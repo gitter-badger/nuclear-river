@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuClear.EntityDataModel.Tests</RootNamespace>
-    <AssemblyName>NuClear.EntityDataModel.Tests</AssemblyName>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
