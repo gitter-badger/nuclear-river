@@ -1,7 +1,8 @@
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
-namespace NuClear.EntityDataModel
+// ReSharper disable once CheckNamespace
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElementBuilder : MetadataElementBuilder<BoundedContextElementBuilder, BoundedContextElement>
     {

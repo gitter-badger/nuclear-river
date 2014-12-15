@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
+using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Processors;

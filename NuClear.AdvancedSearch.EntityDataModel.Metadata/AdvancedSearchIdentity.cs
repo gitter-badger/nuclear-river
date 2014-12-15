@@ -3,7 +3,8 @@
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Kinds;
 
-namespace NuClear.EntityDataModel
+// ReSharper disable once CheckNamespace
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class AdvancedSearchIdentity : MetadataKindIdentityBase<AdvancedSearchIdentity>
     {

@@ -37,8 +37,9 @@
     <AssemblyOriginatorKeyFile>..\AdvancedSearch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.Metamodeling">
-      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.0.9\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common">
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.0.8\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
@@ -62,9 +63,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NuClear.EntityDataModel\NuClear.EntityDataModel.csproj">
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
       <Project>{7ad073f2-b143-4fdd-9e31-9b6f955e6c9b}</Project>
-      <Name>NuClear.EntityDataModel</Name>
+      <Name>NuClear.AdvancedSearch.EntityDataModel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

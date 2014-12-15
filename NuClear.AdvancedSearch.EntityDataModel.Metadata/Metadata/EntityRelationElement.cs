@@ -4,13 +4,13 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 
-namespace NuClear.EntityDataModel
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class EntityElement : MetadataElement<EntityElement, EntityElementBuilder>
+    public sealed class EntityRelationElement : MetadataElement<EntityRelationElement, EntityRelationElementBuilder>
     {
         private IMetadataElementIdentity _identity;
 
-        internal EntityElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
+        internal EntityRelationElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
             : base(features)
         {
             _identity = identity;

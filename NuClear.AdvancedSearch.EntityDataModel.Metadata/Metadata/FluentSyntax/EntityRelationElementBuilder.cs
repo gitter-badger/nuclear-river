@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
-namespace NuClear.EntityDataModel
+// ReSharper disable once CheckNamespace
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EntityRelationElementBuilder : MetadataElementBuilder<EntityRelationElementBuilder, EntityRelationElement>
     {

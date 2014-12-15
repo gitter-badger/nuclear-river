@@ -1,4 +1,4 @@
-﻿namespace NuClear.EntityDataModel
+﻿namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public enum Cardinality : byte
     {

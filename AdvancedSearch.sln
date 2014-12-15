@@ -3,14 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuClear.EntityDataModel", "NuClear.EntityDataModel\NuClear.EntityDataModel.csproj", "{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuClear.EntityDataModel.Tests", "NuClear.EntityDataModel.Tests\NuClear.EntityDataModel.Tests.csproj", "{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{5E32B268-B2DE-4437-9CF3-E161F4CCDC36}"
 	ProjectSection(SolutionItems) = preProject
 		readme.txt = readme.txt
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.Metadata", "NuClear.AdvancedSearch.EntityDataModel.Metadata\EntityDataModel.Metadata.csproj", "{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.Metadata.Tests", "NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests\EntityDataModel.Metadata.Tests.csproj", "{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,5 +31,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{16DA002C-3DA3-4303-AC10-8FE046F0ED2C} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
 	EndGlobalSection
 EndGlobal

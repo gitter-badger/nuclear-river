@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
-using NuClear.Metamodeling.Elements.Identities;
-using NuClear.Metamodeling.Provider.Sources;
-
-namespace NuClear.EntityDataModel
+﻿// ReSharper disable once CheckNamespace
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class AdvancedSearchMetadataSource : MetadataSourceBase<AdvancedSearchIdentity>
+    partial class AdvancedSearchMetadataSource
     {
-        private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
-
-        private readonly BoundedContextElement _customerIntelligence = 
+        private readonly BoundedContextElement _customerIntelligence =
             BoundedContextElement.Config
                 .Name("CustomerIntelligence")
                 .Elements(
@@ -28,6 +19,7 @@ namespace NuClear.EntityDataModel
                         .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(TypeCode.Boolean))
                         .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(TypeCode.Byte))
                         .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(TypeCode.UInt32))
+                        .IdentifyBy("Id")
                         .Relation(EntityRelationElement.Config
                             .Name("Categories")
                             .DirectTo(
@@ -67,21 +59,5 @@ namespace NuClear.EntityDataModel
                             )
                             .AsSingleOptionally())
                 );
-
-        public AdvancedSearchMetadataSource()
-        {
-            HierarchyMetadata root = HierarchyMetadata.Config
-                .Id.Is(IdBuilder.For<AdvancedSearchIdentity>())
-                .Childs(_customerIntelligence);
-            _metadata = new Dictionary<Uri, IMetadataElement> { { root.Identity.Id, root } };
-        }
-
-        public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata
-        {
-            get
-            {
-                return _metadata;
-            }
-        }
     }
 }
