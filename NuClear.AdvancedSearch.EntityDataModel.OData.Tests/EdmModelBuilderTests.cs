@@ -41,12 +41,32 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         public void ShouldBuildModel()
         {
             _modelSource.Setup(x => x.Namespace).Returns("CustomerIntelligence");
+            _modelSource.Setup(x => x.Entities).Returns(
+                new[]
+                    {
+                        Entity("Book", 
+                            //Key("Id"),
+                            Property("Id", EdmEntityPropertyTypeKind.Int64), 
+                            Property("Title", EdmEntityPropertyTypeKind.String)
+                            ),
+                    }
+                );
 
             var model = _modelBuilder.Build();
             Debug.WriteLine(model.Dump());
 
             Assert.NotNull(model);
             Assert.That(model, Model.IsValid);
+        }
+
+        private static EdmEntityInfo Entity(string name, params EdmEntityPropertyInfo[] properties)
+        {
+            return new EdmEntityInfo(name, properties, null);
+        }
+
+        private static EdmEntityPropertyInfo Property(string name, EdmEntityPropertyTypeKind typeKind)
+        {
+            return new EdmEntityPropertyInfo(name, new EdmEntityPropertyType(typeKind));
         }
 
         #region Model constraints
