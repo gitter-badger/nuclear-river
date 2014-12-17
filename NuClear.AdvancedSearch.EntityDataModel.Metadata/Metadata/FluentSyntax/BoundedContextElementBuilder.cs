@@ -1,3 +1,5 @@
+using System;
+
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
@@ -22,6 +24,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         protected override BoundedContextElement Create()
         {
+            if (string.IsNullOrEmpty(_name))
+            {
+                throw new InvalidOperationException("The context name was not specified.");
+            }
+
             return new BoundedContextElement(IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity(), Features);
         }
     }

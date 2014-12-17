@@ -43,8 +43,9 @@
     <Compile Include="AdvancedSearchIdentity.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />
     <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
+    <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />
     <Compile Include="Metadata\FluentSyntax\BoundedContextElementBuilder.cs" />
-    <Compile Include="Metadata\Cardinality.cs" />
+    <Compile Include="Metadata\EntityRelationCardinality.cs" />
     <Compile Include="Metadata\EntityElement.cs" />
     <Compile Include="Metadata\FluentSyntax\EntityElementBuilder.cs" />
     <Compile Include="Metadata\EntityPropertyElement.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="Metadata\Features\EntityPropertyTypeFeature.cs" />
     <Compile Include="Metadata\EntityRelationElement.cs" />
     <Compile Include="Metadata\FluentSyntax\EntityRelationElementBuilder.cs" />
-    <Compile Include="Metadata\TypeCode.cs" />
+    <Compile Include="Metadata\EntityPropertyType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdvancedSearchMetadataSource.cs" />
   </ItemGroup>

@@ -25,27 +25,22 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityRelationElementBuilder AsSingle()
+        public EntityRelationElementBuilder AsOneOptionally()
         {
-            return AddCardinality(Cardinality.One);
+            return AddCardinality(EntityRelationCardinality.OptionalOne);
         }
 
-        public EntityRelationElementBuilder AsSingleOptionally()
+        public EntityRelationElementBuilder AsOne()
         {
-            return AddCardinality(Cardinality.OptionalOne);
+            return AddCardinality(EntityRelationCardinality.One);
         }
 
         public EntityRelationElementBuilder AsMany()
         {
-            return AddCardinality(Cardinality.Many);
+            return AddCardinality(EntityRelationCardinality.Many);
         }
 
-        public EntityRelationElementBuilder AsManyOptionally()
-        {
-            return AddCardinality(Cardinality.OptionalMany);
-        }
-
-        private EntityRelationElementBuilder AddCardinality(Cardinality cardinality)
+        private EntityRelationElementBuilder AddCardinality(EntityRelationCardinality cardinality)
         {
             AddFeatures(new EntityRelationCardinalityFeature(cardinality));
             return this;

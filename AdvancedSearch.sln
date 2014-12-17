@@ -14,6 +14,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.Metadata", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.Metadata.Tests", "NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests\EntityDataModel.Metadata.Tests.csproj", "{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}"
 EndProject
+<<<<<<< Updated upstream
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.OData", "NuClear.AdvancedSearch.EntityDataModel.OData\EntityDataModel.OData.csproj", "{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.OData.Tests", "NuClear.AdvancedSearch.EntityDataModel.OData.Tests\EntityDataModel.OData.Tests.csproj", "{508DB918-8B80-4F82-97FD-1DBE14E1CE46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "NuClear.AdvancedSearch.Engine\Engine.csproj", "{64362743-DB1D-4988-831F-A9B896D26A34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuClear.Engine.Tests", "NuClear.Engine.Tests\NuClear.Engine.Tests.csproj", "{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}"
+EndProject
+>>>>>>> Stashed changes
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,11 +39,35 @@ Global
 		{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16DA002C-3DA3-4303-AC10-8FE046F0ED2C}.Release|Any CPU.Build.0 = Release|Any CPU
+<<<<<<< Updated upstream
+=======
+		{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{508DB918-8B80-4F82-97FD-1DBE14E1CE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{508DB918-8B80-4F82-97FD-1DBE14E1CE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{508DB918-8B80-4F82-97FD-1DBE14E1CE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{508DB918-8B80-4F82-97FD-1DBE14E1CE46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64362743-DB1D-4988-831F-A9B896D26A34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64362743-DB1D-4988-831F-A9B896D26A34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64362743-DB1D-4988-831F-A9B896D26A34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64362743-DB1D-4988-831F-A9B896D26A34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}.Release|Any CPU.Build.0 = Release|Any CPU
+>>>>>>> Stashed changes
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{16DA002C-3DA3-4303-AC10-8FE046F0ED2C} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
+<<<<<<< Updated upstream
+=======
+		{508DB918-8B80-4F82-97FD-1DBE14E1CE46} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
+		{899E12BA-EF0F-431B-BD41-E6C70DBF78A2} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
+>>>>>>> Stashed changes
 	EndGlobalSection
 EndGlobal
