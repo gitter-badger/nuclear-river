@@ -1,22 +1,21 @@
 ﻿namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public enum TypeCode : byte
+    public enum EntityPropertyType : byte
     {
-        DBNull,
-        Boolean,
-        Char,
-        SByte,
         Byte,
+        SByte,
         Int16,
-        UInt16,
         Int32,
-        UInt32,
         Int64,
-        UInt64,
+        
         Single,
         Double,
         Decimal,
-        DateTime,
+
+        Boolean,
+        
         String,
+        
+        DateTime,
     }
 }

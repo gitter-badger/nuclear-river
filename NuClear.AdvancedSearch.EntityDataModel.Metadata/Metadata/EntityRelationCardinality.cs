@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public enum Cardinality : byte
+    public enum EntityRelationCardinality : byte
     {
         /// <summary>
         /// Specifies the relation that must direct to an entity.
@@ -14,9 +14,5 @@
         /// Specifies the relation that must direct to at least an entity.
         /// </summary>
         Many,
-        /// <summary>
-        /// Specifies the relation that may direct to entities.
-        /// </summary>
-        OptionalMany,
     }
 }

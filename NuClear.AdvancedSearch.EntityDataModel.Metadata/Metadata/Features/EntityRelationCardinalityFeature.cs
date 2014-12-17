@@ -4,11 +4,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
     public sealed class EntityRelationCardinalityFeature : IUniqueMetadataFeature
     {
-        public EntityRelationCardinalityFeature(Cardinality cardinality)
+        public EntityRelationCardinalityFeature(EntityRelationCardinality cardinality)
         {
             Cardinality = cardinality;
         }
 
-        public Cardinality Cardinality { get; private set; }
+        public EntityRelationCardinality Cardinality { get; private set; }
     }
 }

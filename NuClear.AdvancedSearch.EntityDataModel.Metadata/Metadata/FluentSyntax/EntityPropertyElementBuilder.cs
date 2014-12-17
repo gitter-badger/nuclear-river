@@ -17,14 +17,25 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityPropertyElementBuilder OfType(TypeCode typeCode)
+        public EntityPropertyElementBuilder NotNull()
         {
-            AddFeatures(new EntityPropertyTypeFeature(typeCode));
+            AddFeatures(new EntityPropertyNullableFeature(false));
+            return this;
+        }
+
+        public EntityPropertyElementBuilder OfType(EntityPropertyType propertyType)
+        {
+            AddFeatures(new EntityPropertyTypeFeature(propertyType));
             return this;
         }
 
         protected override EntityPropertyElement Create()
         {
+            if (string.IsNullOrEmpty(_name))
+            {
+                throw new InvalidOperationException("The property name was not specified.");
+            }
+
             return new EntityPropertyElement(new Uri(_name, UriKind.Relative).AsIdentity(), Features);
         }
     }

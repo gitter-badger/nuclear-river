@@ -4,11 +4,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
     public sealed class EntityPropertyTypeFeature : IUniqueMetadataFeature
     {
-        public EntityPropertyTypeFeature(TypeCode typeCode)
+        public EntityPropertyTypeFeature(EntityPropertyType propertyType)
         {
-            TypeCode = typeCode;
+            PropertyType = propertyType;
         }
 
-        public TypeCode TypeCode { get; private set; }
+        public EntityPropertyType PropertyType { get; private set; }
     }
 }
