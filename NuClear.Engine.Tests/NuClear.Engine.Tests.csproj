@@ -48,9 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdmModelHelper.cs" />
+    <Compile Include="EdmModelExtensions.cs" />
     <Compile Include="EdmModelSourceAdapterTests.cs" />
-    <Compile Include="EngineTests.cs" />
+    <Compile Include="EdmModelBuilderTests.cs" />
     <Compile Include="ModelConstraints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
