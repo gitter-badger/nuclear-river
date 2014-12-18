@@ -12,6 +12,8 @@ using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
+using EdmPrimitiveTypeKind = NuClear.AdvancedSearch.EntityDataModel.OData.Building.EdmPrimitiveTypeKind;
+
 namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 {
     [TestFixture]
@@ -46,8 +48,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                     {
                         Entity("Book", 
                             //Key("Id"),
-                            Property("Id", EdmEntityPropertyTypeKind.Int64), 
-                            Property("Title", EdmEntityPropertyTypeKind.String)
+                            Property("Id", EdmPrimitiveTypeKind.Int64), 
+                            Property("Title", EdmPrimitiveTypeKind.String)
                             ),
                     }
                 );
@@ -59,14 +61,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             Assert.That(model, Model.IsValid);
         }
 
-        private static EdmEntityInfo Entity(string name, params EdmEntityPropertyInfo[] properties)
+        private static EdmEntityType Entity(string name, params EdmEntityPropertyInfo[] properties)
         {
-            return new EdmEntityInfo(name, properties, null);
+            return new EdmEntityType(name, properties, null);
         }
 
-        private static EdmEntityPropertyInfo Property(string name, EdmEntityPropertyTypeKind typeKind)
+        private static EdmEntityPropertyInfo Property(string name, EdmPrimitiveTypeKind typeKind)
         {
-            return new EdmEntityPropertyInfo(name, new EdmEntityPropertyType(typeKind));
+            return new EdmEntityPropertyInfo(name, new EdmTypeReference(new EdmPrimitiveType(typeKind)));
         }
 
         #region Model constraints

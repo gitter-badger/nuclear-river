@@ -44,6 +44,7 @@
     <Compile Include="Metadata\BoundedContextElement.cs" />
     <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
     <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />
+    <Compile Include="Metadata\Features\EntityPropertyEnumTypeFeature.cs" />
     <Compile Include="Metadata\FluentSyntax\BoundedContextElementBuilder.cs" />
     <Compile Include="Metadata\EntityRelationCardinality.cs" />
     <Compile Include="Metadata\EntityElement.cs" />

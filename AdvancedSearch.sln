@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityDataModel.OData.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "NuClear.AdvancedSearch.Engine\Engine.csproj", "{64362743-DB1D-4988-831F-A9B896D26A34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuClear.Engine.Tests", "NuClear.Engine.Tests\NuClear.Engine.Tests.csproj", "{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine.Tests", "NuClear.Engine.Tests\Engine.Tests.csproj", "{899E12BA-EF0F-431B-BD41-E6C70DBF78A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -43,18 +43,19 @@ namespace NuClear.EntityDataModel.Tests
             Assert.IsNotNull(contextElement);
         }
 
-        [TestCase("CustomerIntelligence/Firm", "Identity,Elements", Explicit = true, Description = "Used to get dump of hierarchy")]
+        [TestCase("CustomerIntelligence/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy")]
         [TestCase("CustomerIntelligence", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence'}}")]
         [TestCase("CustomerIntelligence/Firm", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm'}}")]
         [TestCase("CustomerIntelligence/Firm/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Id'}}")]
         [TestCase("CustomerIntelligence/Firm/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
         [TestCase("CustomerIntelligence/Firm/Categories", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories'},'Features':[{'Cardinality':'Many'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Id'},'Features':[{'PropertyType':'Int64'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/Name", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Name'},'Features':[{'PropertyType':'String'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/CategoryGroup", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
+        [TestCase("CustomerIntelligence/Firm/Categories/Category/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
+        [TestCase("CustomerIntelligence/Firm/Categories/Category/Name", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/Name'},'Features':[{'PropertyType':'String'}]}")]
+        [TestCase("CustomerIntelligence/Firm/Categories/Category/CategoryGroup", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
         [TestCase("CustomerIntelligence/Firm/Client", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Id'}}")]
-        [TestCase("CustomerIntelligence/Firm/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/CategoryGroup'}}")]
+        [TestCase("CustomerIntelligence/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/Id'}}")]
+        [TestCase("CustomerIntelligence/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/CategoryGroup'}}")]
+        [TestCase("CustomerIntelligence/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
         public string ShouldReturnMetadata(string path, string csPropertyNames)
         {
             IMetadataElement element;

@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.Engine.Tests
     internal class EdmModelBuilderTests
     {
         [Test]
-        public void ShouldBuildValidModelForEntity()
+        public void ShouldSupportEntity()
         {
             var config = BoundedContextElement.Config
                 .Name("Context")
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Engine.Tests
         }
 
         [Test]
-        public void ShouldBuildValidModelForComplexType()
+        public void ShouldSupportEntityOfComplexType()
         {
             var config = BoundedContextElement.Config
                 .Name("Context")
@@ -37,6 +37,26 @@ namespace NuClear.AdvancedSearch.Engine.Tests
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String)));
             var model = BuildModel(config);
             
+            Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
+        }
+
+        [Test]
+        public void ShouldSupportPropertyWithEnumType()
+        {
+            var config = BoundedContextElement.Config
+                .Name("Context")
+                .Elements(
+                    EntityElement.Config
+                    .Name("Person")
+                    .Property(EntityPropertyElement.Config.Name("Gender")
+                        .UsingEnum()
+                        .WithMember("Male", 1)
+                        .WithMember("Female", 2)
+                        )
+                    );
+
+            var model = BuildModel(config);
+
             Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
         }
 

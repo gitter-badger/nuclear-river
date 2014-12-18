@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
@@ -14,6 +15,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             : base(features)
         {
             _identity = identity;
+        }
+
+        public IEnumerable<EntityElement> RootEntities
+        {
+            get
+            {
+                return Elements.OfType<EntityElement>();
+            }
         }
 
         public override IMetadataElementIdentity Identity

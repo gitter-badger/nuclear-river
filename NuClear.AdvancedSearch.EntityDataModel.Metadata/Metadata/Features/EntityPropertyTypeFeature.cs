@@ -2,7 +2,7 @@ using NuClear.Metamodeling.Elements.Aspects.Features;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
-    public sealed class EntityPropertyTypeFeature : IUniqueMetadataFeature
+    public class EntityPropertyTypeFeature : IUniqueMetadataFeature
     {
         public EntityPropertyTypeFeature(EntityPropertyType propertyType)
         {

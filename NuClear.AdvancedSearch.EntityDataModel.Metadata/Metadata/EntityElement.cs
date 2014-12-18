@@ -45,6 +45,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
         }
 
+        public IEnumerable<EntityRelationElement> Relations
+        {
+            get
+            {
+                return Elements.OfType<EntityRelationElement>();
+            }
+        }
+
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
             _identity = actualMetadataElementIdentity;

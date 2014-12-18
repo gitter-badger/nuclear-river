@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="EdmModelExtensions.cs" />
     <Compile Include="EdmModelSourceAdapterTests.cs" />
     <Compile Include="EdmModelBuilderTests.cs" />

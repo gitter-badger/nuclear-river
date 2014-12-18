@@ -40,11 +40,28 @@
     <AssemblyOriginatorKeyFile>..\AdvancedSearch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Building\Elements\EdmEntityRelationInfo.cs" />
+    <Compile Include="Building\Elements\EdmEntityRelationMultiplicity.cs" />
+    <Compile Include="Building\Elements\EdmEntityType.cs" />
+    <Compile Include="Building\Elements\EdmPrimitiveTypeKind.cs" />
+    <Compile Include="Building\Elements\EdmEnumType.cs" />
+    <Compile Include="Building\Elements\EdmPrimitiveType.cs" />
+    <Compile Include="Building\Elements\EdmStructuredType.cs" />
+    <Compile Include="Building\Elements\EdmType.cs" />
+    <Compile Include="Building\Elements\EdmEntityPropertyInfo.cs" />
     <Compile Include="Building\EdmModelBuilder.cs" />
+    <Compile Include="Building\Elements\EdmTypeReference.cs" />
+    <Compile Include="Building\Elements\EdmValueType.cs" />
     <Compile Include="Building\IEdmModelSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Metamodeling">
+      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Model.Common">
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.0.8\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.OData.Edm">
       <HintPath>..\packages\Microsoft.OData.Edm.6.9.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
     </Reference>
@@ -52,7 +69,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
+      <Project>{7ad073f2-b143-4fdd-9e31-9b6f955e6c9b}</Project>
+      <Name>EntityDataModel.Metadata</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
