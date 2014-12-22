@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             _identity = identity;
         }
 
-        public IEnumerable<EntityElement> RootEntities
+        public IEnumerable<EntityElement> Entities
         {
             get
             {

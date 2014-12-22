@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 EntityElement.Config.Name("Contact")
                                                     .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                     .Property(EntityPropertyElement.Config.Name("Role")
-                                                        .UsingEnum()
+                                                        .UsingEnum("ContactRole")
                                                         .WithMember("Employee", 200000)
                                                         .WithMember("InfluenceDecisions", 200001)
                                                         .WithMember("MakingDecisions", 200002)

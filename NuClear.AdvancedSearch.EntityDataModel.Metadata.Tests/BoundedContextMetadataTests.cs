@@ -55,7 +55,7 @@ namespace NuClear.EntityDataModel.Tests
         [TestCase("CustomerIntelligence/Firm/Client", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
         [TestCase("CustomerIntelligence/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/Id'}}")]
         [TestCase("CustomerIntelligence/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/CategoryGroup'}}")]
-        [TestCase("CustomerIntelligence/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
+        [TestCase("CustomerIntelligence/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
         public string ShouldReturnMetadata(string path, string csPropertyNames)
         {
             IMetadataElement element;

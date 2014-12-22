@@ -40,19 +40,8 @@
     <AssemblyOriginatorKeyFile>..\AdvancedSearch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Building\Elements\EdmEntityRelationInfo.cs" />
-    <Compile Include="Building\Elements\EdmEntityRelationMultiplicity.cs" />
-    <Compile Include="Building\Elements\EdmEntityType.cs" />
-    <Compile Include="Building\Elements\EdmPrimitiveTypeKind.cs" />
-    <Compile Include="Building\Elements\EdmEnumType.cs" />
-    <Compile Include="Building\Elements\EdmPrimitiveType.cs" />
-    <Compile Include="Building\Elements\EdmStructuredType.cs" />
-    <Compile Include="Building\Elements\EdmType.cs" />
-    <Compile Include="Building\Elements\EdmEntityPropertyInfo.cs" />
     <Compile Include="Building\EdmModelBuilder.cs" />
-    <Compile Include="Building\Elements\EdmTypeReference.cs" />
-    <Compile Include="Building\Elements\EdmValueType.cs" />
-    <Compile Include="Building\IEdmModelSource.cs" />
+    <Compile Include="EdmModelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,191 +4,274 @@ using System.Linq;
 
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Library;
+using Microsoft.OData.Edm.Library.Values;
+
+using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
+using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 {
-    public sealed class EdmModelBuilder
+    public static class EdmModelBuilder
     {
-        private readonly IEdmModelSource _source;
+        private const string DefaultContainName = "DefaultContainer";
 
-        public EdmModelBuilder(IEdmModelSource source)
+        public static IEdmModel Build(BoundedContextElement context)
         {
-            if (source == null)
+            if (context == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException("context");
             }
-            _source = source;
+
+            return BuildModel(ResolveNamespaceName(context.Identity), context.Entities);
         }
 
-        public IEdmModel Build()
+        private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)
         {
-            var ns = _source.Namespace;
-//            var relations = (_source.Relations ?? Enumerable.Empty<EdmEntityRelationInfo>()).GroupBy(x => x.SourceEntity.Name).ToDictionary(x => x.Key, x => x.AsEnumerable());
-//
+            var typeBuilder = new TypeBuilder(namespaceName);
+
             var model = new EdmModel();
+
+            model.AddElement(BuildContainer(entities, typeBuilder));
             
-            var container = new EdmEntityContainer(ns, "DefaultContainer");
-            model.AddElement(container);
-
-            foreach (var entityInfo in _source.Entities ?? Enumerable.Empty<EdmEntityType>())
+            foreach (var registeredType in typeBuilder.RegisteredTypes)
             {
-                var entity = BuildEntity(ns, entityInfo);
-                model.AddElement(entity);
-                if (/*entityInfo.IsOpen &&*/ (entity is IEdmEntityType))
-                {
-                    container.AddEntitySet(entityInfo.Name, (IEdmEntityType)entity);
-                }
-
-//                IEnumerable<EdmEntityRelationInfo> rels;
-//                if (relations.TryGetValue(entityInfo.Name, out rels) && (entity is IEdmEntityType))
-//                {
-//                    foreach (var rel in rels)
-//                    {
-//                        ((EdmEntityType)entity).AddProperty(BuildNavigationProperty((EdmEntityType)entity, rel));
-//                    }
-//                }
+                model.AddElement(registeredType);
             }
 
             return model;
         }
 
-        #region Entity Building
-
-        private static IEdmSchemaElement BuildEntity(string namespaceName, EdmEntityType entityType)
+        private static IEdmEntityContainer BuildContainer(IEnumerable<EntityElement> entities, TypeBuilder typeBuilder)
         {
-            return entityType.HasKey ? BuildEntityType(namespaceName, entityType) : BuildComplexType(namespaceName, entityType);
+            var container = new EdmEntityContainer(typeBuilder.NamespaceName, DefaultContainName);
+
+            foreach (var entityElement in entities)
+            {
+                var entitySetName = ResolveName(entityElement.Identity);
+                var entityType = typeBuilder.ResolveEntityType(entityElement);
+
+                container.AddEntitySet(entitySetName, entityType);
+            }
+
+            return container;
         }
 
-        private static IEdmSchemaElement BuildComplexType(string namespaceName, EdmEntityType entityType)
+        #region Utils
+
+        private static string ResolveNamespaceName(IMetadataElementIdentity identity)
         {
-            var entityType = new EdmComplexType(namespaceName, entityInfo.Name);
-
-            foreach (var propertyInfo in entityInfo.Properties)
-            {
-                entityType.AddProperty(BuildProperty(entityType, propertyInfo));
-            }
-
-            return entityType;
+            // TODO {s.pomadin, 16.12.2014}: provide a better solution
+            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Replace("/", ".");
         }
 
-        private static IEdmSchemaElement BuildEntityType(string namespaceName, EdmEntityType entityType)
+        private static string ResolveName(IMetadataElementIdentity identity)
         {
-            var entityType = new Microsoft.OData.Edm.Library.EdmEntityType(namespaceName, entityInfo.Name);
-
-            foreach (var propertyInfo in entityInfo.Properties)
-            {
-                entityType.AddProperty(BuildProperty(entityType, propertyInfo));
-            }
-
-            if (entityInfo.HasKey)
-            {
-                var keys = new HashSet<string>(entityInfo.Keys.Select(x => x.Name));
-                entityType.AddKeys(entityType.DeclaredProperties.OfType<IEdmStructuralProperty>().Where(x => keys.Contains(x.Name)));
-            }
-
-//            foreach (var relation in entityInfo.Relations)
-//            {
-//                entityType.AddProperty(BuildNavigationProperty(entityType, relation));
-//            }
-
-            return entityType;
+            // TODO {s.pomadin, 16.12.2014}: provide a better solution
+            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').LastOrDefault();
         }
 
         #endregion
 
-        #region Property Building
+        #region TypeBuilder
 
-        private static IEdmProperty BuildProperty(EdmStructuredType entityType, EdmEntityPropertyInfo propertyInfo)
+        private class TypeBuilder
         {
-            var property = new EdmStructuralProperty(entityType, propertyInfo.Name, ResolvePropertyType(propertyInfo.TypeReference));
-            //var id = books.AddStructuralProperty("ID", EdmPrimitiveTypeKind.Int64, false);
-            //books.AddStructuralProperty("Name", EdmPrimitiveTypeKind.String);
-            return property;
-        }
+            private readonly Dictionary<string, IEdmSchemaType> _registeredTypes;
 
-        private static IEdmTypeReference ResolvePropertyType(EdmTypeReference typeReference)
-        {
-            var primitiveType = typeReference.Type as EdmPrimitiveType;
-            if (primitiveType != null)
+            public TypeBuilder(string namespaceName)
             {
-                return EdmCoreModel.Instance.GetPrimitive(ConvertPrimitiveType(primitiveType.TypeKind), typeReference.IsNullable);
+                NamespaceName = namespaceName;
+                _registeredTypes = new Dictionary<string, IEdmSchemaType>();
             }
 
-            var enumType = typeReference.Type as EdmEnumType;
-            if (enumType != null)
+            public string NamespaceName { get; private set; }
+
+            public IEnumerable<IEdmSchemaType> RegisteredTypes
             {
-                var type = new Microsoft.OData.Edm.Library.EdmEnumType("MyNs", "TypeName");
-                return new EdmEnumTypeReference(type, typeReference.IsNullable);
+                get
+                {
+                    return _registeredTypes.Values;
+                }
             }
 
-            throw new NotSupportedException();
-        }
-
-        private static Microsoft.OData.Edm.EdmPrimitiveTypeKind ConvertPrimitiveType(EdmPrimitiveTypeKind typeKind)
-        {
-            switch (typeKind)
+            public IEdmEntityType ResolveEntityType(EntityElement entityElement)
             {
-                case EdmPrimitiveTypeKind.Boolean:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Boolean;
-                case EdmPrimitiveTypeKind.String:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.String;
-                case EdmPrimitiveTypeKind.Int16:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Int16;
-                case EdmPrimitiveTypeKind.Int32:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Int32;
-                case EdmPrimitiveTypeKind.Int64:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Int64;
-                case EdmPrimitiveTypeKind.Byte:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Byte;
-                case EdmPrimitiveTypeKind.SByte:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.SByte;
-                case EdmPrimitiveTypeKind.Single:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Single;
-                case EdmPrimitiveTypeKind.Double:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Double;
-                case EdmPrimitiveTypeKind.Decimal:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Decimal;
-                case EdmPrimitiveTypeKind.Date:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Date;
-                case EdmPrimitiveTypeKind.DateTimeOffset:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.DateTimeOffset;
-                case EdmPrimitiveTypeKind.TimeOfDay:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.TimeOfDay;
-                case EdmPrimitiveTypeKind.Guid:
-                    return Microsoft.OData.Edm.EdmPrimitiveTypeKind.Guid;
-                default:
-                    throw new ArgumentOutOfRangeException("typeKind");
+                var typeName = ResolveName(entityElement.Identity);
+
+                IEdmSchemaType entityType;
+                if (!_registeredTypes.TryGetValue(typeName, out entityType))
+                {
+                    _registeredTypes.Add(typeName, entityType = BuildEntityType(typeName, entityElement));
+                }
+
+                return (IEdmEntityType)entityType;
             }
-        }
 
-        #endregion
-
-        #region Navigation Property Building
-
-        private static EdmNavigationProperty BuildNavigationProperty(IEdmEntityType entityType, EdmEntityRelationInfo relationInfo)
-        {
-            var info = new EdmNavigationPropertyInfo
-                       {
-                           Name = relationInfo.Name, 
-                           Target = entityType, 
-                           TargetMultiplicity = ConvertMultiplicity(relationInfo.TargetMultiplicity),
-                           //ContainsTarget = 
-                       };
-            return EdmNavigationProperty.CreateNavigationProperty(entityType, info);
-        }
-
-        private static EdmMultiplicity ConvertMultiplicity(EdmEntityRelationMultiplicity targetMultiplicity)
-        {
-            switch (targetMultiplicity)
+            private IEdmComplexType ResolveComplexType(EntityElement entityElement)
             {
-                case EdmEntityRelationMultiplicity.ZeroOrOne:
-                    return EdmMultiplicity.ZeroOrOne;
-                case EdmEntityRelationMultiplicity.One:
-                    return EdmMultiplicity.One;
-                case EdmEntityRelationMultiplicity.Many:
-                    return EdmMultiplicity.Many;
-                default:
-                    throw new ArgumentOutOfRangeException("targetMultiplicity");
+                var typeName = ResolveName(entityElement.Identity);
+
+                IEdmSchemaType complexType;
+                if (!_registeredTypes.TryGetValue(typeName, out complexType))
+                {
+                    _registeredTypes.Add(typeName, complexType = BuildComplexType(typeName, entityElement));
+                }
+
+                return (IEdmComplexType)complexType;
+            }
+
+            private IEdmEnumType ResolveEnumType(EntityPropertyEnumTypeFeature feature)
+            {
+                var typeName = feature.Name;
+
+                IEdmSchemaType enumType;
+                if (!_registeredTypes.TryGetValue(typeName, out enumType))
+                {
+                    _registeredTypes.Add(typeName, enumType = BuildEnumType(typeName, feature));
+                }
+
+                return (IEdmEnumType)enumType;
+            }
+
+            private IEdmTypeReference ResolveTypeReference(EntityPropertyElement propertyElement)
+            {
+                if (IsPrimitiveType(propertyElement.PropertyType))
+                {
+                    return EdmCoreModel.Instance.GetPrimitive(Convert(propertyElement.PropertyType), propertyElement.IsNullable);
+                }
+
+                if (propertyElement.PropertyType == EntityPropertyType.Enum)
+                {
+                    var feature = propertyElement.Features.OfType<EntityPropertyEnumTypeFeature>().SingleOrDefault();
+                    if (feature == null)
+                    {
+                        throw new ArgumentException("The enum type was not completely specified.");
+                    }
+
+                    return new EdmEnumTypeReference(ResolveEnumType(feature), propertyElement.IsNullable);
+                }
+
+                throw new NotSupportedException();
+            }
+
+            private IEdmTypeReference ResolveTypeReference(EntityRelationElement relationElement)
+            {
+                var complexType = ResolveComplexType(relationElement.Target);
+
+                IEdmTypeReference typeReference;
+                switch (relationElement.Cardinality)
+                {
+                    case EntityRelationCardinality.One:
+                        typeReference = new EdmComplexTypeReference(complexType, false);
+                        break;
+                    case EntityRelationCardinality.OptionalOne:
+                        typeReference = new EdmComplexTypeReference(complexType, true);
+                        break;
+                    case EntityRelationCardinality.Many:
+                        typeReference = EdmCoreModel.GetCollection(new EdmComplexTypeReference(complexType, true));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return typeReference;
+            }
+
+            private IEdmEntityType BuildEntityType(string typeName, EntityElement entityElement)
+            {
+                var entityType = new EdmEntityType(NamespaceName, typeName);
+                var keyIds = new HashSet<IMetadataElementIdentity>(entityElement.Keys.Select(x => x.Identity));
+
+                foreach (var propertyElement in entityElement.Properties)
+                {
+                    var propertyName = ResolveName(propertyElement.Identity);
+                    var typeReference = ResolveTypeReference(propertyElement);
+
+                    var property = entityType.AddStructuralProperty(propertyName, typeReference);
+                    if (keyIds.Contains(propertyElement.Identity))
+                    {
+                        entityType.AddKeys(property);
+                    }
+                }
+
+                foreach (var relationElement in entityElement.Relations)
+                {
+                    var propertyName = ResolveName(relationElement.Identity);
+                    var typeReference = ResolveTypeReference(relationElement);
+
+                    entityType.AddStructuralProperty(propertyName, typeReference);
+                }
+
+                return entityType;
+            }
+
+            private IEdmComplexType BuildComplexType(string typeName, EntityElement entityElement)
+            {
+                var entityType = new EdmComplexType(NamespaceName, typeName);
+
+                foreach (var propertyElement in entityElement.Properties)
+                {
+                    var propertyName = ResolveName(propertyElement.Identity);
+                    var typeReference = ResolveTypeReference(propertyElement);
+
+                    entityType.AddStructuralProperty(propertyName, typeReference);
+                }
+
+                return entityType;
+            }
+
+            private IEdmEnumType BuildEnumType(string typeName, EntityPropertyEnumTypeFeature feature)
+            {
+                var enumType = new EdmEnumType(NamespaceName, typeName, Convert(feature.UnderlyingType), false);
+
+                foreach (var member in feature.Members)
+                {
+                    enumType.AddMember(member.Key, new EdmIntegerConstant(member.Value));
+                }
+
+                return enumType;
+            }
+
+            private static bool IsPrimitiveType(EntityPropertyType propertyType)
+            {
+                return propertyType != EntityPropertyType.Enum;
+            }
+
+            private static EdmPrimitiveTypeKind Convert(EntityPropertyType propertyType)
+            {
+                switch (propertyType)
+                {
+                    case EntityPropertyType.Boolean:
+                        return EdmPrimitiveTypeKind.Boolean;
+
+                    case EntityPropertyType.Byte:
+                        return EdmPrimitiveTypeKind.Byte;
+                    case EntityPropertyType.SByte:
+                        return EdmPrimitiveTypeKind.SByte;
+                    case EntityPropertyType.Int16:
+                        return EdmPrimitiveTypeKind.Int16;
+                    case EntityPropertyType.Int32:
+                        return EdmPrimitiveTypeKind.Int32;
+                    case EntityPropertyType.Int64:
+                        return EdmPrimitiveTypeKind.Int64;
+
+                    case EntityPropertyType.Single:
+                        return EdmPrimitiveTypeKind.Single;
+                    case EntityPropertyType.Double:
+                        return EdmPrimitiveTypeKind.Double;
+                    case EntityPropertyType.Decimal:
+                        return EdmPrimitiveTypeKind.Decimal;
+
+                    case EntityPropertyType.DateTime:
+                        return EdmPrimitiveTypeKind.Date;
+
+                    case EntityPropertyType.String:
+                        return EdmPrimitiveTypeKind.String;
+
+                    default:
+                        throw new ArgumentOutOfRangeException("propertyType");
+                }
             }
         }
 
