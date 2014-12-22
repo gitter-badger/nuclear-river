@@ -57,10 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdmModelBuilderOldTests.cs" />
     <Compile Include="EdmModelExtensions.cs" />
     <Compile Include="EdmModelBuilderTests.cs" />
-    <Compile Include="IntegrationTests.cs" />
     <Compile Include="ModelConstraints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

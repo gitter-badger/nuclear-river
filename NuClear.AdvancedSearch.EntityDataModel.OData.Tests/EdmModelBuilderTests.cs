@@ -157,27 +157,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         }
 
         [Test]
-        public void ShouldDistinguishEntityTypes()
-        {
-            var config = BoundedContextElement.Config
-                .Name("Context")
-                .Elements(
-                    EntityElement.Config.Name("EntityType")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                        .IdentifyBy("Id"),
-                    EntityElement.Config.Name("ComplexType")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                    );
-
-            var model = BuildValidModel(config);
-
-//            Assert.NotNull(modelSource);
-//            Assert.AreEqual(2, modelSource.Entities.Count);
-//            Assert.That(modelSource.Entities.FirstOrDefault(Entity.ByName("EntityType")), Is.Not.Null.And.Matches(Entity.OfEntityType));
-//            Assert.That(modelSource.Entities.FirstOrDefault(Entity.ByName("ComplexType")), Is.Not.Null.And.Matches(Entity.OfComplexType));
-        }
-
-        [Test]
         public void ShouldExposeRelatedTargetType()
         {
             var config = BoundedContextElement.Config
@@ -200,23 +179,44 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             Assert.NotNull(complexType);
         }
 
+        [Test]
+        public void ShouldBuildValidModelForCustomerIntelligenceContext()
+        {
+            var provider = CreateProvider(new AdvancedSearchMetadataSource());
+
+            BoundedContextElement boundedContext;
+            provider.TryGetMetadata(IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence"), out boundedContext);
+            
+            var context = ProcessContext(boundedContext);
+            var model = BuildModel(context);
+
+            Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
+        }
+
         #region Utils
 
-        private static BoundedContextElement ProcessContext(BoundedContextElement context)
+        private static IMetadataSource MockSource(IMetadataElement context)
         {
             var source = new Mock<IMetadataSource>();
             source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
             source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { IdBuilder.For<AdvancedSearchIdentity>(), context } });
 
-            var sources = new IMetadataSource[] { source.Object };
-            var processors = new IMetadataProcessor[0];
+            return source.Object;
+        }
 
-            var provider = new MetadataProvider(sources, processors);
+        private static IMetadataProvider CreateProvider(params IMetadataSource[] sources)
+        {
+            return new MetadataProvider(sources, new IMetadataProcessor[0]);
+        }
+
+        private static BoundedContextElement ProcessContext(BoundedContextElement context)
+        {
+            var provider = CreateProvider(MockSource(context));
 
             return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
         }
 
-        private static IEdmModel BuildModel(BoundedContextElementBuilder config)
+        private static IEdmModel BuildModel(BoundedContextElement config)
         {
             var context = ProcessContext(config);
             var model = EdmModelBuilder.Build(context);
@@ -235,7 +235,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return model;
         }
 
-        public static class Entity
+        private static class Entity
         {
             public static Func<IEdmEntityType, bool> ByName(string name)
             {
