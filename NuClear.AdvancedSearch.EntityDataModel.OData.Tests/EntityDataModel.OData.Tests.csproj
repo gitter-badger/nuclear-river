@@ -2,19 +2,15 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}</ProjectGuid>
+    <ProjectGuid>{508DB918-8B80-4F82-97FD-1DBE14E1CE46}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.AdvancedSearch.EntityDataModel</RootNamespace>
-    <AssemblyName>2GIS.NuClear.AdvancedSearch.EntityDataModel.Metadata</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <RootNamespace>NuClear.AdvancedSearch.EntityDataModel.OData.Tests</RootNamespace>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.EntityDataModel.OData.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile151</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,43 +36,46 @@
     <AssemblyOriginatorKeyFile>..\AdvancedSearch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AdvancedSearchIdentity.cs" />
-    <Compile Include="Metadata\BoundedContextElement.cs" />
-    <Compile Include="Metadata\EntityElementExtensions.cs" />
-    <Compile Include="Metadata\EntityPropertyExtensions.cs" />
-    <Compile Include="Metadata\EntityRelationElementExtensions.cs" />
-    <Compile Include="Metadata\Features\EntityCollectionFeature.cs" />
-    <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
-    <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />
-    <Compile Include="Metadata\Features\EntityPropertyEnumTypeFeature.cs" />
-    <Compile Include="Metadata\FluentSyntax\BoundedContextElementBuilder.cs" />
-    <Compile Include="Metadata\EntityRelationCardinality.cs" />
-    <Compile Include="Metadata\EntityElement.cs" />
-    <Compile Include="Metadata\FluentSyntax\EntityElementBuilder.cs" />
-    <Compile Include="Metadata\EntityPropertyElement.cs" />
-    <Compile Include="Metadata\FluentSyntax\EntityPropertyElementBuilder.cs" />
-    <Compile Include="Metadata\Features\EntityRelationCardinalityFeature.cs" />
-    <Compile Include="Metadata\Features\EntityPropertyTypeFeature.cs" />
-    <Compile Include="Metadata\EntityRelationElement.cs" />
-    <Compile Include="Metadata\FluentSyntax\EntityRelationElementBuilder.cs" />
-    <Compile Include="Metadata\EntityPropertyType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AdvancedSearchMetadataSource.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="2GIS.NuClear.Metamodeling">
       <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common">
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.0.8\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.OData.Edm">
+      <HintPath>..\packages\Microsoft.OData.Edm.6.9.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvancedSearchMetadataSource.CustomIntelegence.cs" />
+    <Compile Include="EdmModelExtensions.cs" />
+    <Compile Include="EdmModelBuilderTests.cs" />
+    <Compile Include="ModelConstraints.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
+      <Project>{7ad073f2-b143-4fdd-9e31-9b6f955e6c9b}</Project>
+      <Name>EntityDataModel.Metadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.OData\EntityDataModel.OData.csproj">
+      <Project>{c651141a-0c01-4e0a-94f2-c1f11cf77bd6}</Project>
+      <Name>EntityDataModel.OData</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

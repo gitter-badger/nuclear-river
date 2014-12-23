@@ -14,8 +14,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public EntityRelationElementBuilder DirectTo(EntityElement entity)
         {
-            Childs(entity.Elements);
-            AddFeatures(entity.Features.ToArray());
+            Childs(entity);
+            //Childs(entity.Elements);
+            //AddFeatures(entity.Features.ToArray());
             return this;
         }
 

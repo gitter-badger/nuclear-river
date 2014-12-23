@@ -17,5 +17,7 @@
         String,
         
         DateTime,
+
+        Enum,
     }
 }
