@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeNamespace()
         {
-            var model = BuildModel(BoundedContextElement.Config.Name("ContextName"));
+            var model = BuildValidModel(BoundedContextElement.Config.Name("ContextName"));
             
             Assert.NotNull(model);
             Assert.That(model.DeclaredNamespaces.SingleOrDefault(), Is.Not.Null.And.EqualTo("AdvancedSearch.ContextName"));
@@ -48,14 +48,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeEntities()
         {
-            var config = BoundedContextElement.Config
-                .Name("Library")
-                .Elements(
-                    EntityElement.Config.Name("Book"),
-                    EntityElement.Config.Name("Author")
-                    );
+            var config = NewContext("Library", NewEntity("Book"), NewEntity("Author"));
 
-            var model = BuildModel(config);
+            var model = BuildValidModel(config);
             
             Assert.NotNull(model);
             Assert.That(model.EntityContainer.Elements, Has.Count.EqualTo(2));
@@ -66,14 +61,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeEntityTypes()
         {
-            var config = BoundedContextElement.Config
-                .Name("Library")
-                .Elements(
-                    EntityElement.Config.Name("Book"),
-                    EntityElement.Config.Name("Author")
-                    );
+            var config = NewContext("Library", NewEntity("Book"), NewEntity("Author"));
 
-            var model = BuildModel(config);
+            var model = BuildValidModel(config);
             
             Assert.NotNull(model);
             Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
@@ -97,12 +87,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                 .Name("Context")
                 .Elements(
                     EntityElement.Config
-                        .Name("Entity")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
+                        .Name("Entity").IdentifyBy("Id")
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull())
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                        .IdentifyBy("Id"));
+                        );
 
-            var model = BuildModel(config);
+            var model = BuildValidModel(config);
             Assert.NotNull(model);
 
             var entityType = model.FindDeclaredType("AdvancedSearch.Context.Entity") as IEdmEntityType;
@@ -116,19 +106,18 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldSupportEnumType()
         {
-            var config = BoundedContextElement.Config
-                .Name("Context")
+            var config = NewContext("Context")
                 .Elements(
-                    EntityElement.Config
-                    .Name("Person")
-                    .Property(EntityPropertyElement.Config.Name("Gender")
+                    NewEntity("Person")
+                    .Property(EntityPropertyElement.Config
+                        .Name("Gender")
                         .UsingEnum("GenderEnum")
                         .WithMember("Male", 1)
                         .WithMember("Female", 2)
                         )
                     );
 
-            var model = BuildModel(config);
+            var model = BuildValidModel(config);
             Assert.NotNull(model);
 
             var entity = model.FindDeclaredType("AdvancedSearch.Context.Person") as IEdmEntityType;
@@ -141,14 +130,13 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         {
             var primitiveTypes = Enum.GetValues(typeof(EntityPropertyType)).OfType<EntityPropertyType>().Except(new[] { EntityPropertyType.Enum }).ToArray();
 
-            var config = BoundedContextElement.Config.Name("Context");
-            var element = EntityElement.Config.Name("Entity");
+            var element = EntityElement.Config.Name("Entity").IdentifyBy("PropertyOfInt32");
             foreach (var propertyType in primitiveTypes)
             {
-                element.Property(EntityPropertyElement.Config.Name("PropertyOf" + propertyType.ToString("G")).OfType(propertyType));
+                element.Property(NewProperty("PropertyOf" + propertyType.ToString("G")).OfType(propertyType).NotNull());
             }
 
-            var model = BuildModel(config.Elements(element));
+            var model = BuildValidModel(NewContext("Context", element));
             Assert.NotNull(model);
 
             var entity = model.FindDeclaredType("AdvancedSearch.Context.Entity") as IEdmEntityType;
@@ -159,24 +147,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeRelatedTargetType()
         {
-            var config = BoundedContextElement.Config
-                .Name("Context")
-                .Elements(
-                    EntityElement.Config.Name("Entity")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull()).IdentifyBy("Id")
-                        .Relation(EntityRelationElement.Config
-                            .Name("Categories")
-                            .DirectTo(
-                                EntityElement.Config.Name("RelatedEntity")
-                                    .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            )
-                            .AsOne())
+            var config =
+                NewContext("Context", 
+                    NewEntity("Entity")
+                    .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
+                    .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsMany())
+                    .Relation(NewRelation("ToEntityAsOn").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
+                    .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntity")).AsMany())
                     );
 
             var model = BuildValidModel(config);
 
-            var complexType = model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity") as IEdmComplexType;
-            Assert.NotNull(complexType);
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
         }
 
         [Test]
@@ -235,6 +218,45 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return model;
         }
 
+        private static BoundedContextElementBuilder NewContext(string name, params EntityElementBuilder[] entities)
+        {
+            var config = BoundedContextElement.Config.Name(name);
+
+            foreach (var entityElementBuilder in entities)
+            {
+                config.Elements(entityElementBuilder);
+            }
+
+            return config;
+        }
+
+        private static EntityElementBuilder NewEntity(string name, params EntityPropertyElementBuilder[] properties)
+        {
+            var config = EntityElement.Config.Name(name);
+
+            if (properties.Length == 0)
+            {
+                config.Property(NewProperty("Id").NotNull()).IdentifyBy("Id");
+            }
+
+            foreach (var propertyElementBuilder in properties)
+            {
+                config.Property(propertyElementBuilder);
+            }
+
+            return config;
+        }
+
+        private static EntityPropertyElementBuilder NewProperty(string propertyName, EntityPropertyType propertyType = EntityPropertyType.Int64)
+        {
+            return EntityPropertyElement.Config.Name(propertyName).OfType(propertyType);
+        }
+
+        private static EntityRelationElementBuilder NewRelation(string relationName)
+        {
+            return EntityRelationElement.Config.Name(relationName);
+        }
+
         private static class Entity
         {
             public static Func<IEdmEntityType, bool> ByName(string name)
@@ -242,17 +264,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                 return x => x.Name == name;
             }
 
-//            public static Predicate<EdmEntityType> OfEntityType { get { return x => x.HasKey; } }
-//
-//            public static Predicate<EdmEntityType> OfComplexType { get { return x => !x.HasKey; } }
-
             public static class Property
             {
-//                public static Func<EdmEntityPropertyInfo, bool> ByName(string name)
-//                {
-//                    return x => x.Name == name;
-//                }
-//
                 public static Predicate<IEdmProperty> Members(params string[] names)
                 {
                     return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
