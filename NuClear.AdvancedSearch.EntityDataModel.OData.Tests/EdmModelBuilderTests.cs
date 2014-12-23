@@ -152,7 +152,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                     NewEntity("Entity")
                     .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
                     .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsMany())
-                    .Relation(NewRelation("ToEntityAsOn").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
+                    .Relation(NewRelation("ToEntityAsOne").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
                     .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntity")).AsMany())
                     );
 
@@ -160,6 +160,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
             Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.Entity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            
+            var entityType = (IEdmStructuredType)model.FindDeclaredType("AdvancedSearch.Context.Entity");
+            Assert.That(entityType.FindProperty("ToValueAsOne"), Is.Not.Null
+                .And.Matches(Entity.Property.OfKind(EdmPropertyKind.Structural))
+                .And.Not.Matches(Entity.Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToValueAsMany"), Is.Not.Null
+                .And.Matches(Entity.Property.OfKind(EdmPropertyKind.Structural))
+                .And.Matches(Entity.Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToEntityAsOne"), Is.Not.Null
+                .And.Property("PropertyKind").EqualTo(EdmPropertyKind.Navigation)
+                .And.Not.Matches(Entity.Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToEntityAsMany"), Is.Not.Null
+                .And.Property("PropertyKind").EqualTo(EdmPropertyKind.Navigation)
+                .And.Matches(Entity.Property.IsCollection()));
         }
 
         [Test]
@@ -266,6 +281,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             public static class Property
             {
+                public static Predicate<IEdmProperty> OfKind(EdmPropertyKind propertyKind)
+                {
+                    return x => x.PropertyKind == propertyKind;
+                }
+
+                public static Predicate<IEdmProperty> IsCollection()
+                {
+                    return x => x.Type.Definition is IEdmCollectionType;
+                }
+
                 public static Predicate<IEdmProperty> Members(params string[] names)
                 {
                     return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
