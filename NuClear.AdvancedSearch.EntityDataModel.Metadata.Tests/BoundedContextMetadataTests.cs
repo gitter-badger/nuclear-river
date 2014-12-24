@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.Metamodeling.Elements;
@@ -11,11 +11,12 @@ using NUnit.Framework;
 
 namespace NuClear.EntityDataModel.Tests
 {
-    internal class BoundedContextMetadataTests
+    [TestFixture]
+    internal class BoundedContextMetadataTests : BaseMetadataFixture
     {
         private MetadataProvider _provider;
 
-        [SetUp]
+        [TestFixtureSetUp]
         public void Setup()
         {
             var sources = new[] { new AdvancedSearchMetadataSource() };
@@ -43,7 +44,23 @@ namespace NuClear.EntityDataModel.Tests
             Assert.IsNotNull(contextElement);
         }
 
-        [TestCase("CustomerIntelligence/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy")]
+        public override IEnumerable Provider
+        {
+            get
+            {
+                yield return Case(
+                    BoundedContextElement.Config.Name("Context"),
+                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Features':[]}"
+                    ).SetName("ShouldDeclareContext");
+                yield return Case(
+                    BoundedContextElement.Config.Name("Context").Elements(EntityElement.Config.Name("Entity")),
+                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'Entity'},'Elements':[]}]}", 
+                    Metadata.Identity | Metadata.Elements
+                    ).SetName("ShouldDeclareContextWithEntity");
+            }
+        }
+
+        [TestCase("CustomerIntelligence/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
         [TestCase("CustomerIntelligence", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence'}}")]
         [TestCase("CustomerIntelligence/Firm", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm'}}")]
         [TestCase("CustomerIntelligence/Firm/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Id'}}")]
@@ -56,7 +73,7 @@ namespace NuClear.EntityDataModel.Tests
         [TestCase("CustomerIntelligence/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/Id'}}")]
         [TestCase("CustomerIntelligence/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/CategoryGroup'}}")]
         [TestCase("CustomerIntelligence/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
-        public string ShouldReturnMetadata(string path, string csPropertyNames)
+        public string ShouldReturnMetadata(string path, string propertyNames)
         {
             IMetadataElement element;
 
@@ -64,9 +81,7 @@ namespace NuClear.EntityDataModel.Tests
             Assert.IsTrue(_provider.TryGetMetadata(id, out element));
             Assert.IsNotNull(element);
 
-            var propertyNames = (csPropertyNames ?? "").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            Debug.WriteLine(element.ToJson(true, propertyNames));
-            return element.ToJson(propertyNames).Replace("\"", "'");
+            return Serialize(element, (propertyNames ?? "").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries));
         }
     }
 }
