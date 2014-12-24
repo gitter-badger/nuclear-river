@@ -36,7 +36,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public EntityPropertyElementBuilder UsingEnum(string name, EntityPropertyType underlyingType = EntityPropertyType.Int32)
         {
-            //AddFeatures(_enumType = new EntityPropertyEnumTypeFeature(propertyType));
             _enumName = name;
             _enumUnderlyingType = underlyingType;
             return this;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
@@ -15,8 +14,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         public EntityRelationElementBuilder DirectTo(EntityElement entity)
         {
             Childs(entity);
-            //Childs(entity.Elements);
-            //AddFeatures(entity.Features.ToArray());
             return this;
         }
 
