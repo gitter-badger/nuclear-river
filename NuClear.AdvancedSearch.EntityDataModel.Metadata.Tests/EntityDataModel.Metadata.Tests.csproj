@@ -55,8 +55,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EntityMetadataTests.cs" />
+    <Compile Include="EntityRelationMetadataTests.cs" />
+    <Compile Include="EntityPropertyMetadataTests.cs" />
     <Compile Include="BoundedContextMetadataTests.cs" />
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="BaseMetadataFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
