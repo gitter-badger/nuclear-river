@@ -122,7 +122,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             var entity = model.FindDeclaredType("AdvancedSearch.Context.Person") as IEdmEntityType;
             Assert.NotNull(entity);
-            Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Entity.Property.Members("Male", "Female")));
+            Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Property.Members("Male", "Female")));
         }
 
         [Test]
@@ -164,17 +164,17 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             
             var entityType = (IEdmStructuredType)model.FindDeclaredType("AdvancedSearch.Context.Entity");
             Assert.That(entityType.FindProperty("ToValueAsOne"), Is.Not.Null
-                .And.Matches(Entity.Property.OfKind(EdmPropertyKind.Structural))
-                .And.Not.Matches(Entity.Property.IsCollection()));
+                .And.Matches(Property.OfKind(EdmPropertyKind.Structural))
+                .And.Not.Matches(Property.IsCollection()));
             Assert.That(entityType.FindProperty("ToValueAsMany"), Is.Not.Null
-                .And.Matches(Entity.Property.OfKind(EdmPropertyKind.Structural))
-                .And.Matches(Entity.Property.IsCollection()));
+                .And.Matches(Property.OfKind(EdmPropertyKind.Structural))
+                .And.Matches(Property.IsCollection()));
             Assert.That(entityType.FindProperty("ToEntityAsOne"), Is.Not.Null
-                .And.Property("PropertyKind").EqualTo(EdmPropertyKind.Navigation)
-                .And.Not.Matches(Entity.Property.IsCollection()));
+                .And.Matches(Property.OfKind(EdmPropertyKind.Navigation))
+                .And.Not.Matches(Property.IsCollection()));
             Assert.That(entityType.FindProperty("ToEntityAsMany"), Is.Not.Null
-                .And.Property("PropertyKind").EqualTo(EdmPropertyKind.Navigation)
-                .And.Matches(Entity.Property.IsCollection()));
+                .And.Matches(Property.OfKind(EdmPropertyKind.Navigation))
+                .And.Matches(Property.IsCollection()));
         }
 
         [Test]
@@ -272,29 +272,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return EntityRelationElement.Config.Name(relationName);
         }
 
-        private static class Entity
+        public static class Property
         {
-            public static Func<IEdmEntityType, bool> ByName(string name)
+            public static Predicate<IEdmProperty> OfKind(EdmPropertyKind propertyKind)
             {
-                return x => x.Name == name;
+                return x => x.PropertyKind == propertyKind;
             }
 
-            public static class Property
+            public static Predicate<IEdmProperty> IsCollection()
             {
-                public static Predicate<IEdmProperty> OfKind(EdmPropertyKind propertyKind)
-                {
-                    return x => x.PropertyKind == propertyKind;
-                }
+                return x => x.Type.Definition is IEdmCollectionType;
+            }
 
-                public static Predicate<IEdmProperty> IsCollection()
-                {
-                    return x => x.Type.Definition is IEdmCollectionType;
-                }
-
-                public static Predicate<IEdmProperty> Members(params string[] names)
-                {
-                    return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
-                }
+            public static Predicate<IEdmProperty> Members(params string[] names)
+            {
+                return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
             }
         }
 
