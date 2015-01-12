@@ -22,7 +22,20 @@ namespace EntityDataModel.EntityFramework.Tests
     internal class EdmxModelBuilderTests
     {
         [Test]
-        public void ShouldExposeEntities()
+        public void ShouldExposeStoreEntities()
+        {
+            var config = NewContext("Library", NewEntity("Book"), NewEntity("Author"));
+
+            var model = BuildStoreModel(config);
+
+            Assert.NotNull(model);
+            Assert.That(model.Container.EntitySets, Has.Count.EqualTo(2));
+            Assert.That(model.Container.FindEntitySet("Book"), Is.Not.Null);
+            Assert.That(model.Container.FindEntitySet("Author"), Is.Not.Null);
+        }
+
+        [Test]
+        public void ShouldExposeEdmEntities()
         {
             var config = NewContext("Library", NewEntity("Book"), NewEntity("Author"));
 
@@ -49,9 +62,7 @@ namespace EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldExposeEntityProperties()
         {
-            var config = BoundedContextElement.Config
-                .Name("Context")
-                .Elements(
+            var config = NewContext("Context",
                     EntityElement.Config
                         .Name("Entity").IdentifyBy("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull())
@@ -72,8 +83,7 @@ namespace EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldSupportEnumType()
         {
-            var config = NewContext("Context")
-                .Elements(
+            var config = NewContext("Context",
                     NewEntity("Person")
                     .Property(EntityPropertyElement.Config
                         .Name("Gender")
@@ -135,12 +145,20 @@ namespace EntityDataModel.EntityFramework.Tests
 
         private static DbModel BuildModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var model = EdmxModelBuilder.Build(CreateProvider(MockSource(context)), context.Identity.Id);
 
-            model.ConceptualModel.Dump();
-            //model.Dump();
+            model.Dump();
 
             return model;
+        }
+
+        private static EdmModel BuildStoreModel(BoundedContextElement context)
+        {
+            var model = EdmxModelBuilder.Build(CreateProvider(MockSource(context)), context.Identity.Id);
+
+            model.StoreModel.Dump();
+
+            return model.StoreModel;
         }
 
         private static EdmModel BuildEdmModel(BoundedContextElement context)
@@ -164,13 +182,15 @@ namespace EntityDataModel.EntityFramework.Tests
 
         private static BoundedContextElementBuilder NewContext(string name, params EntityElementBuilder[] entities)
         {
-            var config = BoundedContextElement.Config.Name(name);
+            var model = StructuralModelElement.Config;
 
             foreach (var entityElementBuilder in entities)
             {
-                config.Elements(entityElementBuilder);
+                model.Elements(entityElementBuilder);
             }
 
+            var config = BoundedContextElement.Config.Name(name);
+            config.ConceptualModel(model);
             return config;
         }
 
