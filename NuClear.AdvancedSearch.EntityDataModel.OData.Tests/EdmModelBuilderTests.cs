@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeNamespace()
         {
-            var model = BuildValidModel(BoundedContextElement.Config.Name("ContextName"));
+            var model = BuildValidModel(BoundedContextElement.Config.Name("ContextName").ConceptualModel(StructuralModelElement.Config));
             
             Assert.NotNull(model);
             Assert.That(model.DeclaredNamespaces.SingleOrDefault(), Is.Not.Null.And.EqualTo("AdvancedSearch.ContextName"));
@@ -42,7 +42,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test, ExpectedException(typeof(InvalidOperationException), MatchType = MessageMatch.Contains, ExpectedMessage = "entity name was not specified")]
         public void ShouldFailIfNoEntityName()
         {
-            BuildModel(BoundedContextElement.Config.Name("Context").Elements(EntityElement.Config));
+            BuildModel(NewContext("Context", EntityElement.Config));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test, ExpectedException(typeof(InvalidOperationException), MatchType = MessageMatch.Contains, ExpectedMessage = "property name was not specified")]
         public void ShouldFailIfNoPropertyName()
         {
-            BuildModel(BoundedContextElement.Config.Name("Context").Elements(
+            BuildModel(NewContext("Context", 
                 EntityElement.Config
                     .Name("Entity")
                     .Property(EntityPropertyElement.Config)
@@ -83,9 +83,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeEntityProperties()
         {
-            var config = BoundedContextElement.Config
-                .Name("Context")
-                .Elements(
+            var config = NewContext("Context",
                     EntityElement.Config
                         .Name("Entity").IdentifyBy("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull())
@@ -106,8 +104,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldSupportEnumType()
         {
-            var config = NewContext("Context")
-                .Elements(
+            var config = NewContext("Context",
                     NewEntity("Person")
                     .Property(EntityPropertyElement.Config
                         .Name("Gender")
@@ -235,13 +232,15 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
         private static BoundedContextElementBuilder NewContext(string name, params EntityElementBuilder[] entities)
         {
-            var config = BoundedContextElement.Config.Name(name);
-
+            var model = StructuralModelElement.Config;
+            
             foreach (var entityElementBuilder in entities)
             {
-                config.Elements(entityElementBuilder);
+                model.Elements(entityElementBuilder);
             }
 
+            var config = BoundedContextElement.Config.Name(name);
+            config.ConceptualModel(model);
             return config;
         }
 
