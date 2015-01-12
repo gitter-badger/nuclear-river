@@ -8,7 +8,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElementBuilder : MetadataElementBuilder<BoundedContextElementBuilder, BoundedContextElement>
     {
+        private const string ConceptualModelName = "ConceptualModel";
+        private const string StoreModelName = "StoreModel";
+
         private string _name;
+        private StructuralModelElement _conceptualModel;
+        private StructuralModelElement _storeModel;
 
         public BoundedContextElementBuilder Name(string name)
         {
@@ -16,9 +21,15 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public BoundedContextElementBuilder Elements(params EntityElement[] elements)
+        public BoundedContextElementBuilder ConceptualModel(StructuralModelElement modelElement)
         {
-            Childs(elements);
+            Childs(_conceptualModel = modelElement);
+            return this;
+        }
+
+        public BoundedContextElementBuilder StoreModel(StructuralModelElement modelElement)
+        {
+            Childs(_storeModel = modelElement);
             return this;
         }
 
@@ -29,7 +40,22 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 throw new InvalidOperationException("The context name was not specified.");
             }
 
-            return new BoundedContextElement(IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity(), Features);
+            var contextId = IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity();
+            IMetadataElementIdentity conceptualModelId = null;
+            IMetadataElementIdentity storeModelId = null;
+
+            if (_conceptualModel != null)
+            {
+                conceptualModelId = contextId.Id.WithRelative(ConceptualModelName.AsRelativeUri()).AsIdentity();
+                _conceptualModel.ActualizeId(conceptualModelId);
+            }
+            if (_storeModel != null)
+            {
+                storeModelId = contextId.Id.WithRelative(StoreModelName.AsRelativeUri()).AsIdentity();
+                _storeModel.ActualizeId(storeModelId);
+            }
+
+            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, Features);
         }
     }
 }

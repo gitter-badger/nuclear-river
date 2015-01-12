@@ -22,8 +22,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             {
                 throw new ArgumentNullException("context");
             }
+            if (context.ConceptualModel == null)
+            {
+                throw new InvalidOperationException("The conceptual model is not specified.");
+            }
 
-            return BuildModel(ResolveNamespaceName(context.Identity), context.Entities);
+            return BuildModel(ResolveNamespaceName(context.Identity), context.ConceptualModel.Entities);
         }
 
         private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)

@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeNamespace()
         {
-            var model = BuildValidModel(BoundedContextElement.Config.Name("ContextName"));
+            var model = BuildValidModel(BoundedContextElement.Config.Name("ContextName").ConceptualModel(StructuralModelElement.Config));
             
             Assert.NotNull(model);
             Assert.That(model.DeclaredNamespaces.SingleOrDefault(), Is.Not.Null.And.EqualTo("AdvancedSearch.ContextName"));
@@ -42,7 +42,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test, ExpectedException(typeof(InvalidOperationException), MatchType = MessageMatch.Contains, ExpectedMessage = "entity name was not specified")]
         public void ShouldFailIfNoEntityName()
         {
-            BuildModel(BoundedContextElement.Config.Name("Context").Elements(EntityElement.Config));
+            BuildModel(NewContext("Context", EntityElement.Config));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test, ExpectedException(typeof(InvalidOperationException), MatchType = MessageMatch.Contains, ExpectedMessage = "property name was not specified")]
         public void ShouldFailIfNoPropertyName()
         {
-            BuildModel(BoundedContextElement.Config.Name("Context").Elements(
+            BuildModel(NewContext("Context", 
                 EntityElement.Config
                     .Name("Entity")
                     .Property(EntityPropertyElement.Config)
@@ -83,9 +83,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldExposeEntityProperties()
         {
-            var config = BoundedContextElement.Config
-                .Name("Context")
-                .Elements(
+            var config = NewContext("Context",
                     EntityElement.Config
                         .Name("Entity").IdentifyBy("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull())
@@ -106,8 +104,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldSupportEnumType()
         {
-            var config = NewContext("Context")
-                .Elements(
+            var config = NewContext("Context",
                     NewEntity("Person")
                     .Property(EntityPropertyElement.Config
                         .Name("Gender")
@@ -122,7 +119,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             var entity = model.FindDeclaredType("AdvancedSearch.Context.Person") as IEdmEntityType;
             Assert.NotNull(entity);
-            Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Entity.Property.Members("Male", "Female")));
+            Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Property.Members("Male", "Female")));
         }
 
         [Test]
@@ -152,7 +149,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                     NewEntity("Entity")
                     .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
                     .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsMany())
-                    .Relation(NewRelation("ToEntityAsOn").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
+                    .Relation(NewRelation("ToEntityAsOne").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
                     .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntity")).AsMany())
                     );
 
@@ -160,6 +157,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
             Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.Entity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            
+            var entityType = (IEdmStructuredType)model.FindDeclaredType("AdvancedSearch.Context.Entity");
+            Assert.That(entityType.FindProperty("ToValueAsOne"), Is.Not.Null
+                .And.Matches(Property.OfKind(EdmPropertyKind.Structural))
+                .And.Not.Matches(Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToValueAsMany"), Is.Not.Null
+                .And.Matches(Property.OfKind(EdmPropertyKind.Structural))
+                .And.Matches(Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToEntityAsOne"), Is.Not.Null
+                .And.Matches(Property.OfKind(EdmPropertyKind.Navigation))
+                .And.Not.Matches(Property.IsCollection()));
+            Assert.That(entityType.FindProperty("ToEntityAsMany"), Is.Not.Null
+                .And.Matches(Property.OfKind(EdmPropertyKind.Navigation))
+                .And.Matches(Property.IsCollection()));
         }
 
         [Test]
@@ -220,13 +232,15 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
         private static BoundedContextElementBuilder NewContext(string name, params EntityElementBuilder[] entities)
         {
-            var config = BoundedContextElement.Config.Name(name);
-
+            var model = StructuralModelElement.Config;
+            
             foreach (var entityElementBuilder in entities)
             {
-                config.Elements(entityElementBuilder);
+                model.Elements(entityElementBuilder);
             }
 
+            var config = BoundedContextElement.Config.Name(name);
+            config.ConceptualModel(model);
             return config;
         }
 
@@ -257,19 +271,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return EntityRelationElement.Config.Name(relationName);
         }
 
-        private static class Entity
+        public static class Property
         {
-            public static Func<IEdmEntityType, bool> ByName(string name)
+            public static Predicate<IEdmProperty> OfKind(EdmPropertyKind propertyKind)
             {
-                return x => x.Name == name;
+                return x => x.PropertyKind == propertyKind;
             }
 
-            public static class Property
+            public static Predicate<IEdmProperty> IsCollection()
             {
-                public static Predicate<IEdmProperty> Members(params string[] names)
-                {
-                    return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
-                }
+                return x => x.Type.Definition is IEdmCollectionType;
+            }
+
+            public static Predicate<IEdmProperty> Members(params string[] names)
+            {
+                return x => names.OrderBy(_ => _).SequenceEqual(((IEdmEnumType)x.Type.Definition).Members.Select(m => m.Name).OrderBy(_ => _));
             }
         }
 

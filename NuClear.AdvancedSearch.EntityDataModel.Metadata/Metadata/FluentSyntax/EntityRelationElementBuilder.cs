@@ -46,7 +46,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         protected override EntityRelationElement Create()
         {
-            return new EntityRelationElement(new Uri(_name, UriKind.Relative).AsIdentity(), Features);
+            if (string.IsNullOrEmpty(_name))
+            {
+                throw new InvalidOperationException("The relation name was not specified.");
+            }
+
+            return new EntityRelationElement(_name.AsRelativeUri().AsIdentity(), Features);
         }
     }
 }

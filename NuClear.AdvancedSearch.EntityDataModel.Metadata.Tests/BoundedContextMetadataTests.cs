@@ -53,26 +53,26 @@ namespace NuClear.EntityDataModel.Tests
                     "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Features':[]}"
                     ).SetName("ShouldDeclareContext");
                 yield return Case(
-                    BoundedContextElement.Config.Name("Context").Elements(EntityElement.Config.Name("Entity")),
-                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'Entity'},'Elements':[]}]}", 
+                    BoundedContextElement.Config.Name("Context").ConceptualModel(StructuralModelElement.Config.Elements(EntityElement.Config.Name("Entity"))),
+                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context/ConceptualModel'},'Elements':[{'Identity':{'Id':'Entity'},'Elements':[]}]}]}", 
                     Metadata.Identity | Metadata.Elements
                     ).SetName("ShouldDeclareContextWithEntity");
             }
         }
 
-        [TestCase("CustomerIntelligence/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
-        [TestCase("CustomerIntelligence", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence'}}")]
-        [TestCase("CustomerIntelligence/Firm", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm'}}")]
-        [TestCase("CustomerIntelligence/Firm/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Id'}}")]
-        [TestCase("CustomerIntelligence/Firm/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories'},'Features':[{'Cardinality':'Many'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/Category/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/Category/Name", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/Name'},'Features':[{'PropertyType':'String'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Categories/Category/CategoryGroup", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Categories/Category/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Client", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
-        [TestCase("CustomerIntelligence/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/Id'}}")]
-        [TestCase("CustomerIntelligence/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/Firm/Client/Client/CategoryGroup'}}")]
-        [TestCase("CustomerIntelligence/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
+        [TestCase("CustomerIntelligence/ConceptualModel", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories'},'Features':[{'Cardinality':'Many'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name'},'Features':[{'PropertyType':'String'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
         public string ShouldReturnMetadata(string path, string propertyNames)
         {
             IMetadataElement element;

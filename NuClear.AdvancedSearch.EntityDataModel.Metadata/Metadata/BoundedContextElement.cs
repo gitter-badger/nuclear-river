@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.Metamodeling.Elements;
@@ -10,18 +11,48 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     public sealed class BoundedContextElement : MetadataElement<BoundedContextElement, BoundedContextElementBuilder>
     {
         private IMetadataElementIdentity _identity;
+        private readonly Lazy<StructuralModelElement> _conceptualModel;
+        private readonly Lazy<StructuralModelElement> _storeModel;
 
-        internal BoundedContextElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
+        internal BoundedContextElement(
+            IMetadataElementIdentity contextIdentity,
+            IMetadataElementIdentity conceptualModelIdentity,
+            IMetadataElementIdentity storeModelIdentity,
+            IEnumerable<IMetadataFeature> features)
             : base(features)
         {
-            _identity = identity;
+            _identity = contextIdentity;
+            _conceptualModel = new Lazy<StructuralModelElement>(() => conceptualModelIdentity != null 
+                ? Elements.OfType<StructuralModelElement>().FirstOrDefault(x => conceptualModelIdentity.Equals(x.Identity))
+                : null);
+            _storeModel = new Lazy<StructuralModelElement>(() => storeModelIdentity != null 
+                ? Elements.OfType<StructuralModelElement>().FirstOrDefault(x => storeModelIdentity.Equals(x.Identity))
+                : null);
         }
+
+        public StructuralModelElement ConceptualModel
+        {
+            get
+            {
+                return _conceptualModel.Value;
+            }
+        }
+
+        public StructuralModelElement StoreModel
+        {
+            get
+            {
+                return _storeModel.Value;
+            }
+        }
+
+        //public object ConceptualToStoreMapping;
 
         public IEnumerable<EntityElement> Entities
         {
             get
             {
-                return Elements.OfType<EntityElement>();
+                return ConceptualModel.Elements.OfType<EntityElement>();
             }
         }
 
