@@ -41,6 +41,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AdvancedSearchIdentity.cs" />
+    <Compile Include="Metadata\FluentSyntax\StructuralModelElementBuilder.cs" />
+    <Compile Include="Metadata\FluentSyntax\UriExtensions.cs" />
+    <Compile Include="Metadata\StructuralModelElement.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />
     <Compile Include="Metadata\EntityElementExtensions.cs" />
     <Compile Include="Metadata\EntityPropertyExtensions.cs" />

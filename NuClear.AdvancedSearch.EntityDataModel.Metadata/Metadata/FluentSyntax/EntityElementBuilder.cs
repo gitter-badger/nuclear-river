@@ -68,7 +68,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             ProcessKeys();
             ProcessCollectionName();
 
-            return new EntityElement(new Uri(_name, UriKind.Relative).AsIdentity(), Features);
+            return new EntityElement(_name.AsRelativeUri().AsIdentity(), Features);
         }
 
         private void ProcessKeys()
@@ -84,7 +84,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 EntityPropertyElement property;
 
-                var propertyId = new Uri(propertyName, UriKind.Relative);
+                var propertyId = propertyName.AsRelativeUri();
                 if (!properties.TryGetValue(propertyId, out property))
                 {
                     throw new InvalidOperationException(string.Format("The property with name: '{0}' was not declared.", propertyName));
