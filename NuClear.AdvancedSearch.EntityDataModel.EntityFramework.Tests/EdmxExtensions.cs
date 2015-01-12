@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 
@@ -23,6 +25,7 @@ namespace EntityDataModel.EntityFramework.Tests
             Debug.WriteLine(stringBuilder.ToString());
         }
 
+        [Conditional("DEBUG")]
         public static void Dump(this EdmModel edmModel)
         {
             var stringBuilder = new StringBuilder();
@@ -30,6 +33,7 @@ namespace EntityDataModel.EntityFramework.Tests
             using (var xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings { Indent = true }))
             {
                 edmModel.ValidateAndSerializeCsdl(xmlWriter);
+                //edmModel.SerializeAndGetSsdlErrors(xmlWriter);
             }
 
             Debug.WriteLine(stringBuilder.ToString());
@@ -37,32 +41,60 @@ namespace EntityDataModel.EntityFramework.Tests
 
         public static void ValidateAndSerializeCsdl(this EdmModel model, XmlWriter writer)
         {
-            var csdlErrors = SerializeAndGetCsdlErrors(model, writer);
+            var csdlErrors = SerializeAndValidateCsdl(model, writer);
 
-
-            if (csdlErrors.Count > 0)
-            {
-                Debug.WriteLine(ToErrorMessage(csdlErrors));
-            }
+//            if (csdlErrors.Count > 0)
+//            {
+//                Debug.WriteLine(ToErrorMessage(csdlErrors));
+//            }
         }
 
-        private static List<DataModelErrorEventArgs> SerializeAndGetCsdlErrors(this EdmModel model, XmlWriter writer)
+        public static bool IsValidCsdl(this EdmModel model, out IReadOnlyCollection<string> errors)
         {
-            List<DataModelErrorEventArgs> validationErrors = new List<DataModelErrorEventArgs>();
-            CsdlSerializer csdlSerializer = new CsdlSerializer();
-            csdlSerializer.OnError += (EventHandler<DataModelErrorEventArgs>)((s, e) => validationErrors.Add(e));
-            csdlSerializer.Serialize(model, writer, (string)null);
+            var writer = XmlWriter.Create(new StreamWriter(Stream.Null));
+            
+            errors = SerializeAndValidateCsdl(model, writer).Select(ToText).ToList();
+
+            return errors.Count == 0;
+        }
+
+        public static bool IsValidSsdl(this EdmModel model, out IReadOnlyCollection<string> errors)
+        {
+            var writer = XmlWriter.Create(new StreamWriter(Stream.Null));
+
+            errors = SerializeAndValidateSsdl(model, writer).Select(ToText).ToList();
+
+            return errors.Count == 0;
+        }
+
+        private static List<DataModelErrorEventArgs> SerializeAndValidateCsdl(this EdmModel model, XmlWriter writer)
+        {
+            var validationErrors = new List<DataModelErrorEventArgs>();
+            
+            var serializer = new CsdlSerializer();
+            serializer.OnError += (_, e) => validationErrors.Add(e);
+            serializer.Serialize(model, writer);
+            
             return validationErrors;
         }
 
-        public static string ToErrorMessage(this IEnumerable<DataModelErrorEventArgs> validationErrors)
+        private static List<DataModelErrorEventArgs> SerializeAndValidateSsdl(this EdmModel model, XmlWriter writer)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Validation Errors:");
-            stringBuilder.AppendLine();
-            foreach (DataModelErrorEventArgs modelErrorEventArgs in validationErrors)
-                stringBuilder.AppendFormat("{0}.{1}: {2}", modelErrorEventArgs.Item, modelErrorEventArgs.PropertyName, modelErrorEventArgs.ErrorMessage);
-            return stringBuilder.ToString();
+            var providerInfoProperty = typeof(EdmModel).GetProperty("ProviderInfo", BindingFlags.Instance | BindingFlags.NonPublic);
+            var providerInfo = (DbProviderInfo)providerInfoProperty.GetValue(model);
+
+            var validationErrors = new List<DataModelErrorEventArgs>();
+
+            var serializer = new SsdlSerializer();
+            serializer.OnError += (_, e) => validationErrors.Add(e);
+            serializer.Serialize(model, providerInfo.ProviderInvariantName, providerInfo.ProviderManifestToken, writer, true);
+            
+            return validationErrors;
+        }
+
+        private static string ToText(DataModelErrorEventArgs errorEventArgs)
+        {
+            return string.Format("{0}.{1}: {2}", errorEventArgs.Item, errorEventArgs.PropertyName, errorEventArgs.ErrorMessage);
         }
     }
 }

@@ -10,6 +10,11 @@ namespace EntityDataModel.EntityFramework.Tests
             return model.EntityTypes.FirstOrDefault(x => x.FullName == entityName);
         }
 
+        public static EntitySet FindEntitySet(this EdmModel model, string entityName)
+        {
+            return model.Container.EntitySets.FirstOrDefault(x => x.Name == entityName);
+        }
+
         public static EntitySet FindEntitySet(this EntityContainer container, string entityName)
         {
             return container.EntitySets.FirstOrDefault(x => x.Name == entityName);

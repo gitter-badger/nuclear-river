@@ -28,12 +28,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             BoundedContextElement context;
             metadataProvider.TryGetMetadata(uri, out context);
 
-            var model = Build(context);
-
-            BuildStoreModel(model, context.Entities);
-            BuildOneToOneMapping(model);
-
-            return model;
+            return Build(context);
         }
 
         public static DbModel Build(BoundedContextElement context)
@@ -43,52 +38,33 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 throw new ArgumentNullException("context");
             }
 
-            return BuildEdmModel(ResolveNamespaceName(context.Identity), context.Entities);
-        }
-
-        private static DbModel BuildEdmModel(string namespaceName, IEnumerable<EntityElement> entities)
-        {
-            var typeBuilder = new EdmTypeBuilder(namespaceName);
-
             var builder = new DbModelBuilder();
-            
             var model = builder.Build(DefaultProviderInfo);
 
-            foreach (var entityElement in entities)
-            {
-                var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
-                var entityType = typeBuilder.ResolveComplexType(entityElement);
+            var namespaceName = ResolveNamespaceName(context.Identity);
 
-                model.ConceptualModel.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
-            }
-
-            foreach (var registeredType in typeBuilder.RegisteredTypes)
-            {
-                var entityType = registeredType as EntityType;
-                if (entityType != null)
-                {
-                    model.ConceptualModel.AddItem(entityType);
-                }
-                var enumType = registeredType as EnumType;
-                if (enumType != null)
-                {
-                    model.ConceptualModel.AddItem(enumType);
-                }
-            }
+            BuildEdmModel(model.ConceptualModel, context.ConceptualModel, namespaceName);
+            BuildStoreModel(model.StoreModel, context.StoreModel, namespaceName, model.ProviderManifest);
+            BuildOneToOneMapping(model);
 
             return model;
         }
 
-        private static void BuildStoreModel(DbModel model, IEnumerable<EntityElement> entities)
+        private static void BuildEdmModel(EdmModel model, StructuralModelElement conceptualModel, string namespaceName)
         {
-            var typeBuilder = new StoreTypeBuilder(model.ProviderManifest);
+            if (conceptualModel == null)
+            {
+                return;
+            }
 
-            foreach (var entityElement in entities)
+            var typeBuilder = new EdmTypeBuilder(namespaceName);
+
+            foreach (var entityElement in conceptualModel.Entities)
             {
                 var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
                 var entityType = typeBuilder.ResolveComplexType(entityElement);
 
-                model.StoreModel.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
+                model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
             }
 
             foreach (var registeredType in typeBuilder.RegisteredTypes)
@@ -96,40 +72,72 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 var entityType = registeredType as EntityType;
                 if (entityType != null)
                 {
-                    model.StoreModel.AddItem(entityType);
+                    model.AddItem(entityType);
                 }
                 var enumType = registeredType as EnumType;
                 if (enumType != null)
                 {
-                    model.StoreModel.AddItem(enumType);
+                    model.AddItem(enumType);
+                }
+            }
+        }
+
+        private static void BuildStoreModel(EdmModel model, StructuralModelElement storeModel, string namespaceName, DbProviderManifest providerManifest)
+        {
+            if (storeModel == null)
+            {
+                return;
+            }
+
+            var typeBuilder = new StoreTypeBuilder(namespaceName, providerManifest);
+
+            foreach (var entityElement in storeModel.Entities)
+            {
+                var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
+                var entityType = typeBuilder.ResolveComplexType(entityElement);
+
+                model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
+            }
+
+            foreach (var registeredType in typeBuilder.RegisteredTypes)
+            {
+                var entityType = registeredType as EntityType;
+                if (entityType != null)
+                {
+                    model.AddItem(entityType);
+                }
+                var enumType = registeredType as EnumType;
+                if (enumType != null)
+                {
+                    model.AddItem(enumType);
                 }
             }
         }
 
         private static void BuildOneToOneMapping(DbModel model)
         {
-            foreach (var entitySet in model.ConceptualModel.Container.EntitySets)
-            {
-                var mapping = new EntitySetMapping(entitySet, model.ConceptualToStoreMapping);
-
-                var entityTypeMapping = new EntityTypeMapping(mapping);
-                entityTypeMapping.AddType(entitySet.ElementType);
-
-                var storeEntitySet = model.StoreModel.Container.EntitySets.Single(x => x.Name == entitySet.Name);
-                
-                var mappingFragment = new MappingFragment(storeEntitySet, entityTypeMapping, false);
-
-                foreach (var property in entitySet.ElementType.DeclaredProperties)
-                {
-                    mappingFragment.AddPropertyMapping(new ScalarPropertyMapping(property, storeEntitySet.ElementType.Properties.Single(x => x.Name == property.Name)));
-                }
-                
-                entityTypeMapping.AddFragment(mappingFragment);
-
-                mapping.AddTypeMapping(entityTypeMapping);
-
-                model.ConceptualToStoreMapping.AddSetMapping(mapping);
-            }
+//            foreach (var entitySet in model.ConceptualModel.Container.EntitySets)
+//            {
+//                var mapping = new EntitySetMapping(entitySet, model.ConceptualToStoreMapping);
+//
+//                var entityTypeMapping = new EntityTypeMapping(mapping);
+//                entityTypeMapping.AddType(entitySet.ElementType);
+//
+//                var storeEntitySet = model.StoreModel.Container.EntitySets.Single(x => x.Name == entitySet.Name);
+//                
+//                var mappingFragment = new MappingFragment(storeEntitySet, entityTypeMapping, false);
+//
+//                foreach (var property in entitySet.ElementType.DeclaredProperties)
+//                {
+//                    mappingFragment.AddPropertyMapping(new ScalarPropertyMapping(property, storeEntitySet.ElementType.Properties.Single(x => x.Name == property.Name)));
+//                }
+//                
+//                entityTypeMapping.AddFragment(mappingFragment);
+//
+//                mapping.AddTypeMapping(entityTypeMapping);
+//
+//                model.ConceptualToStoreMapping.AddSetMapping(mapping);
+//            }
         }
 
         #region Utils
@@ -398,9 +406,9 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             private readonly DbProviderManifest _providerManifest;
             private readonly Dictionary<string, EdmType> _registeredTypes;
 
-            public StoreTypeBuilder(DbProviderManifest providerManifest)
+            public StoreTypeBuilder(string namespaceName, DbProviderManifest providerManifest)
             {
-                NamespaceName = "StoreSpace";
+                NamespaceName = namespaceName + ".Store";
                 _providerManifest = providerManifest;
                 _registeredTypes = new Dictionary<string, EdmType>();
             }
