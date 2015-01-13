@@ -81,6 +81,10 @@
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.EntityFramework\EntityDataModel.EntityFramework.csproj">
+      <Project>{b6a84d45-6c11-4175-86f5-20cc5879fb01}</Project>
+      <Name>EntityDataModel.EntityFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
       <Project>{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}</Project>
       <Name>EntityDataModel.Metadata</Name>
