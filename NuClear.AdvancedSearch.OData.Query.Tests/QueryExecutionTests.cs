@@ -3,8 +3,6 @@ using System.Net.Http;
 using System.Web.OData.Extensions;
 using System.Web.OData.Query;
 
-using AdvancedSearch.TestData;
-
 using Newtonsoft.Json;
 
 using NUnit.Framework;
@@ -76,21 +74,21 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        //[Test]
-        //public void Test_Expand()
-        //{
-        //    var request = TestHelper.CreateRequest("$expand=Class2");
-        //    var queryOptions = CreateQueryOptions(request);
+        [Test]
+        public void Test_Expand()
+        {
+            var request = TestHelper.CreateRequest("$expand=Class2");
+            var queryOptions = CreateQueryOptions(request);
 
-        //    var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
-        //    var expected = JsonConvert.SerializeObject(Repositories.Class1.Select(x => new
-        //    {
-        //        x.Id,
-        //        Class2 = (x.Class2 == null) ? null : new { x.Class2.Id }
-        //    }));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
+            var expected = JsonConvert.SerializeObject(Repositories.Class1.Select(x => new
+            {
+                x.Id,
+                Class2 = (x.Class2 == null) ? null : new { x.Class2.Id }
+            }));
 
-        //    Assert.AreEqual(expected, actual);
-        //}
+            Assert.AreEqual(expected, actual);
+        }
 
         private static ODataQueryOptions CreateQueryOptions(HttpRequestMessage request)
         {

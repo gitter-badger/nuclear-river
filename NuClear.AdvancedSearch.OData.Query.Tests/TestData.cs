@@ -14,19 +14,18 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 
-// ReSharper disable once CheckNamespace
-namespace AdvancedSearch.TestData
+namespace NuClear.AdvancedSearch.OData.Query.Tests
 {
     public sealed class Class1
     {
         public int Id { get; set; }
-        //public Class2 Class2 { get; set; }
+        public Class2 Class2 { get; set; }
     }
 
-    //public sealed class Class2
-    //{
-    //    public int Id { get; set; }
-    //}
+    public sealed class Class2
+    {
+        public int Id { get; set; }
+    }
 
     public static class Repositories
     {
@@ -52,19 +51,22 @@ namespace AdvancedSearch.TestData
                             .Name("Class1").CollectionName("Class1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                            //.Relation(EntityRelationElement.Config
-                            //    .Name("Class2")
-                            //    .DirectTo(
-                            //        EntityElement.Config
-                            //            .Name("Class2")
-                            //            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                            //    )
-                            //    .AsOne())
+                            .Relation(EntityRelationElement.Config
+                                .Name("Class2")
+                                .DirectTo(
+                                    EntityElement.Config
+                                        .Name("Class2")
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                                )
+                                .AsOne())
                     )
                 );
 
             var element = ProcessContext(builder);
-            return EdmModelBuilder.Build(element);
+            var model = EdmModelBuilder.Build(element);
+            model.AddClrAnnotations(new[] { typeof(Class1) });
+
+            return model;
         }
 
         # region Скопипасчено из EdmModelBuilderTests, зарефакторить
