@@ -16,9 +16,14 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
             return queryOptions;
         }
 
-        public static HttpRequestMessage CreateRequest(string query)
+        public static HttpRequestMessage CreateRequest(string query = null)
         {
-            var uriBuilder = new UriBuilder { Query = query };
+            var uriBuilder = new UriBuilder();
+            if (query != null)
+            {
+                uriBuilder.Query = query;
+            }
+
             return new HttpRequestMessage { RequestUri = uriBuilder.Uri };
         }
     }

@@ -90,6 +90,22 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
             Assert.AreEqual(expected, actual);
         }
 
+        [Test]
+        public void Test_Paging()
+        {
+            var request = TestHelper.CreateRequest();
+            var queryOptions = CreateQueryOptions(request);
+            var querySettings = new ODataQuerySettings
+            {
+                PageSize = 2
+            };
+
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1, querySettings));
+            var expected = JsonConvert.SerializeObject(Repositories.Class1.Take(2));
+
+            Assert.AreEqual(expected, actual);
+        }
+
         private static ODataQueryOptions CreateQueryOptions(HttpRequestMessage request)
         {
             var model = Class1EdmModelBuilder.GetEdmModel();
@@ -98,7 +114,5 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
             var queryOptions = TestHelper.CreateQueryOptions(model, elementClrType, request);
             return queryOptions;
         }
-
-        // TODO: paging
     }
 }
