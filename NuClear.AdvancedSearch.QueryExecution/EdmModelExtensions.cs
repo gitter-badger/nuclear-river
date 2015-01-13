@@ -5,7 +5,7 @@ using System.Web.OData;
 
 using Microsoft.OData.Edm;
 
-namespace NuClear.AdvancedSearch.OData.Query
+namespace NuClear.AdvancedSearch.QueryExecution
 {
     public static class EdmModelExtensions
     {

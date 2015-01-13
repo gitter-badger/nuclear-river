@@ -14,7 +14,7 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 
-namespace NuClear.AdvancedSearch.OData.Query.Tests
+namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
     public sealed class Class1
     {

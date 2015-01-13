@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.OData.Query.Tests
+namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
     [TestFixture]
     public class QueryExecutionTests

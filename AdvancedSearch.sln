@@ -27,9 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{C1C7C6
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OData.Query", "NuClear.AdvancedSearch.OData.Query\OData.Query.csproj", "{135EF4B2-E97C-44B5-A6AC-6E97B103DE55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryExecution", "NuClear.AdvancedSearch.QueryExecution\QueryExecution.csproj", "{135EF4B2-E97C-44B5-A6AC-6E97B103DE55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OData.Query.Tests", "NuClear.AdvancedSearch.OData.Query.Tests\OData.Query.Tests.csproj", "{1FB39973-A18A-4764-96D5-6F3347FF3EE6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryExecution.Tests", "NuClear.AdvancedSearch.QueryExecution.Tests\QueryExecution.Tests.csproj", "{1FB39973-A18A-4764-96D5-6F3347FF3EE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

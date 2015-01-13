@@ -7,8 +7,8 @@
     <ProjectGuid>{135EF4B2-E97C-44B5-A6AC-6E97B103DE55}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.AdvancedSearch.OData.Query</RootNamespace>
-    <AssemblyName>NuClear.AdvancedSearch.OData.Query</AssemblyName>
+    <RootNamespace>NuClear.AdvancedSearch.QueryExecution</RootNamespace>
+    <AssemblyName>NuClear.AdvancedSearch.QueryExecution</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
