@@ -83,8 +83,8 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.Select(x => new
             {
-                x.Id,
-                Class2 = (x.Class2 == null) ? null : new { x.Class2.Id }
+                Class2 = (x.Class2 == null) ? null : new { x.Class2.Id },
+                x.Id
             }));
 
             Assert.AreEqual(expected, actual);

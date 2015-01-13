@@ -32,9 +32,9 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
         public static IQueryable<Class1> Class1 = new[]
                                          {
                                              new Class1 { Id = 1 },
-                                             new Class1 { Id = 2, /*Class2 = new Class2 { Id = 0 }*/ },
+                                             new Class1 { Id = 2, Class2 = new Class2 { Id = 0 } },
                                              new Class1 { Id = 3 },
-                                             new Class1 { Id = 4, /*Class2 = new Class2 { Id = 1 }*/ },
+                                             new Class1 { Id = 4, Class2 = new Class2 { Id = 1 } },
                                          }.AsQueryable();
 
     }
@@ -44,11 +44,11 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
         public static IEdmModel GetEdmModel()
         {
             var builder = BoundedContextElement.Config
-                .Name("TestData")
+                .Name("Context")
                 .ConceptualModel(
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("Class1").CollectionName("Class1")
+                            .Name("Class1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
                             .Relation(EntityRelationElement.Config
@@ -56,6 +56,7 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("Class2")
+                                        .IdentifyBy("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
                                 )
                                 .AsOne())
@@ -64,12 +65,12 @@ namespace NuClear.AdvancedSearch.OData.Query.Tests
 
             var element = ProcessContext(builder);
             var model = EdmModelBuilder.Build(element);
-            model.AddClrAnnotations(new[] { typeof(Class1) });
+            model.AddClrAnnotations(new[] { typeof(Class1), typeof(Class2) });
 
             return model;
         }
 
-        # region Скопипасчено из EdmModelBuilderTests, зарефакторить
+        # region copy/paste from EdmModelBuilderTests, refactor this later
 
         private static BoundedContextElement ProcessContext(BoundedContextElement context)
         {
