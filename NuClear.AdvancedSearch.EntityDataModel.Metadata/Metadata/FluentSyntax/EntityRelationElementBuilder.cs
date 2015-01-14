@@ -38,12 +38,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return AddCardinality(EntityRelationCardinality.Many);
         }
 
-        private EntityRelationElementBuilder AddCardinality(EntityRelationCardinality cardinality)
-        {
-            AddFeatures(new EntityRelationCardinalityFeature(cardinality));
-            return this;
-        }
-
         protected override EntityRelationElement Create()
         {
             if (string.IsNullOrEmpty(_name))
@@ -52,6 +46,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
 
             return new EntityRelationElement(_name.AsRelativeUri().AsIdentity(), Features);
+        }
+
+        private EntityRelationElementBuilder AddCardinality(EntityRelationCardinality cardinality)
+        {
+            AddFeatures(new EntityRelationCardinalityFeature(cardinality));
+            return this;
         }
     }
 }
