@@ -77,13 +77,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [Test]
         public void Test_Expand()
         {
-            var request = TestHelper.CreateRequest("$expand=Class2");
+            var request = TestHelper.CreateRequest("$expand=TestClass2");
             var queryOptions = CreateQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.Select(x => new
             {
-                Class2 = (x.Class2 == null) ? null : new { x.Class2.Id },
+                TestClass2 = (x.TestClass2 == null) ? null : new { x.TestClass2.Id },
                 x.Id
             }));
 
@@ -109,7 +109,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         private static ODataQueryOptions CreateQueryOptions(HttpRequestMessage request)
         {
             var model = Class1EdmModelBuilder.GetEdmModel();
-            var elementClrType = typeof(Class1);
+            var elementClrType = typeof(TestClass1);
 
             var queryOptions = TestHelper.CreateQueryOptions(model, elementClrType, request);
             return queryOptions;

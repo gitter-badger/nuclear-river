@@ -16,27 +16,26 @@ using NuClear.Metamodeling.Provider.Sources;
 
 namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
-    public sealed class Class1
+    public sealed class TestClass1
     {
         public int Id { get; set; }
-        public Class2 Class2 { get; set; }
+        public TestClass2 TestClass2 { get; set; }
     }
 
-    public sealed class Class2
+    public sealed class TestClass2
     {
         public int Id { get; set; }
     }
 
     public static class Repositories
     {
-        public static IQueryable<Class1> Class1 = new[]
+        public static IQueryable<TestClass1> Class1 = new[]
                                          {
-                                             new Class1 { Id = 1 },
-                                             new Class1 { Id = 2, Class2 = new Class2 { Id = 0 } },
-                                             new Class1 { Id = 3 },
-                                             new Class1 { Id = 4, Class2 = new Class2 { Id = 1 } },
+                                             new TestClass1 { Id = 1 },
+                                             new TestClass1 { Id = 2, TestClass2 = new TestClass2 { Id = 0 } },
+                                             new TestClass1 { Id = 3 },
+                                             new TestClass1 { Id = 4, TestClass2 = new TestClass2 { Id = 1 } },
                                          }.AsQueryable();
-
     }
 
     public static class Class1EdmModelBuilder
@@ -48,14 +47,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 .ConceptualModel(
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("Class1")
+                            .Name("TestClass1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
                             .Relation(EntityRelationElement.Config
-                                .Name("Class2")
+                                .Name("TestClass2")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("Class2")
+                                        .Name("TestClass2")
                                         .IdentifyBy("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
                                 )
@@ -65,7 +64,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
             var element = ProcessContext(builder);
             var model = EdmModelBuilder.Build(element);
-            model.AddClrAnnotations(new[] { typeof(Class1), typeof(Class2) });
+            model.AddClrAnnotations(new[] { typeof(TestClass1), typeof(TestClass2) });
 
             return model;
         }
