@@ -9,10 +9,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
     public static class TestHelper
     {
-        public static ODataQueryOptions CreateQueryOptions(IEdmModel model, Type elementClrType, HttpRequestMessage request)
+        public static ODataQueryOptions CreateValidQueryOptions(IEdmModel model, Type elementClrType, HttpRequestMessage request, ODataValidationSettings validationSettings)
         {
             var context = new ODataQueryContext(model, elementClrType, null);
             var queryOptions = new ODataQueryOptions(context, request);
+            queryOptions.Validate(validationSettings);
+
             return queryOptions;
         }
 

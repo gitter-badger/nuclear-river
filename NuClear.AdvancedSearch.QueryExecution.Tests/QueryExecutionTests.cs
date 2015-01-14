@@ -3,6 +3,8 @@ using System.Net.Http;
 using System.Web.OData.Extensions;
 using System.Web.OData.Query;
 
+using Microsoft.OData.Core;
+
 using Newtonsoft.Json;
 
 using NUnit.Framework;
@@ -16,7 +18,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public void Test_Filter()
         {
             var request = TestHelper.CreateRequest("$filter=Id ne 1");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.Where(x => x.Id != 1));
@@ -25,10 +27,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ODataException))]
+        public void Test_Filter_Negative()
+        {
+            var request = TestHelper.CreateRequest("$filter=NonExistent ne null");
+            CreateValidQueryOptions(request);
+        }
+
+        [Test]
         public void Test_Count()
         {
             var request = TestHelper.CreateRequest("$count=true");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             queryOptions.ApplyTo(Repositories.Class1);
             var actual = request.ODataProperties().TotalCount;
@@ -41,7 +51,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public void Test_OrderBy()
         {
             var request = TestHelper.CreateRequest("$orderby=Id desc");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.OrderByDescending(x => x.Id));
@@ -50,10 +60,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ODataException))]
+        public void Test_OrderBy_Negative()
+        {
+            var request = TestHelper.CreateRequest("$orderby=NonExistent desc");
+            CreateValidQueryOptions(request);
+        }
+
+        [Test]
         public void Test_SkipTop()
         {
             var request = TestHelper.CreateRequest("$skip=2&$top=1");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.Skip(2).Take(1));
@@ -65,7 +83,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public void Test_Select()
         {
             var request = TestHelper.CreateRequest("$select=Id");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             var data = queryOptions.ApplyTo(Repositories.Class1);
             var actual = JsonConvert.SerializeObject(data);
@@ -75,10 +93,19 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ODataException))]
+        public void Test_Select_Negative()
+        {
+            var request = TestHelper.CreateRequest("$select=NonExistent");
+            CreateValidQueryOptions(request);
+        }
+
+
+        [Test]
         public void Test_Expand()
         {
             var request = TestHelper.CreateRequest("$expand=TestClass2");
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(Repositories.Class1));
             var expected = JsonConvert.SerializeObject(Repositories.Class1.Select(x => new
@@ -91,10 +118,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ODataException))]
+        public void Test_Expand_Negative()
+        {
+            var request = TestHelper.CreateRequest("$expand=NonExistent");
+            CreateValidQueryOptions(request);
+        }
+
+        [Test]
         public void Test_Paging()
         {
             var request = TestHelper.CreateRequest();
-            var queryOptions = CreateQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions(request);
             var querySettings = new ODataQuerySettings
             {
                 PageSize = 2
@@ -106,12 +141,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             Assert.AreEqual(expected, actual);
         }
 
-        private static ODataQueryOptions CreateQueryOptions(HttpRequestMessage request)
+        private static ODataQueryOptions CreateValidQueryOptions(HttpRequestMessage request)
         {
             var model = Class1EdmModelBuilder.GetEdmModel();
             var elementClrType = typeof(TestClass1);
 
-            var queryOptions = TestHelper.CreateQueryOptions(model, elementClrType, request);
+            var queryOptions = TestHelper.CreateValidQueryOptions(model, elementClrType, request, new ODataValidationSettings());
             return queryOptions;
         }
     }
