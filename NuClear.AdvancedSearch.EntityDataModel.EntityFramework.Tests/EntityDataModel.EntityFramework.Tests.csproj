@@ -76,13 +76,13 @@
     <Compile Include="EdmxBuilderBaseFixture.cs" />
     <Compile Include="Demo.cs" />
     <Compile Include="EdmModelExtensions.cs" />
+    <Compile Include="EdmxBuilderModelTests.cs" />
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

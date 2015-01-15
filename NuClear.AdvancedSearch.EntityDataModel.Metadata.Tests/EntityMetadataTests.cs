@@ -18,9 +18,9 @@ namespace NuClear.EntityDataModel.Tests
                     "{'Identity':{'Id':'Entity'},'Features':[]}"
                     ).SetName("ShouldDeclareEntity");
                 yield return Case(
-                    EntityElement.Config.Name("Entity").CollectionName("Entities"),
-                    "{'Identity':{'Id':'Entity'},'Features':[{'CollectionName':'Entities'}]}"
-                    ).SetName("ShouldDeclareEntityAsCollection");
+                    EntityElement.Config.Name("Entity").EntitySetName("Entities"),
+                    "{'Identity':{'Id':'Entity'},'Features':[{'EntitySetName':'Entities'}]}"
+                    ).SetName("ShouldDeclareEntityWithSpecialName");
                 yield return Case(
                     EntityElement.Config.Name("Entity").Property(EntityPropertyElement.Config.Name("Property")),
                     "{'Identity':{'Id':'Entity'},'Elements':[{'Identity':{'Id':'Property'},'Elements':[]}]}", Metadata.Identity | Metadata.Elements

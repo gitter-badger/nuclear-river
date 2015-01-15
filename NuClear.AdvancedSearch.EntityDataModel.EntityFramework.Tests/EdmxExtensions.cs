@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
@@ -26,27 +27,26 @@ namespace EntityDataModel.EntityFramework.Tests
         }
 
         [Conditional("DEBUG")]
-        public static void Dump(this EdmModel edmModel)
+        public static void Dump(this EdmModel edmModel, EdmModelType modelType)
         {
             var stringBuilder = new StringBuilder();
 
             using (var xmlWriter = XmlWriter.Create(stringBuilder, new XmlWriterSettings { Indent = true }))
             {
-                edmModel.ValidateAndSerializeCsdl(xmlWriter);
-                //edmModel.SerializeAndGetSsdlErrors(xmlWriter);
+                switch (modelType)
+                {
+                    case EdmModelType.Conceptual:
+                        edmModel.SerializeAndValidateCsdl(xmlWriter);
+                        break;
+                    case EdmModelType.Store:
+                        edmModel.SerializeAndValidateSsdl(xmlWriter);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException("modelType");
+                }
             }
 
             Debug.WriteLine(stringBuilder.ToString());
-        }
-
-        public static void ValidateAndSerializeCsdl(this EdmModel model, XmlWriter writer)
-        {
-            var csdlErrors = SerializeAndValidateCsdl(model, writer);
-
-//            if (csdlErrors.Count > 0)
-//            {
-//                Debug.WriteLine(ToErrorMessage(csdlErrors));
-//            }
         }
 
         public static bool IsValidCsdl(this EdmModel model, out IReadOnlyCollection<string> errors)
@@ -95,6 +95,12 @@ namespace EntityDataModel.EntityFramework.Tests
         private static string ToText(DataModelErrorEventArgs errorEventArgs)
         {
             return string.Format("{0}.{1}: {2}", errorEventArgs.Item, errorEventArgs.PropertyName, errorEventArgs.ErrorMessage);
+        }
+
+        public enum EdmModelType
+        {
+            Conceptual,
+            Store,
         }
     }
 }

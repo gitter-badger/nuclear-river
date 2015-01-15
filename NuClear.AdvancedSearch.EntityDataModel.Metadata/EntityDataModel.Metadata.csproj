@@ -48,7 +48,7 @@
     <Compile Include="Metadata\EntityElementExtensions.cs" />
     <Compile Include="Metadata\EntityPropertyExtensions.cs" />
     <Compile Include="Metadata\EntityRelationElementExtensions.cs" />
-    <Compile Include="Metadata\Features\EntityCollectionFeature.cs" />
+    <Compile Include="Metadata\Features\EntitySetFeature.cs" />
     <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
     <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />
     <Compile Include="Metadata\Features\EntityPropertyEnumTypeFeature.cs" />

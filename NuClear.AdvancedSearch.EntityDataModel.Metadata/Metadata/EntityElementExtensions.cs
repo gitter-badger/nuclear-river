@@ -7,13 +7,13 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public static class EntityElementExtensions
     {
-        public static string GetCollectionName(this EntityElement entityElement)
+        public static string GetEntitySetName(this EntityElement entityElement)
         {
             {
-                var collectionFeature = entityElement.Features.OfType<EntityCollectionFeature>().FirstOrDefault();
+                var collectionFeature = entityElement.Features.OfType<EntitySetFeature>().FirstOrDefault();
                 return collectionFeature == null
                     ? null
-                    : collectionFeature.CollectionName;
+                    : collectionFeature.EntitySetName;
             }
         }
 

@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
             foreach (var entityElement in entities)
             {
-                var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
+                var entitySetName = entityElement.GetEntitySetName() ?? ResolveName(entityElement.Identity);
                 var entityType = (IEdmEntityType)typeBuilder.ResolveComplexType(entityElement);
 
                 container.AddEntitySet(entitySetName, entityType);
@@ -272,8 +272,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
                     case EntityPropertyType.Byte:
                         return EdmPrimitiveTypeKind.Byte;
-                    case EntityPropertyType.SByte:
-                        return EdmPrimitiveTypeKind.SByte;
                     case EntityPropertyType.Int16:
                         return EdmPrimitiveTypeKind.Int16;
                     case EntityPropertyType.Int32:

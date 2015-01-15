@@ -9,7 +9,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 .ConceptualModel(
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("Firm").CollectionName("Firms")
+                            .Name("Firm").EntitySetName("Firms")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
@@ -72,7 +72,25 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 .StoreModel(
                     StructuralModelElement.Config.Elements(
                          EntityElement.Config
-                            .Name("Firm").CollectionName("Firms")
+                            .Name("CustomerIntelligence.Client")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte)),
+                         EntityElement.Config
+                            .Name("CustomerIntelligence.Contact")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Role").OfType(EntityPropertyType.Int32))
+                            .Property(EntityPropertyElement.Config.Name("IsFired").OfType(EntityPropertyType.Boolean))
+                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int32)),
+                         EntityElement.Config
+                            .Name("CustomerIntelligence.Account")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
+                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                         EntityElement.Config
+                            .Name("CustomerIntelligence.Firm")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
@@ -84,6 +102,20 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                             .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
+                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                         EntityElement.Config
+                            .Name("CustomerIntelligence.Category")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                            .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64)),
+                         EntityElement.Config
+                            .Name("CustomerIntelligence.FirmCategories")
+                            .IdentifyBy("FirmId", "CategoryId")
+                            .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                    )
                 )
                 ;

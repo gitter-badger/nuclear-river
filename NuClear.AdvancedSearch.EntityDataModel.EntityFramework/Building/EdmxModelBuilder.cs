@@ -17,6 +17,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
     public static class EdmxModelBuilder
     {
         private static readonly DbProviderInfo DefaultProviderInfo = new DbProviderInfo("System.Data.SqlClient", "2012");
+        private static readonly IEnumerable<MetadataProperty> EmptyMetadata = new MetadataProperty[0];
 
         public static DbModel Build(IMetadataProvider metadataProvider, Uri uri)
         {
@@ -41,10 +42,11 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             var builder = new DbModelBuilder();
             var model = builder.Build(DefaultProviderInfo);
 
-            var namespaceName = ResolveNamespaceName(context.Identity);
+            var cmNamespaceName = ResolveNamespaceName(context.Identity);
+            var smNamespaceName = ResolveNamespaceName(context.Identity) + ".Store"; // FIXME {s.pomadin, 13.01.2015}: has to be improved
 
-            BuildEdmModel(model.ConceptualModel, context.ConceptualModel, namespaceName);
-            BuildStoreModel(model.StoreModel, context.StoreModel, namespaceName, model.ProviderManifest);
+            BuildEdmModel(model.ConceptualModel, context.ConceptualModel, cmNamespaceName);
+            BuildStoreModel(model.StoreModel, context.StoreModel, smNamespaceName, model.ProviderManifest);
             BuildOneToOneMapping(model);
 
             return model;
@@ -61,10 +63,11 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
             foreach (var entityElement in conceptualModel.Entities)
             {
-                var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
+                var entitySetName = entityElement.GetEntitySetName() ?? ResolveName(entityElement.Identity);
                 var entityType = typeBuilder.ResolveComplexType(entityElement);
 
-                model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
+                //model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
+                //model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, null, null, null, entityType, new MetadataProperty[0]));
             }
 
             foreach (var registeredType in typeBuilder.RegisteredTypes)
@@ -72,6 +75,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 var entityType = registeredType as EntityType;
                 if (entityType != null)
                 {
+                    model.Container.AddEntitySetBase(EntitySet.Create(entityType.Name, null, null, null, entityType, EmptyMetadata));
                     model.AddItem(entityType);
                 }
                 var enumType = registeredType as EnumType;
@@ -79,6 +83,19 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 {
                     model.AddItem(enumType);
                 }
+            }
+
+            foreach (var associationType in typeBuilder.AssociationTypes)
+            {
+                //var sourceType = associationType.
+                var sourceType = ((AssociationEndMember)associationType.KeyMembers.First()).GetEntityType();
+                var targetType = ((AssociationEndMember)associationType.KeyMembers.ElementAt(1)).GetEntityType();
+
+                var sourceEntitySet = model.Container.EntitySets.FirstOrDefault(x => x.ElementType == sourceType);
+                var targetEntitySet = model.Container.EntitySets.FirstOrDefault(x => x.ElementType == targetType);
+
+                model.Container.AddEntitySetBase(AssociationSet.Create(associationType.Name, associationType, sourceEntitySet, targetEntitySet, EmptyMetadata));
+                model.AddItem(associationType);
             }
         }
 
@@ -93,10 +110,14 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
             foreach (var entityElement in storeModel.Entities)
             {
-                var entitySetName = entityElement.GetCollectionName() ?? ResolveName(entityElement.Identity);
-                var entityType = typeBuilder.ResolveComplexType(entityElement);
+                string schemaName;
+                var tableName = ResolveName(entityElement.Identity, out schemaName);
+                var entityName = entityElement.GetEntitySetName() ?? tableName;
 
-                model.Container.AddEntitySetBase(EntitySet.Create(entitySetName, typeBuilder.NamespaceName, entityType.Name, null, entityType, new MetadataProperty[0]));
+                var entityType = typeBuilder.ResolveType(entityElement);
+                var entitySet = EntitySet.Create(entityName, schemaName, tableName, null, entityType, new MetadataProperty[0]);
+
+                model.Container.AddEntitySetBase(entitySet);
             }
 
             foreach (var registeredType in typeBuilder.RegisteredTypes)
@@ -116,28 +137,33 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private static void BuildOneToOneMapping(DbModel model)
         {
-//            foreach (var entitySet in model.ConceptualModel.Container.EntitySets)
-//            {
-//                var mapping = new EntitySetMapping(entitySet, model.ConceptualToStoreMapping);
-//
-//                var entityTypeMapping = new EntityTypeMapping(mapping);
-//                entityTypeMapping.AddType(entitySet.ElementType);
-//
-//                var storeEntitySet = model.StoreModel.Container.EntitySets.Single(x => x.Name == entitySet.Name);
-//                
-//                var mappingFragment = new MappingFragment(storeEntitySet, entityTypeMapping, false);
-//
-//                foreach (var property in entitySet.ElementType.DeclaredProperties)
-//                {
-//                    mappingFragment.AddPropertyMapping(new ScalarPropertyMapping(property, storeEntitySet.ElementType.Properties.Single(x => x.Name == property.Name)));
-//                }
-//                
-//                entityTypeMapping.AddFragment(mappingFragment);
-//
-//                mapping.AddTypeMapping(entityTypeMapping);
-//
-//                model.ConceptualToStoreMapping.AddSetMapping(mapping);
-//            }
+            foreach (var entitySet in model.ConceptualModel.Container.EntitySets)
+            {
+                var mapping = new EntitySetMapping(entitySet, model.ConceptualToStoreMapping);
+
+                var entityTypeMapping = new EntityTypeMapping(mapping);
+                entityTypeMapping.AddType(entitySet.ElementType);
+
+                var storeEntitySet = model.StoreModel.Container.EntitySets.SingleOrDefault(x => x.Name.EndsWith(entitySet.Name));
+                if (storeEntitySet == null) continue;
+                
+                var mappingFragment = new MappingFragment(storeEntitySet, entityTypeMapping, false);
+
+                foreach (var property in entitySet.ElementType.DeclaredProperties)
+                {
+                    var targetProperty = storeEntitySet.ElementType.Properties.SingleOrDefault(x => x.Name == property.Name);
+                    if (targetProperty != null)
+                    {
+                        mappingFragment.AddPropertyMapping(new ScalarPropertyMapping(property, targetProperty));
+                    }
+                }
+                
+                entityTypeMapping.AddFragment(mappingFragment);
+
+                mapping.AddTypeMapping(entityTypeMapping);
+
+                model.ConceptualToStoreMapping.AddSetMapping(mapping);
+            }
         }
 
         #region Utils
@@ -154,21 +180,49 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').LastOrDefault();
         }
 
+        private static string ResolveName(IMetadataElementIdentity identity, out string schema)
+        {
+            // TODO {s.pomadin, 16.12.2014}: provide a better solution
+            schema = null;
+            var name = ResolveName(identity);
+            if (name != null)
+            {
+                var index = name.IndexOf('.');
+                if (index >= 0)
+                {
+                    schema = name.Substring(0, index);
+                    return name.Substring(index + 1);
+                }
+            }
+            return name;
+        }
+
         #endregion
 
         #region EdmTypeBuilder
 
         private class EdmTypeBuilder
         {
+            private static readonly TypeProvider Provider = new TypeProvider();
             private readonly Dictionary<string, EdmType> _registeredTypes;
+            private readonly Dictionary<string, AssociationType> _associationTypes;
 
             public EdmTypeBuilder(string namespaceName)
             {
                 NamespaceName = namespaceName;
                 _registeredTypes = new Dictionary<string, EdmType>();
+                _associationTypes = new Dictionary<string, AssociationType>();
             }
 
             public string NamespaceName { get; private set; }
+
+            public IEnumerable<AssociationType> AssociationTypes
+            {
+                get
+                {
+                    return _associationTypes.Values;
+                }
+            }
 
             public IEnumerable<EdmType> RegisteredTypes
             {
@@ -185,12 +239,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 EdmType complexType;
                 if (!_registeredTypes.TryGetValue(typeName, out complexType))
                 {
-                    _registeredTypes.Add(typeName,
-                        complexType = entityElement.GetKeyProperties().Any()
-//                        ? (IEdmSchemaType)BuildEntityType(typeName, entityElement)
-//                        : (IEdmSchemaType)BuildComplexType(typeName, entityElement));
-                        ? (EntityType)BuildEntityType(typeName, entityElement)
-                        : (EntityType)BuildEntityType(typeName, entityElement));
+                    _registeredTypes.Add(typeName, complexType = BuildEntityType(typeName, entityElement));
                 }
 
                 return (EntityType)complexType;
@@ -274,61 +323,52 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                     }
                 }
 
-                //                foreach (var relationElement in entityElement.GetRelations())
-                //                {
-                //                    var propertyName = ResolveName(relationElement.Identity);
-                //                    var structuredType = ResolveComplexType(relationElement.GetTarget());
-                //
-                //                    if (structuredType is IEdmComplexType)
-                //                    {
-                //                        var typeReference = ResolveTypeReference(relationElement);
-                //                        entityType.AddStructuralProperty(propertyName, typeReference);
-                //                    }
-                //
-                //                    var relatedEntityType = structuredType as IEdmEntityType;
-                //                    if (relatedEntityType != null)
-                //                    {
-                //
-                //                        entityType.AddUnidirectionalNavigation(
-                //                                                               new EdmNavigationPropertyInfo
-                //                                                               {
-                //                                                                   Name = propertyName,
-                //                                                                   Target = relatedEntityType,
-                //                                                                   TargetMultiplicity = Convert(relationElement.GetCardinality())
-                //                                                               });
-                //                    }
-                //                }
+                var type = EntityType.Create(typeName, NamespaceName, DataSpace.CSpace, keyNames, properties,
+                    //new MetadataProperty[0]
+                    new[] { MetadataProperty.CreateAnnotation("http://schemas.microsoft.com/ado/2013/11/edm/customannotation:ClrType", Provider.Resolve(entityElement)) }
+                    );
 
+                foreach (var relationElement in entityElement.GetRelations())
+                {
+                    var propertyName = ResolveName(relationElement.Identity);
+                    var structuredType = ResolveComplexType(relationElement.GetTarget());
 
-                return EntityType.Create(typeName, NamespaceName, DataSpace.CSpace,keyNames, properties, new MetadataProperty[0]);
+                    var associationTypeName = typeName + "_" + propertyName;
+                    var sourceEnd = AssociationEndMember.Create(
+                                                                associationTypeName + "_Source",
+                                                                type.GetReferenceType(),
+                                                                RelationshipMultiplicity.ZeroOrOne,
+                                                                OperationAction.None,
+                                                                EmptyMetadata);
+                    var targetEnd = AssociationEndMember.Create(
+                                                                associationTypeName + "_Target",
+                                                                structuredType.GetReferenceType(),
+                                                                Convert(relationElement.GetCardinality()),
+                                                                OperationAction.None,
+                                                                EmptyMetadata);
+                    var associationType = AssociationType.Create(
+                                                                 associationTypeName,
+                                                                 NamespaceName,
+                                                                 false,
+                                                                 DataSpace.CSpace,
+                                                                 sourceEnd,
+                                                                 targetEnd,
+                                                                 null,
+                                                                 EmptyMetadata);
+
+                    _associationTypes.Add(associationType.Name, associationType);
+
+                    var property = NavigationProperty.Create(
+                        propertyName, 
+                        TypeUsage.Create(structuredType, new Facet[0]),
+                        associationType,
+                        sourceEnd, targetEnd, EmptyMetadata);
+
+                    type.AddNavigationProperty(property);
+                }
+
+                return type;
             }
-
-//            private IEdmComplexType BuildComplexType(string typeName, EntityElement entityElement)
-//            {
-//                var entityType = new EdmComplexType(NamespaceName, typeName);
-//
-//                foreach (var propertyElement in entityElement.GetProperties())
-//                {
-//                    var propertyName = ResolveName(propertyElement.Identity);
-//                    var typeReference = ResolveTypeReference(propertyElement);
-//
-//                    entityType.AddStructuralProperty(propertyName, typeReference);
-//                }
-//
-//                foreach (var relationElement in entityElement.GetRelations())
-//                {
-//                    var propertyName = ResolveName(relationElement.Identity);
-//                    var structuredType = ResolveComplexType(relationElement.GetTarget());
-//
-//                    if (structuredType is IEdmComplexType)
-//                    {
-//                        var typeReference = ResolveTypeReference(relationElement);
-//                        entityType.AddStructuralProperty(propertyName, typeReference);
-//                    }
-//                }
-//
-//                return entityType;
-//            }
 
             private EnumType BuildEnumType(string typeName, EntityPropertyEnumTypeFeature feature)
             {
@@ -354,8 +394,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                     case EntityPropertyType.Byte:
                         return PrimitiveTypeKind.Byte;
-                    case EntityPropertyType.SByte:
-                        return PrimitiveTypeKind.SByte;
                     case EntityPropertyType.Int16:
                         return PrimitiveTypeKind.Int16;
                     case EntityPropertyType.Int32:
@@ -381,20 +419,20 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 }
             }
 
-//            private static EdmMultiplicity Convert(EntityRelationCardinality cardinality)
-//            {
-//                switch (cardinality)
-//                {
-//                    case EntityRelationCardinality.One:
-//                        return EdmMultiplicity.One;
-//                    case EntityRelationCardinality.OptionalOne:
-//                        return EdmMultiplicity.ZeroOrOne;
-//                    case EntityRelationCardinality.Many:
-//                        return EdmMultiplicity.Many;
-//                    default:
-//                        throw new ArgumentOutOfRangeException("cardinality");
-//                }
-//            }
+            private static RelationshipMultiplicity Convert(EntityRelationCardinality cardinality)
+            {
+                switch (cardinality)
+                {
+                    case EntityRelationCardinality.One:
+                        return RelationshipMultiplicity.One;
+                    case EntityRelationCardinality.OptionalOne:
+                        return RelationshipMultiplicity.ZeroOrOne;
+                    case EntityRelationCardinality.Many:
+                        return RelationshipMultiplicity.Many;
+                    default:
+                        throw new ArgumentOutOfRangeException("cardinality");
+                }
+            }
         }
 
         #endregion
@@ -403,17 +441,16 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private class StoreTypeBuilder
         {
+            private readonly string _namespaceName;
             private readonly DbProviderManifest _providerManifest;
             private readonly Dictionary<string, EdmType> _registeredTypes;
 
             public StoreTypeBuilder(string namespaceName, DbProviderManifest providerManifest)
             {
-                NamespaceName = namespaceName + ".Store";
+                _namespaceName = namespaceName;
                 _providerManifest = providerManifest;
                 _registeredTypes = new Dictionary<string, EdmType>();
             }
-
-            public string NamespaceName { get; private set; }
 
             public IEnumerable<EdmType> RegisteredTypes
             {
@@ -423,19 +460,15 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 }
             }
 
-            public EntityType ResolveComplexType(EntityElement entityElement)
+            public EntityType ResolveType(EntityElement entityElement)
             {
-                var typeName = ResolveName(entityElement.Identity);
+                string schema;
+                var typeName = ResolveName(entityElement.Identity, out schema);
 
                 EdmType complexType;
                 if (!_registeredTypes.TryGetValue(typeName, out complexType))
                 {
-                    _registeredTypes.Add(typeName,
-                        complexType = entityElement.GetKeyProperties().Any()
-                        //                        ? (IEdmSchemaType)BuildEntityType(typeName, entityElement)
-                        //                        : (IEdmSchemaType)BuildComplexType(typeName, entityElement));
-                        ? (EntityType)BuildEntityType(typeName, entityElement)
-                        : (EntityType)BuildEntityType(typeName, entityElement));
+                    _registeredTypes.Add(typeName, complexType = BuildEntityType(typeName, entityElement));
                 }
 
                 return (EntityType)complexType;
@@ -492,7 +525,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                 foreach (var propertyElement in entityElement.GetProperties())
                 {
-                    var propertyName = ResolveName(propertyElement.Identity);
+                    var propertyName = propertyElement.Identity.ToName();
                     var propertyType = propertyElement.GetPropertyType();
 
                     EdmProperty property;
@@ -503,7 +536,8 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                     }
                     else if (propertyType == EntityPropertyType.Enum)
                     {
-                        property = EdmProperty.CreateEnum(propertyName, ResolveEnumType(propertyElement));
+                        throw new NotSupportedException("The enum property is not supported.");
+                        //property = EdmProperty.CreateEnum(propertyName, ResolveEnumType(propertyElement));
                     }
                     else
                     {
@@ -546,40 +580,13 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 //                }
 
 
-                return EntityType.Create(typeName, NamespaceName, DataSpace.SSpace, keyNames, properties, new MetadataProperty[0]);
+                return EntityType.Create(typeName, _namespaceName, DataSpace.SSpace, keyNames, properties, new MetadataProperty[0]);
             }
-
-            //            private IEdmComplexType BuildComplexType(string typeName, EntityElement entityElement)
-            //            {
-            //                var entityType = new EdmComplexType(NamespaceName, typeName);
-            //
-            //                foreach (var propertyElement in entityElement.GetProperties())
-            //                {
-            //                    var propertyName = ResolveName(propertyElement.Identity);
-            //                    var typeReference = ResolveTypeReference(propertyElement);
-            //
-            //                    entityType.AddStructuralProperty(propertyName, typeReference);
-            //                }
-            //
-            //                foreach (var relationElement in entityElement.GetRelations())
-            //                {
-            //                    var propertyName = ResolveName(relationElement.Identity);
-            //                    var structuredType = ResolveComplexType(relationElement.GetTarget());
-            //
-            //                    if (structuredType is IEdmComplexType)
-            //                    {
-            //                        var typeReference = ResolveTypeReference(relationElement);
-            //                        entityType.AddStructuralProperty(propertyName, typeReference);
-            //                    }
-            //                }
-            //
-            //                return entityType;
-            //            }
 
             private EnumType BuildEnumType(string typeName, EntityPropertyEnumTypeFeature feature)
             {
                 return EnumType.Create(
-                    typeName, NamespaceName,
+                    typeName, _namespaceName,
                     PrimitiveType.GetEdmPrimitiveType(Convert(feature.UnderlyingType)),
                     false,
                     feature.Members.Select(memberPair => EnumMember.Create(memberPair.Key, memberPair.Value, new MetadataProperty[0])),
@@ -600,8 +607,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                     case EntityPropertyType.Byte:
                         return PrimitiveTypeKind.Byte;
-                    case EntityPropertyType.SByte:
-                        return PrimitiveTypeKind.SByte;
                     case EntityPropertyType.Int16:
                         return PrimitiveTypeKind.Int16;
                     case EntityPropertyType.Int32:
@@ -644,5 +649,19 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
         }
 
         #endregion
+    }
+
+    internal static class IdentityExtensions
+    {
+        public static string ToName(this IMetadataElementIdentity identity)
+        {
+            if (identity == null)
+            {
+                return null;
+            }
+
+            // TODO {s.pomadin, 16.12.2014}: provide a better solution
+            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').LastOrDefault();
+        }
     }
 }

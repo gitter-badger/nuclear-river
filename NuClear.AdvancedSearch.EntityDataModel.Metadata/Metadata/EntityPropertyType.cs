@@ -3,7 +3,6 @@
     public enum EntityPropertyType : byte
     {
         Byte,
-        SByte,
         Int16,
         Int32,
         Int64,
