@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuClear.AdvancedSearch.QueryExecution</RootNamespace>
-    <AssemblyName>NuClear.AdvancedSearch.QueryExecution</AssemblyName>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.QueryExecution</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
