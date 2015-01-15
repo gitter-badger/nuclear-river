@@ -1,13 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
+using System.Web.OData.Query;
+
+using Effort;
 
 using Microsoft.OData.Edm;
 
 using Moq;
 
+using Newtonsoft.Json;
+
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
+using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Processors;
@@ -50,23 +59,65 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .Name("TestClass1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                            .Relation(EntityRelationElement.Config
-                                .Name("TestClass2")
-                                .DirectTo(
-                                    EntityElement.Config
-                                        .Name("TestClass2")
-                                        .IdentifyBy("Id")
-                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                                )
-                                .AsOne())
+                            //.Relation(EntityRelationElement.Config
+                            //    .Name("TestClass2")
+                            //    .DirectTo(
+                            //        EntityElement.Config
+                            //            .Name("TestClass2")
+                            //            .IdentifyBy("Id")
+                            //            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            //    )
+                            //    .AsOne())
                     )
-                );
+                )
+                .StoreModel(
+                    StructuralModelElement.Config.Elements(
+                         EntityElement.Config
+                            .Name("dbo.TestClass1")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                    )
+                )
+                ;
 
             var element = ProcessContext(builder);
-            var model = EdmModelBuilder.Build(element);
-            model.AddClrAnnotations(new[] { typeof(TestClass1), typeof(TestClass2) });
+            var connection = DbConnectionFactory.CreateTransient();
+            var dbModel = EdmxModelBuilder.Build(element, connection);
+            var edmModel = EdmModelBuilder.Build(element);
+            var clrTypes = dbModel.GetClrTypes().ToArray();
+            edmModel.AddClrAnnotations(clrTypes);
 
-            return model;
+
+            var testType = clrTypes.Single(x => string.Equals(x.Name, "TestClass1"));
+
+            var dbCompiledModel = dbModel.Compile();
+            using (var context = new DbContext(connection, dbCompiledModel, true))
+            {
+                var set = context.Set(testType);
+
+                var idProperty = testType.GetProperty("Id");
+                for (var i = 0; i < 10; i++)
+                {
+                    var @object = Activator.CreateInstance(testType);
+                    idProperty.SetValue(@object, i);
+                    set.Add(@object);
+                }
+
+                context.SaveChanges();
+            }
+
+            using (var context = new DbContext(connection, dbCompiledModel, true))
+            {
+                var request = TestHelper.CreateRequest("$filter=Id ne 2&$skip=1&$top=1&$count=true");
+                var queryOptions = TestHelper.CreateValidQueryOptions(edmModel, testType, request, new ODataValidationSettings());
+
+                var set = context.Set(testType);
+                var results = queryOptions.ApplyTo(set);
+
+                var data = JsonConvert.SerializeObject(results);
+            }
+
+            return edmModel;
         }
 
         # region copy/paste from EdmModelBuilderTests, refactor this later

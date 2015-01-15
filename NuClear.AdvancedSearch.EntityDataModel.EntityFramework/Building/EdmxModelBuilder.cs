@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Core.Common;
 using System.Data.Entity.Core.Mapping;
@@ -32,7 +33,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             return Build(context);
         }
 
-        public static DbModel Build(BoundedContextElement context)
+        public static DbModel Build(BoundedContextElement context, DbConnection connection = null)
         {
             if (context == null)
             {
@@ -40,7 +41,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             }
 
             var builder = new DbModelBuilder();
-            var model = builder.Build(DefaultProviderInfo);
+            var model = (connection == null) ? builder.Build(DefaultProviderInfo) : builder.Build(connection);
 
             var cmNamespaceName = ResolveNamespaceName(context.Identity);
             var smNamespaceName = ResolveNamespaceName(context.Identity) + ".Store"; // FIXME {s.pomadin, 13.01.2015}: has to be improved
