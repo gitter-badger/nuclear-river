@@ -3,10 +3,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     partial class AdvancedSearchMetadataSource
     {
-        private readonly BoundedContextElement _customerIntelligence =
-            BoundedContextElement.Config
-                .Name("CustomerIntelligence")
-                .ConceptualModel(
+        private static readonly StructuralModelElement ConceptualModel =
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
                             .Name("Firm").EntitySetName("Firms")
@@ -66,11 +63,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .AsMany()
                                         )
                                 )
-                                .AsOneOptionally())
-                    )
-                )
-                .StoreModel(
-                    StructuralModelElement.Config.Elements(
+                                .AsOneOptionally()));
+
+        private static readonly StructuralModelElement StoreModel = StructuralModelElement
+            .Config.Elements(
                          EntityElement.Config
                             .Name("CustomerIntelligence.Client")
                             .IdentifyBy("Id")
@@ -116,8 +112,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64).NotNull())
                             .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64).NotNull())
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
-                   )
-                )
-                ;
+                   );
+
+        private readonly BoundedContextElement _customerIntelligence =
+            BoundedContextElement.Config.Name("CustomerIntelligence")
+                                 .ConceptualModel(ConceptualModel)
+                                 .StoreModel(StoreModel);
     }
 }

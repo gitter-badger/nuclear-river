@@ -9,12 +9,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     {
         public static string GetEntitySetName(this EntityElement entityElement)
         {
-            {
-                var collectionFeature = entityElement.Features.OfType<EntitySetFeature>().FirstOrDefault();
+            var collectionFeature = entityElement.Features.OfType<EntitySetFeature>().FirstOrDefault();
                 return collectionFeature == null
                     ? null
                     : collectionFeature.EntitySetName;
-            }
         }
 
         public static IEnumerable<EntityPropertyElement> GetProperties(this EntityElement entityElement)

@@ -11,6 +11,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new ArgumentNullException("uri");
             }
+
             return new Uri(uri, UriKind.Relative);
         }
     }

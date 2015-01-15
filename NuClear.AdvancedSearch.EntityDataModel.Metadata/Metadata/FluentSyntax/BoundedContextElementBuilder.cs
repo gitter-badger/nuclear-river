@@ -49,6 +49,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 conceptualModelId = contextId.Id.WithRelative(ConceptualModelName.AsRelativeUri()).AsIdentity();
                 _conceptualModel.ActualizeId(conceptualModelId);
             }
+
             if (_storeModel != null)
             {
                 storeModelId = contextId.Id.WithRelative(StoreModelName.AsRelativeUri()).AsIdentity();

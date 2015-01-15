@@ -514,28 +514,28 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 return (EnumType)enumType;
             }
 
-            //            private IEdmTypeReference ResolveTypeReference(EntityRelationElement relationElement)
-            //            {
-            //                var complexType = (IEdmComplexType)ResolveComplexType(relationElement.GetTarget());
-            //
-            //                IEdmTypeReference typeReference;
-            //                switch (relationElement.GetCardinality())
-            //                {
-            //                    case EntityRelationCardinality.One:
-            //                        typeReference = new EdmComplexTypeReference(complexType, false);
-            //                        break;
-            //                    case EntityRelationCardinality.OptionalOne:
-            //                        typeReference = new EdmComplexTypeReference(complexType, true);
-            //                        break;
-            //                    case EntityRelationCardinality.Many:
-            //                        typeReference = EdmCoreModel.GetCollection(new EdmComplexTypeReference(complexType, true));
-            //                        break;
-            //                    default:
-            //                        throw new ArgumentOutOfRangeException();
-            //                }
-            //
-            //                return typeReference;
-            //            }
+//            private IEdmTypeReference ResolveTypeReference(EntityRelationElement relationElement)
+//            {
+//                var complexType = (IEdmComplexType)ResolveComplexType(relationElement.GetTarget());
+//            
+//                IEdmTypeReference typeReference;
+//                switch (relationElement.GetCardinality())
+//                {
+//                    case EntityRelationCardinality.One:
+//                        typeReference = new EdmComplexTypeReference(complexType, false);
+//                        break;
+//                    case EntityRelationCardinality.OptionalOne:
+//                        typeReference = new EdmComplexTypeReference(complexType, true);
+//                        break;
+//                    case EntityRelationCardinality.Many:
+//                        typeReference = EdmCoreModel.GetCollection(new EdmComplexTypeReference(complexType, true));
+//                        break;
+//                    default:
+//                        throw new ArgumentOutOfRangeException();
+//                }
+//            
+//                return typeReference;
+//            }
 
             private EntityType BuildEntityType(string typeName, EntityElement entityElement)
             {
@@ -575,33 +575,32 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                     }
                 }
 
-                //                foreach (var relationElement in entityElement.GetRelations())
-                //                {
-                //                    var propertyName = ResolveName(relationElement.Identity);
-                //                    var structuredType = ResolveComplexType(relationElement.GetTarget());
-                //
-                //                    if (structuredType is IEdmComplexType)
-                //                    {
-                //                        var typeReference = ResolveTypeReference(relationElement);
-                //                        entityType.AddStructuralProperty(propertyName, typeReference);
-                //                    }
-                //
-                //                    var relatedEntityType = structuredType as IEdmEntityType;
-                //                    if (relatedEntityType != null)
-                //                    {
-                //
-                //                        entityType.AddUnidirectionalNavigation(
-                //                                                               new EdmNavigationPropertyInfo
-                //                                                               {
-                //                                                                   Name = propertyName,
-                //                                                                   Target = relatedEntityType,
-                //                                                                   TargetMultiplicity = Convert(relationElement.GetCardinality())
-                //                                                               });
-                //                    }
-                //                }
+                foreach (var relationElement in entityElement.GetRelations())
+                {
+//                    var propertyName = ResolveName(relationElement.Identity);
+//                    var structuredType = ResolveComplexType(relationElement.GetTarget());
+//                
+//                    if (structuredType is IEdmComplexType)
+//                    {
+//                        var typeReference = ResolveTypeReference(relationElement);
+//                        entityType.AddStructuralProperty(propertyName, typeReference);
+//                    }
+//                
+//                    var relatedEntityType = structuredType as IEdmEntityType;
+//                    if (relatedEntityType != null)
+//                    {
+//                
+//                        entityType.AddUnidirectionalNavigation(
+//                                                                new EdmNavigationPropertyInfo
+//                                                                {
+//                                                                    Name = propertyName,
+//                                                                    Target = relatedEntityType,
+//                                                                    TargetMultiplicity = Convert(relationElement.GetCardinality())
+//                                                                });
+//                    }
+                }
 
-
-                return EntityType.Create(typeName, _namespaceName, DataSpace.SSpace, keyNames, properties, new MetadataProperty[0]);
+                return EntityType.Create(typeName, _namespaceName, DataSpace.SSpace, keyNames, properties, EmptyMetadata);
             }
 
             private EnumType BuildEnumType(string typeName, EntityPropertyEnumTypeFeature feature)

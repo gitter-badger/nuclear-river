@@ -74,7 +74,7 @@ namespace EntityDataModel.EntityFramework.Tests
                 )
                 ;
 
-        [Test]
+        [Test, Explicit]
         public void ShouldQueryData()
         {
             var model = BuildModel(_customerIntelligence).Compile();

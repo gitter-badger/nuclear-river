@@ -13,22 +13,22 @@ namespace NuClear.EntityDataModel.Tests
         {
             get
             {
-                yield return Case(
-                    EntityRelationElement.Config.Name("Relation"),
-                    "{'Identity':{'Id':'Relation'},'Features':[]}"
-                    ).SetName("ShouldDeclareRelation");
-                yield return Case(
-                    EntityRelationElement.Config.Name("Relation").AsOneOptionally(),
-                    "{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'OptionalOne'}]}"
-                    ).SetName("ShouldDeclareRelationAsOneOrZero");
-                yield return Case(
-                    EntityRelationElement.Config.Name("Relation").AsOne(),
-                    "{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'One'}]}"
-                    ).SetName("ShouldDeclareRelationAsOne");
-                yield return Case(
-                    EntityRelationElement.Config.Name("Relation").AsMany(),
-                    "{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'Many'}]}"
-                    ).SetName("ShouldDeclareRelationAsMany");
+                yield return
+                    Case(EntityRelationElement.Config.Name("Relation"))
+                        .Returns("{'Identity':{'Id':'Relation'},'Features':[]}")
+                        .SetName("ShouldDeclareRelation");
+                yield return
+                    Case(EntityRelationElement.Config.Name("Relation").AsOneOptionally())
+                        .Returns("{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'OptionalOne'}]}")
+                        .SetName("ShouldDeclareRelationAsOneOrZero");
+                yield return
+                    Case(EntityRelationElement.Config.Name("Relation").AsOne())
+                        .Returns("{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'One'}]}")
+                        .SetName("ShouldDeclareRelationAsOne");
+                yield return
+                    Case(EntityRelationElement.Config.Name("Relation").AsMany())
+                        .Returns("{'Identity':{'Id':'Relation'},'Features':[{'Cardinality':'Many'}]}")
+                        .SetName("ShouldDeclareRelationAsMany");
             }
         }
     }

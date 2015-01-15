@@ -11,9 +11,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EntityElementBuilder : MetadataElementBuilder<EntityElementBuilder, EntityElement>
     {
+        private readonly List<string> _keyNames = new List<string>();
+
         private string _name;
         private string _entitySetName;
-        private readonly List<string> _keyNames = new List<string>();
 
         public EntityElementBuilder Name(string name)
         {
@@ -21,6 +22,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new ArgumentException("The name should be meaningful.", "name");
             }
+
             _name = name;
             return this;
         }
@@ -31,6 +33,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new ArgumentException("The entity set name should be meaningful.", "entitySetName");
             }
+
             _entitySetName = entitySetName;
             return this;
         }
@@ -101,6 +104,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 return;
             }
+
             AddFeatures(new EntitySetFeature(_entitySetName));
         }
     }

@@ -15,6 +15,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 {
                     throw new InvalidOperationException("The cardinality was not specified.");
                 }
+
                 return cardinalityFeature.Cardinality;
             }
         }
@@ -26,6 +27,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new InvalidOperationException("The target entity was not specified.");
             }
+
             return target;
         }
     }

@@ -14,6 +14,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new InvalidOperationException("The type was not specified.");
             }
+
             return typeFeature.PropertyType;
         }
 

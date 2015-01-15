@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.Metamodeling.Elements;
@@ -16,6 +15,22 @@ namespace NuClear.EntityDataModel.Tests
     {
         private MetadataProvider _provider;
 
+        public override IEnumerable Provider
+        {
+            get
+            {
+                yield return Case(BoundedContextElement.Config.Name("Context"))
+                    .Returns("{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Features':[]}")
+                    .SetName("ShouldDeclareContext");
+                yield return Case(BoundedContextElement
+                                      .Config.Name("Context")
+                                      .ConceptualModel(StructuralModelElement.Config.Elements(EntityElement.Config.Name("Entity"))),
+                                  Metadata.Identity | Metadata.Elements)
+                    .Returns("{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context/ConceptualModel'},'Elements':[{'Identity':{'Id':'Entity'},'Elements':[]}]}]}")
+                    .SetName("ShouldDeclareContextWithEntity");
+            }
+        }
+
         [TestFixtureSetUp]
         public void Setup()
         {
@@ -30,8 +45,8 @@ namespace NuClear.EntityDataModel.Tests
         {
             MetadataSet metadataSet;
             
-            Assert.IsTrue(_provider.TryGetMetadata<AdvancedSearchIdentity>(out metadataSet));
-            Assert.IsNotNull(metadataSet);
+            Assert.That(_provider.TryGetMetadata<AdvancedSearchIdentity>(out metadataSet), Is.True);
+            Assert.That(metadataSet, Is.Not.Null);
         }
 
         [Test]
@@ -40,48 +55,32 @@ namespace NuClear.EntityDataModel.Tests
             BoundedContextElement contextElement;
 
             var id = IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence");
-            Assert.IsTrue(_provider.TryGetMetadata(id, out contextElement));
-            Assert.IsNotNull(contextElement);
+            Assert.That(_provider.TryGetMetadata(id, out contextElement), Is.True);
+            Assert.That(contextElement, Is.Not.Null);
         }
 
-        public override IEnumerable Provider
-        {
-            get
-            {
-                yield return Case(
-                    BoundedContextElement.Config.Name("Context"),
-                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Features':[]}"
-                    ).SetName("ShouldDeclareContext");
-                yield return Case(
-                    BoundedContextElement.Config.Name("Context").ConceptualModel(StructuralModelElement.Config.Elements(EntityElement.Config.Name("Entity"))),
-                    "{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context/ConceptualModel'},'Elements':[{'Identity':{'Id':'Entity'},'Elements':[]}]}]}", 
-                    Metadata.Identity | Metadata.Elements
-                    ).SetName("ShouldDeclareContextWithEntity");
-            }
-        }
-
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm", "Identity,Elements,Features", Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
-        [TestCase("CustomerIntelligence/ConceptualModel", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories'},'Features':[{'Cardinality':'Many'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name'},'Features':[{'PropertyType':'String'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client", "Identity,Features", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup", "Identity", Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Contacts/Contact/Role", "Features", Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
-        public string ShouldReturnMetadata(string path, string propertyNames)
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm", Metadata.Identity | Metadata.Elements | Metadata.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
+        [TestCase("CustomerIntelligence/ConceptualModel", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories'},'Features':[{'Cardinality':'Many'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Id'},'Features':[{'IsNullable':false},{'PropertyType':'Int64'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/Name'},'Features':[{'PropertyType':'String'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories/Category/CategoryGroup'},'Features':[{'PropertyType':'Byte'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client", Metadata.Identity | Metadata.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client'},'Features':[{'Cardinality':'OptionalOne'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/Id'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client/Client/CategoryGroup'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client/Client/Contacts/Contact/Role", Metadata.Features, Result = "{'Features':[{'Name':'ContactRole','UnderlyingType':'Int32','Members':{'Employee':200000,'InfluenceDecisions':200001,'MakingDecisions':200002},'PropertyType':'Enum'}]}")]
+        public string ShouldReturnMetadata(string path, Metadata properties)
         {
             IMetadataElement element;
 
             var id = IdBuilder.For<AdvancedSearchIdentity>(path.Split('/'));
-            Assert.IsTrue(_provider.TryGetMetadata(id, out element));
-            Assert.IsNotNull(element);
+            Assert.That(_provider.TryGetMetadata(id, out element), Is.True);
+            Assert.That(element, Is.Not.Null);
 
-            return Serialize(element, (propertyNames ?? "").Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries));
+            return Serialize(element, properties);
         }
     }
 }

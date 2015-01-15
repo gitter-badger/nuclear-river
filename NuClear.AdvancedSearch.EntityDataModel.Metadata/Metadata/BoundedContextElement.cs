@@ -10,9 +10,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElement : MetadataElement<BoundedContextElement, BoundedContextElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
         private readonly Lazy<StructuralModelElement> _conceptualModel;
         private readonly Lazy<StructuralModelElement> _storeModel;
+
+        private IMetadataElementIdentity _identity;
 
         internal BoundedContextElement(
             IMetadataElementIdentity contextIdentity,

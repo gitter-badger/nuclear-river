@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuClear.EntityDataModel.EntityFramework</RootNamespace>
-    <AssemblyName>NuClear.EntityDataModel.EntityFramework</AssemblyName>
+    <AssemblyName>2GIS.NuClear.EntityDataModel.EntityFramework</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
