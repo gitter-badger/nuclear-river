@@ -164,6 +164,27 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                 model.ConceptualToStoreMapping.AddSetMapping(mapping);
             }
+
+            foreach (var associationSet in model.ConceptualModel.Container.AssociationSets)
+            {
+                var storeEntitySet = model.StoreModel.Container.EntitySets.SingleOrDefault(x => x.Name.EndsWith("Category"));
+                if (storeEntitySet == null) continue;
+
+                var sourceType = (AssociationEndMember)associationSet.ElementType.KeyMembers.First();
+                var targetType = (AssociationEndMember)associationSet.ElementType.KeyMembers.ElementAt(1);
+
+                var mapping = new AssociationSetMapping(associationSet, storeEntitySet, model.ConceptualToStoreMapping);
+
+                var s = sourceType.GetEntityType();
+                mapping.SourceEndMapping = new EndPropertyMapping(sourceType);
+                mapping.SourceEndMapping.AddPropertyMapping(new ScalarPropertyMapping(s.KeyProperties.First(), (EdmProperty)storeEntitySet.ElementType.DeclaredMembers.First(x => x.Name == "FirmId")));
+
+                var t = targetType.GetEntityType();
+                mapping.TargetEndMapping = new EndPropertyMapping(targetType);
+                mapping.TargetEndMapping.AddPropertyMapping(new ScalarPropertyMapping(t.KeyProperties.First(), storeEntitySet.ElementType.KeyProperties.First()));
+
+                model.ConceptualToStoreMapping.AddSetMapping(mapping);
+            }
         }
 
         #region Utils

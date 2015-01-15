@@ -33,17 +33,17 @@ namespace EntityDataModel.EntityFramework.Tests
                             .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                             .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
-//                            .Relation(EntityRelationElement.Config
-//                                .Name("Categories")
-//                                .DirectTo(
-//                                    EntityElement.Config
-//                                        .Name("Category")
-//                                        .IdentifyBy("Id")
-//                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
-//                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-//                                        .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
-//                                )
-//                                .AsMany())
+                            .Relation(EntityRelationElement.Config
+                                .Name("Categories")
+                                .DirectTo(
+                                    EntityElement.Config
+                                        .Name("Category")
+                                        .IdentifyBy("Id")
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                                        .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
+                                )
+                                .AsMany())
                     )
                 )
                 .StoreModel(
@@ -61,14 +61,15 @@ namespace EntityDataModel.EntityFramework.Tests
                             .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                             .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64))//,
-//                         EntityElement.Config
-//                            .Name("dbo.Category")
-//                            .IdentifyBy("Id")
-//                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
-//                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-//                            .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32).NotNull())
-//                            .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
+                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                         EntityElement.Config
+                            .Name("dbo.Category")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                            .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
+                            .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64))
                    )
                 )
                 ;
@@ -83,7 +84,7 @@ namespace EntityDataModel.EntityFramework.Tests
             var connection = DefaultFactory.CreateConnection(DemoConnectionString);
             using (var context = model.CreateObjectContext<ObjectContext>(connection))
             {
-                var records = new ObjectQuery<DbDataRecord>("SELECT firm.Id FROM Firm as firm", context);
+                var records = new ObjectQuery<DbDataRecord>("SELECT Firm.Id FROM Firm", context);
                 foreach (var record in records)
                 {
                     Debug.WriteLine(record.GetString(record.GetOrdinal("Id")));
