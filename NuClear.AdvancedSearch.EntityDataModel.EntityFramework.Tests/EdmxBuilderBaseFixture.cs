@@ -20,6 +20,15 @@ namespace EntityDataModel.EntityFramework.Tests
 {
     internal class EdmxBuilderBaseFixture
     {
+        protected static DbModel BuildModel(IMetadataSource source, Uri id)
+        {
+            var model = EdmxModelBuilder.Build(CreateProvider(source), id);
+
+            model.Dump();
+
+            return model;
+        }
+
         protected static DbModel BuildModel(BoundedContextElement context)
         {
             var model = EdmxModelBuilder.Build(ProcessContext(context));
@@ -33,7 +42,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var model = EdmxModelBuilder.Build(ProcessContext(context));
 
-            model.ConceptualModel.Dump();
+            model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
             return model.ConceptualModel;
         }
@@ -42,7 +51,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var model = EdmxModelBuilder.Build(ProcessContext(context));
 
-            //model.StoreModel.Dump();
+            model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
             return model.StoreModel;
         }
@@ -180,15 +189,10 @@ namespace EntityDataModel.EntityFramework.Tests
                 return x => x.PrimitiveType.PrimitiveTypeKind == typeKind;
             }
 
-            //            public static Predicate<IEdmProperty> OfKind(EdmPropertyKind propertyKind)
-            //            {
-            //                return x => x.PropertyKind == propertyKind;
-            //            }
-            //
-            //            public static Predicate<IEdmProperty> IsCollection()
-            //            {
-            //                return x => x.Type.Definition is IEdmCollectionType;
-            //            }
+            public static Predicate<EdmProperty> IsKey()
+            {
+                return x => (x.DeclaringType as EntityType) != null && ((EntityType)x.DeclaringType).KeyMembers.Contains(x);
+            }
 
             public static Predicate<EdmProperty> Members(params string[] names)
             {

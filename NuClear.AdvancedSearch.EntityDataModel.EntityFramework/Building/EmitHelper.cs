@@ -48,6 +48,5 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             propertyBuilder.SetGetMethod(getMethodBuilder);
             propertyBuilder.SetSetMethod(setMethodBuilder);
         }
-        
     }
 }

@@ -14,7 +14,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private readonly List<string> _keyNames = new List<string>();
 
         private string _name;
-        private string _collectionName;
+        private string _entitySetName;
 
         public EntityElementBuilder Name(string name)
         {
@@ -27,14 +27,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityElementBuilder CollectionName(string collectionName)
+        public EntityElementBuilder EntitySetName(string entitySetName)
         {
-            if (string.IsNullOrWhiteSpace(collectionName))
+            if (string.IsNullOrWhiteSpace(entitySetName))
             {
-                throw new ArgumentException("The collection name should be meaningful.", "collectionName");
+                throw new ArgumentException("The entity set name should be meaningful.", "entitySetName");
             }
 
-            _collectionName = collectionName;
+            _entitySetName = entitySetName;
             return this;
         }
 
@@ -100,12 +100,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         private void ProcessCollectionName()
         {
-            if (string.IsNullOrEmpty(_collectionName))
+            if (string.IsNullOrEmpty(_entitySetName))
             {
                 return;
             }
 
-            AddFeatures(new EntityCollectionFeature(_collectionName));
+            AddFeatures(new EntitySetFeature(_entitySetName));
         }
     }
 }

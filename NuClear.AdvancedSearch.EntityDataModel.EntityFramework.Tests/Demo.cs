@@ -5,9 +5,12 @@ using System.Data.Entity;
 using System.Data.Entity.Core.Common;
 using System.Data.Entity.Core.Mapping;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Xml;
 
@@ -15,10 +18,122 @@ using NUnit.Framework;
 
 namespace NuClear.EntityDataModel.EntityFramework
 {
+    public class Firm
+    {
+        public long Id { get; set; }
+        public long OrganizationUnitId { get; set; }
+        public long TerritoryId { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public DateTime LastQualifiedOn { get; set; }
+        public DateTime LastDistributedOn { get; set; }
+        public bool HasWebsite { get; set; }
+        public bool HasPhone { get; set; }
+        public byte CategoryGroup { get; set; }
+        public long AddressCount { get; set; }
+        
+        public ICollection<Category> Categories { get; set; }
+    }
+
+    public class Category
+    {
+        public long Id { get; set; }
+        public string Name { get; set; }
+        public byte CategoryGroup { get; set; }
+    }
+
+    public class User
+    {
+        public int UserId { get; set; }
+        public string Name { get; set; }
+
+        public Address Address { get; set; }
+        public virtual ICollection<Item> BoughtItems { get; set; }
+    }
+
+    public class Address
+    {
+        public int Id { get; set; }
+        public string Street { get; set; }
+        public string City { get; set; }
+        public string ZipCode { get; set; }
+    }
+
+    public class Item
+    {
+        public int ItemId { get; set; }
+        public string Name { get; set; }
+        public double InitialPrice { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public int? BuyerId { get; set; }
+        public int? SuccessfulBidId { get; set; }
+
+//        public virtual User Buyer { get; set; }
+//        public virtual Bid SuccessfulBid { get; set; }
+//        public virtual ICollection<Bid> Bids { get; set; }
+//        public virtual ICollection<Category> Categories { get; set; }
+    }
+
     internal class DemoFixture
     {
         private static readonly DbProviderInfo DefaultProviderInfo = new DbProviderInfo("System.Data.SqlClient", "2012");
         private static readonly IDbConnectionFactory DefaultFactory = new LocalDbConnectionFactory("mssqllocaldb");
+
+        [Test]
+        public void CreateDemoModel()
+        {
+            var builder = new DbModelBuilder();
+            //builder.ComplexType<Address>();
+            //builder.Entity<Address>();
+            //builder.Entity<Address>();
+            builder.Entity<Firm>();
+
+            var model = builder.Build(DefaultProviderInfo);
+            model.Dump();
+
+            //var compiledModel = model.Compile();
+
+//            var connection = DefaultFactory.CreateConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=D:\data.mdf");
+//            using (var context = compiledModel.CreateObjectContext<ObjectContext>(connection))
+//            {
+//                //context.MetadataWorkspace.LoadFromAssembly(CreateAssembly());
+//
+//                //var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM CodeFirstContainer.Tables as t", context);
+//                var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM Tables as t", context);
+//                foreach (var record in records)
+//                {
+//                    Debug.WriteLine(record.GetString(record.GetOrdinal("Name")));
+//                }
+//            }
+        }
+
+        [Test]
+        public void CreateModel()
+        {
+            var builder = new DbModelBuilder();
+
+            var assembly = CreateAssembly();
+            //builder.Configurations.AddFromAssembly(assembly);
+            builder.RegisterEntityType(CreateType());
+
+            var model = builder.Build(DefaultProviderInfo);
+            model.Dump();
+
+            var compiledModel = model.Compile();
+
+//            var connection = DefaultFactory.CreateConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=D:\data.mdf");
+//            using (var context = compiledModel.CreateObjectContext<ObjectContext>(connection))
+//            {
+//                //context.MetadataWorkspace.LoadFromAssembly(CreateAssembly());
+//
+//                //var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM CodeFirstContainer.Tables as t", context);
+//                var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM Tables as t", context);
+//                foreach (var record in records)
+//                {
+//                    Debug.WriteLine(record.GetString(record.GetOrdinal("Name")));
+//                }
+//            }
+        }
 
         [Test, Explicit]
         public void BuildModel()
@@ -43,7 +158,7 @@ namespace NuClear.EntityDataModel.EntityFramework
                                                                                                           }, 
                                                                                                           new MetadataProperty[]
                                                                                                           {
-                                                                                                              //MetadataProperty.CreateAnnotation("http://schemas.microsoft.com/ado/2013/11/edm/customannotation:ClrType", CreateType())
+                                                                                                              MetadataProperty.CreateAnnotation("http://schemas.microsoft.com/ado/2013/11/edm/customannotation:ClrType", CreateType())
                                                                                                           });
             model.ConceptualModel.AddItem(entityType);
 
@@ -102,18 +217,18 @@ namespace NuClear.EntityDataModel.EntityFramework
 
             var compiledModel = model.Compile();
 
-//            var connection = DefaultFactory.CreateConnection(ConfigurationManager.ConnectionStrings["NativeDataEntities"].ConnectionString);
-//            using (var context = compiledModel.CreateObjectContext<ObjectContext>(connection))
-//            {
-//                //context.MetadataWorkspace.LoadFromAssembly(CreateAssembly());
-//
-//                //var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM CodeFirstContainer.Tables as t", context);
-//                var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM Tables as t", context);
-//                foreach (var record in records)
-//                {
-//                    Debug.WriteLine(record.GetString(record.GetOrdinal("Name")));
-//                }
-//            }
+            var connection = DefaultFactory.CreateConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=D:\data.mdf");
+            using (var context = compiledModel.CreateObjectContext<ObjectContext>(connection))
+            {
+                //context.MetadataWorkspace.LoadFromAssembly(CreateAssembly());
+
+                //var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM CodeFirstContainer.Tables as t", context);
+                var records = new ObjectQuery<DbDataRecord>("SELECT t.Name FROM Tables as t", context);
+                foreach (var record in records)
+                {
+                    Debug.WriteLine(record.GetString(record.GetOrdinal("Name")));
+                }
+            }
         }
 
 
@@ -139,7 +254,6 @@ namespace NuClear.EntityDataModel.EntityFramework
 //            }
         }
 
-/*
         private static Assembly CreateAssembly()
         {
             var assemblyBuilder = EmitHelper.DefineAssembly("ObjectSpace");
@@ -187,7 +301,54 @@ namespace NuClear.EntityDataModel.EntityFramework
             // create the dynamic class
             return tableTypeBuilder.CreateType();
         }
- */ 
+  
+    }
+
+    internal static class EmitHelper
+    {
+        // the property set and property get methods require a special set of attributes
+        private const MethodAttributes PropertyAccessorAttributes = MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
+        public static AssemblyBuilder DefineAssembly(string assemblyName)
+        {
+            return AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+        }
+
+        public static ModuleBuilder DefineModule(this AssemblyBuilder assemblyBuilder, string moduleName)
+        {
+            return assemblyBuilder.DefineDynamicModule(moduleName);
+        }
+
+        public static TypeBuilder DefineType(this ModuleBuilder moduleBuilder, string name)
+        {
+            return moduleBuilder.DefineType(name, TypeAttributes.Public);
+        }
+
+        public static void DefineProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
+        {
+            var fieldBuilder = typeBuilder.DefineField("_" + propertyName, propertyType, FieldAttributes.Private);
+
+            var propertyBuilder = typeBuilder.DefineProperty(propertyName, PropertyAttributes.HasDefault, propertyType, null);
+
+            // define the "get" accessor method
+            var getMethodBuilder = typeBuilder.DefineMethod("get_" + propertyName, PropertyAccessorAttributes, propertyType, Type.EmptyTypes);
+            var getMethodIL = getMethodBuilder.GetILGenerator();
+            getMethodIL.Emit(OpCodes.Ldarg_0);
+            getMethodIL.Emit(OpCodes.Ldfld, fieldBuilder);
+            getMethodIL.Emit(OpCodes.Ret);
+
+            // define the "set" accessor method
+            var setMethodBuilder = typeBuilder.DefineMethod("set_" + propertyName, PropertyAccessorAttributes, null, new[] { propertyType });
+            var setMethodIL = setMethodBuilder.GetILGenerator();
+            setMethodIL.Emit(OpCodes.Ldarg_0);
+            setMethodIL.Emit(OpCodes.Ldarg_1);
+            setMethodIL.Emit(OpCodes.Stfld, fieldBuilder);
+            setMethodIL.Emit(OpCodes.Ret);
+
+            propertyBuilder.SetGetMethod(getMethodBuilder);
+            propertyBuilder.SetSetMethod(setMethodBuilder);
+        }
+
     }
 
     internal static class EdmModelExtensions
