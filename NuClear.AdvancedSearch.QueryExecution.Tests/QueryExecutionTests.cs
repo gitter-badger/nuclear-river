@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.Id FROM TestClass1 AS T WHERE T.Id <> 1"));
+            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T WHERE T.Id <> 1"));
 
             Assert.AreEqual(expected, actual);
         }
@@ -86,7 +86,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.Id FROM TestClass1 AS T ORDER BY T.Id DESC"));
+            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T ORDER BY T.Id DESC"));
 
             Assert.AreEqual(expected, actual);
         }
@@ -106,7 +106,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.Id FROM TestClass1 AS T ORDER BY T.Id SKIP 2 LIMIT 1"));
+            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T ORDER BY T.Id SKIP 2 LIMIT 1"));
 
             Assert.AreEqual(expected, actual);
         }
@@ -139,7 +139,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.Id FROM TestClass1 AS T"));
+            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.TestClass2 FROM TestClass1 AS T"));
 
             Assert.AreEqual(expected, actual);
         }
@@ -163,7 +163,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             };
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet, querySettings));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT TOP(2) T.Id FROM TestClass1 AS T"));
+            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE TOP(2) T FROM TestClass1 AS T"));
 
             Assert.AreEqual(expected, actual);
         }

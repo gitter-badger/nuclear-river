@@ -38,6 +38,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .Name("TestClass1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
 
                             // TODO: актализировать когда будет поддержка relations
                             // .Relation(EntityRelationElement.Config
@@ -56,7 +57,9 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                          EntityElement.Config
                             .Name("dbo.TestClass1")
                             .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())));
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                            ));
 
             var element = ProcessContext(builder);
             var dbModel = BuildDbModel(element);

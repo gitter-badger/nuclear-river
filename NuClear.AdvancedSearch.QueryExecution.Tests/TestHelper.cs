@@ -44,6 +44,16 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             return context;
         }
 
+        public static object EsqlQuery(this IObjectContextAdapter objectContextAdapter, Type type, string commandText)
+        {
+            var objectContext = objectContextAdapter.ObjectContext;
+
+            var queryType = typeof(ObjectQuery<>).MakeGenericType(type);
+            var objectQuery = Activator.CreateInstance(queryType, commandText, objectContext);
+
+            return objectQuery;
+        }
+
         public static object EsqlQuery(this IObjectContextAdapter objectContextAdapter, string commandText)
         {
             var objectContext = objectContextAdapter.ObjectContext;
