@@ -38,8 +38,9 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .Name("TestClass1")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+
                             // TODO: актализировать когда будет поддержка relations
-                            //.Relation(EntityRelationElement.Config
+                            // .Relation(EntityRelationElement.Config
                             //    .Name("TestClass2")
                             //    .DirectTo(
                             //        EntityElement.Config
@@ -48,16 +49,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             //            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
                             //    )
                             //    .AsOne())
-                    )
-                )
+                    ))
+
                 .StoreModel(
                     StructuralModelElement.Config.Elements(
                          EntityElement.Config
                             .Name("dbo.TestClass1")
                             .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                    )
-                );
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())));
 
             var element = ProcessContext(builder);
             var dbModel = BuildDbModel(element);
@@ -81,13 +80,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             }
         }
 
-        # region copy/paste from EdmModelBuilderTests, refactor this later
+        #region copy/paste from EdmModelBuilderTests, refactor this later
 
         private static BoundedContextElement ProcessContext(BoundedContextElement context)
         {
             var provider = CreateProvider(MockSource(context));
 
-            return Enumerable.OfType<BoundedContextElement>(provider.Metadata.Metadata.Values).FirstOrDefault();
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
         }
 
         private static IMetadataSource MockSource(IMetadataElement context)
@@ -104,6 +103,6 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }
 
-        # endregion
+        #endregion
     }
 }

@@ -36,6 +36,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 idProperty.SetValue(@object, i);
                 _testDbSet.Add(@object);
             }
+
             _context.SaveChanges();
         }
 
@@ -130,7 +131,6 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$select=NonExistent");
             CreateValidQueryOptions(request);
         }
-
 
         [Test, Ignore("Актализировать когда будет поддержка relations")]
         public void Test_Expand()
