@@ -33,7 +33,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             return Build(context);
         }
 
-        public static DbModel Build(BoundedContextElement context, DbConnection connection = null)
+        public static DbModel Build(BoundedContextElement context, DbProviderInfo dbProviderInfo = null)
         {
             if (context == null)
             {
@@ -41,7 +41,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             }
 
             var builder = new DbModelBuilder();
-            var model = (connection == null) ? builder.Build(DefaultProviderInfo) : builder.Build(connection);
+            var model = builder.Build(dbProviderInfo ?? DefaultProviderInfo);
 
             var cmNamespaceName = ResolveNamespaceName(context.Identity);
             var smNamespaceName = ResolveNamespaceName(context.Identity) + ".Store"; // FIXME {s.pomadin, 13.01.2015}: has to be improved
