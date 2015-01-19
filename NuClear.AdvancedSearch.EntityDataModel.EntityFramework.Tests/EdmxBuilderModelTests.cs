@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
@@ -17,23 +19,15 @@ namespace EntityDataModel.EntityFramework.Tests
     [TestFixture]
     internal class EdmxBuilderModelTests : EdmxBuilderBaseFixture
     {
-        private const string DefaultDataUri = "res://EntityDataModel.EntityFramework.Tests/Data";
-
-        private static DbConnection CreateDataConnection()
-        {
-            return DbConnectionFactory.CreateTransient(new CsvDataLoader(DefaultDataUri));
-        }
+        private static readonly string DefaultDataUri = string.Format("res://{0}/Data", typeof(EdmxBuilderModelTests).Assembly.GetName().Name);
 
         [Test]
         public void ShouldQueryData()
         {
-            var typeProvider = new Mock<ITypeProvider>();
-            typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == "Firm"))).Returns(typeof(Firm));
-            typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == "Category"))).Returns(typeof(Category));
+            var typeProvider = MockTypeProvider(typeof(Firm), typeof(Category));
+            var config = (BoundedContextElement)NewContext("Library").ConceptualModel(NewModel(NewEntity("Firm")));
 
-            BoundedContextElement config = NewContext("Library").ConceptualModel(NewModel(NewEntity("Firm")));
-
-            var builder = CreateModelBuilder(typeProvider.Object);
+            var builder = CreateModelBuilder(typeProvider);
             var model = builder.Build(ProcessContext(config));
 
             model.Dump();
@@ -44,12 +38,34 @@ namespace EntityDataModel.EntityFramework.Tests
             }
         }
 
+        private static DbConnection CreateDataConnection()
+        {
+            return DbConnectionFactory.CreateTransient(new CsvDataLoader(DefaultDataUri));
+        }
+
+        private static ITypeProvider MockTypeProvider(params Type[] types)
+        {
+            var typeProvider = new Mock<ITypeProvider>();
+
+            foreach (var type in types)
+            {
+                RegisterType(typeProvider, type);
+            }
+
+            return typeProvider.Object;
+        }
+
+        private static void RegisterType(Mock<ITypeProvider> typeProvider, Type type)
+        {
+            typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
+        }
+
         private class Firm
         {
             public long Id { get; set; }
             public long OrganizationUnitId { get; set; }
             
-            //public ICollection<Category> Categories { get; set; }
+            public ICollection<Category> Categories { get; set; }
         }
 
         private class Category
