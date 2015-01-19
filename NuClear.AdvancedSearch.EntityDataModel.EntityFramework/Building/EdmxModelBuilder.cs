@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.ModelConfiguration.Configuration;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
@@ -12,6 +16,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
     {
         private readonly DbProviderInfo _providerInfo;
         private readonly ITypeProvider _typeProvider;
+        private readonly Dictionary<Type, EntityElement> _elementsByType = new Dictionary<Type, EntityElement>();
 
         public EdmxModelBuilder(DbProviderInfo providerInfo, ITypeProvider typeProvider = null)
         {
@@ -44,17 +49,16 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 throw new ArgumentNullException("context");
             }
 
-            var builder = new DbModelBuilder();
+            var builder = CreateModelBuilder();
 
             if (context.ConceptualModel != null)
             {
                 foreach (var entityElement in context.ConceptualModel.Entities)
                 {
                     var entityType = _typeProvider.Resolve(entityElement);
+                    var configuration = RegisterType(builder, entityType);
 
-                    builder.RegisterEntityType(entityType);
-
-                    var configuration = builder.Types().Where(x => x == entityType);
+                    _elementsByType.Add(entityType, entityElement);
 
                     var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
                     var keyNames = entityElement.GetKeyProperties().Select(p => p.ResolveName()).ToArray();
@@ -84,6 +88,79 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             var model = builder.Build(_providerInfo);
 
             return model;
+        }
+
+        private static TypeConventionConfiguration RegisterType(DbModelBuilder builder, Type entityType)
+        {
+            builder.RegisterEntityType(entityType);
+
+            return builder.Types().Where(x => x == entityType);
+        }
+
+        private DbModelBuilder CreateModelBuilder()
+        {
+            var builder = new DbModelBuilder();
+            
+            DropDefaultConventions(builder);
+            AddCustomConventions(builder);
+            
+            return builder;
+        }
+
+        private static void DropDefaultConventions(DbModelBuilder builder)
+        {
+            // conceptual model conventions
+            builder.Conventions.Remove<PluralizingEntitySetNameConvention>();
+
+            // store model conventions
+            builder.Conventions.Remove<ForeignKeyIndexConvention>();
+            builder.Conventions.Remove<PluralizingTableNameConvention>();
+        }
+
+        private void AddCustomConventions(DbModelBuilder builder)
+        {
+            //builder.Conventions.Add(new EntityKeyConvention());
+            //builder.Conventions.Add(new EntitySetNameConvention());
+            //builder.Conventions.Add(new TableMappingConvention());
+        }
+
+        private class EntityKeyConvention : IConceptualModelConvention<EntityType>
+        {
+            private readonly IReadOnlyDictionary<Type, EntityElement> _elementsByType;
+
+            public EntityKeyConvention(IReadOnlyDictionary<Type, EntityElement> elementsByType)
+            {
+                _elementsByType = elementsByType;
+            }
+
+            public void Apply(EntityType item, DbModel model)
+            {
+            }
+        }
+
+        private class EntitySetNameConvention : IConceptualModelConvention<EntityType>
+        {
+            public EntitySetNameConvention()
+            {
+            }
+
+            public void Apply(EntityType item, DbModel model)
+            {
+                var meta = item.MetadataProperties.Where(x => x.IsAnnotation);
+            }
+        }
+
+        private class TableMappingConvention : Convention//, IConceptualModelConvention<EntityType>
+        {
+            public TableMappingConvention()
+            {
+                //Types().Having(t => t.HasElementType)
+            }
+
+            public void Apply(EntityType item, DbModel model)
+            {
+                //item.
+            }
         }
     }
 }

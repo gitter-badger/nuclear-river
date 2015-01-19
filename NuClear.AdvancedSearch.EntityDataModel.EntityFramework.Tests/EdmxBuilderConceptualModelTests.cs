@@ -34,7 +34,7 @@ namespace EntityDataModel.EntityFramework.Tests
             Assert.That(model, Is.Not.Null.And.Matches(ConceptualModel.IsValid));
             Assert.That(model.Container.EntitySets, Has.Count.EqualTo(2));
             Assert.That(model.FindEntitySet("Book"), Is.Not.Null);
-            Assert.That(model.FindEntitySet("Authors"), Is.Not.Null);
+            Assert.That(model.FindEntitySet("Author"), Is.Not.Null);
         }
 
         [Test]

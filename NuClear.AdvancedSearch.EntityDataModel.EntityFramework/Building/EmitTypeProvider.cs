@@ -55,7 +55,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private Type CreateType(EntityElement entityElement)
         {
-            var typeName = entityElement.ResolveName();
+            var typeName = entityElement.ResolveFullName();
             var tableTypeBuilder = ModuleBuilder.DefineType(typeName);
 
             foreach (var propertyElement in entityElement.GetProperties())

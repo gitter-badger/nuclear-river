@@ -631,7 +631,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                 foreach (var propertyElement in entityElement.GetProperties())
                 {
-                    var propertyName = propertyElement.Identity.ToName();
+                    var propertyName = propertyElement.ResolveName();
                     var propertyType = propertyElement.GetPropertyType();
 
                     EdmProperty property;
@@ -753,20 +753,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             }
 
             public Dictionary<IMetadataElementIdentity, EntitySet> EntitySets { get; private set; }
-        }
-    }
-
-    internal static class IdentityExtensions
-    {
-        public static string ToName(this IMetadataElementIdentity identity)
-        {
-            if (identity == null)
-            {
-                return null;
-            }
-
-            // TODO {s.pomadin, 16.12.2014}: provide a better solution
-            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').LastOrDefault();
         }
     }
 }

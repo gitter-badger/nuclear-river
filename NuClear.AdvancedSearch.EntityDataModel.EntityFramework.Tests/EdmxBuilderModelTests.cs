@@ -1,6 +1,9 @@
-using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Linq;
+
+using Effort;
+using Effort.DataLoaders;
 
 using Moq;
 
@@ -14,6 +17,13 @@ namespace EntityDataModel.EntityFramework.Tests
     [TestFixture]
     internal class EdmxBuilderModelTests : EdmxBuilderBaseFixture
     {
+        private const string DefaultDataUri = "res://EntityDataModel.EntityFramework.Tests/Data";
+
+        private static DbConnection CreateDataConnection()
+        {
+            return DbConnectionFactory.CreateTransient(new CsvDataLoader(DefaultDataUri));
+        }
+
         [Test]
         public void ShouldQueryData()
         {
@@ -28,11 +38,9 @@ namespace EntityDataModel.EntityFramework.Tests
 
             model.Dump();
 
-            var connection = Effort.DbConnectionFactory.CreateTransient();
-            using (var context = new DbContext(connection, model.Compile(), true))
+            using (var context = new DbContext(CreateDataConnection(), model.Compile(), true))
             {
-                var firms = context.Set<Category>().ToArray();
-                Assert.That(firms, Is.Empty);
+                Assert.That(context.Set<Firm>().ToArray(), Has.Length.EqualTo(2));
             }
         }
 
@@ -41,7 +49,7 @@ namespace EntityDataModel.EntityFramework.Tests
             public long Id { get; set; }
             public long OrganizationUnitId { get; set; }
             
-            public ICollection<Category> Categories { get; set; }
+            //public ICollection<Category> Categories { get; set; }
         }
 
         private class Category

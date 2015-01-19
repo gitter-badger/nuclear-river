@@ -8,6 +8,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public static class EntityElementExtensions
     {
+        public static string ResolveFullName(this EntityElement entityElement)
+        {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
+            return entityElement.Identity.ResolveFullName();
+        }
+
         public static string ResolveName(this EntityElement entityElement)
         {
             if (entityElement == null)
