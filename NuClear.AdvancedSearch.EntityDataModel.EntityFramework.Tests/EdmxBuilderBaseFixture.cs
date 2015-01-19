@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+
+using Effort.Provider;
 
 using Moq;
 
@@ -14,15 +17,44 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 
+using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
 namespace EntityDataModel.EntityFramework.Tests
 {
     internal class EdmxBuilderBaseFixture
     {
+        [TestFixtureSetUp]
+        public void FixtureSetup()
+        {
+            EffortProviderConfiguration.RegisterProvider();
+        }
+
+        protected static DbProviderFactory DefaultFactory
+        {
+            get
+            {
+                return DbProviderFactories.GetFactory(EffortProviderConfiguration.ProviderInvariantName);
+            }
+        }
+
+        protected static DbProviderInfo DefaultProviderInfo
+        {
+            get
+            {
+                return new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
+            }
+        }
+
+        protected static EdmxModelBuilder CreateModelBuilder(ITypeProvider typeProvider = null)
+        {
+            return new EdmxModelBuilder(DefaultProviderInfo, typeProvider);
+        }
+
         protected static DbModel BuildModel(IMetadataSource source, Uri id)
         {
-            var model = EdmxModelBuilder.Build(CreateProvider(source), id);
+            var builder = CreateModelBuilder();
+            var model = builder.Build(CreateProvider(source), id);
 
             model.Dump();
 
@@ -31,7 +63,8 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var builder = CreateModelBuilder();
+            var model = builder.Build(ProcessContext(context));
 
             model.Dump();
 
@@ -40,7 +73,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var model = CreateModel(ProcessContext(context));
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -49,7 +82,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var model = CreateModel(ProcessContext(context));
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
@@ -98,6 +131,18 @@ namespace EntityDataModel.EntityFramework.Tests
         protected static EntityRelationElementBuilder NewRelation(string relationName)
         {
             return EntityRelationElement.Config.Name(relationName);
+        }
+
+        protected static ModelMappingElementBuilder NewMapping(params EntityElementBuilder[] entities)
+        {
+            var mapping = ModelMappingElement.Config;
+
+//            foreach (var entityElementBuilder in entities)
+//            {
+//                model.Elements(entityElementBuilder);
+//            }
+
+            return mapping;
         }
 
         protected static class ConceptualModel
@@ -202,6 +247,14 @@ namespace EntityDataModel.EntityFramework.Tests
 
         #region Utils
 
+        private static DbModel CreateModel(BoundedContextElement context)
+        {
+            var builder = CreateModelBuilder();
+            var model = builder.Build(ProcessContext(context));
+
+            return model;
+        }
+
         private static IMetadataSource MockSource(IMetadataElement context)
         {
             var source = new Mock<IMetadataSource>();
@@ -216,7 +269,7 @@ namespace EntityDataModel.EntityFramework.Tests
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }
 
-        private static BoundedContextElement ProcessContext(IMetadataElement context)
+        protected static BoundedContextElement ProcessContext(IMetadataElement context)
         {
             var provider = CreateProvider(MockSource(context));
 

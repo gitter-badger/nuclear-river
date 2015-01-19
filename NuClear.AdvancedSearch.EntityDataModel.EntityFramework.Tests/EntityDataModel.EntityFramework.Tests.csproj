@@ -51,6 +51,9 @@
     <Reference Include="2GIS.NuClear.Model.Common">
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.0.8\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Effort">
+      <HintPath>..\packages\Effort.EF6.1.1.4\lib\net45\Effort.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -60,12 +63,17 @@
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="NMemory">
+      <HintPath>..\packages\NMemory.1.0.1\lib\net45\NMemory.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -74,8 +82,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EdmxBuilderBaseFixture.cs" />
-    <Compile Include="Demo.cs" />
     <Compile Include="EdmModelExtensions.cs" />
+    <Compile Include="EdmxBuilderMappingTests.cs" />
     <Compile Include="EdmxBuilderModelTests.cs" />
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />

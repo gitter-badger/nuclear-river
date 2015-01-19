@@ -5,24 +5,34 @@ namespace EntityDataModel.EntityFramework.Tests
 {
     internal static class EdmModelExtensions
     {
-        public static EntityType FindDeclaredType(this EdmModel model, string entityName)
+        public static EntitySet FindEntitySet(this EdmModel model, string name)
         {
-            return model.EntityTypes.FirstOrDefault(x => x.FullName == entityName);
+            return model.Container.EntitySets.FirstOrDefault(x => x.Name == name);
         }
 
-        public static EntitySet FindEntitySet(this EdmModel model, string entityName)
+        public static AssociationSet FindAssociationSet(this EdmModel model, string name)
         {
-            return model.Container.EntitySets.FirstOrDefault(x => x.Name == entityName);
+            return model.Container.AssociationSets.FirstOrDefault(x => x.Name == name);
         }
 
-        public static EntitySet FindEntitySet(this EntityContainer container, string entityName)
+        public static AssociationType FindAssociationType(this EdmModel model, string name)
         {
-            return container.EntitySets.FirstOrDefault(x => x.Name == entityName);
+            return model.AssociationTypes.FirstOrDefault(x => IsCompositeName(name) ? x.FullName == name : x.Name == name);
         }
 
-        public static EdmProperty FindProperty(this EntityType entityType, string entityName)
+        public static EntityType FindEntityType(this EdmModel model, string name)
         {
-            return entityType.Properties.FirstOrDefault(x => x.Name == entityName);
+            return model.EntityTypes.FirstOrDefault(x => IsCompositeName(name) ? x.FullName == name : x.Name == name);
+        }
+
+        public static EdmProperty FindProperty(this EntityType entityType, string name)
+        {
+            return entityType.Properties.FirstOrDefault(x => IsCompositeName(name) ? x.Name == name : x.Name == name);
+        }
+
+        private static bool IsCompositeName(string name)
+        {
+            return name != null && name.Contains(".");
         }
     }
 }

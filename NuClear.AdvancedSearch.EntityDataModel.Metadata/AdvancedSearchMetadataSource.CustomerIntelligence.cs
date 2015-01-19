@@ -65,8 +65,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 )
                                 .AsOneOptionally()));
 
-        private static readonly StructuralModelElement StoreModel = StructuralModelElement
-            .Config.Elements(
+        private static readonly StructuralModelElement StoreModel = 
+            StructuralModelElement.Config
+                .Elements(
                          EntityElement.Config
                             .Name("CustomerIntelligence.Client")
                             .IdentifyBy("Id")
@@ -114,9 +115,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                    );
 
+        private static readonly ModelMappingElement ConceptualToStoreMapping = 
+            ModelMappingElement.Config
+                .Mappings(
+                    EntityMappingElement.Config
+                        .Map("Firm", "CustomerIntelligence.Firm")
+                        .Map(PropertyMappingElement.Config.Map("Id", "Id"))
+                    );
+
         private readonly BoundedContextElement _customerIntelligence =
-            BoundedContextElement.Config.Name("CustomerIntelligence")
-                                 .ConceptualModel(ConceptualModel)
-                                 .StoreModel(StoreModel);
+            BoundedContextElement.Config
+                .Name("CustomerIntelligence")
+                .ConceptualModel(ConceptualModel)
+                .StoreModel(StoreModel)
+                .Mapping(ConceptualToStoreMapping);
     }
 }

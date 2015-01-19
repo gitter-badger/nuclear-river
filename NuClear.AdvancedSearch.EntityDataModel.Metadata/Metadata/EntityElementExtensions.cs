@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
@@ -7,6 +8,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public static class EntityElementExtensions
     {
+        public static string ResolveName(this EntityElement entityElement)
+        {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
+            return entityElement.Identity.ResolveName();
+        }
+
         public static string GetEntitySetName(this EntityElement entityElement)
         {
             var collectionFeature = entityElement.Features.OfType<EntitySetFeature>().FirstOrDefault();

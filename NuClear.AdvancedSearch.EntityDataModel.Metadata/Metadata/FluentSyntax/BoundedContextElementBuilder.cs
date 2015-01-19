@@ -10,10 +10,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     {
         private const string ConceptualModelName = "ConceptualModel";
         private const string StoreModelName = "StoreModel";
+        private const string MappingName = "StoreModel";
 
         private string _name;
         private StructuralModelElement _conceptualModel;
         private StructuralModelElement _storeModel;
+        private ModelMappingElement _mapping;
 
         public BoundedContextElementBuilder Name(string name)
         {
@@ -33,6 +35,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
+        public BoundedContextElementBuilder Mapping(ModelMappingElement conceptualToStoreMapping)
+        {
+            Childs(_mapping = conceptualToStoreMapping);
+            return this;
+        }
+
         protected override BoundedContextElement Create()
         {
             if (string.IsNullOrEmpty(_name))
@@ -43,6 +51,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             var contextId = IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity();
             IMetadataElementIdentity conceptualModelId = null;
             IMetadataElementIdentity storeModelId = null;
+            IMetadataElementIdentity mappingId = null;
 
             if (_conceptualModel != null)
             {
@@ -56,7 +65,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 _storeModel.ActualizeId(storeModelId);
             }
 
-            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, Features);
+            if (_mapping != null)
+            {
+                _mapping.ActualizeId(mappingId = contextId.Id.WithRelative(MappingName.AsRelativeUri()).AsIdentity());
+            }
+
+            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, mappingId, Features);
         }
     }
 }

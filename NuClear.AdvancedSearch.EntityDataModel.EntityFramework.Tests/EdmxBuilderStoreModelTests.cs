@@ -12,24 +12,68 @@ namespace EntityDataModel.EntityFramework.Tests
     internal class EdmxBuilderStoreModelTests : EdmxBuilderBaseFixture
     {
         [Test]
-        public void ShouldExposeEntities()
+        public void ShouldExposeEntitySets()
         {
-            var config = NewContext("Library").StoreModel(NewModel(
-                NewEntity("Book"), 
-                NewEntity("Author").EntitySetName("Authors")));
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book"), NewEntity("Author").EntitySetName("Authors")))
+                .StoreModel(NewModel(NewEntity("Book"), NewEntity("Author").EntitySetName("Authors")));
 
             var model = BuildStoreModel(config);
 
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
             Assert.That(model.Container.EntitySets, Has.Count.EqualTo(2));
             Assert.That(model.FindEntitySet("Book"), Is.Not.Null);
-            Assert.That(model.FindEntitySet("Authors"), Is.Not.Null);
+            Assert.That(model.FindEntitySet("Author"), Is.Not.Null);
+        }
+
+        [Test]
+        public void ShouldExposeRelatedEntitySet()
+        {
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())))
+                .StoreModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())));
+
+            var model = BuildStoreModel(config);
+
+            Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
+            Assert.That(model.Container.EntitySets, Has.Count.EqualTo(2));
+            Assert.That(model.FindEntitySet("Book"), Is.Not.Null);
+            Assert.That(model.FindEntitySet("Author"), Is.Not.Null);
+        }
+
+        [Test]
+        public void ShouldNotExposeAssociationSet()
+        {
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book"), NewEntity("Author").EntitySetName("Authors")))
+                .StoreModel(NewModel(NewEntity("Book"), NewEntity("Author").EntitySetName("Authors")));
+
+            var model = BuildStoreModel(config);
+
+            Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
+            Assert.That(model.Container.AssociationSets, Has.Count.EqualTo(0));
+        }
+
+        [Test]
+        public void ShouldExposeAssociationSet()
+        {
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())))
+                .StoreModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())));
+
+            var model = BuildStoreModel(config);
+
+            Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
+            Assert.That(model.Container.AssociationSets, Has.Count.EqualTo(1));
+            Assert.That(model.FindAssociationSet("Book_Authors"), Is.Not.Null);
         }
 
         [Test]
         public void ShouldExposeEntityAccordingToSchema()
         {
-            var config = NewContext("Library").StoreModel(NewModel(NewEntity("Catalog.Book").EntitySetName("Books")));
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Catalog.Book").EntitySetName("Books")))
+                .StoreModel(NewModel(NewEntity("Catalog.Book").EntitySetName("Books")));
 
             var model = BuildStoreModel(config);
 
@@ -45,14 +89,57 @@ namespace EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldExposeEntityTypes()
         {
-            var config = NewContext("Library").StoreModel(NewModel(NewEntity("Book"), NewEntity("Author")));
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book"), NewEntity("Author")))
+                .StoreModel(NewModel(NewEntity("Book"), NewEntity("Author")));
 
             var model = BuildStoreModel(config);
 
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
             Assert.That(model.EntityTypes, Has.Count.EqualTo(2));
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Store.Book"), Is.Not.Null.And.InstanceOf<EntityType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Store.Author"), Is.Not.Null.And.InstanceOf<EntityType>());
+            Assert.That(model.FindEntityType("Book"), Is.Not.Null);
+            Assert.That(model.FindEntityType("Author"), Is.Not.Null);
+        }
+
+        [Test]
+        public void ShouldExposeRelatedEntityType()
+        {
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())))
+                .StoreModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())));
+
+            var model = BuildStoreModel(config);
+
+            Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
+            Assert.That(model.EntityTypes, Has.Count.EqualTo(2));
+            Assert.That(model.FindEntityType("Book"), Is.Not.Null);
+            Assert.That(model.FindEntityType("Author"), Is.Not.Null);
+        }
+
+        [Test]
+        public void ShouldExposeRelation()
+        {
+            var config = NewContext("Library")
+                .ConceptualModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())))
+                .StoreModel(NewModel(NewEntity("Book").Relation(NewRelation("Authors").DirectTo(NewEntity("Author")).AsMany())));
+
+            var model = BuildStoreModel(config);
+
+            Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
+            Assert.That(model.AssociationTypes, Has.Count.EqualTo(1));
+
+            var associationType = model.FindAssociationType("Book_Authors");
+            Assert.That(associationType, Is.Not.Null);
+
+            var sourceEnd = associationType.KeyMembers.FirstOrDefault() as AssociationEndMember;
+            Assert.That(sourceEnd, Is.Not.Null);
+            Assert.That(sourceEnd.RelationshipMultiplicity, Is.EqualTo(RelationshipMultiplicity.ZeroOrOne));
+            Assert.That(sourceEnd.GetEntityType().Name, Is.EqualTo("Book"));
+            
+            var targetEnd = associationType.KeyMembers.LastOrDefault() as AssociationEndMember;
+            Assert.That(targetEnd, Is.Not.Null);
+            Assert.That(targetEnd.RelationshipMultiplicity, Is.EqualTo(RelationshipMultiplicity.Many));
+            Assert.That(targetEnd.GetEntityType().Name, Is.EqualTo("Author"));
         }
 
         [Test]
@@ -68,7 +155,7 @@ namespace EntityDataModel.EntityFramework.Tests
             var model = BuildStoreModel(config);
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
 
-            var entityType = model.FindDeclaredType("AdvancedSearch.Context.Store.Entity");
+            var entityType = model.FindEntityType("Entity");
             Assert.NotNull(entityType);
 
             Assert.AreEqual(2, entityType.DeclaredProperties.Count);
@@ -89,7 +176,7 @@ namespace EntityDataModel.EntityFramework.Tests
             var model = BuildStoreModel(config);
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
 
-            var entityType = model.FindDeclaredType("AdvancedSearch.Context.Store.Entity");
+            var entityType = model.FindEntityType("Entity");
             Assert.NotNull(entityType);
 
             Assert.AreEqual(2, entityType.DeclaredProperties.Count);
@@ -111,7 +198,7 @@ namespace EntityDataModel.EntityFramework.Tests
             var model = BuildStoreModel(config);
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
 
-            var entityType = model.FindDeclaredType("AdvancedSearch.Context.Store.Entity");
+            var entityType = model.FindEntityType("Entity");
             Assert.NotNull(entityType);
 
             Assert.That(entityType.FindProperty("Nullable"), Is.Not.Null.And.Matches<EdmProperty>(x => x.Nullable));
@@ -132,13 +219,13 @@ namespace EntityDataModel.EntityFramework.Tests
             var model = BuildStoreModel(NewContext("Context").StoreModel(NewModel(element)));
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
 
-            var entity = model.FindDeclaredType("AdvancedSearch.Context.Store.Entity");
+            var entity = model.FindEntityType("Entity");
             Assert.NotNull(entity);
             Assert.AreEqual(primitiveTypes.Length, entity.DeclaredProperties.Count());
         }
 
         [Test, ExpectedException(typeof(NotSupportedException), ExpectedMessage = "enum property", MatchType = MessageMatch.Contains)]
-        public void ShouldNotSupportEnumType()
+        public void ShouldFailOnEnumType()
         {
             var config = NewContext("Context").StoreModel(NewModel(
                     NewEntity("Person")
@@ -152,5 +239,5 @@ namespace EntityDataModel.EntityFramework.Tests
 
             BuildStoreModel(config);
         }
-    }
+   }
 }
