@@ -101,6 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Category.csv" />
+    <EmbeddedResource Include="Data\Contact.csv" />
+    <EmbeddedResource Include="Data\Client.csv" />
+    <EmbeddedResource Include="Data\Account.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
