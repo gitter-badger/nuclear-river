@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core.Common;
 using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Linq;
 
-using Effort;
+using Effort.Provider;
 
 using Microsoft.OData.Edm;
 
@@ -28,6 +25,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public static readonly DbCompiledModel EFModel;
         public static readonly IEdmModel EdmModel;
 
+        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(Enum1) };
+
         static TestModel()
         {
             var builder = BoundedContextElement.Config
@@ -39,17 +38,17 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-
-                            // TODO: актализировать когда будет поддержка relations
-                            // .Relation(EntityRelationElement.Config
-                            //    .Name("TestClass2")
-                            //    .DirectTo(
-                            //        EntityElement.Config
-                            //            .Name("TestClass2")
-                            //            .IdentifyBy("Id")
-                            //            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                            //    )
-                            //    .AsOne())
+                            .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
+                            .Relation(EntityRelationElement.Config
+                                .Name("TestClass2")
+                                .DirectTo(
+                                    EntityElement.Config
+                                        .Name("TestClass2")
+                                        .IdentifyBy("Id")
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
+                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                             )
+                             .AsOne())
                     ))
 
                 .StoreModel(
@@ -59,7 +58,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            ));
+                            .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32)),
+                         EntityElement.Config
+                            .Name("dbo.TestClass2")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                    )
+                );
 
             var element = ProcessContext(builder);
             var dbModel = BuildDbModel(element);
@@ -73,17 +79,29 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
         private static DbModel BuildDbModel(BoundedContextElement element)
         {
-            using (var connection = DbConnectionFactory.CreateTransient())
+            var dbProviderInfo = GeEffortProviderInfo();
+            var typeProvider = GetTypeProvider(ClrTypes);
+
+            var edmxModelBuilder = new EdmxModelBuilderOld(dbProviderInfo, typeProvider);
+            return edmxModelBuilder.Build(element);
+        }
+
+        private static DbProviderInfo GeEffortProviderInfo()
+        {
+            EffortProviderConfiguration.RegisterProvider();
+            return new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
+        }
+
+        private static ITypeProvider GetTypeProvider(IEnumerable<Type> types)
+        {
+            var mock = new Mock<ITypeProvider>();
+
+            foreach (var type in types)
             {
-                var providerManifestToken = DbConfiguration.DependencyResolver.GetService<IManifestTokenResolver>().ResolveManifestToken(connection);
-                var providerInvariantName = DbConfiguration.DependencyResolver.GetService<IProviderInvariantName>(DbProviderServices.GetProviderFactory(connection)).Name;
-                var dbProviderInfo = new DbProviderInfo(providerInvariantName, providerManifestToken);
-
-                // TODO: custom TypeProvider
-                var edmxModelBuilder = new EdmxModelBuilderOld(dbProviderInfo);
-
-                return edmxModelBuilder.Build(element);
+                mock.Setup(x => x.Resolve(It.Is<EntityElement>(y => y.ResolveName() == type.Name))).Returns(type);
             }
+
+            return mock.Object;
         }
 
         #region copy/paste from EdmModelBuilderTests, refactor this later
@@ -110,5 +128,22 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         #endregion
+    }
+
+    public enum Enum1 { Member1 , Member2 }
+
+    public sealed class TestClass1
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Enum1 Enum1 { get; set; }
+
+        public TestClass2 TestClass2 { get; set; }
+    }
+
+    public sealed class TestClass2
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

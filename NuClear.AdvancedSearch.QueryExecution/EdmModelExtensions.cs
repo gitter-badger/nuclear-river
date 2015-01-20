@@ -9,18 +9,9 @@ namespace NuClear.AdvancedSearch.QueryExecution
 {
     public static class EdmModelExtensions
     {
-        public static IEnumerable<Type> GetClrTypes(this IEdmModel model)
-        {
-            var clrTypes = model.SchemaElements.OfType<IEdmTerm>()
-                                         .Select(model.GetAnnotationValue<ClrTypeAnnotation>)
-                                         .Where(x => x != null)
-                                         .Select(x => x.ClrType);
-            return clrTypes;
-        }
-
         public static IEdmModel AddClrAnnotations(this IEdmModel model, IEnumerable<Type> clrTypes)
         {
-            var tuples = model.SchemaElements.OfType<IEdmTerm>().Join(clrTypes, x => x.Name, x => x.Name, Tuple.Create, StringComparer.OrdinalIgnoreCase);
+            var tuples = model.SchemaElements.Join(clrTypes, x => x.Name, x => x.Name, Tuple.Create, StringComparer.OrdinalIgnoreCase);
 
             foreach (var tuple in tuples)
             {
