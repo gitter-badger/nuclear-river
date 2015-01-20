@@ -26,7 +26,7 @@ using NUnit.Framework.Constraints;
 
 namespace EntityDataModel.EntityFramework.Tests
 {
-    internal class EdmxBuilderBaseFixture
+    public class EdmxBuilderBaseFixture
     {
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -90,7 +90,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
         {
-            var metadataProvider = CreateMetadataProvider(CustomerIntelligenceMetadataSource);
+            var metadataProvider = CreateMetadataProvider(source);
             var context = LookupContext(metadataProvider);
 
             var builder = CreateBuilder(typeProvider);
@@ -330,12 +330,12 @@ namespace EntityDataModel.EntityFramework.Tests
             return LookupContext(metadataProvider);
         }
 
-        private static BoundedContextElement LookupContext(IMetadataProvider provider)
+        protected static BoundedContextElement LookupContext(IMetadataProvider provider)
         {
             return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
         }
 
-        private static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
+        protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
         {
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }
