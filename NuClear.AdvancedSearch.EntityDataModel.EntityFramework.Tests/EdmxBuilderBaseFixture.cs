@@ -233,9 +233,16 @@ namespace EntityDataModel.EntityFramework.Tests
 
         private static readonly string DefaultTestDataUri = string.Format("res://{0}/Data", typeof(EdmxBuilderBaseFixture).Assembly.GetName().Name);
 
+        protected static DbConnection CreateMemoryConnection()
+        {
+            return DbConnectionFactory.CreateTransient();
+        }
+
         protected static DbConnection CreateConnection(string path = null)
         {
-            return DbConnectionFactory.CreateTransient(new CsvDataLoader(path ?? DefaultTestDataUri));
+            var dataLoader = new CsvDataLoader(path ?? DefaultTestDataUri);
+            var cachingLoader = new CachingDataLoader(dataLoader);
+            return DbConnectionFactory.CreateTransient(cachingLoader);
         }
 
         #endregion
