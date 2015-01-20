@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.Http;
 using System.Web.OData.Extensions;
 using System.Web.OData.Query;
 
@@ -45,138 +44,128 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [Test]
         public void Test_Filter()
         {
-            var request = TestHelper.CreateRequest("$filter=Id ne 1");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$filter=Id ne 1");
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.Where(x => x.Id != 1));
+            var actual = queryOptions.ApplyTo(_query);
+            var expected = _query.Where(x => x.Id != 1);
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         public void Test_Filter_Enum()
         {
-            var request = TestHelper.CreateRequest("$filter=Enum1 eq AdvancedSearch.Context.Enum1'Member1'");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$filter=Enum1 eq AdvancedSearch.Context.Enum1'Member1'");
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.Where(x => x.Enum1 == Enum1.Member1));
+            var actual = queryOptions.ApplyTo(_query);
+            var expected = _query.Where(x => x.Enum1 == Enum1.Member1);
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         [ExpectedException(typeof(ODataException))]
         public void Test_Filter_Negative()
         {
-            var request = TestHelper.CreateRequest("$filter=NonExistent ne null");
-            CreateValidQueryOptions(request);
+            CreateValidQueryOptions("$filter=NonExistent ne null");
         }
 
         [Test, Ignore("https://github.com/tamasflamich/effort/issues/6")]
         public void Test_Count()
         {
-            var request = TestHelper.CreateRequest("$count=true");
-            var queryOptions = CreateValidQueryOptions(request);
+            var request = TestHelper.CreateRequest();
+            var queryOptions = CreateValidQueryOptions("$count=true");
 
             queryOptions.ApplyTo(_query);
             var actual = request.ODataProperties().TotalCount;
             var expected = ((IEnumerable)_query).OfType<object>().Count();
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         public void Test_OrderBy()
         {
-            var request = TestHelper.CreateRequest("$orderby=Id desc");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$orderby=Id desc");
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.OrderByDescending(x => x.Id));
+            var actual = queryOptions.ApplyTo(_query);
+            var expected = _query.OrderByDescending(x => x.Id);
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         [ExpectedException(typeof(ODataException))]
         public void Test_OrderBy_Negative()
         {
-            var request = TestHelper.CreateRequest("$orderby=NonExistent desc");
-            CreateValidQueryOptions(request);
+            CreateValidQueryOptions("$orderby=NonExistent desc");
         }
 
         [Test]
         public void Test_SkipTop()
         {
-            var request = TestHelper.CreateRequest("$skip=2&$top=1");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$skip=2&$top=1");
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.OrderBy(x => x.Id).Skip(2).Take(1));
+            var actual = queryOptions.ApplyTo(_query);
+            var expected = _query.OrderBy(x => x.Id).Skip(2).Take(1);
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         public void Test_Select()
         {
-            var request = TestHelper.CreateRequest("$select=Id,Name");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$select=Id,Name");
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
             var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.Name, x.Id }));
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         [ExpectedException(typeof(ODataException))]
         public void Test_Select_Negative()
         {
-            var request = TestHelper.CreateRequest("$select=NonExistent");
-            CreateValidQueryOptions(request);
+            CreateValidQueryOptions("$select=NonExistent");
         }
 
         [Test]
         public void Test_Expand()
         {
-            var request = TestHelper.CreateRequest("$select=TestClass2&$expand=TestClass2");
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions("$select=TestClass2&$expand=TestClass2");
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
             var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.TestClass2 }));
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
         [Test]
         [ExpectedException(typeof(ODataException))]
         public void Test_Expand_Negative()
         {
-            var request = TestHelper.CreateRequest("$expand=NonExistent");
-            CreateValidQueryOptions(request);
+            CreateValidQueryOptions("$expand=NonExistent");
         }
 
         [Test]
         public void Test_Paging()
         {
-            var request = TestHelper.CreateRequest();
-            var queryOptions = CreateValidQueryOptions(request);
+            var queryOptions = CreateValidQueryOptions();
             var querySettings = new ODataQuerySettings
             {
                 PageSize = 2
             };
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query, querySettings));
-            var expected = JsonConvert.SerializeObject(_query.Take(2));
+            var actual = queryOptions.ApplyTo(_query, querySettings);
+            var expected = _query.Take(2);
 
-            Assert.AreEqual(expected, actual);
+            Assert.That(actual, Is.EqualTo(expected));
         }
 
-        private static ODataQueryOptions CreateValidQueryOptions(HttpRequestMessage request)
+        public ODataQueryOptions CreateValidQueryOptions(string query = null)
         {
+            var request = TestHelper.CreateRequest(query);
             var queryOptions = TestHelper.CreateValidQueryOptions(TestModel.EdmModel, typeof(TestClass1), request, new ODataValidationSettings());
             return queryOptions;
         }
