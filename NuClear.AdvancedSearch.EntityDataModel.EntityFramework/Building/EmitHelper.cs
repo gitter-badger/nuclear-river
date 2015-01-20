@@ -24,6 +24,11 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             return moduleBuilder.DefineType(name, TypeAttributes.Public);
         }
 
+        public static EnumBuilder DefineEnum(this ModuleBuilder moduleBuilder, string name, Type underlyingType)
+        {
+            return moduleBuilder.DefineEnum(name, TypeAttributes.Public, underlyingType);
+        }
+
         public static void DefineProperty(this TypeBuilder typeBuilder, string propertyName, Type propertyType)
         {
             var fieldBuilder = typeBuilder.DefineField("_" + propertyName, propertyType, FieldAttributes.Private);

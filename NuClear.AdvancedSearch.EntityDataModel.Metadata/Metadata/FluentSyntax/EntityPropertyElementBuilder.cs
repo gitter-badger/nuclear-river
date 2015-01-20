@@ -22,9 +22,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityPropertyElementBuilder NotNull()
+        public EntityPropertyElementBuilder Nullable()
         {
-            AddFeatures(new EntityPropertyNullableFeature(false));
+            AddFeatures(new EntityPropertyNullableFeature(true));
             return this;
         }
 

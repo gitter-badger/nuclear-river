@@ -7,6 +7,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public static class EntityRelationElementExtensions
     {
+        public static string ResolveName(this EntityRelationElement relationElement)
+        {
+            if (relationElement == null)
+            {
+                throw new ArgumentNullException("relationElement");
+            }
+
+            return relationElement.Identity.ResolveName();
+        }
+
         public static EntityRelationCardinality GetCardinality(this EntityRelationElement relationElement)
         {
             {

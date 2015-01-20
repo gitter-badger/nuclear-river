@@ -31,6 +31,7 @@ namespace NuClear.EntityDataModel.Tests
         protected static string Serialize(IMetadataElement element, Metadata properties)
         {
             var propertyNames = properties.ToString().Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            
             Debug.WriteLine(element.ToJson(true, propertyNames));
 
             return element.ToJson(propertyNames).Replace("\"", "'");

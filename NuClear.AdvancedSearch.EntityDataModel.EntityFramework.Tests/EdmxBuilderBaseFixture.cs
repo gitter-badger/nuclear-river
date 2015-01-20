@@ -1,8 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+
+using Effort;
+using Effort.DataLoaders;
+using Effort.Provider;
+
+using EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
 
 using Moq;
 
@@ -14,24 +21,90 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 
+using NUnit.Framework;
 using NUnit.Framework.Constraints;
 
 namespace EntityDataModel.EntityFramework.Tests
 {
     internal class EdmxBuilderBaseFixture
     {
-        protected static DbModel BuildModel(IMetadataSource source, Uri id)
+        [TestFixtureSetUp]
+        public void FixtureSetup()
         {
-            var model = EdmxModelBuilder.Build(CreateProvider(source), id);
+            EffortProviderConfiguration.RegisterProvider();
+        }
+
+        protected static DbProviderFactory EffortFactory
+        {
+            get
+            {
+                return DbProviderFactories.GetFactory(EffortProviderConfiguration.ProviderInvariantName);
+            }
+        }
+
+        protected static DbProviderInfo EffortProvider
+        {
+            get
+            {
+                return new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
+            }
+        }
+
+        protected static IMetadataSource CustomerIntelligenceMetadataSource
+        {
+            get
+            {
+                return new AdvancedSearchMetadataSource();
+            }
+        }
+
+        protected static ITypeProvider CustomerIntelligenceTypeProvider
+        {
+            get
+            {
+                return MockTypeProvider(
+                    typeof(Account),
+                    typeof(Category),
+                    typeof(Client),
+                    typeof(Contact),
+                    typeof(Firm));
+            }
+        }
+
+        private static ITypeProvider MockTypeProvider(params Type[] types)
+        {
+            var typeProvider = new Mock<ITypeProvider>();
+
+            foreach (var type in types)
+            {
+                RegisterType(typeProvider, type);
+            }
+
+            return typeProvider.Object;
+        }
+
+        private static void RegisterType(Mock<ITypeProvider> typeProvider, Type type)
+        {
+            typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
+        }
+
+        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        {
+            var metadataProvider = CreateMetadataProvider(CustomerIntelligenceMetadataSource);
+            var context = LookupContext(metadataProvider);
+
+            var builder = CreateBuilder(typeProvider);
+            var model = builder.Build(context);
 
             model.Dump();
 
             return model;
         }
 
-        protected static DbModel BuildModel(BoundedContextElement context)
+        protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var builder = CreateBuilder(typeProvider);
+            var model = builder.Build(ProcessContext(context));
 
             model.Dump();
 
@@ -40,7 +113,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var model = CreateModel(ProcessContext(context));
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -49,55 +122,11 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = EdmxModelBuilder.Build(ProcessContext(context));
+            var model = CreateModel(ProcessContext(context));
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
             return model.StoreModel;
-        }
-
-        protected static BoundedContextElementBuilder NewContext(string name)
-        {
-            return BoundedContextElement.Config.Name(name);
-        }
-
-        protected static StructuralModelElementBuilder NewModel(params EntityElementBuilder[] entities)
-        {
-            var model = StructuralModelElement.Config;
-
-            foreach (var entityElementBuilder in entities)
-            {
-                model.Elements(entityElementBuilder);
-            }
-
-            return model;
-        }
-
-        protected static EntityElementBuilder NewEntity(string name, params EntityPropertyElementBuilder[] properties)
-        {
-            var config = EntityElement.Config.Name(name);
-
-            if (properties.Length == 0)
-            {
-                config.Property(NewProperty("Id").NotNull()).IdentifyBy("Id");
-            }
-
-            foreach (var propertyElementBuilder in properties)
-            {
-                config.Property(propertyElementBuilder);
-            }
-
-            return config;
-        }
-
-        protected static EntityPropertyElementBuilder NewProperty(string propertyName, EntityPropertyType propertyType = EntityPropertyType.Int64)
-        {
-            return EntityPropertyElement.Config.Name(propertyName).OfType(propertyType);
-        }
-
-        protected static EntityRelationElementBuilder NewRelation(string relationName)
-        {
-            return EntityRelationElement.Config.Name(relationName);
         }
 
         protected static class ConceptualModel
@@ -200,7 +229,116 @@ namespace EntityDataModel.EntityFramework.Tests
             }
         }
 
+        #region Test Data
+
+        private static readonly string DefaultTestDataUri = string.Format("res://{0}/Data", typeof(EdmxBuilderBaseFixture).Assembly.GetName().Name);
+
+        protected static DbConnection CreateMemoryConnection()
+        {
+            return DbConnectionFactory.CreateTransient();
+        }
+
+        protected static DbConnection CreateConnection(string path = null)
+        {
+            var dataLoader = new CsvDataLoader(path ?? DefaultTestDataUri);
+            var cachingLoader = new CachingDataLoader(dataLoader);
+            return DbConnectionFactory.CreateTransient(cachingLoader);
+        }
+
+        #endregion
+
+        #region Metadata Helpers
+
+        protected static BoundedContextElementBuilder NewContext(string name)
+        {
+            return BoundedContextElement.Config.Name(name);
+        }
+
+        protected static StructuralModelElementBuilder NewModel(params EntityElementBuilder[] entities)
+        {
+            var model = StructuralModelElement.Config;
+
+            foreach (var entityElementBuilder in entities)
+            {
+                model.Elements(entityElementBuilder);
+            }
+
+            return model;
+        }
+
+        protected static EntityElementBuilder NewEntity(string name, params EntityPropertyElementBuilder[] properties)
+        {
+            var config = EntityElement.Config.Name(name);
+
+            if (properties.Length == 0)
+            {
+                config.Property(NewProperty("Id")).IdentifyBy("Id");
+            }
+
+            foreach (var propertyElementBuilder in properties)
+            {
+                config.Property(propertyElementBuilder);
+            }
+
+            return config;
+        }
+
+        protected static EntityPropertyElementBuilder NewProperty(string propertyName, EntityPropertyType propertyType = EntityPropertyType.Int64)
+        {
+            return EntityPropertyElement.Config.Name(propertyName).OfType(propertyType);
+        }
+
+        protected static EntityRelationElementBuilder NewRelation(string relationName)
+        {
+            return EntityRelationElement.Config.Name(relationName);
+        }
+
+        protected static ModelMappingElementBuilder NewMapping(params EntityElementBuilder[] entities)
+        {
+            var mapping = ModelMappingElement.Config;
+
+            //            foreach (var entityElementBuilder in entities)
+            //            {
+            //                model.Elements(entityElementBuilder);
+            //            }
+
+            return mapping;
+        }
+
+        #endregion
+
         #region Utils
+
+        private static EdmxModelBuilder CreateBuilder(ITypeProvider typeProvider = null)
+        {
+            return new EdmxModelBuilder(EffortProvider, typeProvider);
+        }
+
+        private static DbModel CreateModel(BoundedContextElement context)
+        {
+            var builder = CreateBuilder();
+            var model = builder.Build(ProcessContext(context));
+
+            return model;
+        }
+
+        private static BoundedContextElement ProcessContext(IMetadataElement context)
+        {
+            var metadataSource = MockSource(context);
+            var metadataProvider = CreateMetadataProvider(metadataSource);
+
+            return LookupContext(metadataProvider);
+        }
+
+        private static BoundedContextElement LookupContext(IMetadataProvider provider)
+        {
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
+        }
+
+        private static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
+        {
+            return new MetadataProvider(sources, new IMetadataProcessor[0]);
+        }
 
         private static IMetadataSource MockSource(IMetadataElement context)
         {
@@ -209,18 +347,6 @@ namespace EntityDataModel.EntityFramework.Tests
             source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { IdBuilder.For<AdvancedSearchIdentity>(), context } });
 
             return source.Object;
-        }
-
-        private static IMetadataProvider CreateProvider(params IMetadataSource[] sources)
-        {
-            return new MetadataProvider(sources, new IMetadataProcessor[0]);
-        }
-
-        private static BoundedContextElement ProcessContext(IMetadataElement context)
-        {
-            var provider = CreateProvider(MockSource(context));
-
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
         }
 
         #endregion

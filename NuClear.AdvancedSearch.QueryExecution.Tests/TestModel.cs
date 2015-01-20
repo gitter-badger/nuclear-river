@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                         EntityElement.Config
                             .Name("TestClass1")
                             .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
 
                             // TODO: актализировать когда будет поддержка relations
@@ -57,7 +57,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                          EntityElement.Config
                             .Name("dbo.TestClass1")
                             .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             ));
 
@@ -79,7 +79,10 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 var providerInvariantName = DbConfiguration.DependencyResolver.GetService<IProviderInvariantName>(DbProviderServices.GetProviderFactory(connection)).Name;
                 var dbProviderInfo = new DbProviderInfo(providerInvariantName, providerManifestToken);
 
-                return EdmxModelBuilder.Build(element, dbProviderInfo);
+                // TODO: custom TypeProvider
+                var edmxModelBuilder = new EdmxModelBuilderOld(dbProviderInfo);
+
+                return edmxModelBuilder.Build(element);
             }
         }
 

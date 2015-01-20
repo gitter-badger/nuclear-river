@@ -5,11 +5,11 @@ using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class EntityElement : BaseMetadataElement<EntityElement, EntityElementBuilder>
+    public sealed class PropertyMappingElement : BaseMetadataElement<PropertyMappingElement, PropertyMappingElementBuilder>
     {
-        internal EntityElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
+        internal PropertyMappingElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
             : base(identity, features)
         {
         }
-   }
+    }
 }
