@@ -51,6 +51,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        public void Test_Filter_Enum()
+        {
+            var request = TestHelper.CreateRequest("$filter=Enum1 eq AdvancedSearch.Context.Enum1'Member1'");
+            var queryOptions = CreateValidQueryOptions(request);
+
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(_query.Where(x => x.Enum1 == Enum1.Member1));
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
         [ExpectedException(typeof(ODataException))]
         public void Test_Filter_Negative()
         {
@@ -106,11 +118,11 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [Test]
         public void Test_Select()
         {
-            var request = TestHelper.CreateRequest("$select=Id");
+            var request = TestHelper.CreateRequest("$select=Id,Name");
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.Id }));
+            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.Name, x.Id }));
 
             Assert.AreEqual(expected, actual);
         }

@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public static readonly DbCompiledModel EFModel;
         public static readonly IEdmModel EdmModel;
 
-        private static readonly Type[] ClrTypes = { typeof(TestClass1) };
+        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(Enum1) };
 
         static TestModel()
         {
@@ -38,6 +38,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                            .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
 
                             // TODO: актализировать когда будет поддержка relations
                             // .Relation(EntityRelationElement.Config
@@ -58,6 +59,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                            .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32))
                             ));
 
             var element = ProcessContext(builder);
@@ -123,9 +125,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         #endregion
     }
 
+    public enum Enum1 { Member1 , Member2 }
+
     public sealed class TestClass1
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public Enum1 Enum1 { get; set; }
     }
 }
