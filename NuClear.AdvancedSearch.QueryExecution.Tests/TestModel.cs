@@ -39,17 +39,16 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
-
-                            // TODO: актализировать когда будет поддержка relations
-                            // .Relation(EntityRelationElement.Config
-                            // .Name("TestClass2")
-                            // .DirectTo(
-                            // EntityElement.Config
-                            // .Name("TestClass2")
-                            // .IdentifyBy("Id")
-                            // .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
-                            // )
-                            // .AsOne())
+                            .Relation(EntityRelationElement.Config
+                                .Name("TestClass2")
+                                .DirectTo(
+                                    EntityElement.Config
+                                        .Name("TestClass2")
+                                        .IdentifyBy("Id")
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
+                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                             )
+                             .AsOne())
                     ))
 
                 .StoreModel(
@@ -59,8 +58,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32))
-                            ));
+                            .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32)),
+                         EntityElement.Config
+                            .Name("dbo.TestClass2")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                    )
+                );
 
             var element = ProcessContext(builder);
             var dbModel = BuildDbModel(element);
@@ -132,5 +137,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public int Id { get; set; }
         public string Name { get; set; }
         public Enum1 Enum1 { get; set; }
+
+        public TestClass2 TestClass2 { get; set; }
+    }
+
+    public sealed class TestClass2
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

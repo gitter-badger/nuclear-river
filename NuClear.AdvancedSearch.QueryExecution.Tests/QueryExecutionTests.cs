@@ -26,7 +26,11 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             _query = _context.Set<TestClass1>();
 
             // insert test data
-            var entities = Enumerable.Range(0, 10).Select(x => new TestClass1 { Id = x });
+            var entities = Enumerable.Range(0, 10).Select(x => new TestClass1
+            {
+                Id = x,
+                TestClass2 = new TestClass2 { Id = x }
+            });
             _context.Set<TestClass1>().AddRange(entities);
 
             _context.SaveChanges();
@@ -135,14 +139,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             CreateValidQueryOptions(request);
         }
 
-        [Test, Ignore("Актализировать когда будет поддержка relations")]
+        [Test]
         public void Test_Expand()
         {
-            var request = TestHelper.CreateRequest("$expand=TestClass2");
+            var request = TestHelper.CreateRequest("$select=TestClass2&$expand=TestClass2");
             var queryOptions = CreateValidQueryOptions(request);
 
             var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(null);
+            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.TestClass2 }));
 
             Assert.AreEqual(expected, actual);
         }
