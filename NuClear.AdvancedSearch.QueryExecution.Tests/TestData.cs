@@ -49,14 +49,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                         EntityElement.Config
                             .Name("TestClass1")
                             .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Relation(EntityRelationElement.Config
                                 .Name("TestClass2")
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("TestClass2")
                                         .IdentifyBy("Id")
-                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32).NotNull())
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                                 )
                                 .AsOne())
                     )

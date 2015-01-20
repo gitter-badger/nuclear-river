@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.Reflection;
-
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 
 using NUnit.Framework;
@@ -30,19 +27,5 @@ namespace EntityDataModel.EntityFramework.Tests
 
             Assert.That(model, Is.Not.Null);
         }
-    }
-
-    public class MyType<T> : TypeDelegator
-    {
-        public MyType()
-            : base(typeof(T))
-        {
-        }
-    }
-
-    public class Firm
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

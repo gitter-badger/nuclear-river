@@ -86,7 +86,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var config = NewContext("Context",
                     EntityElement.Config
                         .Name("Entity").IdentifyBy("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte).NotNull())
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                         );
 
@@ -130,7 +130,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var element = EntityElement.Config.Name("Entity").IdentifyBy("PropertyOfInt32");
             foreach (var propertyType in primitiveTypes)
             {
-                element.Property(NewProperty("PropertyOf" + propertyType.ToString("G")).OfType(propertyType).NotNull());
+                element.Property(NewProperty("PropertyOf" + propertyType.ToString("G")).OfType(propertyType));
             }
 
             var model = BuildValidModel(NewContext("Context", element));
@@ -250,7 +250,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 
             if (properties.Length == 0)
             {
-                config.Property(NewProperty("Id").NotNull()).IdentifyBy("Id");
+                config.Property(NewProperty("Id")).IdentifyBy("Id");
             }
 
             foreach (var propertyElementBuilder in properties)

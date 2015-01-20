@@ -80,7 +80,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         public static bool IsNullable(this EntityPropertyElement propertyElement)
         {
             var nullableFeature = propertyElement.Features.OfType<EntityPropertyNullableFeature>().FirstOrDefault();
-            var isNullable = nullableFeature == null || nullableFeature.IsNullable;
+            var isNullable = nullableFeature != null && nullableFeature.IsNullable;
             return isNullable;
         }
     }

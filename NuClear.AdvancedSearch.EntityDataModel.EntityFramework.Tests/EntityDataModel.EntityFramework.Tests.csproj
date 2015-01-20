@@ -90,6 +90,12 @@
     <Compile Include="EdmxBuilderModelTests.cs" />
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
+    <Compile Include="Model.CustomerIntelligence\Account.cs" />
+    <Compile Include="Model.CustomerIntelligence\Category.cs" />
+    <Compile Include="Model.CustomerIntelligence\Client.cs" />
+    <Compile Include="Model.CustomerIntelligence\Contact.cs" />
+    <Compile Include="Model.CustomerIntelligence\ContactRole.cs" />
+    <Compile Include="Model.CustomerIntelligence\Firm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
