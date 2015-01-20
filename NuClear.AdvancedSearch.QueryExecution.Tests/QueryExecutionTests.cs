@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Data.Entity;
 using System.Linq;
 using System.Net.Http;
@@ -17,25 +16,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
     [TestFixture]
     public sealed class QueryExecutionTests
     {
-        private Type _testType;
         private DbContext _context;
-        private DbSet _testDbSet;
+        private IQueryable<TestClass1> _query;
 
         [SetUp]
         public void Init()
         {
-            _testType = TestModel.EdmModel.GetClrTypes().Single(x => string.Equals(x.Name, "TestClass1"));
             _context = TestModel.EFModel.CreateInMemoryContext();
+            _query = _context.Set<TestClass1>();
 
             // insert test data
-            _testDbSet = _context.Set(_testType);
-            var idProperty = _testType.GetProperty("Id");
-            for (var i = 0; i < 10; i++)
-            {
-                var @object = Activator.CreateInstance(_testType);
-                idProperty.SetValue(@object, i);
-                _testDbSet.Add(@object);
-            }
+            var entities = Enumerable.Range(0, 10).Select(x => new TestClass1 { Id = x });
+            _context.Set<TestClass1>().AddRange(entities);
 
             _context.SaveChanges();
         }
@@ -52,8 +44,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$filter=Id ne 1");
             var queryOptions = CreateValidQueryOptions(request);
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T WHERE T.Id <> 1"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(_query.Where(x => x.Id != 1));
 
             Assert.AreEqual(expected, actual);
         }
@@ -72,9 +64,9 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$count=true");
             var queryOptions = CreateValidQueryOptions(request);
 
-            queryOptions.ApplyTo(_testDbSet);
+            queryOptions.ApplyTo(_query);
             var actual = request.ODataProperties().TotalCount;
-            var expected = ((IEnumerable)_testDbSet).OfType<object>().Count();
+            var expected = ((IEnumerable)_query).OfType<object>().Count();
 
             Assert.AreEqual(expected, actual);
         }
@@ -85,8 +77,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$orderby=Id desc");
             var queryOptions = CreateValidQueryOptions(request);
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T ORDER BY T.Id DESC"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(_query.OrderByDescending(x => x.Id));
 
             Assert.AreEqual(expected, actual);
         }
@@ -105,8 +97,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$skip=2&$top=1");
             var queryOptions = CreateValidQueryOptions(request);
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE T FROM TestClass1 AS T ORDER BY T.Id SKIP 2 LIMIT 1"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(_query.OrderBy(x => x.Id).Skip(2).Take(1));
 
             Assert.AreEqual(expected, actual);
         }
@@ -117,9 +109,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$select=Id");
             var queryOptions = CreateValidQueryOptions(request);
 
-            var data = queryOptions.ApplyTo(_testDbSet);
-            var actual = JsonConvert.SerializeObject(data);
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.Id FROM TestClass1 AS T"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.Id }));
 
             Assert.AreEqual(expected, actual);
         }
@@ -138,8 +129,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var request = TestHelper.CreateRequest("$expand=TestClass2");
             var queryOptions = CreateValidQueryOptions(request);
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery("SELECT T.TestClass2 FROM TestClass1 AS T"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
+            var expected = JsonConvert.SerializeObject(null);
 
             Assert.AreEqual(expected, actual);
         }
@@ -162,15 +153,15 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 PageSize = 2
             };
 
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_testDbSet, querySettings));
-            var expected = JsonConvert.SerializeObject(_context.EsqlQuery(_testType, "SELECT VALUE TOP(2) T FROM TestClass1 AS T"));
+            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query, querySettings));
+            var expected = JsonConvert.SerializeObject(_query.Take(2));
 
             Assert.AreEqual(expected, actual);
         }
 
-        private ODataQueryOptions CreateValidQueryOptions(HttpRequestMessage request)
+        private static ODataQueryOptions CreateValidQueryOptions(HttpRequestMessage request)
         {
-            var queryOptions = TestHelper.CreateValidQueryOptions(TestModel.EdmModel, _testType, request, new ODataValidationSettings());
+            var queryOptions = TestHelper.CreateValidQueryOptions(TestModel.EdmModel, typeof(TestClass1), request, new ODataValidationSettings());
             return queryOptions;
         }
     }
