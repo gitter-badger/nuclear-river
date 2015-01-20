@@ -19,9 +19,9 @@ namespace NuClear.EntityDataModel.Tests
                 yield return Case(EntityPropertyElement.Config.Name("Property").OfType(EntityPropertyType.Int64))
                     .Returns("{'Identity':{'Id':'Property'},'Features':[{'PropertyType':'Int64'}]}")
                     .SetName("ShouldDeclareTypedProperty");
-                yield return Case(EntityPropertyElement.Config.Name("Property").NotNull())
-                    .Returns("{'Identity':{'Id':'Property'},'Features':[{'IsNullable':false}]}")
-                    .SetName("ShouldDeclareNonNullableProperty");
+                yield return Case(EntityPropertyElement.Config.Name("Property").Nullable())
+                    .Returns("{'Identity':{'Id':'Property'},'Features':[{'IsNullable':true}]}")
+                    .SetName("ShouldDeclareNullableProperty");
                 yield return Case(EntityPropertyElement.Config.Name("Property")
                                                        .UsingEnum("Gender")
                                                        .WithMember("Female", 1)
