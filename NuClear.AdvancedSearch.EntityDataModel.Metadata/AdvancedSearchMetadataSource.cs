@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         {
             HierarchyMetadata root = HierarchyMetadata.Config
                 .Id.Is(IdBuilder.For<AdvancedSearchIdentity>())
-                .Childs(_customerIntelligence);
+                .Childs(CustomerIntelligenceContext);
             _metadata = new Dictionary<Uri, IMetadataElement> { { root.Identity.Id, root } };
         }
 

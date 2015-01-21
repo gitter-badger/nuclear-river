@@ -1,5 +1,3 @@
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-
 using NUnit.Framework;
 
 namespace EntityDataModel.EntityFramework.Tests
@@ -16,12 +14,7 @@ namespace EntityDataModel.EntityFramework.Tests
             var config = NewContext("Library")
                 .ConceptualModel(NewModel(NewEntity("Book")))
                 .StoreModel(NewModel(NewEntity("Book")))
-                .Mapping(
-                    ModelMappingElement.Config.Mappings(
-                        EntityMappingElement.Config.Map("Book", "Book")
-                    )
-                )
-                ;
+                .Map("Book", "Book");
 
             var model = BuildModel(config);
 

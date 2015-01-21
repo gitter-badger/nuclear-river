@@ -6,7 +6,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private static readonly StructuralModelElement ConceptualModel =
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("Firm").EntitySetName("Firms")
+                            .Name("Firm").EntitySetName("Firms").ToTable("CustomerIntelligence.Firm")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .Name("Categories")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("Category")
+                                        .Name("Category").ToTable("CustomerIntelligence.Category")
                                         .IdentifyBy("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .Name("Client")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("Client")
+                                        .Name("Client").ToTable("CustomerIntelligence.Client")
                                         .IdentifyBy("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                         .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
@@ -42,7 +42,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .Name("Accounts")
                                                 .DirectTo(
                                                     EntityElement.Config
-                                                        .Name("Account")
+                                                        .Name("Account").ToTable("CustomerIntelligence.Account")
                                                         .IdentifyBy("Id")
                                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
@@ -54,7 +54,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .Name("Contacts")
                                                 .DirectTo(
                                                     EntityElement.Config
-                                                        .Name("Contact")
+                                                        .Name("Contact").ToTable("CustomerIntelligence.Contact")
                                                         .IdentifyBy("Id")
                                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Role")
@@ -116,31 +116,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64))
                    );
 
-        private static readonly ModelMappingElement ConceptualToStoreMapping = 
-            ModelMappingElement.Config
-                .Mappings(
-                    EntityMappingElement.Config
-                        .Map("Firm", "CustomerIntelligence.Firm")
-                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
-                    EntityMappingElement.Config
-                        .Map("Category", "CustomerIntelligence.Category")
-                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
-                    EntityMappingElement.Config
-                        .Map("Client", "CustomerIntelligence.Client")
-                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
-                    EntityMappingElement.Config
-                        .Map("Account", "CustomerIntelligence.Account")
-                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
-                    EntityMappingElement.Config
-                        .Map("Contact", "CustomerIntelligence.Contact")
-                        .Map(PropertyMappingElement.Config.Map("Id", "Id"))
-                    );
-
-        private readonly BoundedContextElement _customerIntelligence =
+        private static readonly BoundedContextElement CustomerIntelligenceContext =
             BoundedContextElement.Config
                 .Name("CustomerIntelligence")
                 .ConceptualModel(ConceptualModel)
-                .StoreModel(StoreModel)
-                .Mapping(ConceptualToStoreMapping);
+                .StoreModel(StoreModel);
     }
 }

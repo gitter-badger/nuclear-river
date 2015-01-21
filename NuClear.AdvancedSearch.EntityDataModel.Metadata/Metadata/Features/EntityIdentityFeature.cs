@@ -1,33 +1,28 @@
 using System;
-using System.Collections.Generic;
 
 using NuClear.Metamodeling.Elements.Aspects.Features;
+using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
-    public sealed class EntityIdentityFeature : IUniqueMetadataFeature
+    public sealed class ElementMappingFeature : IUniqueMetadataFeature
     {
-        private readonly EntityPropertyElement[] _identifyingProperties;
+        private readonly IMetadataElementIdentity _mappedElementIdentity;
 
-        public EntityIdentityFeature(params EntityPropertyElement[] identifyingProperties)
+        public ElementMappingFeature(IMetadataElementIdentity mappedElementIdentity)
         {
-            if (identifyingProperties == null)
+            if (mappedElementIdentity == null)
             {
-                throw new ArgumentNullException("identifyingProperties");
+                throw new ArgumentNullException("mappedElementIdentity");
             }
-            if (identifyingProperties.Length == 0)
-            {
-                throw new ArgumentException("The properties should be provided.", "identifyingProperties");
-            }
-
-            _identifyingProperties = identifyingProperties;
+            _mappedElementIdentity = mappedElementIdentity;
         }
 
-        public IReadOnlyCollection<EntityPropertyElement> IdentifyingProperties
+        public IMetadataElementIdentity MappedElementIdentity
         {
             get
             {
-                return _identifyingProperties;
+                return _mappedElementIdentity;
             }
         }
     }

@@ -90,7 +90,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
         {
-            var metadataProvider = CreateMetadataProvider(CustomerIntelligenceMetadataSource);
+            var metadataProvider = CreateMetadataProvider(source);
             var context = LookupContext(metadataProvider);
 
             var builder = CreateBuilder(typeProvider);
@@ -290,18 +290,6 @@ namespace EntityDataModel.EntityFramework.Tests
         protected static EntityRelationElementBuilder NewRelation(string relationName)
         {
             return EntityRelationElement.Config.Name(relationName);
-        }
-
-        protected static ModelMappingElementBuilder NewMapping(params EntityElementBuilder[] entities)
-        {
-            var mapping = ModelMappingElement.Config;
-
-            //            foreach (var entityElementBuilder in entities)
-            //            {
-            //                model.Elements(entityElementBuilder);
-            //            }
-
-            return mapping;
         }
 
         #endregion

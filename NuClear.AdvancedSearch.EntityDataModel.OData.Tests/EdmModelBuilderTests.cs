@@ -147,16 +147,18 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var config =
                 NewContext("Context", 
                     NewEntity("Entity")
-                    .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
-                    .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsMany())
-                    .Relation(NewRelation("ToEntityAsOne").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
-                    .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntity")).AsMany())
+                    .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValueAsOne", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
+                    .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValueAsMany", NewProperty("Name", EntityPropertyType.String))).AsMany())
+                    .Relation(NewRelation("ToEntityAsOne").DirectTo(NewEntity("RelatedEntityAsOne")).AsOneOptionally())
+                    .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntityAsMany")).AsMany())
                     );
 
             var model = BuildValidModel(config);
 
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValueAsOne"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValueAsMany"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntityAsOne"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntityAsMany"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
             Assert.That(model.FindDeclaredType("AdvancedSearch.Context.Entity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
             
             var entityType = (IEdmStructuredType)model.FindDeclaredType("AdvancedSearch.Context.Entity");
