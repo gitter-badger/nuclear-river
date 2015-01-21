@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.EntityDataModel.EntityFramework.Building
@@ -16,7 +16,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
     {
         private readonly DbProviderInfo _providerInfo;
         private readonly ITypeProvider _typeProvider;
-        private readonly Dictionary<Type, EntityElement> _elementsByType = new Dictionary<Type, EntityElement>();
 
         public EdmxModelBuilder(DbProviderInfo providerInfo, ITypeProvider typeProvider = null)
         {
@@ -29,65 +28,76 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             _typeProvider = typeProvider ?? new EmitTypeProvider();
         }
 
-        public DbModel Build(IMetadataProvider metadataProvider, Uri uri)
+        public DbModel Build(IMetadataProvider metadataProvider, Uri contextUrl)
         {
             if (metadataProvider == null)
             {
                 throw new ArgumentNullException("metadataProvider");
             }
+            if (contextUrl == null)
+            {
+                throw new ArgumentNullException("contextUrl");
+            }
 
-            BoundedContextElement context;
-            metadataProvider.TryGetMetadata(uri, out context);
+            BoundedContextElement boundedContextElement;
+            metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
+            if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
+            {
+                return null;
+            }
 
-            return Build(context);
+            return Build(new BuildContext(metadataProvider, boundedContextElement, _typeProvider));
         }
 
-        public DbModel Build(BoundedContextElement context)
+        private DbModel Build(BuildContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException("context");
-            }
-
             var builder = CreateModelBuilder();
 
-            if (context.ConceptualModel != null)
+            foreach (var entityElement in context.EntityTypes)
             {
-                foreach (var entityElement in context.ConceptualModel.Entities)
-                {
-                    var entityType = _typeProvider.Resolve(entityElement);
-                    var configuration = RegisterType(builder, entityType);
+                var entityType = context.ResolveType(entityElement);
+                var configuration = RegisterType(builder, entityType);
 
-                    _elementsByType.Add(entityType, entityElement);
-
-                    var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
-                    var keyNames = entityElement.GetKeyProperties().Select(p => p.ResolveName()).ToArray();
-                    configuration.Configure(x => x
-                        .HasEntitySetName(entitySetName)
-                        .HasKey(keyNames));
-
-                    foreach (var propertyElement in entityElement.GetProperties())
-                    {
-                        var propertyType = propertyElement.GetPropertyType();
-                        if (propertyType == EntityPropertyType.Enum) continue;
-
-                        var propertyName = propertyElement.ResolveName();
-
-                        if (propertyElement.IsNullable())
-                        {
-                            configuration.Configure(x => x.Property(propertyName).IsOptional());
-                        }
-                        else
-                        {
-                            configuration.Configure(x => x.Property(propertyName).IsRequired());
-                        }
-                    }
-                }
+                ConfigureEntityType(configuration, entityElement, context);
             }
 
-            var model = builder.Build(_providerInfo);
+            return builder.Build(_providerInfo);
+        }
 
-            return model;
+        private static void ConfigureEntityType(TypeConventionConfiguration configuration, EntityElement entityElement, BuildContext context)
+        {
+            // update entity set name
+            var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
+            configuration.Configure(x => x.HasEntitySetName(entitySetName));
+
+            // declare keys
+            var keyNames = entityElement.GetKeyProperties().Select(p => p.ResolveName());
+            configuration.Configure(x => x.HasKey(keyNames));
+
+            // specify table schema and name
+            var storeEntityElement = context.LookupMappedEntity(entityElement);
+            if (storeEntityElement != null)
+            {
+                string schemaName;
+                var tableName = storeEntityElement.ResolveName(out schemaName);
+                configuration.Configure(x => x.ToTable(tableName, schemaName));
+            }
+
+            foreach (var propertyElement in entityElement.GetProperties())
+            {
+                var propertyType = propertyElement.GetPropertyType();
+                if (propertyType == EntityPropertyType.Enum) continue;
+
+                var propertyName = propertyElement.ResolveName();
+                if (propertyElement.IsNullable())
+                {
+                    configuration.Configure(x => x.Property(propertyName).IsOptional());
+                }
+                else
+                {
+                    configuration.Configure(x => x.Property(propertyName).IsRequired());
+                }
+            }
         }
 
         private static TypeConventionConfiguration RegisterType(DbModelBuilder builder, Type entityType)
@@ -102,7 +112,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             var builder = new DbModelBuilder();
             
             DropDefaultConventions(builder);
-            AddCustomConventions(builder);
             
             return builder;
         }
@@ -117,49 +126,54 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             builder.Conventions.Remove<PluralizingTableNameConvention>();
         }
 
-        private void AddCustomConventions(DbModelBuilder builder)
+        private class BuildContext
         {
-            //builder.Conventions.Add(new EntityKeyConvention());
-            //builder.Conventions.Add(new EntitySetNameConvention());
-            //builder.Conventions.Add(new TableMappingConvention());
-        }
+            private readonly IMetadataProvider _metadataProvider;
+            private readonly BoundedContextElement _boundedContextElement;
+            private readonly ITypeProvider _typeProvider;
+            private readonly Dictionary<IMetadataElementIdentity, IMetadataElementIdentity> _entityMap;
 
-        private class EntityKeyConvention : IConceptualModelConvention<EntityType>
-        {
-            private readonly IReadOnlyDictionary<Type, EntityElement> _elementsByType;
-
-            public EntityKeyConvention(IReadOnlyDictionary<Type, EntityElement> elementsByType)
+            public BuildContext(IMetadataProvider metadataProvider, BoundedContextElement boundedContextElement, ITypeProvider typeProvider)
             {
-                _elementsByType = elementsByType;
+                _metadataProvider = metadataProvider;
+                _boundedContextElement = boundedContextElement;
+                _typeProvider = typeProvider;
+                _entityMap = boundedContextElement.ConceptualToStoreMapping != null && boundedContextElement.StoreModel != null
+                    ? boundedContextElement.ConceptualToStoreMapping.Mappings().ToDictionary(x => x.ConceptualEntityIdentity, x => x.StoreEntityIdentity)
+                    : new Dictionary<IMetadataElementIdentity, IMetadataElementIdentity>();
             }
 
-            public void Apply(EntityType item, DbModel model)
+            public IEnumerable<EntityElement> Entities
             {
-            }
-        }
-
-        private class EntitySetNameConvention : IConceptualModelConvention<EntityType>
-        {
-            public EntitySetNameConvention()
-            {
+                get
+                {
+                    return _boundedContextElement.ConceptualModel.Entities;
+                }
             }
 
-            public void Apply(EntityType item, DbModel model)
+            public IEnumerable<EntityElement> EntityTypes
             {
-                var meta = item.MetadataProperties.Where(x => x.IsAnnotation);
-            }
-        }
-
-        private class TableMappingConvention : Convention//, IConceptualModelConvention<EntityType>
-        {
-            public TableMappingConvention()
-            {
-                //Types().Having(t => t.HasElementType)
+                get
+                {
+                    return _boundedContextElement.ConceptualModel.GetFlattenEntities();
+                }
             }
 
-            public void Apply(EntityType item, DbModel model)
+            public EntityElement LookupEntity(Uri entityUrl)
             {
-                //item.
+                EntityElement entityElement;
+                return _metadataProvider.TryGetMetadata(entityUrl, out entityElement) ? entityElement : null;
+            }
+
+            public EntityElement LookupMappedEntity(EntityElement entityElement)
+            {
+                IMetadataElementIdentity storeElementIdentity;
+                return _entityMap.TryGetValue(entityElement.Identity, out storeElementIdentity) ? LookupEntity(storeElementIdentity.Id) : null;
+            }
+
+            public Type ResolveType(EntityElement entityElement)
+            {
+                return _typeProvider.Resolve(entityElement);
             }
         }
     }
