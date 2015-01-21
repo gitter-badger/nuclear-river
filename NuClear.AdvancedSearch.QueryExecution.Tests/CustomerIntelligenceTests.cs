@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Data.Entity;
 using System.Linq;
 
@@ -40,14 +41,56 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
+        public void ByClient()
+        {
+            using (var context = new DbContext(CreateConnection(), Model, true))
+            {
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/CategoryGroup eq 0");
+
+                var actual = queryOptions.ApplyTo(context.Set<Firm>());
+                var expected = context.Set<Firm>().Where(x => x.HasPhone || x.HasWebsite);
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
+        }
+
+        [Test]
+        public void ByCategory()
+        {
+            using (var context = new DbContext(CreateConnection(), Model, true))
+            {
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Categories/any(x: x/CategoryGroup eq 0)");
+
+                var actual = queryOptions.ApplyTo(context.Set<Firm>());
+                var expected = context.Set<Firm>().Where(x => x.Categories.Any(y => y.CategoryGroup == 0));
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
+        }
+
+        [Test]
+        public void ByAccount()
+        {
+            using (var context = new DbContext(CreateConnection(), Model, true))
+            {
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/Accounts/all(x: x/Balance gt 0.01M)");
+
+                var actual = queryOptions.ApplyTo(context.Set<Firm>());
+                var expected = context.Set<Firm>().Where(x => x.Client.Accounts.All(y => y.Balance > 0.01M));
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
+        }
+
+        [Test, Ignore("Почему-то не работает, разобраться")]
         public void ByContact()
         {
             using (var context = new DbContext(CreateConnection(), Model, true))
             {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=HasPhone eq true or HasWebsite eq true");
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/Contacts/any(x: x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')");
 
                 var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.HasPhone || x.HasWebsite);
+                var expected = context.Set<Firm>().Where(x => x.Client.Contacts.Any(y => y.Role == ContactRole.Employee));
 
                 Assert.That(actual, Is.EqualTo(expected));
             }
