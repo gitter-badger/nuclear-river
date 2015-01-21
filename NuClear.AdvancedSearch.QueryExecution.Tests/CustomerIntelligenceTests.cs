@@ -39,6 +39,18 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             }
         }
 
+        [Test]
+        public void ByContact()
+        {
+            using (var context = new DbContext(CreateConnection(), Model, true))
+            {
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=HasPhone eq true or HasWebsite eq true");
 
+                var actual = queryOptions.ApplyTo(context.Set<Firm>());
+                var expected = context.Set<Firm>().Where(x => x.HasPhone || x.HasWebsite);
+
+                Assert.That(actual, Is.EqualTo(expected));
+            }
+        }
     }
 }
