@@ -24,8 +24,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         protected override EntityMappingElement Create()
         {
             var identity = IdBuilder.For<AdvancedSearchIdentity>(_conceptualEntityName, _storeEntityName).AsIdentity();
-            var sourceEntityIdentity = IdBuilder.For<AdvancedSearchIdentity>(_conceptualEntityName).AsIdentity();
-            var targetEntityIdentity = IdBuilder.For<AdvancedSearchIdentity>(_storeEntityName).AsIdentity();
+            var sourceEntityIdentity = _conceptualEntityName.AsRelativeUri().AsIdentity();
+            var targetEntityIdentity = _storeEntityName.AsRelativeUri().AsIdentity();
 
             return new EntityMappingElement(identity, sourceEntityIdentity, targetEntityIdentity, Features);
         }

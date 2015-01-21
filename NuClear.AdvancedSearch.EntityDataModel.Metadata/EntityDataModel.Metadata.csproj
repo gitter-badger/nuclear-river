@@ -51,6 +51,7 @@
     <Compile Include="Metadata\FluentSyntax\ModelMappingElementBuilder.cs" />
     <Compile Include="Metadata\PropertyMappingElement.cs" />
     <Compile Include="Metadata\FluentSyntax\PropertyMappingElementBuilder.cs" />
+    <Compile Include="Metadata\StructuralModelElementExtensions.cs" />
     <Compile Include="Metadata\StructuralModelElement.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />
     <Compile Include="Metadata\EntityElementExtensions.cs" />
