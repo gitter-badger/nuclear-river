@@ -92,8 +92,6 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 var actual = queryOptions.ApplyTo(context.Set<Firm>());
                 var expected = context.Set<Firm>().Where(x => x.Client.Contacts.Any(y => y.Role == ContactRole.Employee));
 
-                var array = ((IEnumerable)actual).OfType<object>().ToArray();
-
                 Assert.That(actual, Is.EqualTo(expected));
             }
         }
