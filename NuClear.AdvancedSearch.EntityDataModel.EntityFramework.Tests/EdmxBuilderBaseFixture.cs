@@ -271,7 +271,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
             if (properties.Length == 0)
             {
-                config.Property(NewProperty("Id")).IdentifyBy("Id");
+                config.Property(NewProperty("Id")).HasKey("Id");
             }
 
             foreach (var propertyElementBuilder in properties)

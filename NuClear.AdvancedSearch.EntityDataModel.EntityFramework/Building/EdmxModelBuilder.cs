@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.ModelConfiguration.Conventions;
@@ -51,7 +52,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private DbModel Build(BuildContext context)
         {
-            var builder = CreateModelBuilder();
+            var builder = CreateModelBuilder(context);
 
             foreach (var entityElement in context.EntityTypes)
             {
@@ -66,6 +67,9 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private static void ConfigureEntityType(TypeConventionConfiguration configuration, EntityElement entityElement, BuildContext context)
         {
+            // add element id
+            //configuration.Configure(x => x.HasTableAnnotation("EntityId", entityElement.Identity.Id));
+
             // update entity set name
             var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
             configuration.Configure(x => x.HasEntitySetName(entitySetName));
@@ -81,6 +85,8 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 string schemaName;
                 var tableName = storeEntityElement.ResolveName(out schemaName);
                 configuration.Configure(x => x.ToTable(tableName, schemaName));
+
+                configuration.Configure(x => x.HasTableAnnotation("EntityId", storeEntityElement.Identity.Id));
             }
 
             foreach (var propertyElement in entityElement.GetProperties())
@@ -107,11 +113,12 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             return builder.Types().Where(x => x == entityType);
         }
 
-        private DbModelBuilder CreateModelBuilder()
+        private DbModelBuilder CreateModelBuilder(BuildContext context)
         {
             var builder = new DbModelBuilder();
             
             DropDefaultConventions(builder);
+            builder.Conventions.Add(new ForeignKeyMappingConvention(context));
             
             return builder;
         }
@@ -124,6 +131,65 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             // store model conventions
             builder.Conventions.Remove<ForeignKeyIndexConvention>();
             builder.Conventions.Remove<PluralizingTableNameConvention>();
+        }
+
+        private class ForeignKeyMappingConvention : IStoreModelConvention<AssociationType>
+        {
+            private const string AnnotationKey = "http://schemas.microsoft.com/ado/2013/11/edm/customannotation:EntityId";
+            private readonly BuildContext _context;
+
+            public ForeignKeyMappingConvention(BuildContext context)
+            {
+                _context = context;
+            }
+
+            public void Apply(AssociationType item, DbModel model)
+            {
+                if (item.IsForeignKey && item.Constraint != null)
+                {
+                    var sourceId = ResolveId(item.Constraint.FromRole.GetEntityType());
+                    var targetId = ResolveId(item.Constraint.ToRole.GetEntityType());
+
+                    if (sourceId != null & targetId != null)
+                    {
+                        var sourceElement = _context.LookupEntity(sourceId);
+                        var targetElement = _context.LookupEntity(targetId);
+
+                        if (sourceElement != null & targetElement != null)
+                        {
+                            var relation = targetElement.GetRelations().FirstOrDefault(x => x.GetTarget().ResolveName() == sourceElement.ResolveName());
+                            if (relation != null)
+                            {
+                                item.Constraint.ToProperties.First().Name = relation.ResolveName();
+                            }
+                        }
+
+                        //item.Constraint.ToProperties.First().Name = "";
+                        //item.Constraint = null;
+                    }
+
+                    //TrimNames(item.Constraint.FromProperties);
+                    //TrimNames(item.Constraint.ToProperties);
+                }
+            }
+
+            private static Uri ResolveId(EntityType entityType)
+            {
+                MetadataProperty property;
+                if (entityType.MetadataProperties.TryGetValue(AnnotationKey, false, out property))
+                {
+                    return (Uri)property.Value;
+                }
+                return null;
+            }
+
+            private static void TrimNames(IEnumerable<EdmProperty> properties)
+            {
+                foreach (var property in properties)
+                {
+                    property.Name = property.Name.Replace("_", "");
+                }
+            }
         }
 
         private class BuildContext

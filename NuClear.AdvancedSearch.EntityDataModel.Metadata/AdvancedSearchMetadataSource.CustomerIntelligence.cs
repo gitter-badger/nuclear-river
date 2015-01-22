@@ -6,8 +6,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private static readonly StructuralModelElement ConceptualModel =
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("Firm").EntitySetName("Firms").ToTable("CustomerIntelligence.Firm")
-                            .IdentifyBy("Id")
+                            .Name(EntityName.Firm).EntitySetName("Firms")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(EntityPropertyType.Int64))
@@ -22,8 +22,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .Name("Categories")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("Category").ToTable("CustomerIntelligence.Category")
-                                        .IdentifyBy("Id")
+                                        .Name(EntityName.Category)
+                                        .HasKey("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                                         .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
@@ -33,8 +33,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .Name("Client")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("Client").ToTable("CustomerIntelligence.Client")
-                                        .IdentifyBy("Id")
+                                        .Name(EntityName.Client)
+                                        .HasKey("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                         .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                                         .Relation(
@@ -42,8 +42,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .Name("Accounts")
                                                 .DirectTo(
                                                     EntityElement.Config
-                                                        .Name("Account").ToTable("CustomerIntelligence.Account")
-                                                        .IdentifyBy("Id")
+                                                        .Name(EntityName.Account)
+                                                        .HasKey("Id")
                                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
                                                 )
@@ -54,8 +54,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .Name("Contacts")
                                                 .DirectTo(
                                                     EntityElement.Config
-                                                        .Name("Contact").ToTable("CustomerIntelligence.Contact")
-                                                        .IdentifyBy("Id")
+                                                        .Name(EntityName.Contact)
+                                                        .HasKey("Id")
                                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Role")
                                                             .UsingEnum("ContactRole")
@@ -74,26 +74,26 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             StructuralModelElement.Config
                 .Elements(
                          EntityElement.Config
-                            .Name("CustomerIntelligence.Client")
-                            .IdentifyBy("Id")
+                            .Name(TableName.Client)
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte)),
                          EntityElement.Config
-                            .Name("CustomerIntelligence.Account")
-                            .IdentifyBy("Id")
+                            .Name(TableName.Account)
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
-                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                            .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
                          EntityElement.Config
-                            .Name("CustomerIntelligence.Contact")
-                            .IdentifyBy("Id")
+                            .Name(TableName.Contact)
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("Role").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("IsFired").OfType(EntityPropertyType.Boolean))
-                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int32)),
+                            .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
                          EntityElement.Config
-                            .Name("CustomerIntelligence.Firm")
-                            .IdentifyBy("Id")
+                            .Name(TableName.Firm)
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(EntityPropertyType.Int64))
@@ -104,22 +104,47 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                             .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                            .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
                          EntityElement.Config
-                            .Name("CustomerIntelligence.Category")
-                            .IdentifyBy("Id")
+                            .Name(TableName.Category)
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
-                            .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64))
+                            .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsMany())
                    );
 
         private static readonly BoundedContextElement CustomerIntelligenceContext =
             BoundedContextElement.Config
                 .Name("CustomerIntelligence")
                 .ConceptualModel(ConceptualModel)
-                .StoreModel(StoreModel);
+                .StoreModel(StoreModel)
+                .Map(EntityName.Firm, TableName.Firm)
+                .Map(EntityName.Category, TableName.Category)
+                .Map(EntityName.Client, TableName.Client)
+                .Map(EntityName.Account, TableName.Account)
+                .Map(EntityName.Contact, TableName.Contact);
+
+        private static class EntityName
+        {
+            public const string Firm = "Firm";
+            public const string Category = "Category";
+            public const string Client = "Client";
+            public const string Account = "Account";
+            public const string Contact = "Contact";
+        }
+
+        private static class TableName
+        {
+            public const string Firm = TableSchema + "." + "Firm";
+            public const string Category = TableSchema + "." + "Category";
+            public const string Client = TableSchema + "." + "Client";
+            public const string Account = TableSchema + "." + "Account";
+            public const string Contact = TableSchema + "." + "Contact";
+
+            private const string TableSchema = "CustomerIntelligence";
+        }
     }
 }

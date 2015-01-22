@@ -147,7 +147,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var config = NewContext("Context").StoreModel(NewModel(
                     EntityElement.Config
-                        .Name("Entity").IdentifyBy("Id")
+                        .Name("Entity").HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                         ));
@@ -168,7 +168,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var config = NewContext("Context").StoreModel(NewModel(
                     EntityElement.Config
-                        .Name("Entity").IdentifyBy("Id", "Name")
+                        .Name("Entity").HasKey("Id", "Name")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                         ));
@@ -189,7 +189,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var config = NewContext("Context").StoreModel(NewModel(
                     EntityElement.Config
-                        .Name("Entity").IdentifyBy("Id")
+                        .Name("Entity").HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
                         .Property(EntityPropertyElement.Config.Name("NonNullable").OfType(EntityPropertyType.String))
                         .Property(EntityPropertyElement.Config.Name("Nullable").OfType(EntityPropertyType.String))
@@ -210,7 +210,7 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var primitiveTypes = Enum.GetValues(typeof(EntityPropertyType)).OfType<EntityPropertyType>().Except(new[] { EntityPropertyType.Enum }).ToArray();
 
-            var element = EntityElement.Config.Name("Entity").IdentifyBy("PropertyOfInt32");
+            var element = EntityElement.Config.Name("Entity").HasKey("PropertyOfInt32");
             foreach (var propertyType in primitiveTypes)
             {
                 element.Property(NewProperty("PropertyOf" + propertyType.ToString("G")).OfType(propertyType));

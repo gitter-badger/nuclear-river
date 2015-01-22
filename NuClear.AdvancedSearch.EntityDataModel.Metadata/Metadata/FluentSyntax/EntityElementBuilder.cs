@@ -38,18 +38,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityElementBuilder ToTable(string mappedStoreEntity)
-        {
-            if (string.IsNullOrWhiteSpace(mappedStoreEntity))
-            {
-                throw new ArgumentException("The table name should be specified.", "mappedStoreEntity");
-            }
-
-            AddFeatures(new ElementMappingFeature(mappedStoreEntity.AsUri().AsIdentity()));
-            return this;
-        }
-
-        public EntityElementBuilder IdentifyBy(params string[] propertyNames)
+        public EntityElementBuilder HasKey(params string[] propertyNames)
         {
             if (propertyNames.Length == 0)
             {

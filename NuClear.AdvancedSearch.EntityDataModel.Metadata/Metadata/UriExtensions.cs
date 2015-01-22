@@ -1,6 +1,5 @@
 ﻿using System;
 
-// ReSharper disable once CheckNamespace
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     internal static class UriExtensions

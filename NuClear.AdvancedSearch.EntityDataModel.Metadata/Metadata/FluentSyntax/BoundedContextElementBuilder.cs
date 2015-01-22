@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
@@ -65,7 +67,28 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 _storeModel.ActualizeId(storeModelId);
             }
 
+            ProcessMappings();
+
             return new BoundedContextElement(contextId, conceptualModelId, storeModelId, Features);
+        }
+
+        private void ProcessMappings()
+        {
+            if (_conceptualModel == null || _storeModel == null)
+            {
+                return;
+            }
+
+            var entities = _conceptualModel.GetFlattenEntities().ToDictionary(x => x.Identity.Id.ToString());
+
+            foreach (var map in _entityMap)
+            {
+                EntityElement entityElement;
+                if (entities.TryGetValue(map.Key, out entityElement))
+                {
+                    ((IMetadataElementUpdater)entityElement).AddFeature(new ElementMappingFeature(map.Value.AsUri().AsIdentity()));
+                }
+            }
         }
     }
 }
