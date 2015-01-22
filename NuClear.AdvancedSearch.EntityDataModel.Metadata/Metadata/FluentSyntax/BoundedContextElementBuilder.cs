@@ -14,10 +14,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private const string ConceptualModelName = "ConceptualModel";
         private const string StoreModelName = "StoreModel";
 
+        private readonly IDictionary<string, string> _entityMap = new Dictionary<string, string>();
         private string _name;
         private StructuralModelElement _conceptualModel;
         private StructuralModelElement _storeModel;
-        private readonly IDictionary<string,string> _entityMap = new Dictionary<string, string>();
 
         public BoundedContextElementBuilder Name(string name)
         {

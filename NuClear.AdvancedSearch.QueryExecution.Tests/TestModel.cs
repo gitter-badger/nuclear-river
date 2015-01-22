@@ -71,7 +71,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var dbModel = BuildDbModel(element);
 
             var clrTypes = dbModel.GetClrTypes();
-            EdmModel = EdmModelBuilder.Build(element);
+
+            var provider = CreateProvider(new AdvancedSearchMetadataSource());
+            var contextId = LookupContextId(provider);
+
+            var edmModelBuilder = new EdmModelBuilder();
+            EdmModel = edmModelBuilder.Build(provider, contextId);
             EdmModel.AddClrAnnotations(clrTypes);
 
             EFModel = dbModel.Compile();
@@ -128,6 +133,11 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         private static IMetadataProvider CreateProvider(params IMetadataSource[] sources)
         {
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
+        }
+
+        private static Uri LookupContextId(IMetadataProvider provider)
+        {
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
         }
 
         #endregion

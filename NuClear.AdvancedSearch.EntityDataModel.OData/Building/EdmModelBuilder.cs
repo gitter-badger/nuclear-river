@@ -9,14 +9,36 @@ using Microsoft.OData.Edm.Library.Values;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 {
-    public static class EdmModelBuilder
+    public sealed class EdmModelBuilder
     {
         private const string DefaultContainName = "DefaultContainer";
 
-        public static IEdmModel Build(BoundedContextElement context)
+        public IEdmModel Build(IMetadataProvider metadataProvider, Uri contextUrl)
+        {
+            if (metadataProvider == null)
+            {
+                throw new ArgumentNullException("metadataProvider");
+            }
+            if (contextUrl == null)
+            {
+                throw new ArgumentNullException("contextUrl");
+            }
+
+            BoundedContextElement boundedContextElement;
+            metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
+            if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
+            {
+                return null;
+            }
+
+            return Build(boundedContextElement);
+        }
+
+        private static IEdmModel Build(BoundedContextElement context)
         {
             if (context == null)
             {

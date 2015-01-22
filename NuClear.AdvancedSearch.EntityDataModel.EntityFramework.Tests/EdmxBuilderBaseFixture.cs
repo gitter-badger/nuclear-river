@@ -88,26 +88,26 @@ namespace EntityDataModel.EntityFramework.Tests
             typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
         }
 
-        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        protected static DbModel BuildModel(IMetadataProvider provider, ITypeProvider typeProvider = null)
         {
-            var metadataProvider = CreateMetadataProvider(source);
-            var context = LookupContext(metadataProvider);
+            var contextId = LookupContextId(provider);
 
             var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(metadataProvider, context.Identity.Id);
+            var model = builder.Build(provider, contextId);
 
             model.Dump();
 
             return model;
         }
 
+        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        {
+            return BuildModel(CreateMetadataProvider(source), typeProvider);
+        }
+
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            var model = CreateModel(context, typeProvider);
-
-            model.Dump();
-
-            return model;
+            return BuildModel(MockSource(context), typeProvider);
         }
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
@@ -305,17 +305,17 @@ namespace EntityDataModel.EntityFramework.Tests
         {
             var metadataSource = MockSource(context);
             var metadataProvider = CreateMetadataProvider(metadataSource);
-            var boundedContext = LookupContext(metadataProvider);
+            var contextId = LookupContextId(metadataProvider);
 
             var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(metadataProvider, boundedContext.Identity.Id);
+            var model = builder.Build(metadataProvider, contextId);
 
             return model;
         }
 
-        protected static BoundedContextElement LookupContext(IMetadataProvider provider)
+        protected static Uri LookupContextId(IMetadataProvider provider)
         {
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single();
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
         }
 
         protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)

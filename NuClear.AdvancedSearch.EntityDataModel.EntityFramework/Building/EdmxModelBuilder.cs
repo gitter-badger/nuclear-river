@@ -18,7 +18,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
         private readonly DbProviderInfo _providerInfo;
         private readonly ITypeProvider _typeProvider;
 
-        public EdmxModelBuilder(DbProviderInfo providerInfo, ITypeProvider typeProvider = null)
+        public EdmxModelBuilder(DbProviderInfo providerInfo, ITypeProvider typeProvider)
         {
             if (providerInfo == null)
             {

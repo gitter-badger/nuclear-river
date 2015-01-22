@@ -20,13 +20,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public void Setup()
         {
             var metadataProvider = CreateMetadataProvider(CustomerIntelligenceMetadataSource);
-            var context = LookupContext(metadataProvider);
+            var contextId = LookupContextId(metadataProvider);
 
-            var dbModel = BuildModel(context, CustomerIntelligenceTypeProvider);
+            var dbModel = BuildModel(metadataProvider, CustomerIntelligenceTypeProvider);
             Model = dbModel.Compile();
             var clrTypes = dbModel.GetClrTypes();
 
-            EdmModel = EdmModelBuilder.Build(context);
+            var edmModelBuilder = new EdmModelBuilder();
+            EdmModel = edmModelBuilder.Build(metadataProvider, contextId);
             EdmModel.AddClrAnnotations(clrTypes);
         }
 

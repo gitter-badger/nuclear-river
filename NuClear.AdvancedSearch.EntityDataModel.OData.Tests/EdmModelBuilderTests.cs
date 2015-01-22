@@ -180,12 +180,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         public void ShouldBuildValidModelForCustomerIntelligenceContext()
         {
             var provider = CreateProvider(new AdvancedSearchMetadataSource());
+            var contextId = LookupContextId(provider);
 
             BoundedContextElement boundedContext;
             provider.TryGetMetadata(IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence"), out boundedContext);
             
-            var context = ProcessContext(boundedContext);
-            var model = BuildModel(context);
+            var model = BuildModel(provider, contextId);
 
             Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
         }
@@ -206,21 +206,27 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }
 
-        private static BoundedContextElement ProcessContext(BoundedContextElement context)
+        private static IEdmModel BuildModel(IMetadataProvider provider, Uri contextId)
         {
-            var provider = CreateProvider(MockSource(context));
-
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
-        }
-
-        private static IEdmModel BuildModel(BoundedContextElement config)
-        {
-            var context = ProcessContext(config);
-            var model = EdmModelBuilder.Build(context);
+            var builder = new EdmModelBuilder();
+            var model = builder.Build(provider, contextId);
 
             model.Dump();
 
             return model;
+        }
+
+        private static IEdmModel BuildModel(BoundedContextElement context)
+        {
+            var provider = CreateProvider(MockSource(context));
+            var contextId = LookupContextId(provider);
+
+            return BuildModel(provider, contextId);
+        }
+
+        private static Uri LookupContextId(IMetadataProvider provider)
+        {
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
         }
 
         private static IEdmModel BuildValidModel(BoundedContextElementBuilder config)
