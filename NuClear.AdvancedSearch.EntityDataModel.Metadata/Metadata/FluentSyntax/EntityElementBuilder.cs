@@ -38,7 +38,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityElementBuilder IdentifyBy(params string[] propertyNames)
+        public EntityElementBuilder HasKey(params string[] propertyNames)
         {
             if (propertyNames.Length == 0)
             {
@@ -71,7 +71,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             ProcessKeys();
             ProcessCollectionName();
 
-            return new EntityElement(_name.AsRelativeUri().AsIdentity(), Features);
+            return new EntityElement(_name.AsUri().AsIdentity(), Features);
         }
 
         private void ProcessKeys()
@@ -87,7 +87,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 EntityPropertyElement property;
 
-                var propertyId = propertyName.AsRelativeUri();
+                var propertyId = propertyName.AsUri();
                 if (!properties.TryGetValue(propertyId, out property))
                 {
                     throw new InvalidOperationException(string.Format("The property with name: '{0}' was not declared.", propertyName));

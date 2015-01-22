@@ -9,14 +9,36 @@ using Microsoft.OData.Edm.Library.Values;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 {
-    public static class EdmModelBuilder
+    public sealed class EdmModelBuilder
     {
         private const string DefaultContainName = "DefaultContainer";
 
-        public static IEdmModel Build(BoundedContextElement context)
+        public IEdmModel Build(IMetadataProvider metadataProvider, Uri contextUrl)
+        {
+            if (metadataProvider == null)
+            {
+                throw new ArgumentNullException("metadataProvider");
+            }
+            if (contextUrl == null)
+            {
+                throw new ArgumentNullException("contextUrl");
+            }
+
+            BoundedContextElement boundedContextElement;
+            metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
+            if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
+            {
+                return null;
+            }
+
+            return Build(boundedContextElement);
+        }
+
+        private static IEdmModel Build(BoundedContextElement context)
         {
             if (context == null)
             {
@@ -27,7 +49,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                 throw new InvalidOperationException("The conceptual model is not specified.");
             }
 
-            return BuildModel(ResolveNamespaceName(context.Identity), context.ConceptualModel.Entities);
+            return BuildModel(context.ResolveNamespace(), context.ConceptualModel.Entities);
         }
 
         private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)
@@ -52,7 +74,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
             foreach (var entityElement in entities)
             {
-                var entitySetName = entityElement.GetEntitySetName() ?? ResolveName(entityElement.Identity);
+                var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
                 var entityType = (IEdmEntityType)typeBuilder.ResolveComplexType(entityElement);
 
                 container.AddEntitySet(entitySetName, entityType);
@@ -60,22 +82,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
             return container;
         }
-
-        #region Utils
-
-        private static string ResolveNamespaceName(IMetadataElementIdentity identity)
-        {
-            // TODO {s.pomadin, 16.12.2014}: provide a better solution
-            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Replace("/", ".");
-        }
-
-        private static string ResolveName(IMetadataElementIdentity identity)
-        {
-            // TODO {s.pomadin, 16.12.2014}: provide a better solution
-            return identity.Id.GetComponents(UriComponents.Path, UriFormat.Unescaped).Split('/').LastOrDefault();
-        }
-
-        #endregion
 
         #region TypeBuilder
 
@@ -101,7 +107,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
             public IEdmStructuredType ResolveComplexType(EntityElement entityElement)
             {
-                var typeName = ResolveName(entityElement.Identity);
+                var typeName = entityElement.ResolveName();
 
                 IEdmSchemaType complexType;
                 if (!_registeredTypes.TryGetValue(typeName, out complexType))
@@ -181,7 +187,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
                 foreach (var propertyElement in entityElement.GetProperties())
                 {
-                    var propertyName = ResolveName(propertyElement.Identity);
+                    var propertyName = propertyElement.ResolveName();
                     var typeReference = ResolveTypeReference(propertyElement);
 
                     var property = entityType.AddStructuralProperty(propertyName, typeReference);
@@ -193,7 +199,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
                 foreach (var relationElement in entityElement.GetRelations())
                 {
-                    var propertyName = ResolveName(relationElement.Identity);
+                    var propertyName = relationElement.ResolveName();
                     var structuredType = ResolveComplexType(relationElement.GetTarget());
 
                     if (structuredType is IEdmComplexType)
@@ -225,7 +231,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
                 foreach (var propertyElement in entityElement.GetProperties())
                 {
-                    var propertyName = ResolveName(propertyElement.Identity);
+                    var propertyName = propertyElement.ResolveName();
                     var typeReference = ResolveTypeReference(propertyElement);
 
                     entityType.AddStructuralProperty(propertyName, typeReference);
@@ -233,7 +239,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
                 foreach (var relationElement in entityElement.GetRelations())
                 {
-                    var propertyName = ResolveName(relationElement.Identity);
+                    var propertyName = relationElement.ResolveName();
                     var structuredType = ResolveComplexType(relationElement.GetTarget());
 
                     if (structuredType is IEdmComplexType)

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.OData.Edm;
+﻿using Microsoft.OData.Edm;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
@@ -12,23 +10,17 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData
     public sealed class EdmModelFactory
     {
         private readonly IMetadataProvider _metadataProvider;
+        private readonly EdmModelBuilder _modelBuilder;
 
         public EdmModelFactory(IMetadataProvider metadataProvider)
         {
             _metadataProvider = metadataProvider;
+            _modelBuilder = new EdmModelBuilder();
         }
 
         public IEdmModel Create(string name)
         {
-            BoundedContextElement contextElement;
-
-            var id = IdBuilder.For<AdvancedSearchIdentity>(name);
-            if (!_metadataProvider.TryGetMetadata(id, out contextElement))
-            {
-                throw new InvalidOperationException("The specified name does not belong to an existing bounded context.");
-            }
-
-            return EdmModelBuilder.Build(contextElement);
+            return _modelBuilder.Build(_metadataProvider, IdBuilder.For<AdvancedSearchIdentity>(name));
         }
     }
 }
