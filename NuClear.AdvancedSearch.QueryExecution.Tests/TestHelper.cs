@@ -1,7 +1,11 @@
 using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Net.Http;
 using System.Web.OData;
 using System.Web.OData.Query;
+
+using Effort;
 
 using Microsoft.OData.Edm;
 
@@ -27,6 +31,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             }
 
             return new HttpRequestMessage { RequestUri = uriBuilder.Uri };
+        }
+
+        public static DbContext CreateInMemoryContext(this DbCompiledModel dbCompiledModel)
+        {
+            var connection = DbConnectionFactory.CreateTransient();
+            var context = new DbContext(connection, dbCompiledModel, true);
+            return context;
         }
     }
 }

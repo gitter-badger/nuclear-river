@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.QueryExecution
     {
         public static IEdmModel AddClrAnnotations(this IEdmModel model, IEnumerable<Type> clrTypes)
         {
-            var tuples = model.SchemaElements.OfType<IEdmTerm>().Join(clrTypes, x => x.Name, x => x.Name, Tuple.Create, StringComparer.OrdinalIgnoreCase);
+            var tuples = model.SchemaElements.Join(clrTypes, x => x.Name, x => x.Name, Tuple.Create, StringComparer.OrdinalIgnoreCase);
 
             foreach (var tuple in tuples)
             {

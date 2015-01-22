@@ -2,8 +2,8 @@
 {
     public enum ContactRole
     {
-        Employee = 20000,
-        InfluenceDecisions = 20001,
-        MakingDecisions = 20002,
+        Employee = 200000,
+        InfluenceDecisions = 200001,
+        MakingDecisions = 200002,
     }
 }
