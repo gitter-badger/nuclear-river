@@ -35,7 +35,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
                             .Name("TestClass1")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("TestClass2")
-                                        .IdentifyBy("Id")
+                                        .HasKey("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                              )
@@ -55,13 +55,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                     StructuralModelElement.Config.Elements(
                          EntityElement.Config
                             .Name("dbo.TestClass1")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32)),
                          EntityElement.Config
                             .Name("dbo.TestClass2")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                     )
@@ -82,8 +82,11 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var dbProviderInfo = GeEffortProviderInfo();
             var typeProvider = GetTypeProvider(ClrTypes);
 
-            var edmxModelBuilder = new EdmxModelBuilderOld(dbProviderInfo, typeProvider);
-            return edmxModelBuilder.Build(element);
+            var provider = CreateProvider(MockSource(element));
+            var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
+
+            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, typeProvider);
+            return edmxModelBuilder.Build(provider, contextId);
         }
 
         private static DbProviderInfo GeEffortProviderInfo()
