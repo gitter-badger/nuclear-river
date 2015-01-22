@@ -26,7 +26,7 @@ using NUnit.Framework.Constraints;
 
 namespace EntityDataModel.EntityFramework.Tests
 {
-    internal class EdmxBuilderBaseFixture
+    public class EdmxBuilderBaseFixture
     {
         [TestFixtureSetUp]
         public void FixtureSetup()
@@ -90,11 +90,11 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
         {
-            var metadataProvider = CreateMetadataProvider(CustomerIntelligenceMetadataSource);
+            var metadataProvider = CreateMetadataProvider(source);
             var context = LookupContext(metadataProvider);
 
             var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(context);
+            var model = builder.Build(metadataProvider, context.Identity.Id);
 
             model.Dump();
 
@@ -103,8 +103,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(ProcessContext(context));
+            var model = CreateModel(context, typeProvider);
 
             model.Dump();
 
@@ -113,7 +112,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = CreateModel(ProcessContext(context));
+            var model = CreateModel(context);
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -122,7 +121,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = CreateModel(ProcessContext(context));
+            var model = CreateModel(context);
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
@@ -314,28 +313,24 @@ namespace EntityDataModel.EntityFramework.Tests
             return new EdmxModelBuilder(EffortProvider, typeProvider);
         }
 
-        private static DbModel CreateModel(BoundedContextElement context)
+        private static DbModel CreateModel(IMetadataElement context, ITypeProvider typeProvider = null)
         {
-            var builder = CreateBuilder();
-            var model = builder.Build(ProcessContext(context));
+            var metadataSource = MockSource(context);
+            var metadataProvider = CreateMetadataProvider(metadataSource);
+            var boundedContext = LookupContext(metadataProvider);
+
+            var builder = CreateBuilder(typeProvider);
+            var model = builder.Build(metadataProvider, boundedContext.Identity.Id);
 
             return model;
         }
 
-        private static BoundedContextElement ProcessContext(IMetadataElement context)
+        protected static BoundedContextElement LookupContext(IMetadataProvider provider)
         {
-            var metadataSource = MockSource(context);
-            var metadataProvider = CreateMetadataProvider(metadataSource);
-
-            return LookupContext(metadataProvider);
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single();
         }
 
-        private static BoundedContextElement LookupContext(IMetadataProvider provider)
-        {
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
-        }
-
-        private static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
+        protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
         {
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }

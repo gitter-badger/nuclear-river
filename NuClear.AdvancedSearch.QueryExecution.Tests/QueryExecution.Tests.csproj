@@ -91,12 +91,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerIntelligenceBaseFixture.cs" />
+    <Compile Include="CustomerIntelligenceTests.cs" />
     <Compile Include="QueryExecutionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestModel.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests\EntityDataModel.EntityFramework.Tests.csproj">
+      <Project>{63640861-D6B6-48E8-AF45-113EFA7982DB}</Project>
+      <Name>EntityDataModel.EntityFramework.Tests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NuClear.AdvancedSearch.EntityDataModel.EntityFramework\EntityDataModel.EntityFramework.csproj">
       <Project>{b6a84d45-6c11-4175-86f5-20cc5879fb01}</Project>
       <Name>EntityDataModel.EntityFramework</Name>

@@ -23,6 +23,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("Category")
+                                        .IdentifyBy("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                                         .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
@@ -42,6 +43,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .DirectTo(
                                                     EntityElement.Config
                                                         .Name("Account")
+                                                        .IdentifyBy("Id")
+                                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
                                                 )
                                                 .AsMany()
@@ -50,7 +53,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                             EntityRelationElement.Config
                                                 .Name("Contacts")
                                                 .DirectTo(
-                                                    EntityElement.Config.Name("Contact")
+                                                    EntityElement.Config
+                                                        .Name("Contact")
+                                                        .IdentifyBy("Id")
                                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                                         .Property(EntityPropertyElement.Config.Name("Role")
                                                             .UsingEnum("ContactRole")
@@ -74,18 +79,18 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte)),
                          EntityElement.Config
+                            .Name("CustomerIntelligence.Account")
+                            .IdentifyBy("Id")
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                            .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
+                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
+                         EntityElement.Config
                             .Name("CustomerIntelligence.Contact")
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("Role").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("IsFired").OfType(EntityPropertyType.Boolean))
                             .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int32)),
-                         EntityElement.Config
-                            .Name("CustomerIntelligence.Account")
-                            .IdentifyBy("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                            .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
-                            .Property(EntityPropertyElement.Config.Name("ClientId").OfType(EntityPropertyType.Int64)),
                          EntityElement.Config
                             .Name("CustomerIntelligence.Firm")
                             .IdentifyBy("Id")
@@ -105,14 +110,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .IdentifyBy("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64)),
-                         EntityElement.Config
-                            .Name("CustomerIntelligence.FirmCategories")
-                            .IdentifyBy("FirmId", "CategoryId")
-                            .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64))
-                            .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
+                            .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
+                            .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
+                            .Property(EntityPropertyElement.Config.Name("FirmId").OfType(EntityPropertyType.Int64))
                    );
 
         private static readonly ModelMappingElement ConceptualToStoreMapping = 
@@ -120,6 +121,18 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 .Mappings(
                     EntityMappingElement.Config
                         .Map("Firm", "CustomerIntelligence.Firm")
+                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
+                    EntityMappingElement.Config
+                        .Map("Category", "CustomerIntelligence.Category")
+                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
+                    EntityMappingElement.Config
+                        .Map("Client", "CustomerIntelligence.Client")
+                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
+                    EntityMappingElement.Config
+                        .Map("Account", "CustomerIntelligence.Account")
+                        .Map(PropertyMappingElement.Config.Map("Id", "Id")),
+                    EntityMappingElement.Config
+                        .Map("Contact", "CustomerIntelligence.Contact")
                         .Map(PropertyMappingElement.Config.Map("Id", "Id"))
                     );
 

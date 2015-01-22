@@ -70,7 +70,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var element = ProcessContext(builder);
             var dbModel = BuildDbModel(element);
 
-            var clrTypes = dbModel.GetClrTypes().ToArray();
+            var clrTypes = dbModel.GetClrTypes();
             EdmModel = EdmModelBuilder.Build(element);
             EdmModel.AddClrAnnotations(clrTypes);
 
