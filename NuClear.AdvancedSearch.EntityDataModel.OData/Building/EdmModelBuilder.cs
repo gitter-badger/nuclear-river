@@ -17,19 +17,26 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
     {
         private const string DefaultContainName = "DefaultContainer";
 
-        public IEdmModel Build(IMetadataProvider metadataProvider, Uri contextUrl)
+        private readonly IMetadataProvider _metadataProvider;
+
+        public EdmModelBuilder(IMetadataProvider metadataProvider)
         {
             if (metadataProvider == null)
             {
                 throw new ArgumentNullException("metadataProvider");
             }
+            _metadataProvider = metadataProvider;
+        }
+
+        public IEdmModel Build(Uri contextUrl)
+        {
             if (contextUrl == null)
             {
                 throw new ArgumentNullException("contextUrl");
             }
 
             BoundedContextElement boundedContextElement;
-            metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
+            _metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
             if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
             {
                 return null;

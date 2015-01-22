@@ -26,8 +26,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             Model = dbModel.Compile();
             var clrTypes = dbModel.GetClrTypes();
 
-            var edmModelBuilder = new EdmModelBuilder();
-            EdmModel = edmModelBuilder.Build(metadataProvider, contextId);
+            var edmModelBuilder = new EdmModelBuilder(metadataProvider);
+            EdmModel = edmModelBuilder.Build(contextId);
             EdmModel.AddClrAnnotations(clrTypes);
         }
 

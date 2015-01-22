@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.Metamodeling.Elements.Identities;
 
-namespace NuClear.EntityDataModel.EntityFramework.Building
+namespace NuClear.EntityDataModel.EntityFramework.Emit
 {
     internal sealed class EmitTypeProvider : ITypeProvider
     {

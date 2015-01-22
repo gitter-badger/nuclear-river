@@ -8,6 +8,7 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.EntityDataModel.EntityFramework.Emit;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Provider;
 
@@ -16,38 +17,45 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
     public sealed class EdmxModelBuilder
     {
         private readonly DbProviderInfo _providerInfo;
+        private readonly IMetadataProvider _metadataProvider;
         private readonly ITypeProvider _typeProvider;
 
-        public EdmxModelBuilder(DbProviderInfo providerInfo, ITypeProvider typeProvider)
+        public EdmxModelBuilder(DbProviderInfo providerInfo, IMetadataProvider metadataProvider)
+            : this(providerInfo, metadataProvider, new EmitTypeProvider())
+        {
+        }
+
+        public EdmxModelBuilder(DbProviderInfo providerInfo, IMetadataProvider metadataProvider, ITypeProvider typeProvider)
         {
             if (providerInfo == null)
             {
                 throw new ArgumentNullException("providerInfo");
             }
-
-            _providerInfo = providerInfo;
-            _typeProvider = typeProvider ?? new EmitTypeProvider();
-        }
-
-        public DbModel Build(IMetadataProvider metadataProvider, Uri contextUrl)
-        {
             if (metadataProvider == null)
             {
                 throw new ArgumentNullException("metadataProvider");
             }
+
+            _providerInfo = providerInfo;
+            _metadataProvider = metadataProvider;
+            _typeProvider = typeProvider ?? new EmitTypeProvider();
+        }
+
+        public DbModel Build(Uri contextUrl)
+        {
             if (contextUrl == null)
             {
                 throw new ArgumentNullException("contextUrl");
             }
 
             BoundedContextElement boundedContextElement;
-            metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
+            _metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
             if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
             {
                 return null;
             }
 
-            return Build(new BuildContext(metadataProvider, boundedContextElement, _typeProvider));
+            return Build(new BuildContext(_metadataProvider, _typeProvider, boundedContextElement));
         }
 
         private DbModel Build(BuildContext context)
@@ -67,8 +75,8 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
         private static void ConfigureEntityType(TypeConventionConfiguration configuration, EntityElement entityElement, BuildContext context)
         {
-            // add element id
-            //configuration.Configure(x => x.HasTableAnnotation("EntityId", entityElement.Identity.Id));
+            // add annotation
+            configuration.Configure(x => x.HasTableAnnotation("EntityId", entityElement.Identity.Id));
 
             // update entity set name
             var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
@@ -84,8 +92,8 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             {
                 string schemaName;
                 var tableName = storeEntityElement.ResolveName(out schemaName);
+                
                 configuration.Configure(x => x.ToTable(tableName, schemaName));
-
                 configuration.Configure(x => x.HasTableAnnotation("EntityId", storeEntityElement.Identity.Id));
             }
 
@@ -163,13 +171,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                                 item.Constraint.ToProperties.First().Name = relation.ResolveName();
                             }
                         }
-
-                        //item.Constraint.ToProperties.First().Name = "";
-                        //item.Constraint = null;
                     }
-
-                    //TrimNames(item.Constraint.FromProperties);
-                    //TrimNames(item.Constraint.ToProperties);
                 }
             }
 
@@ -182,14 +184,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 }
                 return null;
             }
-
-            private static void TrimNames(IEnumerable<EdmProperty> properties)
-            {
-                foreach (var property in properties)
-                {
-                    property.Name = property.Name.Replace("_", "");
-                }
-            }
         }
 
         private class BuildContext
@@ -199,7 +193,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             private readonly ITypeProvider _typeProvider;
             private readonly Dictionary<Uri, IMetadataElementIdentity> _storeEntities;
 
-            public BuildContext(IMetadataProvider metadataProvider, BoundedContextElement boundedContextElement, ITypeProvider typeProvider)
+            public BuildContext(IMetadataProvider metadataProvider, ITypeProvider typeProvider, BoundedContextElement boundedContextElement)
             {
                 _metadataProvider = metadataProvider;
                 _boundedContextElement = boundedContextElement;

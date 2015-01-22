@@ -88,12 +88,11 @@ namespace EntityDataModel.EntityFramework.Tests
             typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
         }
 
-        protected static DbModel BuildModel(IMetadataProvider provider, ITypeProvider typeProvider = null)
+        protected static DbModel BuildModel(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
-            var contextId = LookupContextId(provider);
-
-            var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(provider, contextId);
+            var builder = CreateBuilder(metadataProvider, typeProvider);
+            var contextId = LookupContextId(metadataProvider);
+            var model = builder.Build(contextId);
 
             model.Dump();
 
@@ -112,7 +111,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = CreateModel(context);
+            var model = BuildModel(context);
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -121,7 +120,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = CreateModel(context);
+            var model = BuildModel(context);
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
@@ -296,9 +295,9 @@ namespace EntityDataModel.EntityFramework.Tests
 
         #region Utils
 
-        private static EdmxModelBuilder CreateBuilder(ITypeProvider typeProvider = null)
+        private static EdmxModelBuilder CreateBuilder(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
-            return new EdmxModelBuilder(EffortProvider, typeProvider);
+            return new EdmxModelBuilder(EffortProvider, metadataProvider, typeProvider);
         }
 
         private static DbModel CreateModel(IMetadataElement context, ITypeProvider typeProvider = null)
@@ -307,8 +306,8 @@ namespace EntityDataModel.EntityFramework.Tests
             var metadataProvider = CreateMetadataProvider(metadataSource);
             var contextId = LookupContextId(metadataProvider);
 
-            var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(metadataProvider, contextId);
+            var builder = CreateBuilder(metadataProvider, typeProvider);
+            var model = builder.Build(contextId);
 
             return model;
         }
