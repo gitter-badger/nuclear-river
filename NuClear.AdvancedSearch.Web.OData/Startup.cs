@@ -24,9 +24,8 @@ namespace NuClear.AdvancedSearch.Web.OData
             var container = Bootstrapper.ConfigureUnity();
             config.DependencyResolver = new UnityResolver(container);
 
-            config.MapHttpAttributeRoutes();
-            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
-
+            //config.MapHttpAttributeRoutes();
+            //config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
             var edmModelFactory = container.Resolve<EdmModelFactory>();
             var edmModel = edmModelFactory.Create("CustomerIntelligence");
