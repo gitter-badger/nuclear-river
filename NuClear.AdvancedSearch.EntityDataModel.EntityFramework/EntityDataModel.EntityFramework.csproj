@@ -65,9 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Building\EdmxModelBuilder.cs" />
-    <Compile Include="Building\EmitHelper.cs" />
+    <Compile Include="Emit\EmitHelper.cs" />
     <Compile Include="Building\ITypeProvider.cs" />
-    <Compile Include="Building\EmitTypeProvider.cs" />
+    <Compile Include="Emit\EmitTypeProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

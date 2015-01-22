@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace NuClear.EntityDataModel.EntityFramework.Building
+namespace NuClear.EntityDataModel.EntityFramework.Emit
 {
     internal static class EmitHelper
     {

@@ -75,8 +75,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var provider = CreateProvider(new AdvancedSearchMetadataSource());
             var contextId = LookupContextId(provider);
 
-            var edmModelBuilder = new EdmModelBuilder();
-            EdmModel = edmModelBuilder.Build(provider, contextId);
+            var edmModelBuilder = new EdmModelBuilder(provider);
+            EdmModel = edmModelBuilder.Build(contextId);
             EdmModel.AddClrAnnotations(clrTypes);
 
             EFModel = dbModel.Compile();
@@ -90,8 +90,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var provider = CreateProvider(MockSource(element));
             var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
 
-            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, typeProvider);
-            return edmxModelBuilder.Build(provider, contextId);
+            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, provider, typeProvider);
+            return edmxModelBuilder.Build(contextId);
         }
 
         private static DbProviderInfo GeEffortProviderInfo()

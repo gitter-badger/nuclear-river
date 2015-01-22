@@ -9,18 +9,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData
 {
     public sealed class EdmModelFactory
     {
-        private readonly IMetadataProvider _metadataProvider;
         private readonly EdmModelBuilder _modelBuilder;
 
         public EdmModelFactory(IMetadataProvider metadataProvider)
         {
-            _metadataProvider = metadataProvider;
-            _modelBuilder = new EdmModelBuilder();
+            _modelBuilder = new EdmModelBuilder(metadataProvider);
         }
 
         public IEdmModel Create(string name)
         {
-            return _modelBuilder.Build(_metadataProvider, IdBuilder.For<AdvancedSearchIdentity>(name));
+            return _modelBuilder.Build(IdBuilder.For<AdvancedSearchIdentity>(name));
         }
     }
 }
