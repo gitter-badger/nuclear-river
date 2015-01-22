@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 throw new InvalidOperationException("The relation name was not specified.");
             }
 
-            return new EntityRelationElement(_name.AsRelativeUri().AsIdentity(), Features);
+            return new EntityRelationElement(_name.AsUri().AsIdentity(), Features);
         }
 
         private EntityRelationElementBuilder AddCardinality(EntityRelationCardinality cardinality)

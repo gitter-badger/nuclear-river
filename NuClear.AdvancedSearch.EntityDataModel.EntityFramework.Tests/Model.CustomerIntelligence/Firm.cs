@@ -16,7 +16,7 @@ namespace EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence
         public byte CategoryGroup { get; set; }
         public int AddressCount { get; set; }
 
-        public ICollection<Category> Categories { get; set; }
         public Client Client { get; set; }
+        public ICollection<Category> Categories { get; set; }
     }
 }

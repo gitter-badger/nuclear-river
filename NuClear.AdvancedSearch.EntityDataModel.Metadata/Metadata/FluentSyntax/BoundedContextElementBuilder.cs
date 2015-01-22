@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
@@ -12,12 +13,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     {
         private const string ConceptualModelName = "ConceptualModel";
         private const string StoreModelName = "StoreModel";
-        private const string MappingName = "StoreModel";
 
+        private readonly IDictionary<string, string> _entityMap = new Dictionary<string, string>();
         private string _name;
         private StructuralModelElement _conceptualModel;
         private StructuralModelElement _storeModel;
-        private ModelMappingElement _mapping;
 
         public BoundedContextElementBuilder Name(string name)
         {
@@ -37,9 +37,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public BoundedContextElementBuilder Mapping(ModelMappingElement conceptualToStoreMapping)
+        public BoundedContextElementBuilder Map(string conceptualEntityName, string storeEntityName)
         {
-            Childs(_mapping = conceptualToStoreMapping);
+            _entityMap.Add(conceptualEntityName, storeEntityName);
             return this;
         }
 
@@ -57,44 +57,38 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
             if (_conceptualModel != null)
             {
-                conceptualModelId = contextId.Id.WithRelative(ConceptualModelName.AsRelativeUri()).AsIdentity();
+                conceptualModelId = contextId.Id.WithRelative(ConceptualModelName.AsUri()).AsIdentity();
                 _conceptualModel.ActualizeId(conceptualModelId);
             }
 
             if (_storeModel != null)
             {
-                storeModelId = contextId.Id.WithRelative(StoreModelName.AsRelativeUri()).AsIdentity();
+                storeModelId = contextId.Id.WithRelative(StoreModelName.AsUri()).AsIdentity();
                 _storeModel.ActualizeId(storeModelId);
             }
 
-            if (_mapping != null)
-            {
-                _mapping.ActualizeId(mappingId = contextId.Id.WithRelative(MappingName.AsRelativeUri()).AsIdentity());
-                //UpdateMappings(_mapping);
-            }
+            ProcessMappings();
 
-            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, mappingId, Features);
+            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, Features);
         }
 
-        private void UpdateMappings(ModelMappingElement mapping)
+        private void ProcessMappings()
         {
-            var conceptualEntities = _conceptualModel.GetFlattenEntities().ToDictionary(x => x.Identity.Id);
-            var storeEntities = _storeModel.GetFlattenEntities().ToDictionary(x => x.Identity.Id);
-
-            List<EntityMappingElement> processedMappings = new List<EntityMappingElement>();
-            foreach (var mappingElement in _mapping.Mappings())
+            if (_conceptualModel == null || _storeModel == null)
             {
-                EntityElement conceptualEntity,
-                              storeEntity;
-
-                if (conceptualEntities.TryGetValue(mappingElement.ConceptualEntityIdentity.Id, out conceptualEntity)
-                    && storeEntities.TryGetValue(mappingElement.StoreEntityIdentity.Id, out storeEntity))
-                {
-                    processedMappings.Add(new EntityMappingElement(mappingElement.Identity, conceptualEntity.Identity, storeEntity.Identity, mapping.Features));
-                }
+                return;
             }
 
-            ((IMetadataElementUpdater)mapping).ReplaceChilds(processedMappings);
+            var entities = _conceptualModel.GetFlattenEntities().ToDictionary(x => x.Identity.Id.ToString());
+
+            foreach (var map in _entityMap)
+            {
+                EntityElement entityElement;
+                if (entities.TryGetValue(map.Key, out entityElement))
+                {
+                    ((IMetadataElementUpdater)entityElement).AddFeature(new ElementMappingFeature(map.Value.AsUri().AsIdentity()));
+                }
+            }
         }
     }
 }

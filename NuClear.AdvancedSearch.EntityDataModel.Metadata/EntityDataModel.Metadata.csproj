@@ -42,15 +42,11 @@
   <ItemGroup>
     <Compile Include="AdvancedSearchIdentity.cs" />
     <Compile Include="Metadata\BaseMetadataElement.cs" />
-    <Compile Include="Metadata\EntityMappingElement.cs" />
-    <Compile Include="Metadata\FluentSyntax\EntityMappingElementBuilder.cs" />
+    <Compile Include="Metadata\BoundedContextElementExtensions.cs" />
+    <Compile Include="Metadata\Features\ElementMappingFeature.cs" />
     <Compile Include="Metadata\MetadataElementIdentityExtensions.cs" />
-    <Compile Include="Metadata\ModelMappingElement.cs" />
     <Compile Include="Metadata\FluentSyntax\StructuralModelElementBuilder.cs" />
-    <Compile Include="Metadata\FluentSyntax\UriExtensions.cs" />
-    <Compile Include="Metadata\FluentSyntax\ModelMappingElementBuilder.cs" />
-    <Compile Include="Metadata\PropertyMappingElement.cs" />
-    <Compile Include="Metadata\FluentSyntax\PropertyMappingElementBuilder.cs" />
+    <Compile Include="Metadata\UriExtensions.cs" />
     <Compile Include="Metadata\StructuralModelElementExtensions.cs" />
     <Compile Include="Metadata\StructuralModelElement.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />

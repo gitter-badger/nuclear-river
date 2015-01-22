@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
+using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
@@ -47,6 +48,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public static string GetEntitySetName(this EntityElement entityElement)
         {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
             var collectionFeature = entityElement.Features.OfType<EntitySetFeature>().FirstOrDefault();
                 return collectionFeature == null
                     ? null
@@ -55,11 +61,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public static IEnumerable<EntityPropertyElement> GetProperties(this EntityElement entityElement)
         {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
             return entityElement.Elements.OfType<EntityPropertyElement>();
         }
 
         public static IEnumerable<EntityPropertyElement> GetKeyProperties(this EntityElement entityElement)
         {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
             var identityFeature = entityElement.Features.OfType<EntityIdentityFeature>().FirstOrDefault();
             return identityFeature == null 
                 ? Enumerable.Empty<EntityPropertyElement>() 
@@ -68,7 +84,23 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public static IEnumerable<EntityRelationElement> GetRelations(this EntityElement entityElement)
         {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
             return entityElement.Elements.OfType<EntityRelationElement>();
+        }
+
+        public static IMetadataElementIdentity GetMappedEntityIdentity(this EntityElement entityElement)
+        {
+            if (entityElement == null)
+            {
+                throw new ArgumentNullException("entityElement");
+            }
+
+            var feature = entityElement.Features.OfType<ElementMappingFeature>().FirstOrDefault();
+            return feature != null ? feature.MappedElementIdentity : null;
         }
     }
 }
