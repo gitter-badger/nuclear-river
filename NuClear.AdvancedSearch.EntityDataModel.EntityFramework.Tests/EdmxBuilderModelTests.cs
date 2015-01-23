@@ -65,9 +65,21 @@ namespace EntityDataModel.EntityFramework.Tests
             }
         }
 
+        [Test, Explicit]
+        public void Test()
+        {
+            var builder = new DbModelBuilder();
+
+            builder.RegisterEntityType(typeof(Firm));
+            //builder.Entity<Firm>().HasRequired(x => x.Client).WithMany(x => x.Firms).Map(x => x.MapKey("ClientId"));
+
+            var model = builder.Build(EffortProvider);
+            model.Dump();
+        }
+
         private static DbModel CreateCustomerIntelligenceModel()
         {
             return BuildModel(CustomerIntelligenceMetadataSource, CustomerIntelligenceTypeProvider);
         }
-    }
+   }
 }

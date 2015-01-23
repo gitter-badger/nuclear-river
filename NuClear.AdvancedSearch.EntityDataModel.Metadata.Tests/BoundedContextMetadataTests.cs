@@ -59,7 +59,7 @@ namespace NuClear.EntityDataModel.Tests
             Assert.That(contextElement, Is.Not.Null);
         }
 
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm", Metadata.Identity | Metadata.Elements | Metadata.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
+        [TestCase("CustomerIntelligence", Metadata.Identity | Metadata.Elements | Metadata.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
         [TestCase("CustomerIntelligence/ConceptualModel", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel'}}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'}}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm/Id", Metadata.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Id'}}")]

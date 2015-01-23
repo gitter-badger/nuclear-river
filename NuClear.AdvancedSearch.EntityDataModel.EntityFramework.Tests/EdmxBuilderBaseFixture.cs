@@ -88,31 +88,30 @@ namespace EntityDataModel.EntityFramework.Tests
             typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
         }
 
-        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        protected static DbModel BuildModel(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
-            var metadataProvider = CreateMetadataProvider(source);
-            var context = LookupContext(metadataProvider);
-
-            var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(metadataProvider, context.Identity.Id);
+            var builder = CreateBuilder(metadataProvider, typeProvider);
+            var contextId = LookupContextId(metadataProvider);
+            var model = builder.Build(contextId);
 
             model.Dump();
 
             return model;
+        }
+
+        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        {
+            return BuildModel(CreateMetadataProvider(source), typeProvider);
         }
 
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            var model = CreateModel(context, typeProvider);
-
-            model.Dump();
-
-            return model;
+            return BuildModel(MockSource(context), typeProvider);
         }
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = CreateModel(context);
+            var model = BuildModel(context);
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -121,7 +120,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = CreateModel(context);
+            var model = BuildModel(context);
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
@@ -271,7 +270,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
             if (properties.Length == 0)
             {
-                config.Property(NewProperty("Id")).IdentifyBy("Id");
+                config.Property(NewProperty("Id")).HasKey("Id");
             }
 
             foreach (var propertyElementBuilder in properties)
@@ -292,42 +291,30 @@ namespace EntityDataModel.EntityFramework.Tests
             return EntityRelationElement.Config.Name(relationName);
         }
 
-        protected static ModelMappingElementBuilder NewMapping(params EntityElementBuilder[] entities)
-        {
-            var mapping = ModelMappingElement.Config;
-
-            //            foreach (var entityElementBuilder in entities)
-            //            {
-            //                model.Elements(entityElementBuilder);
-            //            }
-
-            return mapping;
-        }
-
         #endregion
 
         #region Utils
 
-        private static EdmxModelBuilder CreateBuilder(ITypeProvider typeProvider = null)
+        private static EdmxModelBuilder CreateBuilder(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
-            return new EdmxModelBuilder(EffortProvider, typeProvider);
+            return new EdmxModelBuilder(EffortProvider, metadataProvider, typeProvider);
         }
 
         private static DbModel CreateModel(IMetadataElement context, ITypeProvider typeProvider = null)
         {
             var metadataSource = MockSource(context);
             var metadataProvider = CreateMetadataProvider(metadataSource);
-            var boundedContext = LookupContext(metadataProvider);
+            var contextId = LookupContextId(metadataProvider);
 
-            var builder = CreateBuilder(typeProvider);
-            var model = builder.Build(metadataProvider, boundedContext.Identity.Id);
+            var builder = CreateBuilder(metadataProvider, typeProvider);
+            var model = builder.Build(contextId);
 
             return model;
         }
 
-        protected static BoundedContextElement LookupContext(IMetadataProvider provider)
+        protected static Uri LookupContextId(IMetadataProvider provider)
         {
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single();
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
         }
 
         protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)

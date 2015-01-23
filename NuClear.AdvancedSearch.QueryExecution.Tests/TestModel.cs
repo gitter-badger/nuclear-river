@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public static readonly DbCompiledModel EFModel;
         public static readonly IEdmModel EdmModel;
 
-        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(Enum1) };
+        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(TestClass2), typeof(Enum1) };
 
         static TestModel()
         {
@@ -35,7 +35,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
                             .Name("TestClass1")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("TestClass2")
-                                        .IdentifyBy("Id")
+                                        .HasKey("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                              )
@@ -55,35 +55,33 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                     StructuralModelElement.Config.Elements(
                          EntityElement.Config
                             .Name("dbo.TestClass1")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                             .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32)),
                          EntityElement.Config
                             .Name("dbo.TestClass2")
-                            .IdentifyBy("Id")
+                            .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                     )
                 );
 
             var element = ProcessContext(builder);
-            var dbModel = BuildDbModel(element);
+            var provider = CreateProvider(MockSource(element));
+            var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
 
+            var dbProviderInfo = GeEffortProviderInfo();
+            var typeProvider = GetTypeProvider(ClrTypes);
+            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, provider, typeProvider);
+            var dbModel = edmxModelBuilder.Build(contextId);
             var clrTypes = dbModel.GetClrTypes();
-            EdmModel = EdmModelBuilder.Build(element);
+
+            var edmModelBuilder = new EdmModelBuilder(provider);
+            EdmModel = edmModelBuilder.Build(contextId);
             EdmModel.AddClrAnnotations(clrTypes);
 
             EFModel = dbModel.Compile();
-        }
-
-        private static DbModel BuildDbModel(BoundedContextElement element)
-        {
-            var dbProviderInfo = GeEffortProviderInfo();
-            var typeProvider = GetTypeProvider(ClrTypes);
-
-            var edmxModelBuilder = new EdmxModelBuilderOld(dbProviderInfo, typeProvider);
-            return edmxModelBuilder.Build(element);
         }
 
         private static DbProviderInfo GeEffortProviderInfo()
@@ -125,6 +123,11 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         private static IMetadataProvider CreateProvider(params IMetadataSource[] sources)
         {
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
+        }
+
+        private static Uri LookupContextId(IMetadataProvider provider)
+        {
+            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
         }
 
         #endregion

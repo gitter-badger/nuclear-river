@@ -59,7 +59,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
 
             return new EntityPropertyElement(
-                _name.AsRelativeUri().AsIdentity(),
+                _name.AsUri().AsIdentity(),
                 _enumUnderlyingType == null ? Features : Features.Concat(new[] {new EntityPropertyEnumTypeFeature(_enumName, _enumUnderlyingType.Value, _enumMembers) })
                 );
         }

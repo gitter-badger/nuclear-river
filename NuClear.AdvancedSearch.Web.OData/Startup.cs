@@ -4,9 +4,11 @@ using System.Web.OData.Extensions;
 using Microsoft.Owin;
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.EntityDataModel.OData;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DI;
+using NuClear.Metamodeling.Elements.Identities;
 
 using Owin;
 
@@ -27,8 +29,8 @@ namespace NuClear.AdvancedSearch.Web.OData
             //config.MapHttpAttributeRoutes();
             //config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            var edmModelFactory = container.Resolve<EdmModelFactory>();
-            var edmModel = edmModelFactory.Create("CustomerIntelligence");
+            var edmModelBuilder = container.Resolve<EdmModelBuilder>();
+            var edmModel = edmModelBuilder.Build(IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence"));
 
             config.MapODataServiceRoute("CustomerIntelligence", "CustomerIntelligence", edmModel);
 

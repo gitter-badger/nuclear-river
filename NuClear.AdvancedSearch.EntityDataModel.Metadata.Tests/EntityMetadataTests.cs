@@ -23,7 +23,7 @@ namespace NuClear.EntityDataModel.Tests
                                   Metadata.Identity | Metadata.Elements)
                     .Returns("{'Identity':{'Id':'Entity'},'Elements':[{'Identity':{'Id':'Property'},'Elements':[]}]}")
                     .SetName("ShouldDeclareEntityWithProperty");
-                yield return Case(EntityElement.Config.Name("Entity").IdentifyBy("Property").Property(EntityPropertyElement.Config.Name("Property")))
+                yield return Case(EntityElement.Config.Name("Entity").HasKey("Property").Property(EntityPropertyElement.Config.Name("Property")))
                     .Returns("{'Identity':{'Id':'Entity'},'Features':[{'IdentifyingProperties':[{'Identity':{'Id':'Property'},'Features':[]}]}]}")
                     .SetName("ShouldDeclareEntityWithKey");
                 yield return Case(EntityElement.Config.Name("Entity").Relation(EntityRelationElement.Config.Name("Relation")),
