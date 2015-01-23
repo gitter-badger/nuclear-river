@@ -20,26 +20,29 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
         {
             var container = new UnityContainer()
                 .ConfigureMetadata()
-                .ConfigureStore();
+                .ConfigureStoreModel();
 
             return container;
         }
 
         public static IUnityContainer ConfigureMetadata(this IUnityContainer container)
         {
-            var metadataSource = new AdvancedSearchMetadataSource();
-            var metadataProvider = new MetadataProvider(new IMetadataSource[] { metadataSource }, new IMetadataProcessor[] { });
+            var metadataSources = new IMetadataSource[]
+            {
+                new AdvancedSearchMetadataSource()
+            };
 
-            return container.RegisterInstance<IMetadataProvider>(metadataProvider, Lifetime.Singleton);
+            var metadataProcessors = new IMetadataProcessor[] { };
+
+            return container.RegisterType<IMetadataProvider, MetadataProvider>(Lifetime.Singleton, new InjectionConstructor(metadataSources, metadataProcessors));
         }
 
-        public static IUnityContainer ConfigureStore(this IUnityContainer container)
+        public static IUnityContainer ConfigureStoreModel(this IUnityContainer container)
         {
             EffortProviderConfiguration.RegisterProvider();
 
             var effortProviderInfo = new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
-            var edmxModelBuilder = new EdmxModelBuilder(effortProviderInfo);
-            return container.RegisterInstance(edmxModelBuilder, Lifetime.Singleton);
+            return container.RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider)));
         }
     }
 }

@@ -66,7 +66,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdmxModelTypesMapper.cs" />
     <Compile Include="EdmxModelExtensions.cs" />
     <Compile Include="EdmModelExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
