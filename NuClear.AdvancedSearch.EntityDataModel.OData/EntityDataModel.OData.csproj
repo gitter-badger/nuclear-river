@@ -41,7 +41,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Building\EdmModelBuilder.cs" />
-    <Compile Include="EdmModelFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
