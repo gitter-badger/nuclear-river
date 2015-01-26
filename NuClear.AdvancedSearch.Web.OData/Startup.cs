@@ -4,9 +4,11 @@ using System.Web.OData.Extensions;
 using Microsoft.Owin;
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.EntityDataModel.OData;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DI;
+using NuClear.AdvancedSearch.Web.OData.Model;
 
 using Owin;
 
@@ -24,12 +26,11 @@ namespace NuClear.AdvancedSearch.Web.OData
             var container = Bootstrapper.ConfigureUnity();
             config.DependencyResolver = new UnityResolver(container);
 
-            config.MapHttpAttributeRoutes();
-            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
+            //config.MapHttpAttributeRoutes();
+            //config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-
-            var edmModelFactory = container.Resolve<EdmModelFactory>();
-            var edmModel = edmModelFactory.Create("CustomerIntelligence");
+            var typedEdmModelBuilder = container.Resolve<TypedEdmModelBuilder>();
+            var edmModel = typedEdmModelBuilder.Build("CustomerIntelligence");
 
             config.MapODataServiceRoute("CustomerIntelligence", "CustomerIntelligence", edmModel);
 

@@ -7,6 +7,7 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
+
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElementBuilder : MetadataElementBuilder<BoundedContextElementBuilder, BoundedContextElement>
@@ -16,8 +17,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         private readonly IDictionary<string, string> _entityMap = new Dictionary<string, string>();
         private string _name;
-        private StructuralModelElement _conceptualModel;
-        private StructuralModelElement _storeModel;
+        private StructuralModelElementBuilder _conceptualModel;
+        private StructuralModelElementBuilder _storeModel;
 
         public BoundedContextElementBuilder Name(string name)
         {
@@ -25,15 +26,15 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public BoundedContextElementBuilder ConceptualModel(StructuralModelElement modelElement)
+        public BoundedContextElementBuilder ConceptualModel(StructuralModelElementBuilder modelElement)
         {
-            Childs(_conceptualModel = modelElement);
+            _conceptualModel = modelElement.Name(ConceptualModelName);
             return this;
         }
 
-        public BoundedContextElementBuilder StoreModel(StructuralModelElement modelElement)
+        public BoundedContextElementBuilder StoreModel(StructuralModelElementBuilder modelElement)
         {
-            Childs(_storeModel = modelElement);
+            _storeModel = modelElement.Name(StoreModelName);
             return this;
         }
 
@@ -51,43 +52,47 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
 
             var contextId = IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity();
-            IMetadataElementIdentity conceptualModelId = null;
-            IMetadataElementIdentity storeModelId = null;
-            IMetadataElementIdentity mappingId = null;
+
+            StructuralModelElement conceptualModel = null;
+            StructuralModelElement storeModel = null;
 
             if (_conceptualModel != null)
             {
-                conceptualModelId = contextId.Id.WithRelative(ConceptualModelName.AsUri()).AsIdentity();
-                _conceptualModel.ActualizeId(conceptualModelId);
+                conceptualModel = _conceptualModel;
+                Childs(conceptualModel);
             }
 
             if (_storeModel != null)
             {
-                storeModelId = contextId.Id.WithRelative(StoreModelName.AsUri()).AsIdentity();
-                _storeModel.ActualizeId(storeModelId);
+                storeModel = _storeModel;
+                Childs(storeModel);
             }
 
-            ProcessMappings();
+            ProcessMappings(conceptualModel, storeModel);
 
-            return new BoundedContextElement(contextId, conceptualModelId, storeModelId, Features);
+            return new BoundedContextElement(contextId, conceptualModel, storeModel, Features);
         }
 
-        private void ProcessMappings()
+        private void ProcessMappings(StructuralModelElement conceptualModel, StructuralModelElement storeModel)
         {
-            if (_conceptualModel == null || _storeModel == null)
+            if (conceptualModel == null || storeModel == null)
             {
                 return;
             }
 
-            var entities = _conceptualModel.GetFlattenEntities().ToDictionary(x => x.Identity.Id.ToString());
+            var conceptualEntities = conceptualModel.Entities.ToDictionary(x => x.Identity.Id);
+            var storeEntities = storeModel.Entities.ToDictionary(x => x.Identity.Id);
 
             foreach (var map in _entityMap)
             {
-                EntityElement entityElement;
-                if (entities.TryGetValue(map.Key, out entityElement))
+                EntityElement conceptualEntity;
+                EntityElement storeEntity;
+                if (!conceptualEntities.TryGetValue(map.Key.AsUri(), out conceptualEntity) || !storeEntities.TryGetValue(map.Value.AsUri(), out storeEntity))
                 {
-                    ((IMetadataElementUpdater)entityElement).AddFeature(new ElementMappingFeature(map.Value.AsUri().AsIdentity()));
+                    throw new InvalidOperationException("The entity mapping cannot be resolved.");
                 }
+
+                ((IMetadataElementUpdater)conceptualEntity).AddFeature(new ElementMappingFeature(storeEntity));
             }
         }
     }

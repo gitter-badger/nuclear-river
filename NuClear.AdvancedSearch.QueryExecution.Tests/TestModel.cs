@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         public static readonly DbCompiledModel EFModel;
         public static readonly IEdmModel EdmModel;
 
-        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(Enum1) };
+        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(TestClass2), typeof(Enum1) };
 
         static TestModel()
         {
@@ -68,30 +68,20 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
                 );
 
             var element = ProcessContext(builder);
-            var dbModel = BuildDbModel(element);
+            var provider = CreateProvider(MockSource(element));
+            var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
 
+            var dbProviderInfo = GeEffortProviderInfo();
+            var typeProvider = GetTypeProvider(ClrTypes);
+            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, provider, typeProvider);
+            var dbModel = edmxModelBuilder.Build(contextId);
             var clrTypes = dbModel.GetClrTypes();
-
-            var provider = CreateProvider(new AdvancedSearchMetadataSource());
-            var contextId = LookupContextId(provider);
 
             var edmModelBuilder = new EdmModelBuilder(provider);
             EdmModel = edmModelBuilder.Build(contextId);
             EdmModel.AddClrAnnotations(clrTypes);
 
             EFModel = dbModel.Compile();
-        }
-
-        private static DbModel BuildDbModel(BoundedContextElement element)
-        {
-            var dbProviderInfo = GeEffortProviderInfo();
-            var typeProvider = GetTypeProvider(ClrTypes);
-
-            var provider = CreateProvider(MockSource(element));
-            var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
-
-            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, provider, typeProvider);
-            return edmxModelBuilder.Build(contextId);
         }
 
         private static DbProviderInfo GeEffortProviderInfo()

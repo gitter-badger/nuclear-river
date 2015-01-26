@@ -3,7 +3,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     partial class AdvancedSearchMetadataSource
     {
-        private static readonly StructuralModelElement ConceptualModel =
+        private static readonly StructuralModelElementBuilder ConceptualModel =
             StructuralModelElement.Config.Elements(
                 EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
                     .HasKey("Id")
@@ -61,48 +61,48 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                         )
                         .AsOneOptionally()));
 
-        private static readonly StructuralModelElement StoreModel =
-            StructuralModelElement.Config.Elements(
-                EntityElement.Config.Name(TableName.Client)
-                             .HasKey("Id")
-                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte)),
-                EntityElement.Config.Name(TableName.Account)
-                             .HasKey("Id")
-                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
-                             .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
-                EntityElement.Config.Name(TableName.Contact)
-                             .HasKey("Id")
-                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("Role").OfType(EntityPropertyType.Int32))
-                             .Property(EntityPropertyElement.Config.Name("IsFired").OfType(EntityPropertyType.Boolean))
-                             .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
-                EntityElement.Config.Name(TableName.Firm)
-                             .HasKey("Id")
-                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("CreatedOn").OfType(EntityPropertyType.DateTime))
-                             .Property(EntityPropertyElement.Config.Name("LastQualifiedOn").OfType(EntityPropertyType.DateTime))
-                             .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(EntityPropertyType.DateTime))
-                             .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(EntityPropertyType.Boolean))
-                             .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
-                             .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
-                             .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsMany()),
-                EntityElement.Config.Name(TableName.Category)
-                             .HasKey("Id")
-                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
-                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
-                             .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
-                             .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsMany()));
+        private static readonly StructuralModelElementBuilder StoreModel =
+            StructuralModelElement.Config
+                .Elements(
+                    EntityElement.Config.Name(TableName.Client)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte)),
+                    EntityElement.Config.Name(TableName.Account)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Balance").OfType(EntityPropertyType.Decimal))
+                                 .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOne()),
+                    EntityElement.Config.Name(TableName.Contact)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Role").OfType(EntityPropertyType.Int32))
+                                 .Property(EntityPropertyElement.Config.Name("IsFired").OfType(EntityPropertyType.Boolean))
+                                 .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOne()),
+                    EntityElement.Config.Name(TableName.Firm)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("CreatedOn").OfType(EntityPropertyType.DateTime))
+                                 .Property(EntityPropertyElement.Config.Name("LastQualifiedOn").OfType(EntityPropertyType.DateTime))
+                                 .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(EntityPropertyType.DateTime))
+                                 .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(EntityPropertyType.Boolean))
+                                 .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
+                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
+                                 .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
+                                 .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
+                    EntityElement.Config.Name(TableName.Category)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Byte))
+                                 .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
+                                 .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
+                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
 
         private static readonly BoundedContextElement CustomerIntelligenceContext =
-            BoundedContextElement.Config
-                .Name("CustomerIntelligence")
+            BoundedContextElement.Config.Name("CustomerIntelligence")
                 .ConceptualModel(ConceptualModel)
                 .StoreModel(StoreModel)
                 .Map(EntityName.Firm, TableName.Firm)

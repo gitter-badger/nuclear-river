@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.OData.Extensions;
 using System.Web.OData.Query;
@@ -28,11 +29,24 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             var entities = Enumerable.Range(0, 10).Select(x => new TestClass1
             {
                 Id = x,
-                TestClass2 = new TestClass2 { Id = x }
+                Name = x.ToString(),
+                TestClass2 = new TestClass2
+                {
+                    Id = x,
+                    Name = x.ToString()
+                }
             });
             _context.Set<TestClass1>().AddRange(entities);
 
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                
+            }
+            
         }
 
         [TearDown]
