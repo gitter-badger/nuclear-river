@@ -206,14 +206,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                     : new Dictionary<Uri, IMetadataElementIdentity>();
             }
 
-            public IEnumerable<EntityElement> Entities
-            {
-                get
-                {
-                    return _boundedContextElement.ConceptualModel.Entities;
-                }
-            }
-
             public IEnumerable<EntityElement> EntityTypes
             {
                 get

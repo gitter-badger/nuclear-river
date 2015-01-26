@@ -254,14 +254,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static StructuralModelElementBuilder NewModel(params EntityElementBuilder[] entities)
         {
-            var model = StructuralModelElement.Config;
-
-            foreach (var entityElementBuilder in entities)
-            {
-                model.Elements(entityElementBuilder);
-            }
-
-            return model;
+            return StructuralModelElement.Config.Elements(entities);
         }
 
         protected static EntityElementBuilder NewEntity(string name, params EntityPropertyElementBuilder[] properties)
