@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Dispatcher;
 
-namespace NuClear.AdvancedSearch.Web.OData.Controllers
+namespace NuClear.AdvancedSearch.Web.OData
 {
     public sealed class DynamicControllerTypeResolver : DefaultHttpControllerTypeResolver
     {

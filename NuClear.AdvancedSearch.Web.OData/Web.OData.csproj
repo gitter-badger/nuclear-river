@@ -126,14 +126,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynamicControllersRegistrator.cs" />
-    <Compile Include="Controllers\DefaultController.cs" />
-    <Compile Include="Controllers\DynamicControllerTypeResolver.cs" />
+    <Compile Include="DynamicControllerTypeResolver.cs" />
     <Compile Include="Controllers\GenericODataController.cs" />
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="DI\UnityResolver.cs" />
-    <Compile Include="Controllers\ControllerBuilder.cs" />
-    <Compile Include="Model\TypedEdmModelBuilder.cs" />
+    <Compile Include="DynamicAssembliesRegistry.cs" />
+    <Compile Include="TypedEdmModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -155,6 +154,7 @@
       <Name>QueryExecution</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

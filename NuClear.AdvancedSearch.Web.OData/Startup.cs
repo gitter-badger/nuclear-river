@@ -7,7 +7,6 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DI;
-using NuClear.AdvancedSearch.Web.OData.Model;
 using NuClear.Metamodeling.Elements.Identities;
 
 using Owin;

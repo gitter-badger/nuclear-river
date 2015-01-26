@@ -6,7 +6,7 @@ using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.QueryExecution;
 using NuClear.EntityDataModel.EntityFramework.Building;
 
-namespace NuClear.AdvancedSearch.Web.OData.Model
+namespace NuClear.AdvancedSearch.Web.OData
 {
     public sealed class TypedEdmModelBuilder
     {
