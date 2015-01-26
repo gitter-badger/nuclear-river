@@ -125,8 +125,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicControllersRegistrator.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
-    <Compile Include="Controllers\FirmsController.cs" />
+    <Compile Include="Controllers\DynamicControllerTypeResolver.cs" />
+    <Compile Include="Controllers\GenericODataController.cs" />
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="DI\UnityResolver.cs" />

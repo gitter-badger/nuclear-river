@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity.Infrastructure;
+using System.Web.Http.Dispatcher;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
@@ -7,6 +8,7 @@ using Effort.Provider;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.Web.OData.Controllers;
 using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.EntityDataModel.EntityFramework.Emit;
 using NuClear.Metamodeling.Processors;
@@ -21,7 +23,8 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
         {
             var container = new UnityContainer()
                 .ConfigureMetadata()
-                .ConfigureStoreModel();
+                .ConfigureStoreModel()
+                .ConfigureWebApi();
 
             return container;
         }
@@ -46,6 +49,14 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             return container
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
                 .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider)));
+        }
+
+        public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
+        {
+            return container
+                .RegisterType<IDynamicAssembliesRegistry, DynamicAssembliesRegistry>(Lifetime.Singleton)
+                .RegisterType<IDynamicAssembliesResolver, DynamicAssembliesRegistry>(Lifetime.Singleton)
+                .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton);
         }
     }
 }
