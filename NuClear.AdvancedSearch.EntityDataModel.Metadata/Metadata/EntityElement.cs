@@ -1,32 +1,58 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class EntityElement : MetadataElement<EntityElement, EntityElementBuilder>
+    public sealed class EntityElement : BaseMetadataElement<EntityElement, EntityElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
-
         internal EntityElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
-            : base(features)
+            : base(identity, features)
         {
-            _identity = identity;
         }
 
-        public override IMetadataElementIdentity Identity
+        public IEnumerable<EntityPropertyElement> Properties
         {
             get
             {
-                return _identity;
+                return Elements.OfType<EntityPropertyElement>();
             }
         }
 
-        public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
+        public IEnumerable<EntityRelationElement> Relations
         {
-            _identity = actualMetadataElementIdentity;
+            get
+            {
+                return Elements.OfType<EntityRelationElement>();
+            }
+        }
+
+        public IEnumerable<EntityPropertyElement> KeyProperties
+        {
+            get
+            {
+                return ResolveFeature<EntityIdentityFeature, IEnumerable<EntityPropertyElement>>(f => f.IdentifyingProperties, Enumerable.Empty<EntityPropertyElement>());
+            }
+        }
+
+        public string EntitySetName
+        {
+            get
+            {
+                return ResolveFeature<EntitySetFeature, string>(f => f.EntitySetName);
+            }
+        }
+
+        public IMetadataElement MappedEntity
+        {
+            get
+            {
+                return ResolveFeature<ElementMappingFeature, EntityElement>(f => (EntityElement)f.MappedElement);
+            }
         }
     }
 }

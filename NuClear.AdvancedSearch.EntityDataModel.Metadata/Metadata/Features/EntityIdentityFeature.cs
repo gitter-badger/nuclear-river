@@ -7,15 +7,15 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
     public sealed class EntityIdentityFeature : IUniqueMetadataFeature
     {
-        private readonly EntityPropertyElement[] _identifyingProperties;
+        private readonly IReadOnlyCollection<EntityPropertyElement> _identifyingProperties;
 
-        public EntityIdentityFeature(params EntityPropertyElement[] identifyingProperties)
+        public EntityIdentityFeature(IReadOnlyCollection<EntityPropertyElement> identifyingProperties)
         {
             if (identifyingProperties == null)
             {
                 throw new ArgumentNullException("identifyingProperties");
             }
-            if (identifyingProperties.Length == 0)
+            if (identifyingProperties.Count == 0)
             {
                 throw new ArgumentException("The properties should be provided.", "identifyingProperties");
             }

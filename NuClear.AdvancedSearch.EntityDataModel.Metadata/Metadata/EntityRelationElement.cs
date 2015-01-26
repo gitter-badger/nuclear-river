@@ -1,32 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-using NuClear.Metamodeling.Elements;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class EntityRelationElement : MetadataElement<EntityRelationElement, EntityRelationElementBuilder>
+    public sealed class EntityRelationElement : BaseMetadataElement<EntityRelationElement, EntityRelationElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
-
         internal EntityRelationElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
-            : base(features)
+            : base(identity, features)
         {
-            _identity = identity;
         }
 
-        public override IMetadataElementIdentity Identity
+        public EntityRelationCardinality Cardinality
         {
             get
             {
-                return _identity;
+                return ResolveFeature<EntityRelationCardinalityFeature, EntityRelationCardinality>(
+                    f => f.Cardinality,
+                    () => { throw new InvalidOperationException("The cardinality was not specified."); });
             }
         }
 
-        public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
+        public EntityElement Target
         {
-            _identity = actualMetadataElementIdentity;
+            get
+            {
+                return ResolveFeature<EntityRelationCardinalityFeature, EntityElement>(
+                    f => f.Target,
+                    () => { throw new InvalidOperationException("The cardinality was not specified."); });
+            }
         }
     }
 }

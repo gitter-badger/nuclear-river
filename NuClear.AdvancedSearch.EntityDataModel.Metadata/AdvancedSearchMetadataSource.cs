@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
-using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Provider.Sources;
 
 // ReSharper disable once CheckNamespace
@@ -15,10 +13,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public AdvancedSearchMetadataSource()
         {
-            HierarchyMetadata root = HierarchyMetadata.Config
-                .Id.Is(IdBuilder.For<AdvancedSearchIdentity>())
-                .Childs(_customerIntelligence);
-            _metadata = new Dictionary<Uri, IMetadataElement> { { root.Identity.Id, root } };
+            _metadata = new Dictionary<Uri, IMetadataElement> { { CustomerIntelligenceContext.Identity.Id, CustomerIntelligenceContext } };
         }
 
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata

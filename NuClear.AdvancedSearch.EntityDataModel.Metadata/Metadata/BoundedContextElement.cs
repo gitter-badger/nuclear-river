@@ -1,41 +1,40 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
-using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
-    public sealed class BoundedContextElement : MetadataElement<BoundedContextElement, BoundedContextElementBuilder>
+    public sealed class BoundedContextElement : BaseMetadataElement<BoundedContextElement, BoundedContextElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
+        private readonly StructuralModelElement _conceptualModel;
+        private readonly StructuralModelElement _storeModel;
 
-        internal BoundedContextElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
-            : base(features)
+        internal BoundedContextElement(
+            IMetadataElementIdentity contextIdentity,
+            StructuralModelElement conceptualModel,
+            StructuralModelElement storeModel,
+            IEnumerable<IMetadataFeature> features)
+            : base(contextIdentity, features)
         {
-            _identity = identity;
+            _conceptualModel = conceptualModel;
+            _storeModel = storeModel;
         }
 
-        public IEnumerable<EntityElement> Entities
+        public StructuralModelElement ConceptualModel
         {
             get
             {
-                return Elements.OfType<EntityElement>();
+                return _conceptualModel;
             }
         }
 
-        public override IMetadataElementIdentity Identity
+        public StructuralModelElement StoreModel
         {
             get
             {
-                return _identity;
+                return _storeModel;
             }
-        }
-
-        public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
-        {
-            _identity = actualMetadataElementIdentity;
         }
     }
 }
