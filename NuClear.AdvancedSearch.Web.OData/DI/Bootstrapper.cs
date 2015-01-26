@@ -8,6 +8,7 @@ using Effort.Provider;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.Web.OData.Controllers;
 using NuClear.AdvancedSearch.Web.OData.Dynamic;
 using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.EntityDataModel.EntityFramework.Emit;
@@ -47,6 +48,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var effortProviderInfo = new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
 
             return container
+                .RegisterType<CreateHelper>(Lifetime.Singleton)
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
                 .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
         }

@@ -125,6 +125,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\CreateHelper.cs" />
     <Compile Include="Dynamic\DynamicAssembliesRegistry.cs" />
     <Compile Include="Dynamic\DynamicControllersRegistrator.cs" />
     <Compile Include="Controllers\GenericODataController.cs" />
