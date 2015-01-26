@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DI;
+using NuClear.AdvancedSearch.Web.OData.Dynamic;
 using NuClear.Metamodeling.Elements.Identities;
 
 using Owin;
@@ -29,18 +30,18 @@ namespace NuClear.AdvancedSearch.Web.OData
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            ConfigureODATAContexts(config, container);
+            MapContextServiceRoute("CustomerIntelligence", config, container);
 
             appBuilder.UseWebApi(config);
         }
 
-        public void ConfigureODATAContexts(HttpConfiguration config, IUnityContainer container)
+        public void MapContextServiceRoute(string contextName, HttpConfiguration config, IUnityContainer container)
         {
-            var uri = IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence");
+            var uri = IdBuilder.For<AdvancedSearchIdentity>(contextName);
 
-            var typedEdmModelBuilder = container.Resolve<TypedEdmModelBuilder>();
-            var edmModel = typedEdmModelBuilder.Build(uri);
-            config.MapODataServiceRoute("CustomerIntelligence", "CustomerIntelligence", edmModel);
+            var emModelBuilder = container.Resolve<EdmModelWithClrTypesBuilder>();
+            var edmModel = emModelBuilder.Build(uri);
+            config.MapODataServiceRoute(contextName, contextName, edmModel);
 
             var registrator = container.Resolve<DynamicControllersRegistrator>();
             registrator.RegisterDynamicControllers(uri);

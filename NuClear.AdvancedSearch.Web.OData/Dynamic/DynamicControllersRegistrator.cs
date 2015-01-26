@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -8,12 +8,10 @@ using NuClear.AdvancedSearch.Web.OData.Controllers;
 using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.Metamodeling.Provider;
 
-namespace NuClear.AdvancedSearch.Web.OData
+namespace NuClear.AdvancedSearch.Web.OData.Dynamic
 {
     public sealed class DynamicControllersRegistrator
     {
-        private const string AssemblyModuleName = "ODataControllers";
-
         private readonly IMetadataProvider _metadataProvider;
         private readonly ITypeProvider _typeProvider;
         private readonly IDynamicAssembliesRegistry _registry;
@@ -33,14 +31,17 @@ namespace NuClear.AdvancedSearch.Web.OData
                 throw new ArgumentException();
             }
 
-            var dynamicAssembly = CreateDynamicControllersAssembly(boundedContextElement.ConceptualModel.Entities);
+            var dynamicAssembly = CreateDynamicControllersAssembly(boundedContextElement);
             _registry.RegisterDynamicAssembly(dynamicAssembly);
         }
 
-        private Assembly CreateDynamicControllersAssembly(IEnumerable<EntityElement> entities)
+        private Assembly CreateDynamicControllersAssembly(BoundedContextElement boundedContextElement)
         {
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(AssemblyModuleName), AssemblyBuilderAccess.Run);
-            var moduleBuilder = assemblyBuilder.DefineDynamicModule(AssemblyModuleName);
+            var assemblyModuleName = boundedContextElement.Identity.Id.Segments.LastOrDefault() + "Controllers";
+
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyModuleName), AssemblyBuilderAccess.Run);
+            var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyModuleName);
+            var entities = boundedContextElement.ConceptualModel.Entities;
 
             foreach (var entity in entities)
             {

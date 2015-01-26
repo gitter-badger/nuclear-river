@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace NuClear.AdvancedSearch.Web.OData
+namespace NuClear.AdvancedSearch.Web.OData.Dynamic
 {
     public interface IDynamicAssembliesResolver
     {

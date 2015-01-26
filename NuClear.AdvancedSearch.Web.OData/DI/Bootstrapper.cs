@@ -8,7 +8,7 @@ using Effort.Provider;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.Web.OData.Controllers;
+using NuClear.AdvancedSearch.Web.OData.Dynamic;
 using NuClear.EntityDataModel.EntityFramework.Building;
 using NuClear.EntityDataModel.EntityFramework.Emit;
 using NuClear.Metamodeling.Processors;
