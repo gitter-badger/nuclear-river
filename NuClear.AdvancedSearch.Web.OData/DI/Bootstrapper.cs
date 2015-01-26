@@ -8,6 +8,7 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.EntityDataModel.EntityFramework.Building;
+using NuClear.EntityDataModel.EntityFramework.Emit;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -40,9 +41,11 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
         public static IUnityContainer ConfigureStoreModel(this IUnityContainer container)
         {
             EffortProviderConfiguration.RegisterProvider();
-
             var effortProviderInfo = new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
-            return container.RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider)));
+
+            return container
+                .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
+                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider)));
         }
     }
 }

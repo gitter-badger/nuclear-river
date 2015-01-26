@@ -125,11 +125,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\FirmsController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
+    <Compile Include="Controllers\FirmsController.cs" />
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Lifetime.cs" />
     <Compile Include="DI\UnityResolver.cs" />
+    <Compile Include="Controllers\ControllerBuilder.cs" />
     <Compile Include="Model\TypedEdmModelBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

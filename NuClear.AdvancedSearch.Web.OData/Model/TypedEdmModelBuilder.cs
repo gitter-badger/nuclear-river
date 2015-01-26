@@ -1,10 +1,10 @@
-﻿using Microsoft.OData.Edm;
+﻿using System;
 
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using Microsoft.OData.Edm;
+
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.QueryExecution;
 using NuClear.EntityDataModel.EntityFramework.Building;
-using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.Web.OData.Model
 {
@@ -19,10 +19,8 @@ namespace NuClear.AdvancedSearch.Web.OData.Model
             _edmxModelBuilder = edmxModelBuilder;
         }
 
-        public IEdmModel Build(string name)
+        public IEdmModel Build(Uri uri)
         {
-            var uri = IdBuilder.For<AdvancedSearchIdentity>(name);
-
             var edmxModel = _edmxModelBuilder.Build(uri);
             var clrTypes = edmxModel.GetClrTypes();
 
