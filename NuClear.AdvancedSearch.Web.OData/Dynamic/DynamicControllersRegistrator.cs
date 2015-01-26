@@ -35,6 +35,30 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
             _registry.RegisterDynamicAssembly(dynamicAssembly);
         }
 
+        private static void CopyParentConstructor(TypeBuilder typeBuilder, Type parentType)
+        {
+            var parentConstructor = parentType.GetConstructors().First();
+            var parentParameters = parentConstructor.GetParameters();
+
+            var parameterTypes = parentParameters.Select(x => x.ParameterType).ToArray();
+            var constructorBuilder = typeBuilder.DefineConstructor(parentConstructor.Attributes, parentConstructor.CallingConvention, parameterTypes);
+            var generator = constructorBuilder.GetILGenerator();
+
+            // load 'this' pointer
+            generator.Emit(OpCodes.Ldarg_0);
+
+            for (var i = 1; i <= parentParameters.Length; i++)
+            {
+                var parentParameter = parentParameters[i - 1];
+                constructorBuilder.DefineParameter(i, parentParameter.Attributes, parentParameter.Name);
+
+                generator.Emit(OpCodes.Ldarg_S, i);
+            }
+
+            generator.Emit(OpCodes.Call, parentConstructor);
+            generator.Emit(OpCodes.Ret);
+        }
+
         private Assembly CreateDynamicControllersAssembly(BoundedContextElement boundedContextElement)
         {
             var assemblyModuleName = boundedContextElement.Identity.Id.Segments.LastOrDefault() + "Controllers";
@@ -50,6 +74,8 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
 
                 var controllerTypeName = entity.GetEntitySetName() + "Controller";
                 var typeBuilder = moduleBuilder.DefineType(controllerTypeName, TypeAttributes.Public | TypeAttributes.Sealed, parentType);
+
+                CopyParentConstructor(typeBuilder, parentType);
 
                 typeBuilder.CreateType();
             }

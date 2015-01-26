@@ -30,12 +30,12 @@ namespace NuClear.AdvancedSearch.Web.OData
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            MapContextServiceRoute("CustomerIntelligence", config, container);
+            MapODataServiceRoute("CustomerIntelligence", config, container);
 
             appBuilder.UseWebApi(config);
         }
 
-        public void MapContextServiceRoute(string contextName, HttpConfiguration config, IUnityContainer container)
+        public void MapODataServiceRoute(string contextName, HttpConfiguration config, IUnityContainer container)
         {
             var uri = IdBuilder.For<AdvancedSearchIdentity>(contextName);
 
