@@ -7,11 +7,6 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
     public class GenericODataController<T> : ODataController
     {
-        public GenericODataController()
-        {
-            
-        }
-
         [EnableQuery]
         public IHttpActionResult Get(ODataQueryOptions<T> options)
         {

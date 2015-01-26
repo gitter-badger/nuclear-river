@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
 
             return container
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
-                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider)));
+                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
         }
 
         public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
