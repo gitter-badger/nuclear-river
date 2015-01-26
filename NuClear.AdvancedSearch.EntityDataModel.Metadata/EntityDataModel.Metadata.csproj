@@ -42,17 +42,13 @@
   <ItemGroup>
     <Compile Include="AdvancedSearchIdentity.cs" />
     <Compile Include="Metadata\BaseMetadataElement.cs" />
-    <Compile Include="Metadata\BoundedContextElementExtensions.cs" />
     <Compile Include="Metadata\Features\ElementMappingFeature.cs" />
+    <Compile Include="Metadata\MetadataElementExtensions.cs" />
     <Compile Include="Metadata\MetadataElementIdentityExtensions.cs" />
     <Compile Include="Metadata\FluentSyntax\StructuralModelElementBuilder.cs" />
     <Compile Include="Metadata\UriExtensions.cs" />
-    <Compile Include="Metadata\StructuralModelElementExtensions.cs" />
     <Compile Include="Metadata\StructuralModelElement.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />
-    <Compile Include="Metadata\EntityElementExtensions.cs" />
-    <Compile Include="Metadata\EntityPropertyExtensions.cs" />
-    <Compile Include="Metadata\EntityRelationElementExtensions.cs" />
     <Compile Include="Metadata\Features\EntitySetFeature.cs" />
     <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
     <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />

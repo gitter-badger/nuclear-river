@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
@@ -11,7 +13,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     {
         private IMetadataElementIdentity _identity;
 
-        internal protected BaseMetadataElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
+        protected internal BaseMetadataElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
             : base(features)
         {
             _identity = identity;
@@ -28,6 +30,30 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
             _identity = actualMetadataElementIdentity;
+        }
+
+        protected TFeature LookupFeature<TFeature>() where TFeature : IMetadataFeature
+        {
+            return Features.OfType<TFeature>().FirstOrDefault();
+        }
+
+        protected TResult ResolveFeature<TFeature, TResult>(Func<TFeature, TResult> projector, TResult defValue = default(TResult)) where TFeature : IMetadataFeature
+        {
+            return ResolveFeature(projector, () => defValue);
+        }
+
+        protected TResult ResolveFeature<TFeature, TResult>(Func<TFeature, TResult> projector, Func<TResult> getDefault) where TFeature : IMetadataFeature
+        {
+            if (projector == null)
+            {
+                throw new ArgumentNullException("projector");
+            }
+            if (getDefault == null)
+            {
+                throw new ArgumentNullException("getDefault");
+            }
+            var feature = LookupFeature<TFeature>();
+            return feature == null ? getDefault() : projector(feature);
         }
     }
 }

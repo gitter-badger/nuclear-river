@@ -1,23 +1,27 @@
+using System;
 using System.Collections.Generic;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Features
 {
     public sealed class EntityPropertyEnumTypeFeature : EntityPropertyTypeFeature
     {
-        private readonly IReadOnlyDictionary<string, long> _members;
-
-        public EntityPropertyEnumTypeFeature(string name, EntityPropertyType underlyingType, IReadOnlyDictionary<string,long> members)
+        public EntityPropertyEnumTypeFeature(string name, EntityPropertyType underlyingType, IReadOnlyDictionary<string, long> members)
             : base(EntityPropertyType.Enum)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("The enum name was not specified.", "name");
+            }
+
             Name = name;
             UnderlyingType = underlyingType;
-            _members = members;
+            Members = members;
         }
 
         public string Name { get; private set; }
 
         public EntityPropertyType UnderlyingType { get; private set; }
 
-        public IReadOnlyDictionary<string, long> Members { get { return _members; } }
+        public IReadOnlyDictionary<string, long> Members { get; private set; }
     }
 }

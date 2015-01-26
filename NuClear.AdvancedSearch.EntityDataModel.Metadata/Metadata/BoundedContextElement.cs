@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
@@ -9,29 +7,25 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElement : BaseMetadataElement<BoundedContextElement, BoundedContextElementBuilder>
     {
-        private readonly Lazy<StructuralModelElement> _conceptualModel;
-        private readonly Lazy<StructuralModelElement> _storeModel;
+        private readonly StructuralModelElement _conceptualModel;
+        private readonly StructuralModelElement _storeModel;
 
         internal BoundedContextElement(
             IMetadataElementIdentity contextIdentity,
-            IMetadataElementIdentity conceptualModelIdentity,
-            IMetadataElementIdentity storeModelIdentity,
+            StructuralModelElement conceptualModel,
+            StructuralModelElement storeModel,
             IEnumerable<IMetadataFeature> features)
             : base(contextIdentity, features)
         {
-            _conceptualModel = new Lazy<StructuralModelElement>(() => conceptualModelIdentity != null 
-                ? Elements.OfType<StructuralModelElement>().FirstOrDefault(x => conceptualModelIdentity.Equals(x.Identity))
-                : null);
-            _storeModel = new Lazy<StructuralModelElement>(() => storeModelIdentity != null 
-                ? Elements.OfType<StructuralModelElement>().FirstOrDefault(x => storeModelIdentity.Equals(x.Identity))
-                : null);
+            _conceptualModel = conceptualModel;
+            _storeModel = storeModel;
         }
 
         public StructuralModelElement ConceptualModel
         {
             get
             {
-                return _conceptualModel.Value;
+                return _conceptualModel;
             }
         }
 
@@ -39,8 +33,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         {
             get
             {
-                return _storeModel.Value;
+                return _storeModel;
             }
         }
-   }
+    }
 }

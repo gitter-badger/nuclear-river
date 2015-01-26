@@ -7,57 +7,72 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
+
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EntityElementBuilder : MetadataElementBuilder<EntityElementBuilder, EntityElement>
     {
-        private readonly List<string> _keyNames = new List<string>();
+        private readonly HashSet<Uri> _keyNames = new HashSet<Uri>();
+        private readonly List<EntityPropertyElementBuilder> _properties = new List<EntityPropertyElementBuilder>();
+        private readonly List<EntityRelationElementBuilder> _relations = new List<EntityRelationElementBuilder>();
 
         private string _name;
         private string _entitySetName;
 
+        public string EntityName
+        {
+            get
+            {
+                return _name;
+            }
+        }
+
+        public IReadOnlyCollection<EntityPropertyElementBuilder> Properties
+        {
+            get
+            {
+                return _properties;
+            }
+        }
+
+        public IReadOnlyCollection<EntityRelationElementBuilder> Relations
+        {
+            get
+            {
+                return _relations;
+            }
+        }
+
         public EntityElementBuilder Name(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentException("The name should be meaningful.", "name");
-            }
-
             _name = name;
             return this;
         }
 
         public EntityElementBuilder EntitySetName(string entitySetName)
         {
-            if (string.IsNullOrWhiteSpace(entitySetName))
-            {
-                throw new ArgumentException("The entity set name should be meaningful.", "entitySetName");
-            }
-
             _entitySetName = entitySetName;
             return this;
         }
 
         public EntityElementBuilder HasKey(params string[] propertyNames)
         {
-            if (propertyNames.Length == 0)
+            foreach (var propertyName in propertyNames)
             {
-                throw new ArgumentException("At least one name should be specified.", "propertyNames");
+                _keyNames.Add(propertyName.AsUri());
             }
-
-            _keyNames.AddRange(propertyNames);
             return this;
         }
 
-        public EntityElementBuilder Property(EntityPropertyElement property)
+        public EntityElementBuilder Property(EntityPropertyElementBuilder property)
         {
-            Childs(property);
+            _properties.Add(property);
             return this;
         }
 
-        public EntityElementBuilder Relation(EntityRelationElement relation)
+        public EntityElementBuilder Relation(EntityRelationElementBuilder relation)
         {
-            Childs(relation);
+            _relations.Add(relation);
             return this;
         }
 
@@ -68,44 +83,40 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 throw new InvalidOperationException("The entity name was not specified.");
             }
 
-            ProcessKeys();
-            ProcessCollectionName();
+            if (!string.IsNullOrWhiteSpace(_entitySetName))
+            {
+                AddFeatures(new EntitySetFeature(_entitySetName));
+            }
+
+            ProcessProperties();
+            ProcessRelations();
 
             return new EntityElement(_name.AsUri().AsIdentity(), Features);
         }
 
-        private void ProcessKeys()
+        private void ProcessProperties()
         {
-            if (_keyNames.Count == 0)
+            var keys = new List<EntityPropertyElement>();
+
+            foreach (var propertyElement in _properties.Select(x => (EntityPropertyElement)x))
             {
-                return;
+                Childs(propertyElement);
+
+                if (_keyNames.Contains(propertyElement.Identity.Id))
+                {
+                    keys.Add(propertyElement);
+                }
             }
 
-            var properties = ChildElements.OfType<EntityPropertyElement>().ToDictionary(x => x.Identity.Id);
-
-            Func<string, EntityPropertyElement> resolve = propertyName =>
+            if (keys.Count > 0)
             {
-                EntityPropertyElement property;
-
-                var propertyId = propertyName.AsUri();
-                if (!properties.TryGetValue(propertyId, out property))
-                {
-                    throw new InvalidOperationException(string.Format("The property with name: '{0}' was not declared.", propertyName));
-                }
-                return property;
-            };
-
-            AddFeatures(new EntityIdentityFeature(_keyNames.Distinct().Select(propertyName => resolve(propertyName)).ToArray()));
+                AddFeatures(new EntityIdentityFeature(keys));
+            }
         }
 
-        private void ProcessCollectionName()
+        private void ProcessRelations()
         {
-            if (string.IsNullOrEmpty(_entitySetName))
-            {
-                return;
-            }
-
-            AddFeatures(new EntitySetFeature(_entitySetName));
+            Childs(_relations.Select(x => (IMetadataElement)(EntityRelationElement)x).ToArray());
         }
     }
 }

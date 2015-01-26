@@ -59,7 +59,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Emit
             var typeName = entityElement.ResolveFullName();
             var tableTypeBuilder = ModuleBuilder.DefineType(typeName);
 
-            foreach (var propertyElement in entityElement.GetProperties())
+            foreach (var propertyElement in entityElement.Properties)
             {
                 var propertyName = propertyElement.ResolveName();
                 var propertyType = ResolveType(propertyElement);
@@ -67,10 +67,10 @@ namespace NuClear.EntityDataModel.EntityFramework.Emit
                 tableTypeBuilder.DefineProperty(propertyName, propertyType);
             }
 
-            foreach (var relationElement in entityElement.GetRelations())
+            foreach (var relationElement in entityElement.Relations)
             {
-                var relationTarget = relationElement.GetTarget();
-                var relationCardinality = relationElement.GetCardinality();
+                var relationTarget = relationElement.Target;
+                var relationCardinality = relationElement.Cardinality;
 
                 var propertyName = relationElement.ResolveName();
                 var propertyType = CreateRelationType(Resolve(relationTarget), relationCardinality);
@@ -83,7 +83,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Emit
 
         private Type ResolveType(EntityPropertyElement propertyElement)
         {
-            var propertyType = propertyElement.GetPropertyType();
+            var propertyType = propertyElement.PropertyType;
             if (propertyType == EntityPropertyType.Enum)
             {
                 return CreateEnum(propertyElement);
@@ -93,12 +93,12 @@ namespace NuClear.EntityDataModel.EntityFramework.Emit
 
         private Type CreateEnum(EntityPropertyElement propertyElement)
         {
-            var typeName = propertyElement.GetEnumName();
-            var underlyingType = ConvertType(propertyElement.GetUnderlyingPropertyType());
+            var typeName = propertyElement.EnumName;
+            var underlyingType = ConvertType(propertyElement.EnumUnderlyingType);
 
             var typeBuilder = ModuleBuilder.DefineEnum(typeName, underlyingType);
 
-            foreach (var member in propertyElement.GetEnumMembers())
+            foreach (var member in propertyElement.EnumMembers)
             {
                 typeBuilder.DefineLiteral(member.Key, Convert.ChangeType(member.Value, underlyingType));
             }
