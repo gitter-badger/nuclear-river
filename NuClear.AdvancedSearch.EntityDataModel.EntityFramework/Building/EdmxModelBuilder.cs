@@ -79,31 +79,31 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             configuration.Configure(x => x.HasTableAnnotation("EntityId", entityElement.Identity.Id));
 
             // update entity set name
-            var entitySetName = entityElement.GetEntitySetName() ?? entityElement.ResolveName();
+            var entitySetName = entityElement.EntitySetName ?? entityElement.ResolveName();
             configuration.Configure(x => x.HasEntitySetName(entitySetName));
 
             // declare keys
-            var keyNames = entityElement.GetKeyProperties().Select(p => p.ResolveName());
+            var keyNames = entityElement.KeyProperties.Select(p => p.ResolveName());
             configuration.Configure(x => x.HasKey(keyNames));
 
             // specify table schema and name
             var storeEntityElement = context.LookupMappedEntity(entityElement);
             if (storeEntityElement != null)
             {
-                string schemaName;
-                var tableName = storeEntityElement.ResolveName(out schemaName);
-                
+                var tableName = storeEntityElement.ResolveName();
+                var schemaName = storeEntityElement.ResolveSchema();
+
                 configuration.Configure(x => x.ToTable(tableName, schemaName));
                 configuration.Configure(x => x.HasTableAnnotation("EntityId", storeEntityElement.Identity.Id));
             }
 
-            foreach (var propertyElement in entityElement.GetProperties())
+            foreach (var propertyElement in entityElement.Properties)
             {
-                var propertyType = propertyElement.GetPropertyType();
+                var propertyType = propertyElement.PropertyType;
                 if (propertyType == EntityPropertyType.Enum) continue;
 
                 var propertyName = propertyElement.ResolveName();
-                if (propertyElement.IsNullable())
+                if (propertyElement.IsNullable)
                 {
                     configuration.Configure(x => x.Property(propertyName).IsOptional());
                 }
@@ -165,7 +165,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                         if (sourceElement != null & targetElement != null)
                         {
-                            var relation = targetElement.GetRelations().FirstOrDefault(x => x.GetTarget().ResolveName() == sourceElement.ResolveName());
+                            var relation = targetElement.Relations.FirstOrDefault(x => x.Target.ResolveName() == sourceElement.ResolveName());
                             if (relation != null)
                             {
                                 item.Constraint.ToProperties.First().Name = relation.ResolveName();
@@ -201,7 +201,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
                 var storeModelId = boundedContextElement.StoreModel != null ? new Uri(boundedContextElement.StoreModel.Identity.Id + "/") : null;
                 _storeEntities = boundedContextElement.StoreModel != null
-                    ? boundedContextElement.StoreModel.GetFlattenEntities()
+                    ? boundedContextElement.StoreModel.Entities
                     .ToDictionary(x => storeModelId.MakeRelativeUri(x.Identity.Id), x => x.Identity)
                     : new Dictionary<Uri, IMetadataElementIdentity>();
             }
@@ -218,7 +218,7 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             {
                 get
                 {
-                    return _boundedContextElement.ConceptualModel.GetFlattenEntities();
+                    return _boundedContextElement.ConceptualModel.Entities;
                 }
             }
 
@@ -230,14 +230,16 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
 
             public EntityElement LookupMappedEntity(EntityElement entityElement)
             {
-                var mappedId = entityElement.GetMappedEntityIdentity();
-                if (mappedId == null)
+                var mappedEntity = entityElement.MappedEntity;
+                if (mappedEntity == null)
                 {
                     return null;
                 }
 
-                IMetadataElementIdentity storeElementIdentity;
-                return _storeEntities.TryGetValue(mappedId.Id, out storeElementIdentity) ? LookupEntity(storeElementIdentity.Id) : null;
+                return (EntityElement)mappedEntity;
+
+                //                IMetadataElementIdentity storeElementIdentity;
+                //                return _storeEntities.TryGetValue(mappedEntity.Id, out storeElementIdentity) ? LookupEntity(storeElementIdentity.Id) : null;
             }
 
             public Type ResolveType(EntityElement entityElement)
