@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                 throw new InvalidOperationException("The conceptual model is not specified.");
             }
 
-            return BuildModel(context.ResolveFullName(), context.ConceptualModel.Entities);
+            return BuildModel(context.ResolveFullName(), context.ConceptualModel.RootEntities);
         }
 
         private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)
@@ -66,7 +66,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             var model = new EdmModel();
 
             model.AddElement(BuildContainer(entities, typeBuilder));
-            
+
             foreach (var registeredType in typeBuilder.RegisteredTypes)
             {
                 model.AddElement(registeredType);
@@ -119,8 +119,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                 IEdmSchemaType complexType;
                 if (!_registeredTypes.TryGetValue(typeName, out complexType))
                 {
-                    _registeredTypes.Add(typeName, 
-                        complexType = entityElement.KeyProperties.Any() 
+                    _registeredTypes.Add(typeName,
+                        complexType = entityElement.KeyProperties.Any()
                         ? (IEdmSchemaType)BuildEntityType(typeName, entityElement)
                         : (IEdmSchemaType)BuildComplexType(typeName, entityElement));
                 }
