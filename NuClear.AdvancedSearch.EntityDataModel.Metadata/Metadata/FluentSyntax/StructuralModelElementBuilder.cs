@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
     public sealed class StructuralModelElementBuilder : MetadataElementBuilder<StructuralModelElementBuilder, StructuralModelElement>
     {
         private string _name;
-        private EntityElementBuilder[] _elements = new EntityElementBuilder[0];
+        private IEnumerable<EntityElementBuilder> _elements = Enumerable.Empty<EntityElementBuilder>();
 
         public StructuralModelElementBuilder Name(string name)
         {
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 throw new ArgumentNullException("elements");
             }
 
-            _elements = elements;
+            _elements = _elements.Concat(elements);
             return this;
         }
 
