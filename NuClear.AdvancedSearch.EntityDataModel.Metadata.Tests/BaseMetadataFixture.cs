@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
 
 using NuClear.Metamodeling.Elements;
 
@@ -8,41 +6,33 @@ using NUnit.Framework;
 
 namespace NuClear.EntityDataModel.Tests
 {
-    internal abstract class BaseMetadataFixture
+    internal abstract class BaseMetadataFixture<TMetadataElement, TBuilder>
+        where TMetadataElement : MetadataElement
+        where TBuilder : MetadataElementBuilder<TBuilder, TMetadataElement>, new()
     {
-        public abstract IEnumerable Provider { get; }
+        public abstract IEnumerable TestCases { get; }
 
-        [TestCaseSource("Provider")]
-        public string CheckSerialization(IMetadataElement element, Metadata properties)
+        [Test, TestCaseSource("TestCases")]
+        public string CheckSerialization(TBuilder element, MetadataKind properties)
         {
-            return Serialize(element, properties);
+            return SerializeAndDump(element, properties);
         }
 
-        protected static TestCaseData Case(MetadataElement element)
+        protected static TestCaseData Case(TBuilder config)
         {
-            return Case(element, Metadata.Identity | Metadata.Features);
+            return Case(config, MetadataKind.Identity | MetadataKind.Features);
         }
 
-        protected static TestCaseData Case(MetadataElement element, Metadata properties)
+        protected static TestCaseData Case(TBuilder config, MetadataKind properties)
         {
-            return new TestCaseData(element, properties);
+            return new TestCaseData(config, properties);
         }
 
-        protected static string Serialize(IMetadataElement element, Metadata properties)
+        private static string SerializeAndDump(TMetadataElement element, MetadataKind metadata)
         {
-            var propertyNames = properties.ToString().Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-            
-            Debug.WriteLine(element.ToJson(true, propertyNames));
+            element.Dump(metadata);
 
-            return element.ToJson(propertyNames).Replace("\"", "'");
+            return element.Serialize(metadata);
         }
-
-        [Flags]
-        internal enum Metadata
-        {
-            Identity = 1,
-            Elements = 2,
-            Features = 4
-        }
-    }
+   }
 }
