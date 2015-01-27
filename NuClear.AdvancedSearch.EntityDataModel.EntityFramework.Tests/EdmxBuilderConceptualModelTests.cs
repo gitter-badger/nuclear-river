@@ -14,7 +14,10 @@ namespace EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldExposeEntitySets()
         {
-            var config = NewContext("Library").ConceptualModel(NewModel(NewEntity("Book"), NewEntity("Author").EntitySetName("Authors")));
+            var config = NewContext("Library").ConceptualModel(
+                NewModel(
+                    NewEntity("Book"), 
+                    NewEntity("Author").EntitySetName("Authors")));
 
             var model = BuildConceptualModel(config);
 

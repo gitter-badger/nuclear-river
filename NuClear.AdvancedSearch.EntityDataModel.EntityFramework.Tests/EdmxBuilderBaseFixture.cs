@@ -239,8 +239,10 @@ namespace EntityDataModel.EntityFramework.Tests
         protected static DbConnection CreateConnection(string path = null)
         {
             var dataLoader = new CsvDataLoader(path ?? DefaultTestDataUri);
-            var cachingLoader = new CachingDataLoader(dataLoader);
-            return DbConnectionFactory.CreateTransient(cachingLoader);
+            //var cachingLoader = new CachingDataLoader(dataLoader);
+
+            //return DbConnectionFactory.CreateTransient(cachingLoader);
+            return DbConnectionFactory.CreateTransient(dataLoader);
         }
 
         #endregion
@@ -254,14 +256,7 @@ namespace EntityDataModel.EntityFramework.Tests
 
         protected static StructuralModelElementBuilder NewModel(params EntityElementBuilder[] entities)
         {
-            var model = StructuralModelElement.Config;
-
-            foreach (var entityElementBuilder in entities)
-            {
-                model.Elements(entityElementBuilder);
-            }
-
-            return model;
+            return StructuralModelElement.Config.Elements(entities);
         }
 
         protected static EntityElementBuilder NewEntity(string name, params EntityPropertyElementBuilder[] properties)
@@ -297,7 +292,9 @@ namespace EntityDataModel.EntityFramework.Tests
 
         private static EdmxModelBuilder CreateBuilder(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
-            return new EdmxModelBuilder(EffortProvider, metadataProvider, typeProvider);
+            return typeProvider == null 
+                ? new EdmxModelBuilder(EffortProvider, metadataProvider)
+                : new EdmxModelBuilder(EffortProvider, metadataProvider, typeProvider);
         }
 
         private static DbModel CreateModel(IMetadataElement context, ITypeProvider typeProvider = null)

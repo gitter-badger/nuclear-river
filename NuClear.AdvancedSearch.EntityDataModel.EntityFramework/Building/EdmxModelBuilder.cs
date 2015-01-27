@@ -35,10 +35,14 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             {
                 throw new ArgumentNullException("metadataProvider");
             }
+            if (typeProvider == null)
+            {
+                throw new ArgumentNullException("typeProvider");
+            }
 
             _providerInfo = providerInfo;
             _metadataProvider = metadataProvider;
-            _typeProvider = typeProvider ?? new EmitTypeProvider();
+            _typeProvider = typeProvider;
         }
 
         public DbModel Build(Uri contextUrl)
@@ -90,8 +94,9 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
             var storeEntityElement = context.LookupMappedEntity(entityElement);
             if (storeEntityElement != null)
             {
+                string schemaName;
                 var tableName = storeEntityElement.ResolveName();
-                var schemaName = storeEntityElement.ResolveSchema();
+                ParseTableName(ref tableName, out schemaName);
 
                 configuration.Configure(x => x.ToTable(tableName, schemaName));
                 configuration.Configure(x => x.HasTableAnnotation("EntityId", storeEntityElement.Identity.Id));
@@ -111,6 +116,23 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                 {
                     configuration.Configure(x => x.Property(propertyName).IsRequired());
                 }
+            }
+        }
+
+        private static void ParseTableName(ref string tableName, out string schemaName)
+        {
+            if (tableName == null)
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            schemaName = null;
+            
+            var index = tableName.IndexOf('.');
+            if (index >= 0)
+            {
+                schemaName = tableName.Substring(0, index);
+                tableName = tableName.Substring(index + 1);
             }
         }
 
@@ -204,14 +226,6 @@ namespace NuClear.EntityDataModel.EntityFramework.Building
                     ? boundedContextElement.StoreModel.Entities
                     .ToDictionary(x => storeModelId.MakeRelativeUri(x.Identity.Id), x => x.Identity)
                     : new Dictionary<Uri, IMetadataElementIdentity>();
-            }
-
-            public IEnumerable<EntityElement> Entities
-            {
-                get
-                {
-                    return _boundedContextElement.ConceptualModel.Entities;
-                }
             }
 
             public IEnumerable<EntityElement> EntityTypes
