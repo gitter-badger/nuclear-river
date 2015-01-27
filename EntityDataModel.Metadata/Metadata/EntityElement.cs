@@ -47,7 +47,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
         }
 
-        public IMetadataElement MappedEntity
+        public EntityElement MappedEntity
         {
             get
             {

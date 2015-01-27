@@ -93,8 +93,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             var contextId = LookupContextId(metadataProvider);
             var model = builder.Build(contextId);
 
-            model.Dump();
-
             return model;
         }
 
@@ -105,12 +103,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
 
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            return BuildModel(MockSource(context), typeProvider);
+            var model = BuildModel(MockSource(context), typeProvider);
+
+            model.Dump();
+
+            return model;
         }
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = BuildModel(context);
+            var model = BuildModel(MockSource(context));
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -119,7 +121,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = BuildModel(context);
+            var model = BuildModel(MockSource(context));
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
