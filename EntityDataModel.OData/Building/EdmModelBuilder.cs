@@ -299,8 +299,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                     case EntityPropertyType.Decimal:
                         return EdmPrimitiveTypeKind.Decimal;
 
-                    case EntityPropertyType.DateTime:
-                        return EdmPrimitiveTypeKind.Date;
+                    case EntityPropertyType.DateTimeOffset:
+                        return EdmPrimitiveTypeKind.DateTimeOffset;
 
                     case EntityPropertyType.String:
                         return EdmPrimitiveTypeKind.String;

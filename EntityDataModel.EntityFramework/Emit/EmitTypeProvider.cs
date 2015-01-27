@@ -127,8 +127,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
                     return typeof(bool);
                 case EntityPropertyType.String:
                     return typeof(string);
-                case EntityPropertyType.DateTime:
-                    return typeof(DateTime);
+                case EntityPropertyType.DateTimeOffset:
+                    return typeof(DateTimeOffset);
                 default:
                     throw new ArgumentOutOfRangeException("propertyType");
             }

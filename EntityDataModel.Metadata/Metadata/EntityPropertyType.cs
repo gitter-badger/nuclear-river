@@ -15,7 +15,7 @@
 
         String,
 
-        DateTime,
+        DateTimeOffset,
 
         Enum,
     }
