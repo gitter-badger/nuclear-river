@@ -2,11 +2,9 @@
 using System.Collections;
 using System.Linq;
 
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-
 using NUnit.Framework;
 
-namespace NuClear.EntityDataModel.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 {
     [TestFixture]
     internal class StructuralModelMetadataTests : BaseMetadataFixture<StructuralModelElement, StructuralModelElementBuilder>
