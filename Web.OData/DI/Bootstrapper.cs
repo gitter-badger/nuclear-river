@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var effortProviderInfo = new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
 
             return container
-                .RegisterType<CreateHelper>(Lifetime.Singleton)
+                .RegisterType<StoreHelper>(Lifetime.Singleton)
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
                 .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
         }

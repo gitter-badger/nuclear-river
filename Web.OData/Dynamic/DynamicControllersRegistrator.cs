@@ -65,7 +65,9 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
 
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyModuleName), AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyModuleName);
-            var entities = boundedContextElement.ConceptualModel.Entities;
+
+
+            var entities = boundedContextElement.ConceptualModel.Entities.Where(x => !string.IsNullOrEmpty(x.EntitySetName));
 
             foreach (var entity in entities)
             {

@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             }
         }
 
-        [Test, Ignore("Should be fixed in version 5.4 (https://github.com/OData/WebApi/issues/136)")]
+        [Test]
         public void ByLastQualifiedOn()
         {
             using (var context = new DbContext(CreateConnection(), Model, true))
