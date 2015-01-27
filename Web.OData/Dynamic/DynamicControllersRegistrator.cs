@@ -37,11 +37,11 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
 
         private static void CopyParentConstructor(TypeBuilder typeBuilder, Type parentType)
         {
-            var parentConstructor = parentType.GetConstructors().First();
+            var parentConstructor = parentType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance).First();
             var parentParameters = parentConstructor.GetParameters();
 
             var parameterTypes = parentParameters.Select(x => x.ParameterType).ToArray();
-            var constructorBuilder = typeBuilder.DefineConstructor(parentConstructor.Attributes, parentConstructor.CallingConvention, parameterTypes);
+            var constructorBuilder = typeBuilder.DefineConstructor(parentConstructor.Attributes | MethodAttributes.Public, parentConstructor.CallingConvention, parameterTypes);
             var generator = constructorBuilder.GetILGenerator();
 
             // load 'this' pointer

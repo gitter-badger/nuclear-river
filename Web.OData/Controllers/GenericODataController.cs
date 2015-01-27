@@ -3,11 +3,11 @@ using System.Web.OData;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
-    public class GenericODataController<T> : ODataController
+    public abstract class GenericODataController<T> : ODataController
     {
         private readonly StoreHelper _storeHelper;
 
-        public GenericODataController(StoreHelper storeHelper)
+        protected GenericODataController(StoreHelper storeHelper)
         {
             _storeHelper = storeHelper;
         }
