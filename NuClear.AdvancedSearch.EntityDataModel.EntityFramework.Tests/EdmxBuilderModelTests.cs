@@ -1,5 +1,6 @@
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
 using EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
@@ -66,15 +67,24 @@ namespace EntityDataModel.EntityFramework.Tests
         }
 
         [Test, Explicit]
-        public void Test()
+        public void ShouldQueryFirmsForCustomModel()
         {
             var builder = new DbModelBuilder();
+            builder.Conventions.Remove<PluralizingTableNameConvention>();
 
             builder.RegisterEntityType(typeof(Firm));
             //builder.Entity<Firm>().HasRequired(x => x.Client).WithMany(x => x.Firms).Map(x => x.MapKey("ClientId"));
 
             var model = builder.Build(EffortProvider);
             model.Dump();
+
+            using (var connection = CreateConnection())
+            using (var context = new DbContext(connection, model.Compile(), false))
+            {
+                var firms = context.Set<Firm>().ToArray();
+
+                Assert.That(firms, Has.Length.EqualTo(2));
+            }
         }
 
         private static DbModel CreateCustomerIntelligenceModel()
