@@ -35,7 +35,7 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
             _registry.RegisterDynamicAssembly(dynamicAssembly);
         }
 
-        private static void CopyParentConstructor(TypeBuilder typeBuilder, Type parentType)
+        private static void AddParentConstructor(TypeBuilder typeBuilder, Type parentType)
         {
             var parentConstructor = parentType.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance).First();
             var parentParameters = parentConstructor.GetParameters();
@@ -59,13 +59,21 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
             generator.Emit(OpCodes.Ret);
         }
 
+        private static void AddEntityElementIdAnnotation(TypeBuilder typeBuilder, EntityElement entity)
+        {
+            var id = entity.Identity.Id.ToString();
+            var constructor = typeof(EntityElementIdAttribute).GetConstructors().First();
+            var customAttributeBuilder = new CustomAttributeBuilder(constructor, new object[] { id });
+
+            typeBuilder.SetCustomAttribute(customAttributeBuilder);
+        }
+
         private Assembly CreateDynamicControllersAssembly(BoundedContextElement boundedContextElement)
         {
             var assemblyModuleName = boundedContextElement.Identity.Id.Segments.LastOrDefault() + "Controllers";
 
             var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName(assemblyModuleName), AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyModuleName);
-
 
             var entities = boundedContextElement.ConceptualModel.Entities.Where(x => !string.IsNullOrEmpty(x.EntitySetName));
 
@@ -77,7 +85,8 @@ namespace NuClear.AdvancedSearch.Web.OData.Dynamic
                 var controllerTypeName = entity.EntitySetName + "Controller";
                 var typeBuilder = moduleBuilder.DefineType(controllerTypeName, TypeAttributes.Public | TypeAttributes.Sealed, parentType);
 
-                CopyParentConstructor(typeBuilder, parentType);
+                AddParentConstructor(typeBuilder, parentType);
+                AddEntityElementIdAnnotation(typeBuilder, entity);
 
                 typeBuilder.CreateType();
             }

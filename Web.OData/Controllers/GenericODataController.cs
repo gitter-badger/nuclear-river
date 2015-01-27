@@ -1,5 +1,6 @@
-using System.Linq;
+using System.Web.Http;
 using System.Web.OData;
+using System.Web.OData.Query;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
@@ -12,12 +13,11 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
             _storeHelper = storeHelper;
         }
 
-        [EnableQuery]
-        public IQueryable<T> Get()
+        public IHttpActionResult Get(ODataQueryOptions<T> queryOptions)
         {
             var entities = _storeHelper.GetEntities<T>();
 
-            return entities;
+            return Ok(entities);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity.Infrastructure;
 using System.Web.Http.Dispatcher;
+using System.Web.Http.Filters;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
@@ -58,7 +59,12 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             return container
                 .RegisterType<IDynamicAssembliesRegistry, DynamicAssembliesRegistry>(Lifetime.Singleton)
                 .RegisterType<IDynamicAssembliesResolver, DynamicAssembliesRegistry>(Lifetime.Singleton)
-                .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton);
+
+                // custom IHttpControllerTypeResolver
+                .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton)
+
+                // custom IFilterProvider
+                .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton);
         }
     }
 }
