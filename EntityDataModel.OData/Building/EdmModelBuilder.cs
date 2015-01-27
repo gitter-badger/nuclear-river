@@ -51,6 +51,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             {
                 throw new ArgumentNullException("context");
             }
+
             if (context.ConceptualModel == null)
             {
                 throw new InvalidOperationException("The conceptual model is not specified.");

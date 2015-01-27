@@ -5,10 +5,10 @@ using Microsoft.Owin;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DI;
-using NuClear.AdvancedSearch.Web.OData.Model;
+using NuClear.AdvancedSearch.Web.OData.Dynamic;
+using NuClear.Metamodeling.Elements.Identities;
 
 using Owin;
 
@@ -26,15 +26,25 @@ namespace NuClear.AdvancedSearch.Web.OData
             var container = Bootstrapper.ConfigureUnity();
             config.DependencyResolver = new UnityResolver(container);
 
-            //config.MapHttpAttributeRoutes();
-            //config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
+            // default web api
+            config.MapHttpAttributeRoutes();
+            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            var typedEdmModelBuilder = container.Resolve<TypedEdmModelBuilder>();
-            var edmModel = typedEdmModelBuilder.Build("CustomerIntelligence");
-
-            config.MapODataServiceRoute("CustomerIntelligence", "CustomerIntelligence", edmModel);
+            MapODataServiceRoute("CustomerIntelligence", config, container);
 
             appBuilder.UseWebApi(config);
+        }
+
+        public void MapODataServiceRoute(string contextName, HttpConfiguration config, IUnityContainer container)
+        {
+            var uri = IdBuilder.For<AdvancedSearchIdentity>(contextName);
+
+            var emModelBuilder = container.Resolve<EdmModelWithClrTypesBuilder>();
+            var edmModel = emModelBuilder.Build(uri);
+            config.MapODataServiceRoute(contextName, contextName, edmModel);
+
+            var registrator = container.Resolve<DynamicControllersRegistrator>();
+            registrator.RegisterDynamicControllers(uri);
         }
     }
 }

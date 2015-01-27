@@ -1,28 +1,26 @@
-﻿using Microsoft.OData.Edm;
+﻿using System;
+
+using Microsoft.OData.Edm;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.QueryExecution;
-using NuClear.Metamodeling.Elements.Identities;
 
-namespace NuClear.AdvancedSearch.Web.OData.Model
+namespace NuClear.AdvancedSearch.Web.OData
 {
-    public sealed class TypedEdmModelBuilder
+    public sealed class EdmModelWithClrTypesBuilder
     {
         private readonly EdmModelBuilder _edmModelBuilder;
         private readonly EdmxModelBuilder _edmxModelBuilder;
 
-        public TypedEdmModelBuilder(EdmModelBuilder edmModelBuilder, EdmxModelBuilder edmxModelBuilder)
+        public EdmModelWithClrTypesBuilder(EdmModelBuilder edmModelBuilder, EdmxModelBuilder edmxModelBuilder)
         {
             _edmModelBuilder = edmModelBuilder;
             _edmxModelBuilder = edmxModelBuilder;
         }
 
-        public IEdmModel Build(string name)
+        public IEdmModel Build(Uri uri)
         {
-            var uri = IdBuilder.For<AdvancedSearchIdentity>(name);
-
             var edmxModel = _edmxModelBuilder.Build(uri);
             var clrTypes = edmxModel.GetClrTypes();
 

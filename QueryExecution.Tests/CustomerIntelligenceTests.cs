@@ -25,12 +25,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             }
         }
 
-        [Test, Ignore("Should be fixed in version 5.4 (https://github.com/OData/WebApi/issues/136)")]
+        [Test]
         public void ByLastQualifiedOn()
         {
             using (var context = new DbContext(CreateConnection(), Model, true))
             {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=LastQualifiedOn gt datetime'2015-01-01T00:00'");
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=LastQualifiedOn gt 2015-01-01");
 
                 var actual = queryOptions.ApplyTo(context.Set<Firm>());
                 var expected = context.Set<Firm>().Where(x => x.LastQualifiedOn > new DateTime(2015, 01, 01));

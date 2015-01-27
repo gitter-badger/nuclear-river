@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
@@ -8,7 +9,7 @@ using NuClear.Metamodeling.Elements.Identities;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
 {
-    internal sealed class EmitTypeProvider : ITypeProvider
+    public sealed class EmitTypeProvider : ITypeProvider
     {
         private const string CustomCodeName = "CustomCode";
 
@@ -57,7 +58,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
         private Type CreateType(EntityElement entityElement)
         {
             var typeName = entityElement.ResolveFullName();
-            var tableTypeBuilder = ModuleBuilder.DefineType(typeName);
+            var tableTypeBuilder = ModuleBuilder.DefineType(typeName, TypeAttributes.Public);
 
             foreach (var propertyElement in entityElement.Properties)
             {

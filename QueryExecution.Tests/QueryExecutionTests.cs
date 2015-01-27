@@ -38,15 +38,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             });
             _context.Set<TestClass1>().AddRange(entities);
 
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                
-            }
-            
+            _context.SaveChanges();
         }
 
         [TearDown]
