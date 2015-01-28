@@ -9,7 +9,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public long OrganizationUnitId { get; set; }
         public long TerritoryId { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
-        public DateTimeOffset LastQualifiedOn { get; set; }
+        public DateTimeOffset LastDisqualifiedOn { get; set; }
         public DateTimeOffset LastDistributedOn { get; set; }
         public bool HasWebsite { get; set; }
         public bool HasPhone { get; set; }
