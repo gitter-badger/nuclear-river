@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections;
 
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-
 using NUnit.Framework;
 
-namespace NuClear.EntityDataModel.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 {
     [TestFixture]
     internal class BoundedContextMetadataTests : BaseMetadataFixture<BoundedContextElement, BoundedContextElementBuilder>
