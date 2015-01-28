@@ -7,7 +7,15 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
     {
         public IQueryable<T> GetEntities<T>()
         {
-            var queryable = Enumerable.Range(0, 10).Select(x => Activator.CreateInstance<T>()).AsQueryable();
+            var idProperty = typeof(T).GetProperty("Id");
+
+            var queryable = Enumerable.Range(0, 10).Select(x =>
+            {
+                var entity = Activator.CreateInstance<T>();
+                idProperty.SetValue(entity, x);
+                return entity;
+            }).AsQueryable();
+
             return queryable;
         }
     }

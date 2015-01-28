@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.OData.Batch;
 using System.Web.OData.Extensions;
 
 using Microsoft.Owin;
@@ -30,18 +31,21 @@ namespace NuClear.AdvancedSearch.Web.OData
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            MapODataServiceRoute("CustomerIntelligence", config, container);
+            var httpServer = new HttpServer(config);
 
-            appBuilder.UseWebApi(config);
+            MapODataServiceRoute("CustomerIntelligence", httpServer, container);
+
+            appBuilder.UseWebApi(httpServer);
         }
 
-        public void MapODataServiceRoute(string contextName, HttpConfiguration config, IUnityContainer container)
+        public void MapODataServiceRoute(string contextName, HttpServer httpServer, IUnityContainer container)
         {
             var uri = IdBuilder.For<AdvancedSearchIdentity>(contextName);
 
-            var emModelBuilder = container.Resolve<EdmModelWithClrTypesBuilder>();
-            var edmModel = emModelBuilder.Build(uri);
-            config.MapODataServiceRoute(contextName, contextName, edmModel);
+            var edmModelBuilder = container.Resolve<EdmModelWithClrTypesBuilder>();
+            var edmModel = edmModelBuilder.Build(uri);
+
+            httpServer.Configuration.MapODataServiceRoute(contextName, contextName, edmModel, new DefaultODataBatchHandler(httpServer));
 
             var registrator = container.Resolve<DynamicControllersRegistrator>();
             registrator.RegisterDynamicControllers(uri);

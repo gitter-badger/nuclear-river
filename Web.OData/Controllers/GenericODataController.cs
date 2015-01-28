@@ -1,23 +1,23 @@
-using System.Linq;
+using System.Web.Http;
 using System.Web.OData;
+using System.Web.OData.Query;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
-    public class GenericODataController<T> : ODataController
+    public abstract class GenericODataController<T> : ODataController
     {
         private readonly StoreHelper _storeHelper;
 
-        public GenericODataController(StoreHelper storeHelper)
+        protected GenericODataController(StoreHelper storeHelper)
         {
             _storeHelper = storeHelper;
         }
 
-        [EnableQuery]
-        public IQueryable<T> Get()
+        public IHttpActionResult Get(ODataQueryOptions<T> queryOptions)
         {
             var entities = _storeHelper.GetEntities<T>();
 
-            return entities;
+            return Ok(entities);
         }
     }
 }
