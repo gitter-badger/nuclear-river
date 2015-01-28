@@ -70,27 +70,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         [Test, Explicit]
         public void ShouldQueryFirmsForCustomModel()
         {
-            DbConfiguration.SetConfiguration(new TestConfiguration());
-
             var builder = new DbModelBuilder();
             builder.Conventions.Remove<PluralizingEntitySetNameConvention>();
             builder.Conventions.Remove<PluralizingTableNameConvention>();
 
-            //builder.RegisterEntityType(typeof(Firm));
-            //builder.Entity<Firm>().HasRequired(x => x.Client).WithMany(x => x.Firms).Map(x => x.MapKey("ClientId"));
-            builder.Entity<Account>().ToTable("CustomTable", "CustomSchema");
+            builder.Entity<Firm>();
 
-            var model = builder.Build(new DbProviderInfo("System.Data.SqlClient", "v11"));
+            var model = builder.Build(EffortProvider);
             model.Dump();
 
-
-            //using (var connection = CreateConnection())
-            using (var context = new DbContext("Data Source=.; Initial Catalog=Erm; Integrated Security=True;", model.Compile()))
+            using (var connection = CreateConnection())
+            using (var context = new DbContext(connection, model.Compile(), false))
             {
-                //Database.SetInitializer(new CreateDatabaseIfNotExists<DbContext>());
                 var firms = context.Set<Firm>().ToArray();
-//
-//                Assert.That(firms, Has.Length.EqualTo(2));
             }
         }
 
@@ -98,13 +90,5 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         {
             return BuildModel(CustomerIntelligenceMetadataSource, CustomerIntelligenceTypeProvider);
         }
-
-        private class TestConfiguration : DbConfiguration
-        {
-            public TestConfiguration()
-            {
-                SetDefaultConnectionFactory(new SqlConnectionFactory("Data Source=.; Initial Catalog=Erm; Integrated Security=True;"));
-            }
-        }
-   }
+  }
 }
