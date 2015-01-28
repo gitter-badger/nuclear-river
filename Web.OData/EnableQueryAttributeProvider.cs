@@ -50,7 +50,7 @@ namespace NuClear.AdvancedSearch.Web.OData
             }
 
             // далее можно кастомизовать EnableQueryAttribute используя entityElement, но пока это не нужно
-            var enableQueryAttribute = new EnableQueryAttribute { PageSize = 5 };
+            var enableQueryAttribute = new EnableQueryAttribute();
 
             return enableQueryAttribute;
         }
