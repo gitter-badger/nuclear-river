@@ -4,7 +4,7 @@ using NuClear.Metamodeling.Elements;
 
 using NUnit.Framework;
 
-namespace NuClear.EntityDataModel.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 {
     internal abstract class BaseMetadataFixture<TMetadataElement, TBuilder>
         where TMetadataElement : MetadataElement

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 
-using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
@@ -10,7 +9,7 @@ using NuClear.Metamodeling.Provider.Sources;
 
 using NUnit.Framework;
 
-namespace NuClear.EntityDataModel.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 {
     [TestFixture]
     internal class CustomerIntelligenceMetadataTests

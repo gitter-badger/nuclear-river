@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
@@ -9,13 +8,14 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
 {
     public sealed class EdmxModelBuilder
     {
+        private const string AnnotationKey = "EntityId";
+
         private readonly DbProviderInfo _providerInfo;
         private readonly IMetadataProvider _metadataProvider;
         private readonly ITypeProvider _typeProvider;
@@ -59,48 +59,50 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
                 return null;
             }
 
-            return Build(new BuildContext(_metadataProvider, _typeProvider, boundedContextElement));
+            return Build(boundedContextElement);
         }
 
-        private DbModel Build(BuildContext context)
+        private DbModel Build(BoundedContextElement context)
         {
-            var builder = CreateModelBuilder(context);
+            var builder = CreateModelBuilder(_metadataProvider);
 
-            foreach (var entityElement in context.EntityTypes)
+            foreach (var entityElement in context.ConceptualModel.Entities)
             {
-                var entityType = context.ResolveType(entityElement);
-                var configuration = RegisterType(builder, entityType);
-
-                ConfigureEntityType(configuration, entityElement, context);
+                ProcessEntity(builder, entityElement);
             }
 
             return builder.Build(_providerInfo);
         }
 
-        private static void ConfigureEntityType(TypeConventionConfiguration configuration, EntityElement entityElement, BuildContext context)
+        private void ProcessEntity(DbModelBuilder builder, EntityElement entityElement)
+        {
+            var entityType = _typeProvider.Resolve(entityElement);
+            if (entityType == null)
+            {
+                return;
+            }
+
+            var configuration = builder.RegisterEntity(entityType);
+
+            ConfigureEntity(configuration, entityElement);
+
+            var tableElement = entityElement.MappedEntity;
+            if (tableElement != null)
+            {
+                ConfigureTable(configuration, tableElement);
+            }
+        }
+
+        private static void ConfigureEntity(TypeConventionConfiguration configuration, EntityElement entityElement)
         {
             // add annotation
-            configuration.Configure(x => x.HasTableAnnotation("EntityId", entityElement.Identity.Id));
+            configuration.Configure(x => x.HasTableAnnotation(AnnotationKey, entityElement.Identity.Id));
 
             // update entity set name
-            var entitySetName = entityElement.EntitySetName ?? entityElement.ResolveName();
-            configuration.Configure(x => x.HasEntitySetName(entitySetName));
+            configuration.Configure(x => x.HasEntitySetName(entityElement.EntitySetName ?? entityElement.ResolveName()));
 
             // declare keys
-            var keyNames = entityElement.KeyProperties.Select(p => p.ResolveName());
-            configuration.Configure(x => x.HasKey(keyNames));
-
-            // specify table schema and name
-            var storeEntityElement = context.LookupMappedEntity(entityElement);
-            if (storeEntityElement != null)
-            {
-                string schemaName;
-                var tableName = storeEntityElement.ResolveName();
-                ParseTableName(ref tableName, out schemaName);
-
-                configuration.Configure(x => x.ToTable(tableName, schemaName));
-                configuration.Configure(x => x.HasTableAnnotation("EntityId", storeEntityElement.Identity.Id));
-            }
+            configuration.Configure(x => x.HasKey(entityElement.KeyProperties.Select(p => p.ResolveName())));
 
             foreach (var propertyElement in entityElement.Properties)
             {
@@ -117,6 +119,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
                     configuration.Configure(x => x.Property(propertyName).IsRequired());
                 }
             }
+        }
+
+        private static void ConfigureTable(TypeConventionConfiguration configuration, EntityElement tableElement)
+        {
+            string schemaName;
+            var tableName = tableElement.ResolveName();
+            ParseTableName(ref tableName, out schemaName);
+
+            configuration.Configure(x => x.ToTable(tableName, schemaName));
+            configuration.Configure(x => x.HasTableAnnotation(AnnotationKey, tableElement.Identity.Id));
         }
 
         private static void ParseTableName(ref string tableName, out string schemaName)
@@ -136,41 +148,34 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
             }
         }
 
-        private static TypeConventionConfiguration RegisterType(DbModelBuilder builder, Type entityType)
-        {
-            builder.RegisterEntityType(entityType);
-
-            return builder.Types().Where(x => x == entityType);
-        }
-
-        private DbModelBuilder CreateModelBuilder(BuildContext context)
+        private static DbModelBuilder CreateModelBuilder(IMetadataProvider metadata)
         {
             var builder = new DbModelBuilder();
-            
-            DropDefaultConventions(builder);
-            builder.Conventions.Add(new ForeignKeyMappingConvention(context));
-            
-            return builder;
-        }
 
-        private static void DropDefaultConventions(DbModelBuilder builder)
-        {
             // conceptual model conventions
             builder.Conventions.Remove<PluralizingEntitySetNameConvention>();
 
             // store model conventions
             builder.Conventions.Remove<ForeignKeyIndexConvention>();
             builder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            // add custom conventions
+            builder.Conventions.Add(new ForeignKeyMappingConvention(metadata));
+            
+            return builder;
         }
+
+        #region ForeignKeyMappingConvention
 
         private class ForeignKeyMappingConvention : IStoreModelConvention<AssociationType>
         {
-            private const string AnnotationKey = "http://schemas.microsoft.com/ado/2013/11/edm/customannotation:EntityId";
-            private readonly BuildContext _context;
+            private const string AnnotationUri = "http://schemas.microsoft.com/ado/2013/11/edm/customannotation" + ":" + AnnotationKey;
 
-            public ForeignKeyMappingConvention(BuildContext context)
+            private readonly IMetadataProvider _provider;
+
+            public ForeignKeyMappingConvention(IMetadataProvider provider)
             {
-                _context = context;
+                _provider = provider;
             }
 
             public void Apply(AssociationType item, DbModel model)
@@ -182,25 +187,31 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
 
                     if (sourceId != null & targetId != null)
                     {
-                        var sourceElement = _context.LookupEntity(sourceId);
-                        var targetElement = _context.LookupEntity(targetId);
+                        var sourceElement = LookupEntity(sourceId);
+                        var targetElement = LookupEntity(targetId);
 
                         if (sourceElement != null & targetElement != null)
                         {
-                            var relation = targetElement.Relations.FirstOrDefault(x => x.Target.ResolveName() == sourceElement.ResolveName());
+                            var relation = targetElement.Relations.FirstOrDefault(x => x.Target == sourceElement);
                             if (relation != null)
                             {
-                                item.Constraint.ToProperties.First().Name = relation.ResolveName();
+                                item.Constraint.ToProperties.Single().Name = relation.ResolveName();
                             }
                         }
                     }
                 }
             }
 
+            private EntityElement LookupEntity(Uri entityUrl)
+            {
+                EntityElement entityElement;
+                return _provider.TryGetMetadata(entityUrl, out entityElement) ? entityElement : null;
+            }
+
             private static Uri ResolveId(EntityType entityType)
             {
                 MetadataProperty property;
-                if (entityType.MetadataProperties.TryGetValue(AnnotationKey, false, out property))
+                if (entityType.MetadataProperties.TryGetValue(AnnotationUri, false, out property))
                 {
                     return (Uri)property.Value;
                 }
@@ -208,58 +219,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
             }
         }
 
-        private class BuildContext
-        {
-            private readonly IMetadataProvider _metadataProvider;
-            private readonly BoundedContextElement _boundedContextElement;
-            private readonly ITypeProvider _typeProvider;
-            private readonly Dictionary<Uri, IMetadataElementIdentity> _storeEntities;
-
-            public BuildContext(IMetadataProvider metadataProvider, ITypeProvider typeProvider, BoundedContextElement boundedContextElement)
-            {
-                _metadataProvider = metadataProvider;
-                _boundedContextElement = boundedContextElement;
-                _typeProvider = typeProvider;
-
-                var storeModelId = boundedContextElement.StoreModel != null ? new Uri(boundedContextElement.StoreModel.Identity.Id + "/") : null;
-                _storeEntities = boundedContextElement.StoreModel != null
-                    ? boundedContextElement.StoreModel.Entities
-                    .ToDictionary(x => storeModelId.MakeRelativeUri(x.Identity.Id), x => x.Identity)
-                    : new Dictionary<Uri, IMetadataElementIdentity>();
-            }
-
-            public IEnumerable<EntityElement> EntityTypes
-            {
-                get
-                {
-                    return _boundedContextElement.ConceptualModel.Entities;
-                }
-            }
-
-            public EntityElement LookupEntity(Uri entityUrl)
-            {
-                EntityElement entityElement;
-                return _metadataProvider.TryGetMetadata(entityUrl, out entityElement) ? entityElement : null;
-            }
-
-            public EntityElement LookupMappedEntity(EntityElement entityElement)
-            {
-                var mappedEntity = entityElement.MappedEntity;
-                if (mappedEntity == null)
-                {
-                    return null;
-                }
-
-                return (EntityElement)mappedEntity;
-
-                //                IMetadataElementIdentity storeElementIdentity;
-                //                return _storeEntities.TryGetValue(mappedEntity.Id, out storeElementIdentity) ? LookupEntity(storeElementIdentity.Id) : null;
-            }
-
-            public Type ResolveType(EntityElement entityElement)
-            {
-                return _typeProvider.Resolve(entityElement);
-            }
-        }
+        #endregion
     }
 }

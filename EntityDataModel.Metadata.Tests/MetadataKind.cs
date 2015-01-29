@@ -1,6 +1,6 @@
 using System;
 
-namespace NuClear.EntityDataModel.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 {
     [Flags]
     internal enum MetadataKind
