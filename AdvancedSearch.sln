@@ -28,6 +28,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueryExecution.Tests", "Que
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.OData", "Web.OData\Web.OData.csproj", "{4D48AAC9-C244-41A3-9E89-187860717B1F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
+	ProjectSection(SolutionItems) = preProject
+		TestData\Firm.sql = TestData\Firm.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
