@@ -27,14 +27,15 @@ namespace NuClear.AdvancedSearch.Web.OData
             var container = Bootstrapper.ConfigureUnity();
             config.DependencyResolver = new UnityResolver(container);
 
+            // per request DI
+            UnityResolver.RegisterHttpRequestMessage(config);
+
             // default web api
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
             var httpServer = new HttpServer(config);
-
             MapODataServiceRoute("CustomerIntelligence", httpServer, container);
-
             appBuilder.UseWebApi(httpServer);
         }
 
