@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -85,11 +86,25 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
         private Type ResolveType(EntityPropertyElement propertyElement)
         {
             var propertyType = propertyElement.PropertyType;
+
             if (propertyType == EntityPropertyType.Enum)
             {
+                if (propertyElement.IsNullable)
+                {
+                    throw new InvalidEnumArgumentException("Nullable enums not supported");
+                }
+
                 return CreateEnum(propertyElement);
             }
-            return ConvertType(propertyType);
+
+            var elementaryType = ConvertType(propertyType);
+
+            if (propertyElement.IsNullable)
+            {
+                return typeof(Nullable<>).MakeGenericType(elementaryType);
+            }
+
+            return elementaryType;
         }
 
         private Type CreateEnum(EntityPropertyElement propertyElement)
