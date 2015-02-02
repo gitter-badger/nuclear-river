@@ -4,18 +4,18 @@ using System.Web.OData.Query;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
-    public abstract class GenericODataController<T> : ODataController
+    public abstract class GenericODataController<T> : ODataController where T : class
     {
-        private readonly StoreHelper _storeHelper;
+        private readonly IFinder _finder;
 
-        protected GenericODataController(StoreHelper storeHelper)
+        protected GenericODataController(IFinder finder)
         {
-            _storeHelper = storeHelper;
+            _finder = finder;
         }
 
         public IHttpActionResult Get(ODataQueryOptions<T> queryOptions)
         {
-            var entities = _storeHelper.GetEntities<T>();
+            var entities = _finder.FindAll<T>();
 
             return Ok(entities);
         }

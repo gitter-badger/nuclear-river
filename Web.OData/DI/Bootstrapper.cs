@@ -4,8 +4,6 @@ using System.Web.Http.Filters;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
-using Effort.Provider;
-
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
@@ -45,13 +43,11 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
 
         public static IUnityContainer ConfigureStoreModel(this IUnityContainer container)
         {
-            EffortProviderConfiguration.RegisterProvider();
-            var effortProviderInfo = new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
+            var providerInfo = new DbProviderInfo("System.Data.SqlClient", "2012");
 
             return container
-                .RegisterType<StoreHelper>(Lifetime.Singleton)
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
-                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(effortProviderInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
+                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(providerInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
         }
 
         public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
@@ -64,7 +60,9 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton)
 
                 // custom IFilterProvider
-                .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton);
+                .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton)
+
+                .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope);
         }
     }
 }
