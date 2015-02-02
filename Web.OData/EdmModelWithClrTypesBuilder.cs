@@ -26,6 +26,7 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             var edmModel = _edmModelBuilder.Build(uri);
             edmModel.AddClrAnnotations(clrTypes);
+            edmModel.AddDbCompiledModelAnnotation(edmxModel.Compile());
 
             return edmModel;
         }
