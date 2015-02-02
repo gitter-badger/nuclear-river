@@ -97,14 +97,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
                 return CreateEnum(propertyElement);
             }
 
-            var elementaryType = ConvertType(propertyType);
+            var type = ConvertType(propertyType);
 
-            if (propertyElement.IsNullable)
+            if (propertyElement.IsNullable && type.IsValueType)
             {
-                return typeof(Nullable<>).MakeGenericType(elementaryType);
+                return typeof(Nullable<>).MakeGenericType(type);
             }
 
-            return elementaryType;
+            return type;
         }
 
         private Type CreateEnum(EntityPropertyElement propertyElement)
