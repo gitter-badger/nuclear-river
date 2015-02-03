@@ -114,6 +114,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="QueryBuilder\Content\images\msls-loader-light.gif" />
+    <Content Include="QueryBuilder\Content\odata-query-builder.css" />
+    <Content Include="QueryBuilder\index-with-options.html" />
+    <Content Include="QueryBuilder\index.html" />
+    <Content Include="QueryBuilder\Scripts\odata-query-builder.js" />
+    <Content Include="QueryBuilder\Scripts\odatajs-4.0.0-beta-01.js" />
+    <Content Include="QueryBuilder\Scripts\odatajs-4.0.0-beta-01.min.js" />
     <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
