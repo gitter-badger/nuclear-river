@@ -62,6 +62,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             get
             {
                 return MockTypeProvider(
+                    typeof(OrganizationUnit),
+                    typeof(Territory),
                     typeof(Account),
                     typeof(Category),
                     typeof(Client),

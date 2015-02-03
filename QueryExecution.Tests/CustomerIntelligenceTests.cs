@@ -16,10 +16,10 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         {
             using (var context = new DbContext(CreateConnection(), Model, true))
             {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=OrganizationUnitId eq 0");
+                var queryOptions = CreateValidQueryOptions<Firm>("$filter=OrganizationUnit/Id eq 0");
 
                 var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.OrganizationUnitId == 0);
+                var expected = context.Set<Firm>().Where(x => x.OrganizationUnit.Id == 0);
 
                 Assert.That(actual, Is.EqualTo(expected));
             }

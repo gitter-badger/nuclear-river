@@ -31,6 +31,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
 	ProjectSection(SolutionItems) = preProject
 		TestData\Firm.sql = TestData\Firm.sql
+		TestData\OrganizationUnit.sql = TestData\OrganizationUnit.sql
+		TestData\Territory.sql = TestData\Territory.sql
 	EndProjectSection
 EndProject
 Global
