@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace NuClear.AdvancedSearch.Web.OData.Controllers
+namespace NuClear.AdvancedSearch.Web.OData.DataAccess
 {
     public interface IFinder
     {
