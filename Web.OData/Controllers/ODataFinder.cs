@@ -1,5 +1,4 @@
 using System;
-using System.Data.Entity;
 using System.Linq;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
@@ -9,10 +8,9 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
         IQueryable<T> FindAll<T>() where T : class;
     }
 
-    // TODO: очень проста€ имплементаци€, замутить через DbConfiguration/IDbDependencyResolver
     public class ODataFinder : IFinder, IDisposable
     {
-        private readonly DbContext _context;
+        private readonly ODataDbContext _context;
 
         public ODataFinder(ODataDbContext context)
         {

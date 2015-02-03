@@ -68,6 +68,7 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             var connection = _connectionFactory.CreateConnection(uri);
             var edmxModel = _edmxModelBuilder.Build(connection, uri);
+
             var clrTypes = edmxModel.GetClrTypes();
             edmModel.AddClrAnnotations(clrTypes);
             edmModel.AddDbCompiledModelAnnotation(edmxModel.Compile());
