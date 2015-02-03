@@ -26,14 +26,14 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         }
 
         [Test]
-        public void ByLastQualifiedOn()
+        public void ByLastDisqualifiedOn()
         {
             using (var context = new DbContext(CreateConnection(), Model, true))
             {
                 var queryOptions = CreateValidQueryOptions<Firm>("$filter=LastDisqualifiedOn gt 2015-01-01");
 
                 var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.LastDisqualifiedOn > new DateTime(2015, 01, 01));
+                var expected = context.Set<Firm>().Where(x => x.LastDisqualifiedOn > new DateTimeOffset(2015, 01, 01, 00, 00, 00, TimeSpan.Zero));
 
                 Assert.That(actual, Is.EqualTo(expected));
             }

@@ -91,7 +91,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         {
             var builder = CreateBuilder(metadataProvider, typeProvider);
             var contextId = LookupContextId(metadataProvider);
-            var model = builder.Build(contextId);
+            var model = builder.Build(EffortProvider, contextId);
 
             return model;
         }
@@ -292,20 +292,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         private static EdmxModelBuilder CreateBuilder(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
         {
             return typeProvider == null 
-                ? new EdmxModelBuilder(EffortProvider, metadataProvider)
-                : new EdmxModelBuilder(EffortProvider, metadataProvider, typeProvider);
-        }
-
-        private static DbModel CreateModel(IMetadataElement context, ITypeProvider typeProvider = null)
-        {
-            var metadataSource = MockSource(context);
-            var metadataProvider = CreateMetadataProvider(metadataSource);
-            var contextId = LookupContextId(metadataProvider);
-
-            var builder = CreateBuilder(metadataProvider, typeProvider);
-            var model = builder.Build(contextId);
-
-            return model;
+                ? new EdmxModelBuilder(metadataProvider)
+                : new EdmxModelBuilder(metadataProvider, typeProvider);
         }
 
         protected static Uri LookupContextId(IMetadataProvider provider)

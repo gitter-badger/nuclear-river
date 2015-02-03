@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
@@ -16,21 +17,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
     {
         private const string AnnotationKey = "EntityId";
 
-        private readonly DbProviderInfo _providerInfo;
         private readonly IMetadataProvider _metadataProvider;
         private readonly ITypeProvider _typeProvider;
 
-        public EdmxModelBuilder(DbProviderInfo providerInfo, IMetadataProvider metadataProvider)
-            : this(providerInfo, metadataProvider, new EmitTypeProvider())
+        public EdmxModelBuilder(IMetadataProvider metadataProvider)
+            : this(metadataProvider, new EmitTypeProvider())
         {
         }
 
-        public EdmxModelBuilder(DbProviderInfo providerInfo, IMetadataProvider metadataProvider, ITypeProvider typeProvider)
+        public EdmxModelBuilder(IMetadataProvider metadataProvider, ITypeProvider typeProvider)
         {
-            if (providerInfo == null)
-            {
-                throw new ArgumentNullException("providerInfo");
-            }
             if (metadataProvider == null)
             {
                 throw new ArgumentNullException("metadataProvider");
@@ -40,29 +36,66 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
                 throw new ArgumentNullException("typeProvider");
             }
 
-            _providerInfo = providerInfo;
             _metadataProvider = metadataProvider;
             _typeProvider = typeProvider;
         }
 
-        public DbModel Build(Uri contextUrl)
+        public DbModel Build(DbProviderInfo providerInfo, Uri contextUrl)
         {
+            if (providerInfo == null)
+            {
+                throw new ArgumentNullException("providerInfo");
+            }
             if (contextUrl == null)
             {
                 throw new ArgumentNullException("contextUrl");
             }
 
+            var boundedContextElement = LookupContext(contextUrl);
+            if (boundedContextElement == null)
+            {
+                return null;
+            }
+
+            var modelBuilder = SetupBuilder(boundedContextElement);
+
+            return modelBuilder.Build(providerInfo);
+        }
+
+        public DbModel Build(DbConnection connection, Uri contextUrl)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection");
+            }
+            if (contextUrl == null)
+            {
+                throw new ArgumentNullException("contextUrl");
+            }
+
+            var boundedContextElement = LookupContext(contextUrl);
+            if (boundedContextElement == null)
+            {
+                return null;
+            }
+
+            var modelBuilder = SetupBuilder(boundedContextElement);
+
+            return modelBuilder.Build(connection);
+        }
+
+        private BoundedContextElement LookupContext(Uri contextUrl)
+        {
             BoundedContextElement boundedContextElement;
             _metadataProvider.TryGetMetadata(contextUrl, out boundedContextElement);
             if (boundedContextElement == null || boundedContextElement.ConceptualModel == null)
             {
                 return null;
             }
-
-            return Build(boundedContextElement);
+            return boundedContextElement;
         }
 
-        private DbModel Build(BoundedContextElement context)
+        private DbModelBuilder SetupBuilder(BoundedContextElement context)
         {
             var builder = CreateModelBuilder(_metadataProvider);
 
@@ -71,7 +104,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
                 ProcessEntity(builder, entityElement);
             }
 
-            return builder.Build(_providerInfo);
+            return builder;
         }
 
         private void ProcessEntity(DbModelBuilder builder, EntityElement entityElement)

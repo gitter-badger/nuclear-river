@@ -43,11 +43,9 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
 
         public static IUnityContainer ConfigureStoreModel(this IUnityContainer container)
         {
-            var providerInfo = new DbProviderInfo("System.Data.SqlClient", "2012");
-
             return container
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
-                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(providerInfo, typeof(IMetadataProvider), typeof(ITypeProvider)));
+                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(typeof(IMetadataProvider), typeof(ITypeProvider)));
         }
 
         public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
