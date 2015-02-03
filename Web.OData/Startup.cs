@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Data.Entity;
+using System.Web.Http;
 using System.Web.OData.Batch;
 using System.Web.OData.Extensions;
 
@@ -7,8 +8,9 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData;
+using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DI;
-using NuClear.AdvancedSearch.Web.OData.Dynamic;
+using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.Metamodeling.Elements.Identities;
 
 using Owin;
@@ -29,6 +31,9 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             // per request DI
             UnityResolver.RegisterHttpRequestMessage(config);
+
+            // configure entity framework
+            DbConfiguration.SetConfiguration(new ODataDbConfiguration());
 
             // default web api
             config.MapHttpAttributeRoutes();

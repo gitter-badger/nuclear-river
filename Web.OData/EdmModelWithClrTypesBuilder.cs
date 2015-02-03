@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Data.Entity;
 
 using Microsoft.OData.Edm;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.AdvancedSearch.QueryExecution;
+using NuClear.AdvancedSearch.Web.OData.DataAccess;
 
 namespace NuClear.AdvancedSearch.Web.OData
 {
@@ -13,22 +13,24 @@ namespace NuClear.AdvancedSearch.Web.OData
     {
         private readonly EdmModelBuilder _edmModelBuilder;
         private readonly EdmxModelBuilder _edmxModelBuilder;
+        private readonly ODataConnectionFactory _connectionFactory;
 
-        public EdmModelWithClrTypesBuilder(EdmModelBuilder edmModelBuilder, EdmxModelBuilder edmxModelBuilder)
+        public EdmModelWithClrTypesBuilder(EdmModelBuilder edmModelBuilder, EdmxModelBuilder edmxModelBuilder, ODataConnectionFactory connectionFactory)
         {
             _edmModelBuilder = edmModelBuilder;
             _edmxModelBuilder = edmxModelBuilder;
+            _connectionFactory = connectionFactory;
         }
 
         public IEdmModel Build(Uri uri)
         {
-            var dbContext = new DbContext("ODATA");
-            var connection = dbContext.Database.Connection;
-
-            var edmxModel = _edmxModelBuilder.Build(connection, uri);
-            var clrTypes = edmxModel.GetClrTypes();
-
             var edmModel = _edmModelBuilder.Build(uri);
+            edmModel.AddMetadataIdentityAnnotation(uri);
+
+            var connection = _connectionFactory.CreateConnection(uri);
+            var edmxModel = _edmxModelBuilder.Build(connection, uri);
+
+            var clrTypes = edmxModel.GetClrTypes();
             edmModel.AddClrAnnotations(clrTypes);
             edmModel.AddDbCompiledModelAnnotation(edmxModel.Compile());
 

@@ -8,7 +8,7 @@ using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.Controllers;
 using NuClear.Metamodeling.Provider;
 
-namespace NuClear.AdvancedSearch.Web.OData.Dynamic
+namespace NuClear.AdvancedSearch.Web.OData.DynamicControllers
 {
     public sealed class DynamicControllersRegistrator
     {

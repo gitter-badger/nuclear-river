@@ -2,6 +2,8 @@ using System.Web.Http;
 using System.Web.OData;
 using System.Web.OData.Query;
 
+using NuClear.AdvancedSearch.Web.OData.DataAccess;
+
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
     public abstract class GenericODataController<T> : ODataController where T : class

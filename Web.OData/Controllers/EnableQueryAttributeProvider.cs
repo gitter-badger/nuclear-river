@@ -8,10 +8,10 @@ using System.Web.OData;
 using System.Web.OData.Query;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.Web.OData.Dynamic;
+using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.Metamodeling.Provider;
 
-namespace NuClear.AdvancedSearch.Web.OData
+namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
     public sealed class EnableQueryAttributeProvider : IFilterProvider
     {

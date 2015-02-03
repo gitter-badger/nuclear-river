@@ -1,16 +1,19 @@
-﻿using System.Data.Entity.Infrastructure;
+﻿using System.Net.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Filters;
+using System.Web.OData.Extensions;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
+using Microsoft.OData.Edm;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.Controllers;
-using NuClear.AdvancedSearch.Web.OData.Dynamic;
+using NuClear.AdvancedSearch.Web.OData.DataAccess;
+using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -24,7 +27,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var container = new UnityContainer()
                 .ConfigureMetadata()
                 .ConfigureStoreModel()
-                .ConfigureWebApi();
+                .ConfigureWebApiOData();
 
             return container;
         }
@@ -45,10 +48,11 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
         {
             return container
                 .RegisterType<ITypeProvider, EmitTypeProvider>(Lifetime.Singleton)
-                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(typeof(IMetadataProvider), typeof(ITypeProvider)));
+                .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(typeof(IMetadataProvider), typeof(ITypeProvider)))
+                .RegisterType<ODataConnectionFactory>(Lifetime.Singleton);
         }
 
-        public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
+        public static IUnityContainer ConfigureWebApiOData(this IUnityContainer container)
         {
             return container
                 .RegisterType<IDynamicAssembliesRegistry, DynamicAssembliesRegistry>(Lifetime.Singleton)
@@ -60,7 +64,8 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 // custom IFilterProvider
                 .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton)
 
-                .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope);
+                .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope)
+                .RegisterType<IEdmModel>(Lifetime.PerScope, new InjectionFactory(c => c.Resolve<HttpRequestMessage>().ODataProperties().Model));
         }
     }
 }

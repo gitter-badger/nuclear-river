@@ -36,5 +36,20 @@ namespace NuClear.AdvancedSearch.QueryExecution
             var annotation = model.GetAnnotationValue<DbCompiledModelAnnotation>(model);
             return annotation.Value;
         }
+
+
+        public static IEdmModel AddMetadataIdentityAnnotation(this IEdmModel model, Uri identity)
+        {
+            var annotation = new MetadataIdentityAnnotation(identity);
+            model.SetAnnotationValue(model, annotation);
+
+            return model;
+        }
+
+        public static Uri GetMetadataIdentity(this IEdmModel model)
+        {
+            var annotation = model.GetAnnotationValue<MetadataIdentityAnnotation>(model);
+            return annotation.Value;
+        }
     }
 }
