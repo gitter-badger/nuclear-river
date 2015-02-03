@@ -1,8 +1,6 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Net.Http;
-using System.Web.OData.Extensions;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
@@ -16,10 +14,9 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
     {
         private readonly DbContext _context;
 
-        public ODataFinder(HttpRequestMessage request)
+        public ODataFinder(ODataDbContext context)
         {
-            var edmModel = request.ODataProperties().Model;
-            _context = new ODataDbContext(edmModel);
+            _context = context;
         }
 
         public IQueryable<T> FindAll<T>() where T : class

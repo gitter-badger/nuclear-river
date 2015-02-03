@@ -1,9 +1,11 @@
-﻿using System.Data.Entity.Infrastructure;
+﻿using System.Net.Http;
 using System.Web.Http.Dispatcher;
 using System.Web.Http.Filters;
+using System.Web.OData.Extensions;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
+using Microsoft.OData.Edm;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
@@ -24,7 +26,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var container = new UnityContainer()
                 .ConfigureMetadata()
                 .ConfigureStoreModel()
-                .ConfigureWebApi();
+                .ConfigureWebApiOData();
 
             return container;
         }
@@ -48,7 +50,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 .RegisterType<EdmxModelBuilder>(Lifetime.Singleton, new InjectionConstructor(typeof(IMetadataProvider), typeof(ITypeProvider)));
         }
 
-        public static IUnityContainer ConfigureWebApi(this IUnityContainer container)
+        public static IUnityContainer ConfigureWebApiOData(this IUnityContainer container)
         {
             return container
                 .RegisterType<IDynamicAssembliesRegistry, DynamicAssembliesRegistry>(Lifetime.Singleton)
@@ -60,7 +62,9 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 // custom IFilterProvider
                 .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton)
 
-                .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope);
+                .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope)
+                .RegisterType<IEdmModel>(Lifetime.PerScope, new InjectionFactory(c => c.Resolve<HttpRequestMessage>().ODataProperties().Model))
+                ;
         }
     }
 }
