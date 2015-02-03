@@ -96,6 +96,8 @@
     <Compile Include="Model.CustomerIntelligence\Contact.cs" />
     <Compile Include="Model.CustomerIntelligence\ContactRole.cs" />
     <Compile Include="Model.CustomerIntelligence\Firm.cs" />
+    <Compile Include="Model.CustomerIntelligence\OrganizationUnit.cs" />
+    <Compile Include="Model.CustomerIntelligence\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
@@ -104,6 +106,8 @@
     <EmbeddedResource Include="Data\Contact.csv" />
     <EmbeddedResource Include="Data\Client.csv" />
     <EmbeddedResource Include="Data\Account.csv" />
+    <EmbeddedResource Include="Data\OrganizationUnit.csv" />
+    <EmbeddedResource Include="Data\Territory.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
