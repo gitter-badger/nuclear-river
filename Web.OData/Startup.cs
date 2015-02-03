@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Data.Entity;
+using System.Web.Http;
 using System.Web.OData.Batch;
 using System.Web.OData.Extensions;
 
@@ -29,6 +30,9 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             // per request DI
             UnityResolver.RegisterHttpRequestMessage(config);
+
+            var dbConfiguration = container.Resolve<TestDbConfiguration>();
+            DbConfiguration.SetConfiguration(dbConfiguration);
 
             // default web api
             config.MapHttpAttributeRoutes();

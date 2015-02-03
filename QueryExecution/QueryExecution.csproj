@@ -69,6 +69,7 @@
     <Compile Include="DbCompiledModelAnnotation.cs" />
     <Compile Include="EdmxModelExtensions.cs" />
     <Compile Include="EdmModelExtensions.cs" />
+    <Compile Include="MetadataIdentityAnnotation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
