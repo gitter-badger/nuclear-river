@@ -73,8 +73,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
             var dbProviderInfo = GeEffortProviderInfo();
             var typeProvider = GetTypeProvider(ClrTypes);
-            var edmxModelBuilder = new EdmxModelBuilder(dbProviderInfo, provider, typeProvider);
-            var dbModel = edmxModelBuilder.Build(contextId);
+            var edmxModelBuilder = new EdmxModelBuilder(provider, typeProvider);
+            var dbModel = edmxModelBuilder.Build(dbProviderInfo, contextId);
             var clrTypes = dbModel.GetClrTypes();
 
             var edmModelBuilder = new EdmModelBuilder(provider);

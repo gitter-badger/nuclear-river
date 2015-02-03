@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 
 using Microsoft.OData.Edm;
 
@@ -21,7 +22,10 @@ namespace NuClear.AdvancedSearch.Web.OData
 
         public IEdmModel Build(Uri uri)
         {
-            var edmxModel = _edmxModelBuilder.Build(uri);
+            var dbContext = new DbContext("ODATA");
+            var connection = dbContext.Database.Connection;
+
+            var edmxModel = _edmxModelBuilder.Build(connection, uri);
             var clrTypes = edmxModel.GetClrTypes();
 
             var edmModel = _edmModelBuilder.Build(uri);
@@ -30,5 +34,5 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             return edmModel;
         }
-    }
+   }
 }
