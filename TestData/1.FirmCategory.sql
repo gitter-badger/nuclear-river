@@ -1,4 +1,4 @@
-create view CustomerIntelligence.Category
+create view CustomerIntelligence.FirmCategory
 as
 with
 FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
@@ -27,13 +27,11 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 )
 , FirmCategoryGroup as
 (
-	select distinct FirmId, CategoryId, C.Name, CategoryGroup from FirmAddressCategoryGroup FACG
-	inner join CategoriesActive C on C.Id = FACG.CategoryId
+	select distinct FirmId, CategoryId, CategoryGroup from FirmAddressCategoryGroup FACG
 )
 
 select
 isnull(CategoryId, 0) Id,
-Name,
 CategoryGroup,
 FirmId
 from FirmCategoryGroup

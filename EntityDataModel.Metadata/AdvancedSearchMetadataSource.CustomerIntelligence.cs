@@ -14,6 +14,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                     .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                     .Relation(EntityRelationElement.Config.Name("OrganizationUnit").DirectTo(EntityElement.Config.Name(EntityName.OrganizationUnit)).AsOne()),
+                EntityElement.Config.Name(EntityName.Category).EntitySetName("Categories")
+                    .HasKey("Id")
+                    .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                    .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                    .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32)),
                 EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
                     .HasKey("Id")
                     .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
@@ -29,10 +34,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Relation(EntityRelationElement.Config.Name("Territory").DirectTo(EntityElement.Config.Name(EntityName.Territory)).AsOne())
                     .Relation(EntityRelationElement.Config.Name("Categories")
                         .DirectTo(
-                            EntityElement.Config.Name(EntityName.Category)
+                            EntityElement.Config.Name(EntityName.FirmCategory)
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                                .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                         )
                         .AsMany())
@@ -111,18 +115,23 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .Relation(EntityRelationElement.Config.Name("OrganizationUnitId").DirectTo(EntityElement.Config.Name(TableName.OrganizationUnit)).AsOne())
                              .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.Territory)).AsOne())
                              .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
+                EntityElement.Config.Name(TableName.FirmCategory)
+                             .HasKey("Id")
+                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
+                             .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
                 EntityElement.Config.Name(TableName.Category)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
-                             .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
+                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32)));
 
         private static readonly BoundedContextElement CustomerIntelligenceContext =
             BoundedContextElement.Config.Name("CustomerIntelligence")
                 .ConceptualModel(ConceptualModel)
                 .StoreModel(StoreModel)
                 .Map(EntityName.Firm, TableName.Firm)
+                .Map(EntityName.FirmCategory, TableName.FirmCategory)
                 .Map(EntityName.Category, TableName.Category)
                 .Map(EntityName.Client, TableName.Client)
                 .Map(EntityName.Account, TableName.Account)
@@ -133,6 +142,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private static class EntityName
         {
             public const string Firm = "Firm";
+            public const string FirmCategory = "FirmCategory";
             public const string Category = "Category";
             public const string Client = "Client";
             public const string Account = "Account";
@@ -144,6 +154,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private static class TableName
         {
             public const string Firm = TableSchema + "." + "Firm";
+            public const string FirmCategory = TableSchema + "." + "FirmCategory";
             public const string Category = TableSchema + "." + "Category";
             public const string Client = TableSchema + "." + "Client";
             public const string Account = TableSchema + "." + "Account";
