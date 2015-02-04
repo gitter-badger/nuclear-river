@@ -15,6 +15,7 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
             _finder = finder;
         }
 
+        [DynamicEnableQuery]
         public IHttpActionResult Get(ODataQueryOptions<TEntity> queryOptions)
         {
             var entities = _finder.FindAll<TEntity>();

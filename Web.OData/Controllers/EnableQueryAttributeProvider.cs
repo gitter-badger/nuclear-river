@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web.Http;
-using System.Web.Http.Controllers;
+using System.Net.Http;
 using System.Web.Http.Filters;
 using System.Web.OData;
-using System.Web.OData.Query;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
@@ -13,49 +10,34 @@ using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
-    public sealed class EnableQueryAttributeProvider : IFilterProvider
+    public sealed class DynamicEnableQueryAttribute : EnableQueryAttribute
     {
-        private readonly IMetadataProvider _metadataProvider;
-
-        public EnableQueryAttributeProvider(IMetadataProvider metadataProvider)
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            _metadataProvider = metadataProvider;
-        }
-
-        public IEnumerable<FilterInfo> GetFilters(HttpConfiguration configuration, HttpActionDescriptor actionDescriptor)
-        {
-            var queryOptionsParameter = actionDescriptor.GetParameters().SingleOrDefault(x => typeof(ODataQueryOptions).IsAssignableFrom(x.ParameterType));
-            if (queryOptionsParameter == null)
-            {
-                return Enumerable.Empty<FilterInfo>();
-            }
-
-            var entityElementIdAttribute = actionDescriptor.ControllerDescriptor.GetCustomAttributes<EntityElementIdAttribute>().SingleOrDefault();
+            var entityElementIdAttribute = actionExecutedContext.ActionContext.ControllerContext.ControllerDescriptor.GetCustomAttributes<EntityElementIdAttribute>().SingleOrDefault();
             if (entityElementIdAttribute == null)
             {
-                return Enumerable.Empty<FilterInfo>();
+                throw new ArgumentException();
             }
 
-            var filter = CreateActionFilter(entityElementIdAttribute.Uri);
+            var dependencyResolver = actionExecutedContext.Request.GetConfiguration().DependencyResolver;
+            var metadataProvider = (IMetadataProvider)dependencyResolver.GetService(typeof(IMetadataProvider));
 
-            return new[] { new FilterInfo(filter, FilterScope.Global) };
+            Customize(metadataProvider, entityElementIdAttribute.Uri);
+
+            base.OnActionExecuted(actionExecutedContext);
         }
 
-        private IActionFilter CreateActionFilter(Uri entityElementId)
+        private void Customize(IMetadataProvider metadataProvider, Uri entityElementId)
         {
             EntityElement entityElement;
-            if (!_metadataProvider.TryGetMetadata(entityElementId, out entityElement))
+            if (!metadataProvider.TryGetMetadata(entityElementId, out entityElement))
             {
                 throw new ArgumentException();
             }
 
             // далее можно кастомизовать EnableQueryAttribute используя entityElement, но пока это не нужно
-            var enableQueryAttribute = new EnableQueryAttribute
-            {
-                PageSize = 40
-            };
-
-            return enableQueryAttribute;
+            PageSize = 40;
         }
     }
 }
