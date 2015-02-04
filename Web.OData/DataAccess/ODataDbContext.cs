@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DataAccess
         public ODataDbContext(IEdmModel model, ODataConnectionFactory connectionFactory)
             : base(connectionFactory.CreateConnection(model.GetMetadataIdentity()), model.GetDbCompiledModel(), true)
         {
-            Database.CommandTimeout = 60;
+            Database.CommandTimeout = 600;
         }
     }
 }

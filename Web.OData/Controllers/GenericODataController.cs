@@ -6,7 +6,7 @@ using NuClear.AdvancedSearch.Web.OData.DataAccess;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
-    public abstract class GenericODataController<T> : ODataController where T : class
+    public abstract class GenericODataController<TEntity> : ODataController where TEntity : class
     {
         private readonly IFinder _finder;
 
@@ -15,11 +15,13 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
             _finder = finder;
         }
 
-        public IHttpActionResult Get(ODataQueryOptions<T> queryOptions)
+        public IHttpActionResult Get(ODataQueryOptions<TEntity> queryOptions)
         {
-            var entities = _finder.FindAll<T>();
+            var entities = _finder.FindAll<TEntity>();
 
             return Ok(entities);
         }
+
+        // TODO: get by id
     }
 }

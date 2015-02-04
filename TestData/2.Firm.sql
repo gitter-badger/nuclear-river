@@ -1,22 +1,4 @@
-﻿use Erm21
-go
-
-declare @schemaName as nvarchar(max) = 'CustomerIntelligence'
-
-if (not exists(select * from sys.schemas where name = @schemaName))
-begin
-	exec('create schema ' + @schemaName)
-end
-
-declare @viewName as nvarchar(max) = 'Firm'
-
-if (exists(select * from sys.views where name = @viewName))
-begin
-	exec('drop view ' + @schemaName + '.' + @viewName)
-end
-
-exec('
-create view ' + @schemaName + '.' + @viewName +'
+﻿create view CustomerIntelligence.Firm
 as
 with
 
@@ -26,25 +8,9 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , OrdersArchive as (select * from Billing.Orders where IsActive = 1 and IsDeleted = 0 and WorkflowStepId in (4, 6))
 , OrganizationUnitsActive as (select * from Billing.OrganizationUnits where IsActive = 1 and IsDeleted = 0)
-, CategoryOrganizationUnitsActive as 
-(
-	select COU.* from (select * from BusinessDirectory.CategoryOrganizationUnits where IsActive = 1 and IsDeleted = 0) COU
-	inner join BusinessDirectory.CategoryGroups CG ON COU.CategoryGroupId = CG.Id
-)
-, CategoryFirmAddressesActive as
-(
-	select CFA.*, COU.CategoryGroupId from (select * from BusinessDirectory.CategoryFirmAddresses where IsActive = 1 and IsDeleted = 0) CFA
-	left join CategoryOrganizationUnitsActive COU on COU.CategoryId = CFA.CategoryId
-)
-, FirmAddressCategoryGroupIds (FirmAddressId, FirmId, CategoryGroup) as
-(
-	select FA.Id, FA.FirmId, CategoryGroup from FirmAddressesActive FA
-	left join (select FirmAddressId, max(CategoryGroupId) as CategoryGroup from CategoryFirmAddressesActive group by FirmAddressId) CFA on CFA.FirmAddressId = FA.Id
-)
 , FirmCategoryGroupIds (FirmId, CategoryGroup) as
 (
-	select F.Id, CategoryGroup from FirmsActive F
-	left join (select FirmId, max(CategoryGroup) as CategoryGroup from FirmAddressCategoryGroupIds group by FirmId) FAC on FAC.FirmId = F.Id
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.Category group by FirmId
 )
 , Contacts1 as (
 	select
@@ -136,4 +102,3 @@ inner join LastDistributedOns on F.Id = LastDistributedOns.FirmId
 inner join FirmAddressCounts on F.Id = FirmAddressCounts.FirmId
 inner join ContactsAggregate on F.Id = ContactsAggregate.FirmId
 inner join FirmCategoryGroupIds ON F.Id = FirmCategoryGroupIds.FirmId
-')
