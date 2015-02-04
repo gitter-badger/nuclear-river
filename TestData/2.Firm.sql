@@ -10,7 +10,7 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , OrganizationUnitsActive as (select * from Billing.OrganizationUnits where IsActive = 1 and IsDeleted = 0)
 , FirmCategoryGroupIds (FirmId, CategoryGroup) as
 (
-	select FirmId, max(CategoryGroup) from CustomerIntelligence.Category group by FirmId
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
 )
 , Contacts1 as (
 	select
