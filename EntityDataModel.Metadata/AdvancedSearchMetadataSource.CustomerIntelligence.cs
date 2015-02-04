@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64))
+                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                         )
                         .AsMany())
                     .Relation(EntityRelationElement.Config.Name("Client")
@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             EntityElement.Config.Name(EntityName.Client)
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64))
+                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                                 .Relation(
                                     EntityRelationElement.Config.Name("Accounts")
                                         .DirectTo(
@@ -85,7 +85,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 EntityElement.Config.Name(TableName.Client)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64)),
+                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable()),
                 EntityElement.Config.Name(TableName.Account)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
@@ -115,9 +115,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32))
-                             .Property(EntityPropertyElement.Config.Name("ParentId").OfType(EntityPropertyType.Int64))
+                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                              .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
 
         private static readonly BoundedContextElement CustomerIntelligenceContext =
