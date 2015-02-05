@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
-using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 

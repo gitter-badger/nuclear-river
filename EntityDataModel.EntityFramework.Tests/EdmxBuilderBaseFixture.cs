@@ -68,7 +68,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                     typeof(Category),
                     typeof(Client),
                     typeof(Contact),
-                    typeof(Firm));
+                    typeof(Firm),
+                    typeof(FirmCategory));
             }
         }
 
