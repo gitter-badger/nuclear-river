@@ -8,9 +8,9 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , OrdersArchive as (select * from Billing.Orders where IsActive = 1 and IsDeleted = 0 and WorkflowStepId in (4, 6))
 , OrganizationUnitsActive as (select * from Billing.OrganizationUnits where IsActive = 1 and IsDeleted = 0)
-, FirmCategoryGroupIds (FirmId, CategoryGroup) as
+, FirmCategoryGroupIds (FirmId, CategoryGroupId) as
 (
-	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroupId) from CustomerIntelligence.FirmCategory group by FirmId
 )
 , Contacts1 as (
 	select
@@ -94,7 +94,7 @@ LastDistributedOns.LastDistributedOn,
 FirmAddressCounts.AddressCount,
 ContactsAggregate.HasPhone,
 ContactsAggregate.HasWebsite,
-FirmCategoryGroupIds.CategoryGroup
+FirmCategoryGroupIds.CategoryGroupId
 
 from FirmsActive F
 inner join LastDisqualifiedOns on F.Id = LastDisqualifiedOns.FirmId

@@ -61,9 +61,6 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 // custom IHttpControllerTypeResolver
                 .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton)
 
-                // custom IFilterProvider
-                .RegisterType<IFilterProvider, EnableQueryAttributeProvider>(typeof(EnableQueryAttributeProvider).Name, Lifetime.Singleton)
-
                 .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope)
                 .RegisterType<IEdmModel>(Lifetime.PerScope, new InjectionFactory(c => c.Resolve<HttpRequestMessage>().ODataProperties().Model));
         }

@@ -1,10 +1,9 @@
 ﻿namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence
 {
-    public class FirmCategory
+    public class CategoryGroup
     {
         public long Id { get; set; }
-        public long CategoryId { get; set; }
         public string Name { get; set; }
-        public CategoryGroup CategoryGroup { get; set; }
+        public decimal Rate { get; set; }
     }
 }

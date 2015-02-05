@@ -32,7 +32,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{3E
 	ProjectSection(SolutionItems) = preProject
 		TestData\1.FirmCategory.sql = TestData\1.FirmCategory.sql
 		TestData\2.Firm.sql = TestData\2.Firm.sql
+		TestData\3.Client.sql = TestData\3.Client.sql
+		TestData\4.Contact.sql = TestData\4.Contact.sql
+		TestData\5.Account.sql = TestData\5.Account.sql
 		TestData\Category.sql = TestData\Category.sql
+		TestData\CategoryGroup.sql = TestData\CategoryGroup.sql
 		TestData\OrganizationUnit.sql = TestData\OrganizationUnit.sql
 		TestData\Territory.sql = TestData\Territory.sql
 	EndProjectSection
