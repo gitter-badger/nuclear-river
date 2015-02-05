@@ -45,6 +45,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             EntityElement.Config.Name(EntityName.Client)
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                                 .Relation(
                                     EntityRelationElement.Config.Name("Accounts")
@@ -89,6 +90,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 EntityElement.Config.Name(TableName.Client)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                              .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable()),
                 EntityElement.Config.Name(TableName.Account)
                              .HasKey("Id")
