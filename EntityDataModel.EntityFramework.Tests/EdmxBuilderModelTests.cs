@@ -22,10 +22,13 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             using (var context = new DbContext(connection, model.Compile(), false))
             {
                 Assert.That(context.Set<Account>().ToArray(), Has.Length.EqualTo(1));
-                Assert.That(context.Set<Category>().ToArray(), Has.Length.EqualTo(10));
+                Assert.That(context.Set<Category>().ToArray(), Has.Length.EqualTo(5));
                 Assert.That(context.Set<Client>().ToArray(), Has.Length.EqualTo(1));
                 Assert.That(context.Set<Contact>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<Firm>().ToArray(), Has.Length.EqualTo(2));
+                Assert.That(context.Set<FirmCategory>().ToArray(), Has.Length.EqualTo(10));
+                Assert.That(context.Set<OrganizationUnit>().ToArray(), Has.Length.EqualTo(6));
+                Assert.That(context.Set<Territory>().ToArray(), Has.Length.EqualTo(5));
             }
         }
 
@@ -53,12 +56,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             using (var context = new DbContext(connection, model.Compile(), false))
             {
                 var firms = context.Set<Firm>()
+                    .Include(x => x.OrganizationUnit)
+                    .Include(x => x.Territory)
                     .Include(x => x.Categories)
                     .Include(x => x.Client)
                     .Include(x => x.Client.Accounts)
                     .ToList();
 
                 Assert.That(firms, Has.Count.EqualTo(2));
+                Assert.That(firms.First().OrganizationUnit, Is.Not.Null.And.Property("Name").EqualTo("Новосибирск"));
+                Assert.That(firms.First().Territory, Is.Not.Null.And.Property("Name").EqualTo("Новосибирск.Региональная территория"));
                 Assert.That(firms.First().Categories, Has.Count.EqualTo(10));
                 Assert.That(firms.Last().Categories, Has.Count.EqualTo(0));
                 Assert.That(firms.First().Client, Is.Not.Null);
