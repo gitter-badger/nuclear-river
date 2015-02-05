@@ -13,26 +13,25 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 	select CA.Id, CWP.CategoryParentId from CategoriesWithParent CWP inner join CategoriesActive CA on CA.ParentId = CWP.CategoryId
 )
 , CategoriesWithParentNotNull (CategoryId, CategoryOrCategoryParentId) as (select CategoryId, isnull(CategoryParentId, CategoryId) from CategoriesWithParent)
-, CategoryFirmAddressesWithParent (CategoryId, FirmAddressId) as
+, CategoryFirmAddressesWithParent (Id, CategoryId, FirmAddressId) as
 (
-	select distinct CWP.CategoryOrCategoryParentId, CFA.FirmAddressId from CategoryFirmAddressesActive CFA
-	left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
+	select max(Id), CategoryId, FirmAddressId from
+	(
+		select ROW_NUMBER() OVER(ORDER BY CFA.Id) Id, CWP.CategoryOrCategoryParentId CategoryId, CFA.FirmAddressId from CategoryFirmAddressesActive CFA
+		left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
+	) T group by FirmAddressId, CategoryId
 )
-, FirmAddressCategoryGroup (FirmId, FirmAddressId, CategoryId, CategoryGroup) as
+, FirmAddressCategoryGroup (Id, FirmId, FirmAddressId, CategoryId, CategoryGroup) as
 (
-	select F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroupId from CategoryFirmAddressesWithParent CFA
+	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroupId from CategoryFirmAddressesWithParent CFA
 	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
 	inner join FirmsActive F on F.Id = FA.FirmId
 	left join CategoryOrganizationUnitsActive COU on COU.CategoryId = CFA.CategoryId and F.OrganizationUnitId = COU.OrganizationUnitId
 )
-, FirmCategoryGroup as
+, FirmCategoryGroup (Id, CategoryId, CategoryGroup, FirmId) as
 (
-	select distinct FirmId, isnull(CategoryId, 0) CategoryId, CategoryGroup from FirmAddressCategoryGroup FACG
+	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroup), FirmId from FirmAddressCategoryGroup
+	group by FirmId, CategoryId
 )
 
-select
-ROW_NUMBER() OVER(ORDER BY FirmId, CategoryId) Id,
-CategoryId,
-CategoryGroup,
-FirmId
-from FirmCategoryGroup
+select * from FirmCategoryGroup
