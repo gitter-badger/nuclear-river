@@ -27,11 +27,12 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 )
 , FirmCategoryGroup as
 (
-	select distinct FirmId, CategoryId, CategoryGroup from FirmAddressCategoryGroup FACG
+	select distinct FirmId, isnull(CategoryId, 0) CategoryId, CategoryGroup from FirmAddressCategoryGroup FACG
 )
 
 select
-isnull(CategoryId, 0) Id,
+ROW_NUMBER() OVER(ORDER BY FirmId, CategoryId) Id,
+CategoryId,
 CategoryGroup,
 FirmId
 from FirmCategoryGroup

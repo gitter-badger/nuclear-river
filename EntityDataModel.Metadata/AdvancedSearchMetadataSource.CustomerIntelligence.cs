@@ -37,6 +37,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             EntityElement.Config.Name(EntityName.FirmCategory)
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                                .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
                                 .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                         )
                         .AsMany())
@@ -120,6 +121,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 EntityElement.Config.Name(TableName.FirmCategory)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                             .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                              .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
                 EntityElement.Config.Name(TableName.Category)
