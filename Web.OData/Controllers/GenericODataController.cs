@@ -23,6 +23,12 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
             return Ok(entities);
         }
 
-        // TODO: get by id
+        // no custom key type support, no composite key support
+        [DynamicEnableQuery]
+        public SingleResult<TEntity> Get([FromODataUri] long key)
+        {
+            var entities = _finder.FindAll<TEntity>().GetById(key);
+            return SingleResult.Create(entities);
+        }
     }
 }
