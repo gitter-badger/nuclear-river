@@ -5,9 +5,9 @@ with
 FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , ClientsActive as (select * from Billing.Clients where IsActive = 1 and IsDeleted = 0)
 
-, FirmCategoryGroupIds (FirmId, CategoryGroup) as
+, FirmCategoryGroupIds (FirmId, CategoryGroupId) as
 (
-	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroupId) from CustomerIntelligence.FirmCategory group by FirmId
 )
 , FirmCategoryGroupIdsExpanded as
 (
@@ -15,15 +15,15 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 	inner join FirmsActive F on F.Id = FCG.FirmId
 	inner join ClientsActive C on F.ClientId = C.Id
 )
-, ClientCategoryGroupIds (ClientId, CategoryGroup) as
+, ClientCategoryGroupIds (ClientId, CategoryGroupId) as
 (
-	select ClientId, max(CategoryGroup) from FirmCategoryGroupIdsExpanded group by ClientId
+	select ClientId, max(CategoryGroupId) from FirmCategoryGroupIdsExpanded group by ClientId
 )
 
 select
 Id,
 Name,
-ClientCategoryGroupIds.CategoryGroup
+ClientCategoryGroupIds.CategoryGroupId
 
 from ClientsActive C
 inner join ClientCategoryGroupIds ON C.Id = ClientCategoryGroupIds.ClientId

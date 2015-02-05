@@ -21,17 +21,17 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 		left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
 	) T group by FirmAddressId, CategoryId
 )
-, FirmAddressCategoryGroup (Id, FirmId, FirmAddressId, CategoryId, CategoryGroup) as
+, FirmAddressCategoryGroupIds (Id, FirmId, FirmAddressId, CategoryId, CategoryGroupId) as
 (
 	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroupId from CategoryFirmAddressesWithParent CFA
 	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
 	inner join FirmsActive F on F.Id = FA.FirmId
 	left join CategoryOrganizationUnitsActive COU on COU.CategoryId = CFA.CategoryId and F.OrganizationUnitId = COU.OrganizationUnitId
 )
-, FirmCategoryGroup (Id, CategoryId, CategoryGroup, FirmId) as
+, FirmCategoryGroupIds (Id, CategoryId, CategoryGroupId, FirmId) as
 (
-	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroup), FirmId from FirmAddressCategoryGroup
+	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroupId), FirmId from FirmAddressCategoryGroupIds
 	group by FirmId, CategoryId
 )
 
-select * from FirmCategoryGroup
+select * from FirmCategoryGroupIds

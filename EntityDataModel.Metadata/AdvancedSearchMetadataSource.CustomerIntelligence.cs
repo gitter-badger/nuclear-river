@@ -33,8 +33,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(EntityPropertyType.DateTimeOffset).Nullable())
                     .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(EntityPropertyType.Boolean))
                     .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
-                    .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                     .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
+                    .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOneOptionally())
                     .Relation(EntityRelationElement.Config.Name("OrganizationUnit").DirectTo(EntityElement.Config.Name(EntityName.OrganizationUnit)).AsOne())
                     .Relation(EntityRelationElement.Config.Name("Territory").DirectTo(EntityElement.Config.Name(EntityName.Territory)).AsOne())
                     .Relation(EntityRelationElement.Config.Name("Categories")
@@ -43,7 +43,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                 .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
-                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
+                                .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOneOptionally())
                         )
                         .AsMany())
                     .Relation(EntityRelationElement.Config.Name("Client")
@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                                .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
+                                .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOneOptionally())
                                 .Relation(
                                     EntityRelationElement.Config.Name("Accounts")
                                         .DirectTo(
@@ -97,7 +97,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable()),
+                             .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOneOptionally()),
                 EntityElement.Config.Name(TableName.Account)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
@@ -118,8 +118,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(EntityPropertyType.DateTimeOffset).Nullable())
                              .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(EntityPropertyType.Boolean))
                              .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(EntityPropertyType.Boolean))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
                              .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(EntityPropertyType.Int32))
+                             .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOneOptionally())
                              .Relation(EntityRelationElement.Config.Name("OrganizationUnitId").DirectTo(EntityElement.Config.Name(TableName.OrganizationUnit)).AsOne())
                              .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.Territory)).AsOne())
                              .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
@@ -127,7 +127,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("CategoryGroup").OfType(EntityPropertyType.Int64).Nullable())
+                             .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOneOptionally())
                              .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
                 EntityElement.Config.Name(TableName.Category)
                              .HasKey("Id")
