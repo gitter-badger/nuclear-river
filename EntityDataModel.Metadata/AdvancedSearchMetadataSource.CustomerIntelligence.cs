@@ -19,6 +19,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                     .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                     .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32)),
+                EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
+                    .HasKey("Id")
+                    .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                    .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                    .Property(EntityPropertyElement.Config.Name("Rate").OfType(EntityPropertyType.Decimal)),
                 EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
                     .HasKey("Id")
                     .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
@@ -128,7 +133,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
                              .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32)));
+                             .Property(EntityPropertyElement.Config.Name("Level").OfType(EntityPropertyType.Int32)),
+                EntityElement.Config.Name(TableName.CategoryGroup)
+                             .HasKey("Id")
+                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
+                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                             .Property(EntityPropertyElement.Config.Name("Rate").OfType(EntityPropertyType.Decimal)));
 
         private static readonly BoundedContextElement CustomerIntelligenceContext =
             BoundedContextElement.Config.Name("CustomerIntelligence")
@@ -137,6 +147,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 .Map(EntityName.Firm, TableName.Firm)
                 .Map(EntityName.FirmCategory, TableName.FirmCategory)
                 .Map(EntityName.Category, TableName.Category)
+                .Map(EntityName.CategoryGroup, TableName.CategoryGroup)
                 .Map(EntityName.Client, TableName.Client)
                 .Map(EntityName.Account, TableName.Account)
                 .Map(EntityName.Contact, TableName.Contact)
@@ -148,6 +159,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             public const string Firm = "Firm";
             public const string FirmCategory = "FirmCategory";
             public const string Category = "Category";
+            public const string CategoryGroup = "CategoryGroup";
             public const string Client = "Client";
             public const string Account = "Account";
             public const string Contact = "Contact";
@@ -160,6 +172,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             public const string Firm = TableSchema + "." + "Firm";
             public const string FirmCategory = TableSchema + "." + "FirmCategory";
             public const string Category = TableSchema + "." + "Category";
+            public const string CategoryGroup = TableSchema + "." + "CategoryGroup";
             public const string Client = TableSchema + "." + "Client";
             public const string Account = TableSchema + "." + "Account";
             public const string Contact = TableSchema + "." + "Contact";
