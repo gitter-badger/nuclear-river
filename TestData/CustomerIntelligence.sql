@@ -24,9 +24,9 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , CategoriesWithParentNotNull (CategoryId, CategoryOrCategoryParentId) as (select CategoryId, isnull(CategoryParentId, CategoryId) from CategoriesWithParent)
 , CategoryFirmAddressesWithParent (Id, CategoryId, FirmAddressId) as
 (
-	select max(Id), CategoryId, FirmAddressId from
+	select concat(CategoryId, FirmAddressId) Id, CategoryId, FirmAddressId from
 	(
-		select ROW_NUMBER() OVER(ORDER BY CFA.Id) Id, CWP.CategoryOrCategoryParentId CategoryId, CFA.FirmAddressId from CategoryFirmAddressesActive CFA
+		select CWP.CategoryOrCategoryParentId CategoryId, CFA.FirmAddressId from CategoryFirmAddressesActive CFA
 		left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
 	) T group by FirmAddressId, CategoryId
 )

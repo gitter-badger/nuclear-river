@@ -24,9 +24,10 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             _container = container;
         }
 
-        public static void RegisterHttpRequestMessage(HttpConfiguration config)
+        public UnityResolver RegisterHttpRequestMessage(HttpConfiguration config)
         {
             config.MessageHandlers.Add(new HttpRequestMessageRegistrator());
+            return this;
         }
 
         public object GetService(Type serviceType)
