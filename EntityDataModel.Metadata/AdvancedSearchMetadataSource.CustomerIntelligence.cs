@@ -42,7 +42,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             EntityElement.Config.Name(EntityName.FirmCategory)
                                 .HasKey("Id")
                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                                .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
+                                .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
                                 .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOneOptionally())
                         )
                         .AsMany())
@@ -126,7 +126,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 EntityElement.Config.Name(TableName.FirmCategory)
                              .HasKey("Id")
                              .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int64))
-                             .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(EntityPropertyType.Int64))
+                             .Relation(EntityRelationElement.Config.Name("CategoryId").DirectTo(EntityElement.Config.Name(TableName.Category)).AsOne())
                              .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOneOptionally())
                              .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
                 EntityElement.Config.Name(TableName.Category)

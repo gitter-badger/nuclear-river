@@ -3,8 +3,7 @@
     public class FirmCategory
     {
         public long Id { get; set; }
-        public long CategoryId { get; set; }
-        public string Name { get; set; }
+        public Category Category { get; set; }
         public CategoryGroup CategoryGroup { get; set; }
     }
 }
