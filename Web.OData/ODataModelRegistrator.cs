@@ -1,9 +1,18 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Dispatcher;
 using System.Web.OData.Batch;
 using System.Web.OData.Extensions;
+using System.Web.OData.Routing;
+
+using Microsoft.OData.Edm;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.Web.OData.DI;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.Metamodeling.Provider;
 
@@ -11,6 +20,8 @@ namespace NuClear.AdvancedSearch.Web.OData
 {
     internal sealed class ODataModelRegistrator
     {
+        private static readonly ConfigureHttpRequest ConfigureHttpRequest = Bootstrapper.ConfigureHttpRequest;
+
         private readonly IMetadataProvider _metadataProvider;
         private readonly DynamicControllersRegistrator _dynamicControllersRegistrator;
         private readonly EdmModelWithClrTypesBuilder _edmModelWithClrTypesBuilder;
@@ -34,13 +45,28 @@ namespace NuClear.AdvancedSearch.Web.OData
             foreach (var context in contexts)
             {
                 var contextId = context.Identity.Id;
-                var contextName = contextId.Segments.Last();
-
                 var edmModel = _edmModelWithClrTypesBuilder.Build(contextId);
-                httpServer.Configuration.MapODataServiceRoute(contextName, contextName, edmModel, new DefaultODataBatchHandler(httpServer));
+
+                var routePrefix = contextId.Segments.Last();
+                MapRoute(routePrefix, edmModel, httpServer, ConfigureHttpRequest);
 
                 _dynamicControllersRegistrator.RegisterDynamicControllers(contextId);
             }
+        }
+
+        private static void MapRoute(string routePrefix, IEdmModel edmModel, HttpServer httpServer, ConfigureHttpRequest configureHttpRequest)
+        {
+            // batch handler should be mapped first
+            var batchHandler = new DefaultODataBatchHandler(httpServer) { ODataRouteName = routePrefix };
+            var routeTemplate = string.IsNullOrEmpty(routePrefix) ? ODataRouteConstants.Batch : (routePrefix + '/' + ODataRouteConstants.Batch);
+            httpServer.Configuration.Routes.MapHttpBatchRoute(routePrefix + "Batch", routeTemplate, batchHandler);
+
+            var additionalHandlers = new[]
+            {
+                new UnityResolver.PerRequestResolver(configureHttpRequest)
+            };
+            var handler = HttpClientFactory.CreatePipeline(new HttpControllerDispatcher(httpServer.Configuration), additionalHandlers);
+            httpServer.Configuration.MapODataServiceRoute(routePrefix, routePrefix, edmModel, handler);
         }
     }
 }

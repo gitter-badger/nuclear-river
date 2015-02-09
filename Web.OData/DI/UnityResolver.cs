@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http;
 using System.Web.Http.Dependencies;
 
 using Microsoft.Practices.Unity;
@@ -22,12 +21,6 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             }
 
             _container = container;
-        }
-
-        public UnityResolver RegisterHttpRequestMessage(HttpConfiguration config)
-        {
-            config.MessageHandlers.Add(new HttpRequestMessageRegistrator());
-            return this;
         }
 
         public object GetService(Type serviceType)
@@ -65,12 +58,20 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             _container.Dispose();
         }
 
-        private sealed class HttpRequestMessageRegistrator : DelegatingHandler
+        public sealed class PerRequestResolver : DelegatingHandler
         {
+            private readonly ConfigureHttpRequest _configureHttpRequest;
+
+            public PerRequestResolver(ConfigureHttpRequest configureHttpRequest)
+            {
+                _configureHttpRequest = configureHttpRequest;
+            }
+
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
-                var resolver = (UnityResolver)request.GetDependencyScope();
-                resolver._container.RegisterInstance(request);
+                var scope = (UnityResolver)request.GetDependencyScope();
+                _configureHttpRequest(scope._container, request);
+
                 return base.SendAsync(request, cancellationToken);
             }
         }

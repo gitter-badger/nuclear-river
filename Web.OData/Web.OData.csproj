@@ -137,6 +137,7 @@
   <ItemGroup>
     <Compile Include="DataAccess\DataAccessExtensions.cs" />
     <Compile Include="DataAccess\ODataDbConfiguration.cs" />
+    <Compile Include="DI\ConfigureHttpRequest.cs" />
     <Compile Include="DynamicControllers\EntityElementIdAttribute.cs" />
     <Compile Include="Controllers\EnableQueryAttributeProvider.cs" />
     <Compile Include="DataAccess\ODataFinder.cs" />

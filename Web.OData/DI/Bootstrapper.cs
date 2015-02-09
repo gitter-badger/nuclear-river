@@ -1,17 +1,14 @@
 ﻿using System.Net.Http;
 using System.Web.Http.Dispatcher;
-using System.Web.Http.Filters;
 using System.Web.OData.Extensions;
 
 using DoubleGis.Erm.Platform.DI.Common.Config;
 
-using Microsoft.OData.Edm;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.Web.OData.Controllers;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.Metamodeling.Processors;
@@ -59,10 +56,16 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 .RegisterType<IDynamicAssembliesResolver, DynamicAssembliesRegistry>(Lifetime.Singleton)
 
                 // custom IHttpControllerTypeResolver
-                .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton)
+                .RegisterType<IHttpControllerTypeResolver, DynamicControllerTypeResolver>(Lifetime.Singleton);
+        }
 
+        public static IUnityContainer ConfigureHttpRequest(this IUnityContainer container, HttpRequestMessage request)
+        {
+            var edmModel = request.ODataProperties().Model;
+
+            return container
                 .RegisterType<IFinder, ODataFinder>(Lifetime.PerScope)
-                .RegisterType<IEdmModel>(Lifetime.PerScope, new InjectionFactory(c => c.Resolve<HttpRequestMessage>().ODataProperties().Model));
+                .RegisterInstance(edmModel, Lifetime.PerScope);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Web.OData
 
             // DI
             var container = Bootstrapper.ConfigureUnity();
-            httpServer.Configuration.DependencyResolver = new UnityResolver(container).RegisterHttpRequestMessage(httpServer.Configuration);
+            httpServer.Configuration.DependencyResolver = new UnityResolver(container);
 
             // default web api
             httpServer.Configuration.MapHttpAttributeRoutes();
