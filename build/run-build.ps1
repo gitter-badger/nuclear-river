@@ -39,5 +39,5 @@ $Properties.Dir = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.11\tools\buildtools.psm1" -DisableNameChecking
+Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.12\tools\buildtools.psm1" -DisableNameChecking
 Run-Build $TaskList $Properties
