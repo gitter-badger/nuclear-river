@@ -10,6 +10,8 @@ Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\versioning.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 
 Task Default -depends Hello
 Task Hello { "Билдскрипт запущен без цели, укажите цель" }
@@ -75,3 +77,21 @@ Task Run-UnitTests -depends Set-BuildNumber, Update-AssemblyInfo{
 
 	Run-UnitTests $projects
 }
+
+Task Build-OData -depends Update-AssemblyInfo {
+	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
+	$entryPointMetadata = Get-EntryPointMetadata 'Web.OData'
+	
+	Build-WebPackage $projectFileName $entryPointMetadata
+}
+
+Task Deploy-OData {
+	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
+	$entryPointMetadata = Get-EntryPointMetadata 'Web.OData'
+	
+	Deploy-WebPackage $projectFileName $entryPointMetadata
+	Validate-WebSite $entryPointMetadata 'CustomerIntelligence/$metadata'
+}
+
+Task Build-Packages -depends Set-BuildNumber, Build-OData
+Task Deploy-Packages -depends Deploy-OData

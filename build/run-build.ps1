@@ -9,6 +9,7 @@ if ($Properties.Count -eq 0){
 		'Revision' = '000000'
 		'Build' = 0
 		'Branch' = 'local'
+		'EnvironmentName' = 'Test.21'
 	}
 }
 
@@ -26,6 +27,19 @@ $Properties.Dir = @{
 	'Artifacts' = Join-Path $PSScriptRoot 'artifacts'
 }
 
+$Properties.EnvironmentMetadata = @{
+	'Test.21' = @{
+		'Transform' = @{
+			'Xdt' = @('Erm.Release.config')
+			'Regex' = @{}
+		}
+		'Web.OData' = @{
+			'TargetHosts' = @('uk-erm-test01')
+			'IisAppPath' = "search21.api.test.erm.2gis.ru"
+		}
+	}
+}
+
 # Restore-Packages
 & {
 	$NugetPath = Join-Path $Properties.Dir.Solution '.nuget\NuGet.exe'
@@ -39,5 +53,5 @@ $Properties.Dir = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.15\tools\buildtools.psm1" -DisableNameChecking
+Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.16\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties

@@ -126,14 +126,8 @@
     <Content Include="QueryBuilder\Scripts\odata-query-builder.js" />
     <Content Include="QueryBuilder\Scripts\odatajs-4.0.0-beta-01.js" />
     <Content Include="QueryBuilder\Scripts\odatajs-4.0.0-beta-01.min.js" />
-    <Content Include="packages.config">
+    <None Include="packages.config">
       <SubType>Designer</SubType>
-    </Content>
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
