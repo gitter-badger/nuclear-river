@@ -14,7 +14,24 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , CategoriesActive as (select * from BusinessDirectory.categories where IsActive = 1 and IsDeleted = 0)
 , FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , CategoryFirmAddressesActive as (select * from BusinessDirectory.CategoryFirmAddresses where IsActive = 1 and IsDeleted = 0)
-, CategoryOrganizationUnitsActive as (select COU.* from (select * from BusinessDirectory.CategoryOrganizationUnits where IsActive = 1 and IsDeleted = 0) COU inner join BusinessDirectory.CategoryGroups CG ON COU.CategoryGroupId = CG.Id)
+, CategoryOrganizationUnitsActive as (select * from BusinessDirectory.CategoryOrganizationUnits where IsActive = 1 and IsDeleted = 0)
+, CategoryOrganizationUnitsActive2 as
+(
+	select
+	COU.CategoryId,
+	COU.OrganizationUnitId,
+	CategoryGroup =
+	case
+		when COU.CategoryGroupId = 1 then 5
+		when COU.CategoryGroupId = 2 then 4
+		when COU.CategoryGroupId = 3 then 2
+		when COU.CategoryGroupId = 4 then 1
+		when COU.CategoryGroupId is null and C.Level = 3 then 3
+		else null
+	end
+	from CategoryOrganizationUnitsActive COU
+	inner join CategoriesActive C on c.Id = COU.CategoryId
+)
 , CategoriesWithParent (CategoryId, CategoryParentId) as
 (
 	select Id, ParentId from CategoriesActive CA
@@ -30,20 +47,20 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 		left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
 	) T group by FirmAddressId, CategoryId
 )
-, FirmAddressCategoryGroupIds (Id, FirmId, FirmAddressId, CategoryId, CategoryGroupId) as
+, FirmAddressCategoryGroups (Id, FirmId, FirmAddressId, CategoryId, CategoryGroup) as
 (
-	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroupId from CategoryFirmAddressesWithParent CFA
+	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroup from CategoryFirmAddressesWithParent CFA
 	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
 	inner join FirmsActive F on F.Id = FA.FirmId
-	left join CategoryOrganizationUnitsActive COU on COU.CategoryId = CFA.CategoryId and F.OrganizationUnitId = COU.OrganizationUnitId
+	left join CategoryOrganizationUnitsActive2 COU on COU.CategoryId = CFA.CategoryId and F.OrganizationUnitId = COU.OrganizationUnitId
 )
-, FirmCategoryGroupIds (Id, CategoryId, CategoryGroupId, FirmId) as
+, FirmCategoryGroups (Id, CategoryId, CategoryGroup, FirmId) as
 (
-	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroupId), FirmId from FirmAddressCategoryGroupIds
+	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroup), FirmId from FirmAddressCategoryGroups
 	group by FirmId, CategoryId
 )
 
-select * from FirmCategoryGroupIds
+select * from FirmCategoryGroups
 go
 
 -- Firm
@@ -60,9 +77,9 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , OrdersArchive as (select * from Billing.Orders where IsActive = 1 and IsDeleted = 0 and WorkflowStepId in (4, 6))
 , OrganizationUnitsActive as (select * from Billing.OrganizationUnits where IsActive = 1 and IsDeleted = 0)
-, FirmCategoryGroupIds (FirmId, CategoryGroupId) as
+, FirmCategoryGroups (FirmId, CategoryGroup) as
 (
-	select FirmId, max(CategoryGroupId) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
 )
 , Contacts1 as (
 	select
@@ -146,14 +163,14 @@ LastDistributedOns.LastDistributedOn,
 FirmAddressCounts.AddressCount,
 ContactsAggregate.HasPhone,
 ContactsAggregate.HasWebsite,
-FirmCategoryGroupIds.CategoryGroupId
+FirmCategoryGroups.CategoryGroup
 
 from FirmsActive F
 inner join LastDisqualifiedOns on F.Id = LastDisqualifiedOns.FirmId
 inner join LastDistributedOns on F.Id = LastDistributedOns.FirmId
 inner join FirmAddressCounts on F.Id = FirmAddressCounts.FirmId
 inner join ContactsAggregate on F.Id = ContactsAggregate.FirmId
-inner join FirmCategoryGroupIds ON F.Id = FirmCategoryGroupIds.FirmId
+inner join FirmCategoryGroups ON F.Id = FirmCategoryGroups.FirmId
 go
 
 -- Client
@@ -167,28 +184,28 @@ with
 FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , ClientsActive as (select * from Billing.Clients where IsActive = 1 and IsDeleted = 0)
 
-, FirmCategoryGroupIds (FirmId, CategoryGroupId) as
+, FirmCategoryGroups (FirmId, CategoryGroup) as
 (
-	select FirmId, max(CategoryGroupId) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
 )
-, FirmCategoryGroupIdsExpanded as
+, FirmCategoryGroupsExpanded as
 (
-	select C.Id ClientId, FCG.* from FirmCategoryGroupIds FCG
+	select C.Id ClientId, FCG.* from FirmCategoryGroups FCG
 	inner join FirmsActive F on F.Id = FCG.FirmId
 	inner join ClientsActive C on F.ClientId = C.Id
 )
-, ClientCategoryGroupIds (ClientId, CategoryGroupId) as
+, ClientCategoryGroups (ClientId, CategoryGroup) as
 (
-	select ClientId, max(CategoryGroupId) from FirmCategoryGroupIdsExpanded group by ClientId
+	select ClientId, max(CategoryGroup) from FirmCategoryGroupsExpanded group by ClientId
 )
 
 select
 Id,
 Name,
-ClientCategoryGroupIds.CategoryGroupId
+ClientCategoryGroups.CategoryGroup
 
 from ClientsActive C
-inner join ClientCategoryGroupIds ON C.Id = ClientCategoryGroupIds.ClientId
+inner join ClientCategoryGroups ON C.Id = ClientCategoryGroups.ClientId
 go
 
 -- Contact
