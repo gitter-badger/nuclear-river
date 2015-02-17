@@ -34,6 +34,7 @@ $Properties.EnvironmentMetadata = @{
 			'Regex' = @{}
 		}
 		'Web.OData' = @{
+			'ValidateWebsite' = $true
 			'TargetHosts' = @('uk-erm-test01')
 			'IisAppPath' = "search21.api.test.erm.2gis.ru"
 		}
