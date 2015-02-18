@@ -32,6 +32,8 @@
     <script type="text/javascript">
         // Document ready event handler.
         $(document).ready(function () {
+            OData.explorer.constants.queryTimeout = 5 * 60 * 1000;
+
             var createdQueryBuilder = new OData.explorer.DataExplorer(
                 {
                     // An array containing the different endpoints.
