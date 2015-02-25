@@ -10,7 +10,10 @@ namespace NuClear.AdvancedSearch.QueryExecution
 {
     public static class EdmModelExtensions
     {
-        public static IEdmModel AddClrAnnotations(this IEdmModel model, IEnumerable<Type> clrTypes)
+        private const string AnnotationNamespace = "http://schemas.2gis.ru/2015/02/edm/customannotation";
+        private const string AnnotationAttribute = "EntityId";
+
+        public static IEdmModel AnnotateByClrTypes(this IEdmModel model, IEnumerable<Type> clrTypes)
         {
             var tuples = model.SchemaElements.Join(clrTypes, x => x.Name, x => x.Name, Tuple.Create, StringComparer.OrdinalIgnoreCase);
 
@@ -18,6 +21,23 @@ namespace NuClear.AdvancedSearch.QueryExecution
             {
                 var annotation = new ClrTypeAnnotation(tuple.Item2);
                 model.SetAnnotationValue(tuple.Item1, annotation);
+            }
+
+            return model;
+        }
+
+        public static IEdmModel AnnotateByClrTypes(this IEdmModel model, IReadOnlyDictionary<string, Type> typesById)
+        {
+            foreach (var element in model.SchemaElements)
+            {
+                var entityId = model.GetAnnotationValue<Uri>(element, AnnotationNamespace, AnnotationAttribute);
+                if (entityId == null) continue;
+
+                var type = typesById[entityId.ResolveName()];
+                if (type == null) continue;
+                
+                var annotation = new ClrTypeAnnotation(type);
+                model.SetAnnotationValue(element, annotation);
             }
 
             return model;
@@ -51,5 +71,21 @@ namespace NuClear.AdvancedSearch.QueryExecution
             var annotation = model.GetAnnotationValue<MetadataIdentityAnnotation>(model);
             return annotation.Value;
         }
+
+        public static string ResolveName(this Uri id)
+        {
+            return id.ResolvePath().Split('/').LastOrDefault();
+        }
+
+        private static string ResolvePath(this Uri id)
+        {
+            if (id == null)
+            {
+                throw new ArgumentNullException("id");
+            }
+
+            return id.GetComponents(UriComponents.Path, UriFormat.Unescaped);
+        }
+
     }
 }

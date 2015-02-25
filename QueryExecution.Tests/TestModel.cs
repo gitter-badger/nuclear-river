@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
-
-using Effort.Provider;
 
 using Microsoft.OData.Edm;
 
 using Moq;
 
-using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.Metamodeling.Elements;
@@ -22,94 +18,42 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
     public static class TestModel
     {
-        public static readonly DbCompiledModel EFModel;
-        public static readonly IEdmModel EdmModel;
+        private static readonly Type[] ClrTypes = { typeof(MasterClass), typeof(NestedClass), typeof(EnumType) };
 
-        private static readonly Type[] ClrTypes = { typeof(TestClass1), typeof(TestClass2), typeof(Enum1) };
+        public static IEdmModel EdmModel { get; private set; }
 
         static TestModel()
         {
-            var builder = BoundedContextElement.Config
+            BoundedContextElement context = BoundedContextElement.Config
                 .Name("Context")
                 .ConceptualModel(
                     StructuralModelElement.Config.Elements(
                         EntityElement.Config
-                            .Name("TestClass1")
+                            .Name("MasterClass")
                             .HasKey("Id")
                             .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                             .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            .Property(EntityPropertyElement.Config.Name("Enum1").UsingEnum("Enum1").WithMember("Member1", 0).WithMember("Member2", 1))
+                            .Property(EntityPropertyElement.Config.Name("EnumType").UsingEnum("EnumType").WithMember("Member1", 0).WithMember("Member2", 1))
                             .Relation(EntityRelationElement.Config
-                                .Name("TestClass2")
+                                .Name("NestedClass")
                                 .DirectTo(
                                     EntityElement.Config
-                                        .Name("TestClass2")
+                                        .Name("NestedClass")
                                         .HasKey("Id")
                                         .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
                                         .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
                              )
                              .AsOne())
-                    ))
+                    ));
 
-                .StoreModel(
-                    StructuralModelElement.Config.Elements(
-                         EntityElement.Config
-                            .Name("dbo.TestClass1")
-                            .HasKey("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            .Property(EntityPropertyElement.Config.Name("Enum1").OfType(EntityPropertyType.Int32)),
-                         EntityElement.Config
-                            .Name("dbo.TestClass2")
-                            .HasKey("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                    )
-                );
-
-            var element = ProcessContext(builder);
-            var provider = CreateProvider(MockSource(element));
-            var contextId = provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
-
-            var dbProviderInfo = GeEffortProviderInfo();
-            var typeProvider = GetTypeProvider(ClrTypes);
-            var edmxModelBuilder = new EdmxModelBuilder(provider, typeProvider);
-            var dbModel = edmxModelBuilder.Build(dbProviderInfo, contextId);
-            var clrTypes = dbModel.GetClrTypes();
+            var provider = CreateProvider(MockSource(context));
+            var contextId = context.Identity.Id;
 
             var edmModelBuilder = new EdmModelBuilder(provider);
-            EdmModel = edmModelBuilder.Build(contextId);
-            EdmModel.AddClrAnnotations(clrTypes);
-
-            EFModel = dbModel.Compile();
+            EdmModel = edmModelBuilder.Build(contextId).AnnotateByClrTypes(ClrTypes);
         }
 
-        private static DbProviderInfo GeEffortProviderInfo()
-        {
-            EffortProviderConfiguration.RegisterProvider();
-            return new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
-        }
-
-        private static ITypeProvider GetTypeProvider(IEnumerable<Type> types)
-        {
-            var mock = new Mock<ITypeProvider>();
-
-            foreach (var type in types)
-            {
-                mock.Setup(x => x.Resolve(It.Is<EntityElement>(y => y.ResolveName() == type.Name))).Returns(type);
-            }
-
-            return mock.Object;
-        }
-
-        #region copy/paste from EdmModelBuilderTests, refactor this later
-
-        private static BoundedContextElement ProcessContext(BoundedContextElement context)
-        {
-            var provider = CreateProvider(MockSource(context));
-
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().FirstOrDefault();
-        }
+        #region Metadata Utils
 
         private static IMetadataSource MockSource(IMetadataElement context)
         {
@@ -125,28 +69,23 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             return new MetadataProvider(sources, new IMetadataProcessor[0]);
         }
 
-        private static Uri LookupContextId(IMetadataProvider provider)
-        {
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
-        }
-
         #endregion
     }
 
-    public enum Enum1 { Member1 , Member2 }
-
-    public sealed class TestClass1
+    public sealed class MasterClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Enum1 Enum1 { get; set; }
+        public EnumType EnumType { get; set; }
 
-        public TestClass2 TestClass2 { get; set; }
+        public NestedClass NestedClass { get; set; }
     }
 
-    public sealed class TestClass2
+    public sealed class NestedClass
     {
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    public enum EnumType { Member1 , Member2 }
 }

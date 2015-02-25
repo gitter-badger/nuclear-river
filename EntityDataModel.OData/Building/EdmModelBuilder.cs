@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.OData.Edm;
+using Microsoft.OData.Edm.Annotations;
 using Microsoft.OData.Edm.Library;
 using Microsoft.OData.Edm.Library.Values;
 
@@ -62,9 +63,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
         private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)
         {
-            var typeBuilder = new TypeBuilder(namespaceName);
-
             var model = new EdmModel();
+
+            var typeBuilder = new TypeBuilder(namespaceName, model.DirectValueAnnotationsManager);
 
             model.AddElement(BuildContainer(entities, typeBuilder));
 
@@ -95,11 +96,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
         private class TypeBuilder
         {
+            private const string AnnotationNamespace = "http://schemas.2gis.ru/2015/02/edm/customannotation";
+            private const string AnnotationAttribute = "EntityId";
+
+            private readonly IEdmDirectValueAnnotationsManager _annotationsManager;
             private readonly Dictionary<string, IEdmSchemaType> _registeredTypes;
 
-            public TypeBuilder(string namespaceName)
+            public TypeBuilder(string namespaceName, IEdmDirectValueAnnotationsManager annotationsManager)
             {
                 NamespaceName = namespaceName;
+                _annotationsManager = annotationsManager;
                 _registeredTypes = new Dictionary<string, IEdmSchemaType>();
             }
 
@@ -124,6 +130,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                         complexType = entityElement.KeyProperties.Any()
                         ? (IEdmSchemaType)BuildEntityType(typeName, entityElement)
                         : (IEdmSchemaType)BuildComplexType(typeName, entityElement));
+
+                    _annotationsManager.SetAnnotationValue(complexType, AnnotationNamespace, AnnotationAttribute, entityElement.Identity.Id);
                 }
 
                 return (IEdmStructuredType)complexType;
@@ -192,7 +200,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             {
                 var entityType = new EdmEntityType(NamespaceName, typeName);
                 var keyIds = new HashSet<IMetadataElementIdentity>(entityElement.KeyProperties.Select(x => x.Identity));
-
+                
                 foreach (var propertyElement in entityElement.Properties)
                 {
                     var propertyName = propertyElement.ResolveName();
