@@ -91,10 +91,6 @@
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EntityDataModel.EntityFramework.Tests\EntityDataModel.EntityFramework.Tests.csproj">
-      <Project>{63640861-D6B6-48E8-AF45-113EFA7982DB}</Project>
-      <Name>EntityDataModel.EntityFramework.Tests</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EntityDataModel.EntityFramework\EntityDataModel.EntityFramework.csproj">
       <Project>{b6a84d45-6c11-4175-86f5-20cc5879fb01}</Project>
       <Name>EntityDataModel.EntityFramework</Name>

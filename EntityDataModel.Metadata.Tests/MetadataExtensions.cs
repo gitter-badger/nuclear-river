@@ -23,6 +23,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             Debug.WriteLine(element.ToJson(true, ResolvePropertyNames(metadata), ignoredFeatures));
         }
 
+        [Conditional("DEBUG")]
+        public static void Dump(this IMetadataElement element, string[] properties, Type[] ignoredFeatures = null)
+        {
+            Debug.WriteLine(element.ToJson(true, new HashSet<string>(properties), ignoredFeatures));
+        }
+
         public static string Serialize(this IMetadataElement element, MetadataKind metadata, Type[] ignoredFeatures = null)
         {
             return element.ToJson(false, ResolvePropertyNames(metadata), ignoredFeatures).Replace("\"", "'");

@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public DateTimeOffset? LastDistributedOn { get; set; }
         public bool HasWebsite { get; set; }
         public bool HasPhone { get; set; }
-        public int? CategoryGroup { get; set; }
+        public CategoryGroup CategoryGroup { get; set; }
         public int AddressCount { get; set; }
 
         public OrganizationUnit OrganizationUnit { get; set; }

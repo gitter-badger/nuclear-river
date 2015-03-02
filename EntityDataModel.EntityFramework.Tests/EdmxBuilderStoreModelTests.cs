@@ -19,18 +19,18 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             _config = NewContext("Library")
                 .ConceptualModel(NewModel(
                     NewEntity("Book")
-                        .Property(NewProperty("Title", EntityPropertyType.String))
-                        .Property(NewProperty("Publisher", EntityPropertyType.String).Nullable()),
+                        .Property(NewProperty("Title", ElementaryTypeKind.String))
+                        .Property(NewProperty("Publisher", ElementaryTypeKind.String).Nullable()),
                     NewEntity("Author")
-                        .Property(NewProperty("Name", EntityPropertyType.String))
+                        .Property(NewProperty("Name", ElementaryTypeKind.String))
                         .Relation(NewRelation("Books").DirectTo(NewEntity("Book")).AsMany())
                     ))
                 .StoreModel(NewModel(
                     NewEntity("Catalog.Author")
-                        .Property(NewProperty("Name", EntityPropertyType.String)),
+                        .Property(NewProperty("Name", ElementaryTypeKind.String)),
                     NewEntity("Catalog.Book")
-                        .Property(NewProperty("Title", EntityPropertyType.String))
-                        .Property(NewProperty("Publisher", EntityPropertyType.String).Nullable())
+                        .Property(NewProperty("Title", ElementaryTypeKind.String))
+                        .Property(NewProperty("Publisher", ElementaryTypeKind.String).Nullable())
                         .Relation(NewRelation("AuthorId").DirectTo(NewEntity("Catalog.Author")).AsOne())
                     ))
                 .Map("Author", "Catalog.Author")
@@ -151,7 +151,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldSupportAllPrimitiveTypes()
         {
-            var primitiveTypes = Enum.GetValues(typeof(EntityPropertyType)).OfType<EntityPropertyType>().Except(new[] { EntityPropertyType.Enum }).ToArray();
+            var primitiveTypes = Enum.GetValues(typeof(ElementaryTypeKind)).OfType<ElementaryTypeKind>().ToArray();
 
             var entity = EntityElement.Config.Name("Entity").HasKey("PropertyOfInt32");
             var table = EntityElement.Config.Name("Entity").HasKey("PropertyOfInt32");
@@ -165,7 +165,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 NewContext("Context")
                     .ConceptualModel(NewModel(entity))
                     .StoreModel(NewModel(table))
-                    .Map(entity.EntityName, table.EntityName));
+                    .Map("Entity", "Entity"));
             
             Assert.That(model, Is.Not.Null.And.Matches(StoreModel.IsValid));
 

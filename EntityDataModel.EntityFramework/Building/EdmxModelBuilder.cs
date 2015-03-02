@@ -140,7 +140,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building
             foreach (var propertyElement in entityElement.Properties)
             {
                 var propertyType = propertyElement.PropertyType;
-                if (propertyType == EntityPropertyType.Enum) continue;
+                if (propertyType.TypeKind == StructuralModelTypeKind.Enum) continue;
 
                 var propertyName = propertyElement.ResolveName();
                 if (propertyElement.IsNullable)

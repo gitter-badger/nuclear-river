@@ -26,18 +26,17 @@ namespace NuClear.AdvancedSearch.QueryExecution
             return model;
         }
 
-        public static IEdmModel AnnotateByClrTypes(this IEdmModel model, IReadOnlyDictionary<string, Type> typesById)
+        public static IEdmModel AnnotateByClrTypes(this IEdmModel model, Func<Uri,Type> resolver)
         {
             foreach (var element in model.SchemaElements)
             {
                 var entityId = model.GetAnnotationValue<Uri>(element, AnnotationNamespace, AnnotationAttribute);
                 if (entityId == null) continue;
 
-                var type = typesById[entityId.ResolveName()];
+                var type = resolver(entityId);
                 if (type == null) continue;
-                
-                var annotation = new ClrTypeAnnotation(type);
-                model.SetAnnotationValue(element, annotation);
+
+                model.SetAnnotationValue(element, new ClrTypeAnnotation(type));
             }
 
             return model;

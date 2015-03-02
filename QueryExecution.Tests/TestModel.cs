@@ -27,21 +27,23 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             BoundedContextElement context = BoundedContextElement.Config
                 .Name("Context")
                 .ConceptualModel(
-                    StructuralModelElement.Config.Elements(
+                    StructuralModelElement.Config
+                    .Types((EnumTypeElement) EnumTypeElement.Config.Name("EnumType").Member("Member1", 0).Member("Member2", 1))
+                    .Elements(
                         EntityElement.Config
                             .Name("MasterClass")
                             .HasKey("Id")
-                            .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
-                            .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
-                            .Property(EntityPropertyElement.Config.Name("EnumType").UsingEnum("EnumType").WithMember("Member1", 0).WithMember("Member2", 1))
+                            .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int32))
+                            .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                            .Property(EntityPropertyElement.Config.Name("EnumType").OfType<EnumTypeElement>(EnumTypeElement.Config.Name("EnumType")))
                             .Relation(EntityRelationElement.Config
                                 .Name("NestedClass")
                                 .DirectTo(
                                     EntityElement.Config
                                         .Name("NestedClass")
                                         .HasKey("Id")
-                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Int32))
-                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int32))
+                                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                              )
                              .AsOne())
                     ));

@@ -1,5 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Web.OData.Query;
 
 using Microsoft.OData.Core;
@@ -19,7 +22,12 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
         protected static ODataQueryOptions CreateValidQueryOptions<T>(IEdmModel model, string filter = null)
         {
-            var options = CreateQueryOptions<T>(model, filter);
+            return CreateValidQueryOptions(model, typeof(T), filter);
+        }
+
+        protected static ODataQueryOptions CreateValidQueryOptions(IEdmModel model, Type entityType, string filter = null)
+        {
+            var options = CreateQueryOptions(model, entityType, filter);
             try
             {
                 options.Validate(DefaultValidationSettings);
@@ -34,8 +42,13 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
         protected static ODataQueryOptions CreateQueryOptions<T>(IEdmModel model, string query = null)
         {
+            return CreateQueryOptions(model, typeof(T), query);
+        }
+
+        protected static ODataQueryOptions CreateQueryOptions(IEdmModel model, Type entityType, string query = null)
+        {
             var request = TestHelper.CreateRequest(query);
-            var queryOptions = TestHelper.CreateQueryOptions(model, typeof(T), request);
+            var queryOptions = TestHelper.CreateQueryOptions(model, entityType, request);
             return queryOptions;
         }
 
@@ -44,14 +57,29 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
             return Enumerable.Empty<T>().AsQueryable();
         }
 
-        protected static string ToExpression<T>(IQueryable queryable)
+        protected static IQueryable CreateDataSource(Type type)
+        {
+            return ((IEnumerable)EnumerableTypeInfo.EmptyMethodInfo.MakeGenericMethod(type).Invoke(null, new object[0])).AsQueryable();
+        }
+
+        protected static string ToExpression(IQueryable queryable, string @namespace)
         {
             var expression = queryable.Expression.ToString();
             
             // just reduce the text size
-            expression = expression.Replace(typeof(T).Namespace + ".", "").Replace("\"", "'");
+            expression = expression.Replace(@namespace + ".", "").Replace("\"", "'");
 
             return expression;
+        }
+
+        protected static string ToExpression<T>(IQueryable queryable)
+        {
+            return ToExpression(queryable, typeof(T).Namespace);
+        }
+
+        private static class EnumerableTypeInfo
+        {
+            public static readonly MethodInfo EmptyMethodInfo = typeof(Enumerable).GetMethod("Empty", BindingFlags.Public | BindingFlags.Static);
         }
     }
 }
