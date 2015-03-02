@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EnumTypeElement : BaseMetadataElement<EnumTypeElement, EnumTypeElementBuilder>, IStructuralModelTypeElement
     {
-        internal EnumTypeElement(IMetadataElementIdentity identity, IReadOnlyDictionary<string, long> members, ElementaryTypeKind typeKind = ElementaryTypeKind.Int64)
+        internal EnumTypeElement(IMetadataElementIdentity identity, IReadOnlyDictionary<string, long> members, ElementaryTypeKind typeKind = ElementaryTypeKind.Int32)
             : base(identity, Enumerable.Empty<IMetadataFeature>())
         {
             Members = members;

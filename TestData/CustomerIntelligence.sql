@@ -3,15 +3,85 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
--- FirmCategory
-if object_id('CustomerIntelligence.FirmCategory') is not null
-	drop view CustomerIntelligence.FirmCategory
+-- FirmCategory1
+if object_id('CustomerIntelligence.FirmCategory1') is not null
+	drop view CustomerIntelligence.FirmCategory1
 go
-create view CustomerIntelligence.FirmCategory
+create view CustomerIntelligence.FirmCategory1
 as
 with
 FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
-, CategoriesActive as (select * from BusinessDirectory.categories where IsActive = 1 and IsDeleted = 0)
+, CategoriesActive as (select * from BusinessDirectory.Categories where IsActive = 1 and IsDeleted = 0)
+, FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
+, CategoryFirmAddressesActive as (select * from BusinessDirectory.CategoryFirmAddresses where IsActive = 1 and IsDeleted = 0)
+, CategoriesWithParent (CategoryId, CategoryParentId) as
+(
+	select Id, ParentId from CategoriesActive CA
+	union all
+	select CA.Id, CWP.CategoryParentId from CategoriesWithParent CWP inner join CategoriesActive CA on CA.ParentId = CWP.CategoryId
+)
+, CategoriesWithParentNotNull (CategoryId, CategoryOrCategoryParentId) as (select CategoryId, isnull(CategoryParentId, CategoryId) from CategoriesWithParent)
+, CategoriesWithParentLevel as (select CWP.*, C.Level from CategoriesWithParentNotNull CWP inner join CategoriesActive C on CWP.CategoryOrCategoryParentId = C.Id)
+
+, FirmCategories (FirmId, CategoryId) as 
+(
+	select distinct F.Id, CFA.CategoryId from CategoryFirmAddressesActive CFA
+	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
+	inner join FirmsActive F on F.Id = FA.FirmId
+)
+, FirmCategories1 (Id, FirmId, CategoryId) as
+(
+	select distinct concat(FC.FirmId, CWP.CategoryOrCategoryParentId), FC.FirmId, isnull(CWP.CategoryOrCategoryParentId, 0) from FirmCategories FC
+	inner join CategoriesWithParentLevel CWP on CWP.CategoryId = FC.CategoryId and CWP.Level = 1
+)
+
+select * from FirmCategories1
+go
+
+-- FirmCategory2
+if object_id('CustomerIntelligence.FirmCategory2') is not null
+	drop view CustomerIntelligence.FirmCategory2
+go
+create view CustomerIntelligence.FirmCategory2
+as
+with
+FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
+, CategoriesActive as (select * from BusinessDirectory.Categories where IsActive = 1 and IsDeleted = 0)
+, FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
+, CategoryFirmAddressesActive as (select * from BusinessDirectory.CategoryFirmAddresses where IsActive = 1 and IsDeleted = 0)
+, CategoriesWithParent (CategoryId, CategoryParentId) as
+(
+	select Id, ParentId from CategoriesActive CA
+	union all
+	select CA.Id, CWP.CategoryParentId from CategoriesWithParent CWP inner join CategoriesActive CA on CA.ParentId = CWP.CategoryId
+)
+, CategoriesWithParentNotNull (CategoryId, CategoryOrCategoryParentId) as (select CategoryId, isnull(CategoryParentId, CategoryId) from CategoriesWithParent)
+, CategoriesWithParentLevel as (select CWP.*, C.Level from CategoriesWithParentNotNull CWP inner join CategoriesActive C on CWP.CategoryOrCategoryParentId = C.Id)
+
+, FirmCategories (FirmId, CategoryId) as 
+(
+	select distinct F.Id, CFA.CategoryId from CategoryFirmAddressesActive CFA
+	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
+	inner join FirmsActive F on F.Id = FA.FirmId
+)
+, FirmCategories2 (Id, FirmId, CategoryId) as
+(
+	select distinct concat(FC.FirmId, CWP.CategoryOrCategoryParentId), FC.FirmId, isnull(CWP.CategoryOrCategoryParentId, 0) from FirmCategories FC
+	inner join CategoriesWithParentLevel CWP on CWP.CategoryId = FC.CategoryId and CWP.Level = 2
+)
+
+select * from FirmCategories2
+go
+
+-- FirmCategory3
+if object_id('CustomerIntelligence.FirmCategory3') is not null
+	drop view CustomerIntelligence.FirmCategory3
+go
+create view CustomerIntelligence.FirmCategory3
+as
+with
+FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
+, CategoriesActive as (select * from BusinessDirectory.Categories where IsActive = 1 and IsDeleted = 0)
 , FirmAddressesActive as (select * from BusinessDirectory.FirmAddresses where IsActive = 1 and IsDeleted = 0 and ClosedForAscertainment = 0)
 , CategoryFirmAddressesActive as (select * from BusinessDirectory.CategoryFirmAddresses where IsActive = 1 and IsDeleted = 0)
 , CategoryOrganizationUnitsActive as (select * from BusinessDirectory.CategoryOrganizationUnits where IsActive = 1 and IsDeleted = 0)
@@ -30,33 +100,18 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 		else null
 	end
 	from CategoryOrganizationUnitsActive COU
-	inner join CategoriesActive C on c.Id = COU.CategoryId
-)
-, CategoriesWithParent (CategoryId, CategoryParentId) as
-(
-	select Id, ParentId from CategoriesActive CA
-	union all
-	select CA.Id, CWP.CategoryParentId from CategoriesWithParent CWP inner join CategoriesActive CA on CA.ParentId = CWP.CategoryId
-)
-, CategoriesWithParentNotNull (CategoryId, CategoryOrCategoryParentId) as (select CategoryId, isnull(CategoryParentId, CategoryId) from CategoriesWithParent)
-, CategoryFirmAddressesWithParent (Id, CategoryId, FirmAddressId) as
-(
-	select concat(CategoryId, FirmAddressId) Id, CategoryId, FirmAddressId from
-	(
-		select CWP.CategoryOrCategoryParentId CategoryId, CFA.FirmAddressId from CategoryFirmAddressesActive CFA
-		left join CategoriesWithParentNotNull CWP on CFA.CategoryId = CWP.CategoryId
-	) T group by FirmAddressId, CategoryId
+	inner join CategoriesActive C on C.Id = COU.CategoryId
 )
 , FirmAddressCategoryGroups (Id, FirmId, FirmAddressId, CategoryId, CategoryGroup) as
 (
-	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroup from CategoryFirmAddressesWithParent CFA
+	select CFA.Id, F.Id, FA.Id, CFA.CategoryId, COU.CategoryGroup from CategoryFirmAddressesActive CFA
 	inner join FirmAddressesActive FA on FA.Id = CFA.FirmAddressId
 	inner join FirmsActive F on F.Id = FA.FirmId
 	left join CategoryOrganizationUnitsActive2 COU on COU.CategoryId = CFA.CategoryId and F.OrganizationUnitId = COU.OrganizationUnitId
 )
 , FirmCategoryGroups (Id, CategoryId, CategoryGroup, FirmId) as
 (
-	select isnull(max(Id), 0), isnull(CategoryId, 0), max(CategoryGroup), FirmId from FirmAddressCategoryGroups
+	select isnull(max(Id), 0), isnull(CategoryId, 0), isnull(max(CategoryGroup), 3), FirmId from FirmAddressCategoryGroups
 	group by FirmId, CategoryId
 )
 
@@ -79,7 +134,7 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 , OrganizationUnitsActive as (select * from Billing.OrganizationUnits where IsActive = 1 and IsDeleted = 0)
 , FirmCategoryGroups (FirmId, CategoryGroup) as
 (
-	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory3 group by FirmId
 )
 , Contacts1 as (
 	select
@@ -163,7 +218,7 @@ LastDistributedOns.LastDistributedOn,
 FirmAddressCounts.AddressCount,
 ContactsAggregate.HasPhone,
 ContactsAggregate.HasWebsite,
-FirmCategoryGroups.CategoryGroup
+isnull(FirmCategoryGroups.CategoryGroup, 3) CategoryGroup
 
 from FirmsActive F
 inner join LastDisqualifiedOns on F.Id = LastDisqualifiedOns.FirmId
@@ -186,7 +241,7 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 
 , FirmCategoryGroups (FirmId, CategoryGroup) as
 (
-	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory group by FirmId
+	select FirmId, max(CategoryGroup) from CustomerIntelligence.FirmCategory3 group by FirmId
 )
 , FirmCategoryGroupsExpanded as
 (
@@ -202,7 +257,7 @@ FirmsActive as (select * from BusinessDirectory.Firms where IsActive = 1 and IsD
 select
 Id,
 Name,
-ClientCategoryGroups.CategoryGroup
+isnull(ClientCategoryGroups.CategoryGroup, 3) CategoryGroup
 
 from ClientsActive C
 inner join ClientCategoryGroups ON C.Id = ClientCategoryGroups.ClientId
@@ -264,17 +319,6 @@ CREATE VIEW [CustomerIntelligence].[Category]
 AS
 SELECT  Id, Name, [Level]
 FROM    BusinessDirectory.Categories
-WHERE   IsActive = 1 AND IsDeleted = 0
-go
-
--- CategoryGroup
-if object_id('CustomerIntelligence.CategoryGroup') is not null
-	drop view CustomerIntelligence.CategoryGroup
-go
-CREATE VIEW [CustomerIntelligence].[CategoryGroup]
-AS
-SELECT  Id, CategoryGroupName Name, GroupRate Rate
-FROM    BusinessDirectory.CategoryGroups
 WHERE   IsActive = 1 AND IsDeleted = 0
 go
 
