@@ -1,179 +1,75 @@
-﻿using System.Collections;
-using System.Data.Entity;
-using System.Data.Entity.Validation;
+﻿using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.OData.Extensions;
 using System.Web.OData.Query;
 
 using Microsoft.OData.Core;
-
-using Newtonsoft.Json;
 
 using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
     [TestFixture]
-    public sealed class QueryExecutionTests
+    public sealed class QueryExecutionTests : QueryExecutionBaseFixture
     {
-        private DbContext _context;
-        private IQueryable<TestClass1> _query;
-
-        [SetUp]
-        public void Init()
+        [TestCase("$filter=Id ne 1", Result = "MasterClass[].Where($it => ($it.Id != 1))")]
+        [TestCase("$filter=EnumType eq AdvancedSearch.Context.EnumType'Member1'", Result = "MasterClass[].Where($it => (Convert($it.EnumType) == Convert(Member1)))")]
+        [TestCase("$filter=NonExistent ne null", ExpectedException = typeof(ODataException))]
+        [TestCase("$orderby=Id desc", Result = "MasterClass[].OrderByDescending($it => $it.Id)")]
+        [TestCase("$orderby=NonExistent desc", ExpectedException = typeof(ODataException))]
+        [TestCase("$skip=2&$top=1", Result = "MasterClass[].OrderBy($it => $it.Id).Skip(2).Take(1)")]
+        [TestCase("$select=Id,Name", Result = "MasterClass[].Select(Param_0 => new SelectSome`1() {ModelID = '<GUID>', Container = new NamedPropertyWithNext`1() {Name = 'Name', Value = Param_0.Name, Next = new NamedProperty`1() {Name = 'Id', Value = Convert(Param_0.Id)}}})")]
+        [TestCase("$select=NonExistent", ExpectedException = typeof(ODataException))]
+        [TestCase("$expand=NestedClass", Result = "MasterClass[].Select(Param_0 => new SelectAllAndExpand`1() {ModelID = '<GUID>', Instance = Param_0, Container = new SingleExpandedProperty`1() {Name = 'NestedClass', Value = new SelectAll`1() {ModelID = '<GUID>', Instance = Param_0.NestedClass}, IsNull = (Param_0.NestedClass == null)}})")]
+        [TestCase("$expand=NonExistent", ExpectedException = typeof(ODataException))]
+        public string ShouldBeValidAndEqualTo(string filter)
         {
-            _context = TestModel.EFModel.CreateInMemoryContext();
-            _query = _context.Set<TestClass1>();
+            var queryOptions = CreateValidQueryOptions<MasterClass>(TestModel.EdmModel, filter);
 
-            // insert test data
-            var entities = Enumerable.Range(0, 10).Select(x => new TestClass1
-            {
-                Id = x,
-                Name = x.ToString(),
-                TestClass2 = new TestClass2
-                {
-                    Id = x,
-                    Name = x.ToString()
-                }
-            });
-            _context.Set<TestClass1>().AddRange(entities);
+            var queryable = queryOptions.ApplyTo(DataSource, DefaultQuerySettings);
 
-            _context.SaveChanges();
+            var expression = ToExpression<MasterClass>(queryable);
+
+            // catch GUIDs
+            expression = Regex.Replace(expression, @"\b[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12}\b", "<GUID>");
+
+            Debug.WriteLine(expression);
+
+            return expression;
         }
 
-        [TearDown]
-        public void Cleanup()
+        [TestCase("$count=true", Result = 5)]
+        [TestCase("$count=false", Result = null)]
+        public long? ShouldCountData(string query)
         {
-            _context.Dispose();
-        }
+            var dataSource = Enumerable.Repeat(new MasterClass(), 5).AsQueryable();
 
-        [Test]
-        public void Test_Filter()
-        {
-            var queryOptions = CreateValidQueryOptions("$filter=Id ne 1");
-
-            var actual = queryOptions.ApplyTo(_query);
-            var expected = _query.Where(x => x.Id != 1);
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void Test_Filter_Enum()
-        {
-            var queryOptions = CreateValidQueryOptions("$filter=Enum1 eq AdvancedSearch.Context.Enum1'Member1'");
-
-            var actual = queryOptions.ApplyTo(_query);
-            var expected = _query.Where(x => x.Enum1 == Enum1.Member1);
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [ExpectedException(typeof(ODataException))]
-        public void Test_Filter_Negative()
-        {
-            CreateValidQueryOptions("$filter=NonExistent ne null");
-        }
-
-        [Test, Ignore("https://github.com/tamasflamich/effort/issues/6")]
-        public void Test_Count()
-        {
-            var request = TestHelper.CreateRequest();
-            var queryOptions = CreateValidQueryOptions("$count=true");
-
-            queryOptions.ApplyTo(_query);
-            var actual = request.ODataProperties().TotalCount;
-            var expected = ((IEnumerable)_query).OfType<object>().Count();
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void Test_OrderBy()
-        {
-            var queryOptions = CreateValidQueryOptions("$orderby=Id desc");
-
-            var actual = queryOptions.ApplyTo(_query);
-            var expected = _query.OrderByDescending(x => x.Id);
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [ExpectedException(typeof(ODataException))]
-        public void Test_OrderBy_Negative()
-        {
-            CreateValidQueryOptions("$orderby=NonExistent desc");
-        }
-
-        [Test]
-        public void Test_SkipTop()
-        {
-            var queryOptions = CreateValidQueryOptions("$skip=2&$top=1");
-
-            var actual = queryOptions.ApplyTo(_query);
-            var expected = _query.OrderBy(x => x.Id).Skip(2).Take(1);
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        public void Test_Select()
-        {
-            var queryOptions = CreateValidQueryOptions("$select=Id,Name");
-
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.Name, x.Id }));
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [ExpectedException(typeof(ODataException))]
-        public void Test_Select_Negative()
-        {
-            CreateValidQueryOptions("$select=NonExistent");
-        }
-
-        [Test]
-        public void Test_Expand()
-        {
-            var queryOptions = CreateValidQueryOptions("$select=TestClass2&$expand=TestClass2");
-
-            var actual = JsonConvert.SerializeObject(queryOptions.ApplyTo(_query));
-            var expected = JsonConvert.SerializeObject(_query.Select(x => new { x.TestClass2 }));
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        [Test]
-        [ExpectedException(typeof(ODataException))]
-        public void Test_Expand_Negative()
-        {
-            CreateValidQueryOptions("$expand=NonExistent");
-        }
-
-        [Test]
-        public void Test_Paging()
-        {
-            var queryOptions = CreateValidQueryOptions();
-            var querySettings = new ODataQuerySettings
-            {
-                PageSize = 2
-            };
-
-            var actual = queryOptions.ApplyTo(_query, querySettings);
-            var expected = _query.Take(2);
-
-            Assert.That(actual, Is.EqualTo(expected));
-        }
-
-        public ODataQueryOptions CreateValidQueryOptions(string query = null)
-        {
             var request = TestHelper.CreateRequest(query);
-            var queryOptions = TestHelper.CreateValidQueryOptions(TestModel.EdmModel, typeof(TestClass1), request, new ODataValidationSettings());
-            return queryOptions;
+            var queryOptions = TestHelper.CreateQueryOptions(TestModel.EdmModel, typeof(MasterClass), request);
+
+            queryOptions.ApplyTo(dataSource, DefaultQuerySettings);
+            
+            return request.ODataProperties().TotalCount;
+        }
+
+        [TestCase(5, 2, Result = 2)]
+        public int ShouldLimitDataToPageSize(int dataRange, int pageSize)
+        {
+            var dataSource = Enumerable.Repeat(new MasterClass(), dataRange).AsQueryable();
+            
+            var queryOptions = CreateValidQueryOptions<MasterClass>(TestModel.EdmModel);
+            var queryable = (IQueryable<MasterClass>)queryOptions.ApplyTo(dataSource, new ODataQuerySettings(DefaultQuerySettings) { PageSize = pageSize });
+
+            return queryable.Count();
+        }
+
+        private static IQueryable<MasterClass> DataSource
+        {
+            get
+            {
+                return CreateDataSource<MasterClass>();
+            }
         }
     }
 }

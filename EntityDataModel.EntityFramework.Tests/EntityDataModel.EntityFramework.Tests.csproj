@@ -94,6 +94,7 @@
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
     <Compile Include="Model.CustomerIntelligence\Account.cs" />
+    <Compile Include="Model.CustomerIntelligence\CategoryGroup.cs" />
     <Compile Include="Model.CustomerIntelligence\FirmCategory.cs" />
     <Compile Include="Model.CustomerIntelligence\Category.cs" />
     <Compile Include="Model.CustomerIntelligence\Client.cs" />

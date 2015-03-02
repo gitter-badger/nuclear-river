@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -22,6 +22,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
         {
             _assemblyBuilder = new Lazy<AssemblyBuilder>(() => EmitHelper.DefineAssembly(CustomCodeName));
             _moduleBuilder = new Lazy<ModuleBuilder>(() => AssemblyBuilder.DefineModule(CustomCodeName));
+        }
+
+        public IReadOnlyDictionary<IMetadataElementIdentity, Type> RegisteredTypes
+        {
+            get
+            {
+                return new ReadOnlyDictionary<IMetadataElementIdentity, Type>(_typesById);
+            }
         }
 
         public Type Resolve(EntityElement entityElement)
@@ -87,34 +95,39 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
         {
             var propertyType = propertyElement.PropertyType;
 
-            if (propertyType == EntityPropertyType.Enum)
+            Type resolvedType;
+            if (propertyType.TypeKind == StructuralModelTypeKind.Primitive)
             {
-                if (propertyElement.IsNullable)
+                resolvedType = ConvertType(((PrimitiveTypeElement)propertyType).PrimitiveType);
+            }
+            else if (propertyType.TypeKind == StructuralModelTypeKind.Enum)
+            {
+                if (!_typesById.TryGetValue(propertyType.Identity, out resolvedType))
                 {
-                    throw new InvalidEnumArgumentException("Nullable enums not supported");
+                    _typesById.Add(propertyType.Identity, resolvedType = CreateEnum((EnumTypeElement)propertyType));
                 }
-
-                return CreateEnum(propertyElement);
             }
-
-            var type = ConvertType(propertyType);
-
-            if (propertyElement.IsNullable && type.IsValueType)
+            else
             {
-                return typeof(Nullable<>).MakeGenericType(type);
+                throw new NotSupportedException();
             }
 
-            return type;
+            if (propertyElement.IsNullable && resolvedType.IsValueType)
+            {
+                return typeof(Nullable<>).MakeGenericType(resolvedType);
+            }
+
+            return resolvedType;
         }
 
-        private Type CreateEnum(EntityPropertyElement propertyElement)
+        private Type CreateEnum(EnumTypeElement element)
         {
-            var typeName = propertyElement.EnumName;
-            var underlyingType = ConvertType(propertyElement.EnumUnderlyingType);
+            var typeName = element.ResolveName();
+            var underlyingType = ConvertType(element.UnderlyingType);
 
             var typeBuilder = ModuleBuilder.DefineEnum(typeName, underlyingType);
 
-            foreach (var member in propertyElement.EnumMembers)
+            foreach (var member in element.Members)
             {
                 typeBuilder.DefineLiteral(member.Key, Convert.ChangeType(member.Value, underlyingType));
             }
@@ -122,28 +135,28 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit
             return typeBuilder.CreateType();
         }
 
-        private static Type ConvertType(EntityPropertyType propertyType)
+        private static Type ConvertType(ElementaryTypeKind propertyType)
         {
             switch (propertyType)
             {
-                case EntityPropertyType.Byte:
+                case ElementaryTypeKind.Byte:
                     return typeof(byte);
-                case EntityPropertyType.Int16:
-                case EntityPropertyType.Int32:
+                case ElementaryTypeKind.Int16:
+                case ElementaryTypeKind.Int32:
                     return typeof(int);
-                case EntityPropertyType.Int64:
+                case ElementaryTypeKind.Int64:
                     return typeof(long);
-                case EntityPropertyType.Single:
+                case ElementaryTypeKind.Single:
                     return typeof(float);
-                case EntityPropertyType.Double:
+                case ElementaryTypeKind.Double:
                     return typeof(double);
-                case EntityPropertyType.Decimal:
+                case ElementaryTypeKind.Decimal:
                     return typeof(decimal);
-                case EntityPropertyType.Boolean:
+                case ElementaryTypeKind.Boolean:
                     return typeof(bool);
-                case EntityPropertyType.String:
+                case ElementaryTypeKind.String:
                     return typeof(string);
-                case EntityPropertyType.DateTimeOffset:
+                case ElementaryTypeKind.DateTimeOffset:
                     return typeof(DateTimeOffset);
                 default:
                     throw new ArgumentOutOfRangeException("propertyType");

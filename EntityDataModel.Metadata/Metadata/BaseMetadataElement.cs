@@ -9,11 +9,12 @@ using NuClear.Metamodeling.Elements.Identities;
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public abstract class BaseMetadataElement<TElement, TBuilder> : MetadataElement<TElement, TBuilder>
-        where TElement : MetadataElement<TElement, TBuilder> where TBuilder : MetadataElementBuilder<TBuilder, TElement>, new()
+        where TElement : MetadataElement<TElement, TBuilder> 
+        where TBuilder : MetadataElementBuilder<TBuilder, TElement>, new()
     {
         private IMetadataElementIdentity _identity;
 
-        protected internal BaseMetadataElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
+        protected BaseMetadataElement(IMetadataElementIdentity identity, IEnumerable<IMetadataFeature> features)
             : base(features)
         {
             _identity = identity;

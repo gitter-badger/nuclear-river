@@ -1,26 +1,40 @@
 ﻿using System;
-using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
-
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EntityRelationElementBuilder : MetadataElementBuilder<EntityRelationElementBuilder, EntityRelationElement>
     {
         private string _name;
         private EntityRelationCardinality? _cardinality;
-        private EntityElement _targetEntity;
-        private EntityElementBuilder _targetEntityConfig;
+        private EntityElement _targetEntityElement;
+        private EntityElementBuilder _targetEntityElementConfig;
 
-        public EntityElementBuilder Target
+        internal Uri TargetEntityReference
         {
             get
             {
-                return _targetEntityConfig;
+                if (_targetEntityElement != null)
+                {
+                    return _targetEntityElement.Identity.Id;
+                }
+                if (_targetEntityElementConfig != null)
+                {
+                    return _targetEntityElementConfig.EntityId;
+                }
+                throw new InvalidOperationException("The reference is not set.");
+            }
+        }
+
+        internal EntityElementBuilder TargetEntityElementConfig
+        {
+            get
+            {
+                return _targetEntityElementConfig;
             }
         }
 
@@ -30,15 +44,17 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
-        public EntityRelationElementBuilder DirectTo(EntityElement entity)
+        public EntityRelationElementBuilder DirectTo(EntityElement entityElement)
         {
-            _targetEntity = entity;
+            _targetEntityElement = entityElement;
+            _targetEntityElementConfig = null;
             return this;
         }
 
-        public EntityRelationElementBuilder DirectTo(EntityElementBuilder entityConfig)
+        public EntityRelationElementBuilder DirectTo(EntityElementBuilder entityElementBuilder)
         {
-            _targetEntityConfig = entityConfig;
+            _targetEntityElement = null;
+            _targetEntityElementConfig = entityElementBuilder;
             return this;
         }
 
@@ -70,12 +86,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 throw new InvalidOperationException("The relation cardinality was not specified.");
             }
-            if (_targetEntity == null && _targetEntityConfig == null)
+            if (_targetEntityElement == null && _targetEntityElementConfig == null)
             {
                 throw new InvalidOperationException("The relation target was not specified.");
             }
 
-            AddFeatures(new EntityRelationCardinalityFeature(_cardinality.Value, _targetEntity ?? _targetEntityConfig));
+            AddFeatures(new EntityRelationCardinalityFeature(_cardinality.Value, _targetEntityElement ?? _targetEntityElementConfig));
 
             return new EntityRelationElement(_name.AsUri().AsIdentity(), Features);
         }

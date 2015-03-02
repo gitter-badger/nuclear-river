@@ -18,14 +18,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
                 yield return Case(EntityPropertyElement.Config.Name("Property"))
                     .Throws(typeof(InvalidOperationException))
                     .SetName("ShouldFailIfNoType");
-                yield return Case(EntityPropertyElement.Config.Name("Property").OfType(EntityPropertyType.String), MetadataKind.Identity | MetadataKind.Features)
-                    .Returns("{'Identity':{'Id':'Property'},'Features':[{'PropertyType':'String'}]}")
+                yield return Case(EntityPropertyElement.Config.Name("Property").OfType(ElementaryTypeKind.String), "Identity", "PropertyType")
+                    .Returns("{'PropertyType':{'Identity':{'Id':'erm://metadata/AdvancedSearch/String'}},'Identity':{'Id':'Property'}}")
                     .SetName("ShouldDeclareProperty");
-                yield return Case(EntityPropertyElement.Config.Name("Property").OfType(EntityPropertyType.String).Nullable(), MetadataKind.Features)
-                    .Returns("{'Features':[{'IsNullable':true},{'PropertyType':'String'}]}")
+                yield return Case(EntityPropertyElement.Config.Name("Property").OfType(ElementaryTypeKind.Int32).Nullable(), "Identity", "PropertyType", "Features")
+                    .Returns("{'PropertyType':{'Identity':{'Id':'erm://metadata/AdvancedSearch/Int32'},'Features':[]},'Identity':{'Id':'Property'},'Features':[{'IsNullable':true}]}")
                     .SetName("ShouldDeclareNullableProperty");
-                yield return Case(EntityPropertyElement.Config.Name("Property").UsingEnum("Gender").WithMember("Female", 1).WithMember("Male", 2), MetadataKind.Features)
-                    .Returns("{'Features':[{'Name':'Gender','UnderlyingType':'Int32','Members':{'Female':1,'Male':2},'PropertyType':'Enum'}]}")
+                yield return Case(EntityPropertyElement.Config.Name("Property").OfType<EnumTypeElement>(EnumTypeElement.Config.Name("Gender").Member("Female", 1).Member("Male", 2)), "Identity", "PropertyType", "Members")
+                    .Returns("{'PropertyType':{'Members':{'Female':1,'Male':2},'Identity':{'Id':'Gender'}},'Identity':{'Id':'Property'}}")
                     .SetName("ShouldDeclareEnumProperty");
             }
         }

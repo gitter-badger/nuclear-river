@@ -26,16 +26,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
                     .SetName("ShouldDeclareEntitySetName");
                 yield return Case(
                     EntityElement.Config.Name("Entity")
-                        .Property(EntityPropertyElement.Config.Name("Property").OfType(EntityPropertyType.String)),
+                        .Property(EntityPropertyElement.Config.Name("Property").OfType(ElementaryTypeKind.String)),
                     MetadataKind.Identity | MetadataKind.Elements)
                     .Returns("{'Identity':{'Id':'Entity'},'Elements':[{'Identity':{'Id':'Property'},'Elements':[]}]}")
                     .SetName("ShouldDeclareEntityWithProperty");
                 yield return Case(
                     EntityElement.Config.Name("Entity")
                         .HasKey("Property")
-                        .Property(EntityPropertyElement.Config.Name("Property").OfType(EntityPropertyType.Int64)), 
+                        .Property(EntityPropertyElement.Config.Name("Property").OfType(ElementaryTypeKind.Int64)), 
                     MetadataKind.Identity | MetadataKind.Features)
-                    .Returns("{'Identity':{'Id':'Entity'},'Features':[{'IdentifyingProperties':[{'Identity':{'Id':'Property'},'Features':[{'PropertyType':'Int64'}]}]}]}")
+                    .Returns("{'Identity':{'Id':'Entity'},'Features':[{'IdentifyingProperties':[{'Identity':{'Id':'Property'},'Features':[]}]}]}")
                     .SetName("ShouldDeclareEntityWithKey");
                 yield return Case(
                     EntityElement.Config.Name("Entity")

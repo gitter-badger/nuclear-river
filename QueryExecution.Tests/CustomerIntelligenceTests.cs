@@ -1,104 +1,127 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Web.OData;
 
-using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
+using Microsoft.OData.Edm;
+
+using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
+using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Processors;
+using NuClear.Metamodeling.Provider;
+using NuClear.Metamodeling.Provider.Sources;
 
 using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.QueryExecution.Tests
 {
-    [TestFixture]
-    public sealed class CustomerIntelligenceTests : CustomerIntelligenceBaseFixture
+    /// <remarks>
+    /// Executes in invariant culture to simplify expected result after the formatting.
+    /// </remarks>>
+    [TestFixture, SetCulture("")]
+    public sealed class CustomerIntelligenceTests : QueryExecutionBaseFixture
     {
-        [Test]
-        public void ByOrganizationUnit()
+        public IEdmModel EdmModel { get; private set; }
+            
+        [TestFixtureSetUp]
+        public void Setup()
         {
-            using (var context = new DbContext(CreateConnection(), Model, true))
+            var metadataProvider = MetadataProvider;
+
+            BoundedContextElement context;
+            metadataProvider.TryGetMetadata(CustomerIntelligenceId, out context);
+
+            var clrTypes = EmitClrTypes(context);
+            var modelBuilder = new EdmModelBuilder(metadataProvider);
+            EdmModel = modelBuilder.Build(CustomerIntelligenceId).AnnotateByClrTypes(elementId => clrTypes[elementId.AsIdentity()]);
+        }
+
+        /// <summary>
+        /// Критерии взяты из https://confluence.2gis.ru/pages/viewpage.action?pageId=143462711.
+        /// </summary>
+        [TestCase("$filter=OrganizationUnit/Id eq @id&@id=12345", Result = "Firm[].Where($it => ($it.OrganizationUnit.Id == Convert(12345)))", Description = "Поиск по организации.")]
+        [TestCase("$filter=Territory/Id eq  @id&@id=12345", Result = "Firm[].Where($it => ($it.Territory.Id == Convert(12345)))", Description = "Поиск по территории.")]
+        [TestCase("$filter=CreatedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.CreatedOn < 01/01/2015 00:00:00 +00:00))", Description = "Поиск по дате создания.")]
+        [TestCase("$filter=LastDisqualifiedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDisqualifiedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего возвращения в резерв.")]
+        [TestCase("$filter=LastDistributedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDistributedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего размещения.")]
+        [TestCase("$filter=Categories/any(x:x/Category/Id eq @id1)&@id1=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.Category.Id == Convert(123))))", Description = "Поиск по рубрике 1-го уровня.")]
+        [TestCase("$filter=Categories/any(x:x/Category/Id eq @id2)&@id2=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.Category.Id == Convert(123))))", Description = "Поиск по рубрике 2-го уровня.")]
+        [TestCase("$filter=Categories/any(x:x/Category/Id eq @id3)&@id3=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.Category.Id == Convert(123))))", Description = "Поиск по рубрике 3-го уровня.")]
+        [TestCase("$filter=CategoryGroup eq AdvancedSearch.CustomerIntelligence.CategoryGroup'Percent120'", Result = "Firm[].Where($it => (Convert($it.CategoryGroup) == Convert(Convert(Percent120))))", Description = "Поиск по ценовой категории фирмы.")]
+        [TestCase("$filter=Categories/any(x:x/CategoryGroup eq AdvancedSearch.CustomerIntelligence.CategoryGroup'Percent120')", Result = "Firm[].Where($it => $it.Categories.Any(x => (Convert(x.CategoryGroup) == Convert(Convert(Percent120)))))", Description = "Поиск по ценовой категории рубрики.")]
+        [TestCase("$filter=Client/CategoryGroup eq AdvancedSearch.CustomerIntelligence.CategoryGroup'Percent120'", Result = "Firm[].Where($it => (Convert($it.Client.CategoryGroup) == Convert(Convert(Percent120))))", Description = "Поиск по ценовой категории клиента.")]
+        [TestCase("$filter=AddressCount gt @amount&@amount=10", Result = "Firm[].Where($it => ($it.AddressCount > 10))", Description = "Поиск по количеству активных адресов.")]
+        [TestCase("$filter=HasWebsite eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasWebsite == True))", Description = "Поиск по наличию сайта.")]
+        [TestCase("$filter=HasPhone eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasPhone == True))", Description = "Поиск по наличию телефона.")]
+        [TestCase("$filter=Client/Contacts/any(x:x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
+        [TestCase("$filter=Client/Contacts/any(x:x/IsFired ne true)", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (x.IsFired != True)))", Description = "Поиск по наличию рабочего контакта.")]
+        [TestCase("$filter=Client/Accounts/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Client.Accounts.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
+        public string ShouldAcceptMainCriteria(string filter)
+        {
+            var firmType = LookupClrType("Firm");
+
+            var options = CreateValidQueryOptions(EdmModel, firmType, filter);
+
+            var query = options.ApplyTo(CreateDataSource(firmType), DefaultQuerySettings);
+
+            var expression = ToExpression(query, firmType.Namespace);
+
+            Debug.WriteLine(expression);
+
+            return expression;
+        }
+
+        private static IReadOnlyDictionary<IMetadataElementIdentity,Type> EmitClrTypes(BoundedContextElement context)
+        {
+            var typeProvider = new EmitTypeProvider();
+            foreach (var element in context.ConceptualModel.Entities)
             {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=OrganizationUnit/Id eq 0");
+                typeProvider.Resolve(element);
+            }
+            return typeProvider.RegisteredTypes;
+        }
 
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.OrganizationUnit.Id == 0);
+        private Type LookupClrType(string name, string @namespace = "AdvancedSearch.CustomerIntelligence")
+        {
+            var fullName = (string.IsNullOrEmpty(@namespace) ? "" : @namespace + ".") + name;
+            
+            var edmType = EdmModel.FindDeclaredType(fullName);
+            if (edmType == null)
+            {
+                throw new Exception("The type was not found for the specified name.");
+            }
 
-                Assert.That(actual, Is.EqualTo(expected));
+            var annotation = EdmModel.GetAnnotationValue<ClrTypeAnnotation>(edmType);
+            if (annotation == null)
+            {
+                throw new Exception("The CLR type cannot be resolved.");
+            }
+
+            return annotation.ClrType;
+        }
+
+        #region Customer Intelligence
+
+        private static readonly Uri CustomerIntelligenceId = IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence");
+
+        private static IMetadataSource CustomerIntelligenceMetadataSource
+        {
+            get
+            {
+                return new AdvancedSearchMetadataSource();
             }
         }
 
-        [Test]
-        public void ByLastDisqualifiedOn()
+        private static IMetadataProvider MetadataProvider
         {
-            using (var context = new DbContext(CreateConnection(), Model, true))
+            get
             {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=LastDisqualifiedOn gt 2015-01-01");
-
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.LastDisqualifiedOn > new DateTimeOffset(2015, 01, 01, 00, 00, 00, TimeSpan.Zero));
-
-                Assert.That(actual, Is.EqualTo(expected));
+                return new MetadataProvider(new[] { CustomerIntelligenceMetadataSource }, new IMetadataProcessor[0]);
             }
         }
 
-        [Test]
-        public void ByClient()
-        {
-            using (var context = new DbContext(CreateConnection(), Model, true))
-            {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/CategoryGroup eq 1");
-
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.CategoryGroup == 1);
-
-                var test = context.Set<Firm>().Select(x => new
-                                                           {
-                                                               x,
-                                                               test = x.CategoryGroup
-                                                           }).ToArray();
-
-                Assert.That(actual, Is.EqualTo(expected));
-            }
-        }
-
-        [Test]
-        public void ByCategory()
-        {
-            using (var context = new DbContext(CreateConnection(), Model, true))
-            {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Categories/any(x: x/CategoryGroup eq 0)");
-
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.Categories.Any(y => y.CategoryGroup == 0));
-
-                Assert.That(actual, Is.EqualTo(expected));
-            }
-        }
-
-        [Test]
-        public void ByAccount()
-        {
-            using (var context = new DbContext(CreateConnection(), Model, true))
-            {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/Accounts/all(x: x/Balance gt 0.01M)");
-
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.Client.Accounts.All(y => y.Balance > 0.01M));
-
-                Assert.That(actual, Is.EqualTo(expected));
-            }
-        }
-
-        [Test]
-        public void ByContact()
-        {
-            using (var context = new DbContext(CreateConnection(), Model, true))
-            {
-                var queryOptions = CreateValidQueryOptions<Firm>("$filter=Client/Contacts/any(x: x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')");
-
-                var actual = queryOptions.ApplyTo(context.Set<Firm>());
-                var expected = context.Set<Firm>().Where(x => x.Client.Contacts.Any(y => y.Role == ContactRole.Employee));
-
-                Assert.That(actual, Is.EqualTo(expected));
-            }
-        }
+        #endregion
     }
 }

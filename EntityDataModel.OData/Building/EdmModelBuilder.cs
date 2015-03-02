@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.OData.Edm;
+using Microsoft.OData.Edm.Annotations;
 using Microsoft.OData.Edm.Library;
 using Microsoft.OData.Edm.Library.Values;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Provider;
 
@@ -62,9 +62,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
         private static IEdmModel BuildModel(string namespaceName, IEnumerable<EntityElement> entities)
         {
-            var typeBuilder = new TypeBuilder(namespaceName);
-
             var model = new EdmModel();
+
+            var typeBuilder = new TypeBuilder(namespaceName, model.DirectValueAnnotationsManager);
 
             model.AddElement(BuildContainer(entities, typeBuilder));
 
@@ -95,11 +95,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
 
         private class TypeBuilder
         {
+            private const string AnnotationNamespace = "http://schemas.2gis.ru/2015/02/edm/customannotation";
+            private const string AnnotationAttribute = "EntityId";
+
+            private readonly IEdmDirectValueAnnotationsManager _annotationsManager;
             private readonly Dictionary<string, IEdmSchemaType> _registeredTypes;
 
-            public TypeBuilder(string namespaceName)
+            public TypeBuilder(string namespaceName, IEdmDirectValueAnnotationsManager annotationsManager)
             {
                 NamespaceName = namespaceName;
+                _annotationsManager = annotationsManager;
                 _registeredTypes = new Dictionary<string, IEdmSchemaType>();
             }
 
@@ -124,19 +129,23 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                         complexType = entityElement.KeyProperties.Any()
                         ? (IEdmSchemaType)BuildEntityType(typeName, entityElement)
                         : (IEdmSchemaType)BuildComplexType(typeName, entityElement));
+
+                    AnnotateElement(complexType, entityElement.Identity.Id);
                 }
 
                 return (IEdmStructuredType)complexType;
             }
 
-            private IEdmEnumType ResolveEnumType(EntityPropertyEnumTypeFeature feature)
+            private IEdmEnumType ResolveEnumType(EnumTypeElement enumTypeElement)
             {
-                var typeName = feature.Name;
+                var typeName = enumTypeElement.ResolveName();
 
                 IEdmSchemaType enumType;
                 if (!_registeredTypes.TryGetValue(typeName, out enumType))
                 {
-                    _registeredTypes.Add(typeName, enumType = BuildEnumType(typeName, feature));
+                    _registeredTypes.Add(typeName, enumType = BuildEnumType(typeName, enumTypeElement));
+                    
+                    AnnotateElement(enumType, enumTypeElement.Identity.Id);
                 }
 
                 return (IEdmEnumType)enumType;
@@ -146,20 +155,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             {
                 var propertyType = propertyElement.PropertyType;
 
-                if (IsPrimitiveType(propertyType))
+                var primitiveType = propertyType as PrimitiveTypeElement;
+                if (primitiveType != null)
                 {
-                    return EdmCoreModel.Instance.GetPrimitive(Convert(propertyType), propertyElement.IsNullable);
+                    return EdmCoreModel.Instance.GetPrimitive(Convert(primitiveType.PrimitiveType), propertyElement.IsNullable);
                 }
 
-                if (propertyType == EntityPropertyType.Enum)
+                var enumType = propertyType as EnumTypeElement;
+                if (enumType != null)
                 {
-                    var feature = propertyElement.Features.OfType<EntityPropertyEnumTypeFeature>().SingleOrDefault();
-                    if (feature == null)
-                    {
-                        throw new ArgumentException("The enum type was not completely specified.");
-                    }
-
-                    return new EdmEnumTypeReference(ResolveEnumType(feature), propertyElement.IsNullable);
+                    return new EdmEnumTypeReference(ResolveEnumType(enumType), propertyElement.IsNullable);
                 }
 
                 throw new NotSupportedException();
@@ -192,7 +197,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
             {
                 var entityType = new EdmEntityType(NamespaceName, typeName);
                 var keyIds = new HashSet<IMetadataElementIdentity>(entityElement.KeyProperties.Select(x => x.Identity));
-
+                
                 foreach (var propertyElement in entityElement.Properties)
                 {
                     var propertyName = propertyElement.ResolveName();
@@ -260,11 +265,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                 return entityType;
             }
 
-            private IEdmEnumType BuildEnumType(string typeName, EntityPropertyEnumTypeFeature feature)
+            private IEdmEnumType BuildEnumType(string typeName, EnumTypeElement enumTypeElement)
             {
-                var enumType = new EdmEnumType(NamespaceName, typeName, Convert(feature.UnderlyingType), false);
+                var enumType = new EdmEnumType(NamespaceName, typeName, Convert(enumTypeElement.UnderlyingType), false);
 
-                foreach (var member in feature.Members)
+                foreach (var member in enumTypeElement.Members)
                 {
                     enumType.AddMember(member.Key, new EdmIntegerConstant(member.Value));
                 }
@@ -272,42 +277,42 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                 return enumType;
             }
 
-            private static bool IsPrimitiveType(EntityPropertyType propertyType)
+            private void AnnotateElement(IEdmSchemaType schemaElement, Uri elementId)
             {
-                return propertyType != EntityPropertyType.Enum;
+                _annotationsManager.SetAnnotationValue(schemaElement, AnnotationNamespace, AnnotationAttribute, elementId);
             }
 
-            private static EdmPrimitiveTypeKind Convert(EntityPropertyType propertyType)
+            private static EdmPrimitiveTypeKind Convert(ElementaryTypeKind typeKind)
             {
-                switch (propertyType)
+                switch (typeKind)
                 {
-                    case EntityPropertyType.Boolean:
+                    case ElementaryTypeKind.Boolean:
                         return EdmPrimitiveTypeKind.Boolean;
 
-                    case EntityPropertyType.Byte:
+                    case ElementaryTypeKind.Byte:
                         return EdmPrimitiveTypeKind.Byte;
-                    case EntityPropertyType.Int16:
+                    case ElementaryTypeKind.Int16:
                         return EdmPrimitiveTypeKind.Int16;
-                    case EntityPropertyType.Int32:
+                    case ElementaryTypeKind.Int32:
                         return EdmPrimitiveTypeKind.Int32;
-                    case EntityPropertyType.Int64:
+                    case ElementaryTypeKind.Int64:
                         return EdmPrimitiveTypeKind.Int64;
 
-                    case EntityPropertyType.Single:
+                    case ElementaryTypeKind.Single:
                         return EdmPrimitiveTypeKind.Single;
-                    case EntityPropertyType.Double:
+                    case ElementaryTypeKind.Double:
                         return EdmPrimitiveTypeKind.Double;
-                    case EntityPropertyType.Decimal:
+                    case ElementaryTypeKind.Decimal:
                         return EdmPrimitiveTypeKind.Decimal;
 
-                    case EntityPropertyType.DateTimeOffset:
+                    case ElementaryTypeKind.DateTimeOffset:
                         return EdmPrimitiveTypeKind.DateTimeOffset;
 
-                    case EntityPropertyType.String:
+                    case ElementaryTypeKind.String:
                         return EdmPrimitiveTypeKind.String;
 
                     default:
-                        throw new ArgumentOutOfRangeException("propertyType");
+                        throw new ArgumentOutOfRangeException("typeKind");
                 }
             }
 

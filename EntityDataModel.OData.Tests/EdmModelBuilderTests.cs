@@ -93,8 +93,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var config = NewContext("Context",
                     EntityElement.Config
                         .Name("Entity").HasKey("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Byte))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                         );
 
             var model = BuildValidModel(config);
@@ -115,11 +115,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
                     NewEntity("Person")
                     .Property(EntityPropertyElement.Config
                         .Name("Gender")
-                        .UsingEnum("GenderEnum")
-                        .WithMember("Male", 1)
-                        .WithMember("Female", 2)
-                        )
-                    );
+                        .OfType<EnumTypeElement>(EnumTypeElement.Config.Name("GenderEnum").Member("Male", 1).Member("Female", 2))
+                    ));
 
             var model = BuildValidModel(config);
             Assert.NotNull(model);
@@ -132,7 +129,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         [Test]
         public void ShouldSupportAllPrimitiveTypes()
         {
-            var primitiveTypes = Enum.GetValues(typeof(EntityPropertyType)).OfType<EntityPropertyType>().Except(new[] { EntityPropertyType.Enum }).ToArray();
+            var primitiveTypes = Enum.GetValues(typeof(ElementaryTypeKind)).Cast<ElementaryTypeKind>().ToArray();
 
             var element = EntityElement.Config.Name("Entity").HasKey("PropertyOfInt32");
             foreach (var propertyType in primitiveTypes)
@@ -154,8 +151,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var config =
                 NewContext("Context",
                     NewEntity("Entity")
-                    .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsOneOptionally())
-                    .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", EntityPropertyType.String))).AsMany())
+                    .Relation(NewRelation("ToValueAsOne").DirectTo(NewEntity("RelatedValue", NewProperty("Name", ElementaryTypeKind.String))).AsOneOptionally())
+                    .Relation(NewRelation("ToValueAsMany").DirectTo(NewEntity("RelatedValue", NewProperty("Name", ElementaryTypeKind.String))).AsMany())
                     .Relation(NewRelation("ToEntityAsOne").DirectTo(NewEntity("RelatedEntity")).AsOneOptionally())
                     .Relation(NewRelation("ToEntityAsMany").DirectTo(NewEntity("RelatedEntity")).AsMany())
                     );
@@ -265,7 +262,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             return config;
         }
 
-        private static EntityPropertyElementBuilder NewProperty(string propertyName, EntityPropertyType propertyType = EntityPropertyType.Int64)
+        private static EntityPropertyElementBuilder NewProperty(string propertyName, ElementaryTypeKind propertyType = ElementaryTypeKind.Int64)
         {
             return EntityPropertyElement.Config.Name(propertyName).OfType(propertyType);
         }

@@ -42,17 +42,22 @@
   <ItemGroup>
     <Compile Include="AdvancedSearchIdentity.cs" />
     <Compile Include="Metadata\BaseMetadataElement.cs" />
+    <Compile Include="Metadata\EnumTypeElement.cs" />
+    <Compile Include="Metadata\FluentSyntax\EnumTypeElementBuilder.cs" />
     <Compile Include="Metadata\Features\ElementMappingFeature.cs" />
+    <Compile Include="Metadata\IStructuralModelTypeElement.cs" />
     <Compile Include="Metadata\MetadataElementExtensions.cs" />
     <Compile Include="Metadata\MetadataElementIdentityExtensions.cs" />
     <Compile Include="Metadata\FluentSyntax\StructuralModelElementBuilder.cs" />
+    <Compile Include="Metadata\PrimitiveTypeElement.cs" />
+    <Compile Include="Metadata\ElementaryTypeKind.cs" />
+    <Compile Include="Metadata\StructuralModelTypeKind.cs" />
     <Compile Include="Metadata\UriExtensions.cs" />
     <Compile Include="Metadata\StructuralModelElement.cs" />
     <Compile Include="Metadata\BoundedContextElement.cs" />
     <Compile Include="Metadata\Features\EntitySetFeature.cs" />
     <Compile Include="Metadata\Features\EntityIdentityFeature.cs" />
     <Compile Include="Metadata\Features\EntityPropertyNullableFeature.cs" />
-    <Compile Include="Metadata\Features\EntityPropertyEnumTypeFeature.cs" />
     <Compile Include="Metadata\FluentSyntax\BoundedContextElementBuilder.cs" />
     <Compile Include="Metadata\EntityRelationCardinality.cs" />
     <Compile Include="Metadata\EntityElement.cs" />
@@ -60,10 +65,8 @@
     <Compile Include="Metadata\EntityPropertyElement.cs" />
     <Compile Include="Metadata\FluentSyntax\EntityPropertyElementBuilder.cs" />
     <Compile Include="Metadata\Features\EntityRelationCardinalityFeature.cs" />
-    <Compile Include="Metadata\Features\EntityPropertyTypeFeature.cs" />
     <Compile Include="Metadata\EntityRelationElement.cs" />
     <Compile Include="Metadata\FluentSyntax\EntityRelationElementBuilder.cs" />
-    <Compile Include="Metadata\EntityPropertyType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AdvancedSearchMetadataSource.cs" />
   </ItemGroup>
