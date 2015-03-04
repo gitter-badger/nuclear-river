@@ -7,7 +7,6 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
-
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class BoundedContextElementBuilder : MetadataElementBuilder<BoundedContextElementBuilder, BoundedContextElement>
@@ -15,7 +14,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private const string ConceptualModelName = "ConceptualModel";
         private const string StoreModelName = "StoreModel";
 
-        private readonly IDictionary<string, string> _entityMap = new Dictionary<string, string>();
+        private readonly IDictionary<Uri, Uri> _entityMap = new Dictionary<Uri, Uri>();
         private string _name;
         private StructuralModelElementBuilder _conceptualModel;
         private StructuralModelElementBuilder _storeModel;
@@ -40,7 +39,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public BoundedContextElementBuilder Map(string conceptualEntityName, string storeEntityName)
         {
-            _entityMap.Add(conceptualEntityName, storeEntityName);
+            _entityMap.Add(conceptualEntityName.AsUri(), storeEntityName.AsUri());
             return this;
         }
 
@@ -87,7 +86,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             {
                 EntityElement conceptualEntity;
                 EntityElement storeEntity;
-                if (!conceptualEntities.TryGetValue(map.Key.AsUri(), out conceptualEntity) || !storeEntities.TryGetValue(map.Value.AsUri(), out storeEntity))
+                if (!conceptualEntities.TryGetValue(map.Key, out conceptualEntity) || !storeEntities.TryGetValue(map.Value, out storeEntity))
                 {
                     throw new InvalidOperationException("The entity mapping cannot be resolved.");
                 }

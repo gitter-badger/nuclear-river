@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 
 using NuClear.Metamodeling.Elements;
@@ -13,9 +14,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         public abstract IEnumerable TestCases { get; }
 
         [Test, TestCaseSource("TestCases")]
-        public string CheckSerialization(TBuilder element, MetadataKind properties)
+        public string CheckSerialization(Func<string> actor)
         {
-            return SerializeAndDump(element, properties);
+            return actor();
         }
 
         protected static TestCaseData Case(TBuilder config)
@@ -25,7 +26,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 
         protected static TestCaseData Case(TBuilder config, MetadataKind properties)
         {
-            return new TestCaseData(config, properties);
+            return new TestCaseData((Func<string>)(() => SerializeAndDump(config, properties)));
+        }
+
+        protected static TestCaseData Case(TBuilder config, params string[] properties)
+        {
+            return new TestCaseData((Func<string>)(() => SerializeAndDump(config, properties)));
         }
 
         private static string SerializeAndDump(TMetadataElement element, MetadataKind metadata)
@@ -33,6 +39,13 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             element.Dump(metadata);
 
             return element.Serialize(metadata);
+        }
+
+        private static string SerializeAndDump(TMetadataElement element, string[] properties)
+        {
+            element.Dump(properties);
+
+            return element.Serialize(properties);
         }
    }
 }

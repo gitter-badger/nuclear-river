@@ -4,6 +4,6 @@
     {
         public long Id { get; set; }
         public Category Category { get; set; }
-        public int? CategoryGroup { get; set; }
+        public CategoryGroup CategoryGroup { get; set; }
     }
 }

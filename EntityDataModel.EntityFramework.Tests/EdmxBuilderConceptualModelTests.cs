@@ -119,8 +119,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             var config = NewContext("Context").ConceptualModel(NewModel(
                     EntityElement.Config
                         .Name("Entity").HasKey("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Byte))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                         ));
 
             var model = BuildConceptualModel(config);
@@ -140,8 +140,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             var config = NewContext("Context").ConceptualModel(NewModel(
                     EntityElement.Config
                         .Name("Entity").HasKey("Id", "Name")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                        .Property(EntityPropertyElement.Config.Name("Name").OfType(EntityPropertyType.String))
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Byte))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                         ));
 
             var model = BuildConceptualModel(config);
@@ -161,9 +161,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             var config = NewContext("Context").ConceptualModel(NewModel(
                     EntityElement.Config
                         .Name("Entity").HasKey("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(EntityPropertyType.Byte))
-                        .Property(EntityPropertyElement.Config.Name("NonNullable").OfType(EntityPropertyType.String))
-                        .Property(EntityPropertyElement.Config.Name("Nullable").OfType(EntityPropertyType.String).Nullable())
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Byte))
+                        .Property(EntityPropertyElement.Config.Name("NonNullable").OfType(ElementaryTypeKind.String))
+                        .Property(EntityPropertyElement.Config.Name("Nullable").OfType(ElementaryTypeKind.String).Nullable())
                         ));
 
             var model = BuildConceptualModel(config);
@@ -179,7 +179,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldSupportAllPrimitiveTypes()
         {
-            var primitiveTypes = Enum.GetValues(typeof(EntityPropertyType)).OfType<EntityPropertyType>().Except(new[] { EntityPropertyType.Enum }).ToArray();
+            var primitiveTypes = Enum.GetValues(typeof(ElementaryTypeKind)).OfType<ElementaryTypeKind>().ToArray();
 
             var element = EntityElement.Config.Name("Entity").HasKey("PropertyOfInt32");
             foreach (var propertyType in primitiveTypes)
@@ -198,15 +198,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldSupportEnumType()
         {
-            var config = NewContext("Context").ConceptualModel(NewModel(
+            var config = NewContext("Context").ConceptualModel(
+                NewModel(
                     NewEntity("Person")
-                    .Property(EntityPropertyElement.Config
-                        .Name("Gender")
-                        .UsingEnum("GenderEnum")
-                        .WithMember("Male", 1)
-                        .WithMember("Female", 2)
-                        )
-                    ));
+                        .Property(EntityPropertyElement.Config.Name("Gender").OfType<EnumTypeElement>(EnumTypeElement.Config.Name("GenderEnum")))
+                        .Property(EntityPropertyElement.Config.Name("NullableGender").OfType<EnumTypeElement>(EnumTypeElement.Config.Name("GenderEnum")).Nullable())
+                ).Types<EnumTypeElement>(EnumTypeElement.Config.Name("GenderEnum").Member("Male", 1).Member("Female", 2)));
 
             var model = BuildConceptualModel(config);
             Assert.NotNull(model);
@@ -214,6 +211,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             var entity = model.FindEntityType("Person");
             Assert.NotNull(entity);
             Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Property.Members("Male", "Female")));
+            Assert.That(entity.FindProperty("NullableGender"), Is.Not.Null.And.Matches(Property.IsNullable()));
         }
     }
 }

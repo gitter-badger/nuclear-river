@@ -7,45 +7,48 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
-
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EntityElementBuilder : MetadataElementBuilder<EntityElementBuilder, EntityElement>
     {
         private readonly HashSet<Uri> _keyNames = new HashSet<Uri>();
-        private readonly List<EntityPropertyElementBuilder> _properties = new List<EntityPropertyElementBuilder>();
-        private readonly List<EntityRelationElementBuilder> _relations = new List<EntityRelationElementBuilder>();
+        private readonly List<EntityPropertyElementBuilder> _propertyConfigs = new List<EntityPropertyElementBuilder>();
+        private readonly List<EntityRelationElementBuilder> _relationConfigs = new List<EntityRelationElementBuilder>();
 
-        private string _name;
+        private Uri _entityId;
         private string _entitySetName;
 
-        public string EntityName
+        public Uri EntityId
         {
             get
             {
-                return _name;
+                if (_entityId == null)
+                {
+                    throw new InvalidOperationException("The id was not set.");
+                }
+                return _entityId;
             }
         }
 
-        public IReadOnlyCollection<EntityPropertyElementBuilder> Properties
+        public IReadOnlyCollection<EntityPropertyElementBuilder> PropertyConfigs
         {
             get
             {
-                return _properties;
+                return _propertyConfigs;
             }
         }
 
-        public IReadOnlyCollection<EntityRelationElementBuilder> Relations
+        public IReadOnlyCollection<EntityRelationElementBuilder> RelationConfigs
         {
             get
             {
-                return _relations;
+                return _relationConfigs;
             }
         }
 
         public EntityElementBuilder Name(string name)
         {
-            _name = name;
+            _entityId = name.AsUri();
             return this;
         }
 
@@ -66,19 +69,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public EntityElementBuilder Property(EntityPropertyElementBuilder property)
         {
-            _properties.Add(property);
+            _propertyConfigs.Add(property);
             return this;
         }
 
         public EntityElementBuilder Relation(EntityRelationElementBuilder relation)
         {
-            _relations.Add(relation);
+            _relationConfigs.Add(relation);
             return this;
         }
 
         protected override EntityElement Create()
         {
-            if (string.IsNullOrEmpty(_name))
+            if (_entityId == null)
             {
                 throw new InvalidOperationException("The entity name was not specified.");
             }
@@ -91,14 +94,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             ProcessProperties();
             ProcessRelations();
 
-            return new EntityElement(_name.AsUri().AsIdentity(), Features);
+            return new EntityElement(_entityId.AsIdentity(), Features);
         }
 
         private void ProcessProperties()
         {
             var keys = new List<EntityPropertyElement>();
 
-            foreach (var propertyElement in _properties.Select(x => (EntityPropertyElement)x))
+            foreach (var propertyElement in _propertyConfigs.Select(x => (EntityPropertyElement)x))
             {
                 Childs(propertyElement);
 
@@ -116,7 +119,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         private void ProcessRelations()
         {
-            Childs(_relations.Select(x => (IMetadataElement)(EntityRelationElement)x).ToArray());
+            Childs(_relationConfigs.Select(x => (IMetadataElement)(EntityRelationElement)x).ToArray());
         }
     }
 }

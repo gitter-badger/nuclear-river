@@ -220,6 +220,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 return x => x.PrimitiveType.PrimitiveTypeKind == typeKind;
             }
 
+            public static Predicate<EdmProperty> IsNullable()
+            {
+                return x => x.Nullable;
+            }
+
             public static Predicate<EdmProperty> IsKey()
             {
                 return x => (x.DeclaringType as EntityType) != null && ((EntityType)x.DeclaringType).KeyMembers.Contains(x);
@@ -278,7 +283,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             return config;
         }
 
-        protected static EntityPropertyElementBuilder NewProperty(string propertyName, EntityPropertyType propertyType = EntityPropertyType.Int64)
+        protected static EntityPropertyElementBuilder NewProperty(string propertyName, ElementaryTypeKind propertyType = ElementaryTypeKind.Int64)
         {
             return EntityPropertyElement.Config.Name(propertyName).OfType(propertyType);
         }
