@@ -18,6 +18,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public OrganizationUnit OrganizationUnit { get; set; }
         public Territory Territory { get; set; }
         public Client Client { get; set; }
-        public ICollection<FirmCategory> Categories { get; set; }
+        public ICollection<FirmCategory1> Categories1 { get; set; }
+        public ICollection<FirmCategory2> Categories2 { get; set; }
+        public ICollection<FirmCategory3> Categories3 { get; set; }
     }
 }
