@@ -7,21 +7,21 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         {
             private static readonly StructuralModelElementBuilder ConceptualModel =
                 StructuralModelElement.Config.Elements(
-                    EntityElement.Config.Name(EntityName.OrganizationUnit).EntitySetName("OrganizationUnit")
+                    EntityElement.Config.Name(EntityName.OrganizationUnit).EntitySetName("OrganizationUnits")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
-                    EntityElement.Config.Name(EntityName.Territory).EntitySetName("Territory")
+                    EntityElement.Config.Name(EntityName.Territory).EntitySetName("Territories")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                         .Relation(EntityRelationElement.Config.Name("OrganizationUnit").DirectTo(EntityElement.Config.Name(EntityName.OrganizationUnit)).AsOne()),
-                    EntityElement.Config.Name(EntityName.Category).EntitySetName("Category")
+                    EntityElement.Config.Name(EntityName.Category).EntitySetName("Categories")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                         .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32)),
-                    EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroup")
+                    EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)));
