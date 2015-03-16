@@ -93,18 +93,17 @@
     <Compile Include="EdmxBuilderModelTests.cs" />
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
-    <Compile Include="Model.CustomerIntelligence\Account.cs" />
-    <Compile Include="Model.CustomerIntelligence\CategoryGroup.cs" />
-    <Compile Include="Model.CustomerIntelligence\FirmCategory1.cs" />
-    <Compile Include="Model.CustomerIntelligence\FirmCategory2.cs" />
-    <Compile Include="Model.CustomerIntelligence\FirmCategory3.cs" />
-    <Compile Include="Model.CustomerIntelligence\Category.cs" />
-    <Compile Include="Model.CustomerIntelligence\Client.cs" />
-    <Compile Include="Model.CustomerIntelligence\Contact.cs" />
-    <Compile Include="Model.CustomerIntelligence\ContactRole.cs" />
-    <Compile Include="Model.CustomerIntelligence\Firm.cs" />
-    <Compile Include="Model.CustomerIntelligence\OrganizationUnit.cs" />
-    <Compile Include="Model.CustomerIntelligence\Territory.cs" />
+    <Compile Include="Model\BusinessDirectory\Category.cs" />
+    <Compile Include="Model\BusinessDirectory\CategoryGroup.cs" />
+    <Compile Include="Model\BusinessDirectory\OrganizationUnit.cs" />
+    <Compile Include="Model\BusinessDirectory\Territory.cs" />
+    <Compile Include="Model\CustomerIntelligence\Client.cs" />
+    <Compile Include="Model\CustomerIntelligence\Contact.cs" />
+    <Compile Include="Model\CustomerIntelligence\ContactRole.cs" />
+    <Compile Include="Model\CustomerIntelligence\Firm.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmCategoryGroup.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmAccount.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
@@ -112,12 +111,12 @@
     <EmbeddedResource Include="Data\Category.csv" />
     <EmbeddedResource Include="Data\Contact.csv" />
     <EmbeddedResource Include="Data\Client.csv" />
-    <EmbeddedResource Include="Data\Account.csv" />
     <EmbeddedResource Include="Data\OrganizationUnit.csv" />
     <EmbeddedResource Include="Data\Territory.csv" />
-    <EmbeddedResource Include="Data\FirmCategory3.csv" />
-    <EmbeddedResource Include="Data\FirmCategory2.csv" />
-    <EmbeddedResource Include="Data\FirmCategory1.csv" />
+    <EmbeddedResource Include="Data\FirmAccount.csv" />
+    <EmbeddedResource Include="Data\CategoryGroup.csv" />
+    <EmbeddedResource Include="Data\FirmCategories.csv" />
+    <EmbeddedResource Include="Data\FirmCategoryGroups.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -12,6 +12,7 @@ using Effort.Provider;
 using Moq;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
+using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.BusinessDirectory;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.Metamodeling.Elements;
@@ -33,6 +34,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             EffortProviderConfiguration.RegisterProvider();
         }
 
+        protected enum AdvancedSearchModel
+        {
+            BusinessDirectory,
+            CustomerIntelligence,
+        }
+
         protected static DbProviderFactory EffortFactory
         {
             get
@@ -49,7 +56,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             }
         }
 
-        protected static IMetadataSource CustomerIntelligenceMetadataSource
+        protected static IMetadataSource AdvancedSearchMetadataSource
         {
             get
             {
@@ -64,14 +71,14 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 return MockTypeProvider(
                     typeof(OrganizationUnit),
                     typeof(Territory),
-                    typeof(Account),
                     typeof(Category),
-                    typeof(Client),
-                    typeof(Contact),
+                    typeof(CategoryGroup),
                     typeof(Firm),
-                    typeof(FirmCategory1),
-                    typeof(FirmCategory2),
-                    typeof(FirmCategory3));
+                    typeof(FirmAccount),
+                    typeof(FirmCategory),
+                    typeof(FirmCategoryGroup),
+                    typeof(Client),
+                    typeof(Contact));
             }
         }
 
@@ -92,23 +99,23 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
         }
 
-        protected static DbModel BuildModel(IMetadataProvider metadataProvider, ITypeProvider typeProvider = null)
+        protected static DbModel BuildModel(IMetadataProvider metadataProvider, AdvancedSearchModel model, ITypeProvider typeProvider = null)
         {
             var builder = CreateBuilder(metadataProvider, typeProvider);
-            var contextId = LookupContextId(metadataProvider);
-            var model = builder.Build(EffortProvider, contextId);
-
-            return model;
+            var contextId = BuildContextId(model);
+            return builder.Build(EffortProvider, contextId);
         }
 
-        protected static DbModel BuildModel(IMetadataSource source, ITypeProvider typeProvider = null)
+        protected static DbModel BuildModel(IMetadataSource source, AdvancedSearchModel model, ITypeProvider typeProvider = null)
         {
-            return BuildModel(CreateMetadataProvider(source), typeProvider);
+            return BuildModel(CreateMetadataProvider(source), model, typeProvider);
         }
 
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
         {
-            var model = BuildModel(MockSource(context), typeProvider);
+            var builder = CreateBuilder(CreateMetadataProvider(MockSource(context)), typeProvider);
+            var contextId = context.Identity.Id;
+            var model = builder.Build(EffortProvider, contextId);
 
             model.Dump();
 
@@ -117,7 +124,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildConceptualModel(BoundedContextElement context)
         {
-            var model = BuildModel(MockSource(context));
+            var model = BuildModel(context);
 
             model.ConceptualModel.Dump(EdmxExtensions.EdmModelType.Conceptual);
 
@@ -126,7 +133,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
 
         protected static EdmModel BuildStoreModel(BoundedContextElement context)
         {
-            var model = BuildModel(MockSource(context));
+            var model = BuildModel(context);
 
             model.StoreModel.Dump(EdmxExtensions.EdmModelType.Store);
 
@@ -306,9 +313,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 : new EdmxModelBuilder(metadataProvider, typeProvider);
         }
 
-        protected static Uri LookupContextId(IMetadataProvider provider)
+        protected static Uri BuildContextId(AdvancedSearchModel model)
         {
-            return provider.Metadata.Metadata.Values.OfType<BoundedContextElement>().Single().Identity.Id;
+            return AdvancedSearchIdentity.Instance.Id.WithRelative(new Uri(model.ToString("G"), UriKind.Relative));
         }
 
         protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)

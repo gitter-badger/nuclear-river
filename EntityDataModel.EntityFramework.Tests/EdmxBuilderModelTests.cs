@@ -3,6 +3,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
+using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.BusinessDirectory;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
 
 using NUnit.Framework;
@@ -13,31 +14,43 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
     internal class EdmxBuilderModelTests : EdmxBuilderBaseFixture
     {
         [Test]
-        public void ShouldQueryData()
+        public void ShouldQueryBusinessDirectoryModel()
         {
-            var model = CreateCustomerIntelligenceModel();
+            var model = CreateModel(AdvancedSearchModel.BusinessDirectory);
             model.Dump();
 
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
             {
-                Assert.That(context.Set<Account>().ToArray(), Has.Length.EqualTo(1));
+                Assert.That(context.Set<OrganizationUnit>().ToArray(), Has.Length.EqualTo(6));
+                Assert.That(context.Set<Territory>().ToArray(), Has.Length.EqualTo(5));
                 Assert.That(context.Set<Category>().ToArray(), Has.Length.EqualTo(5));
+                Assert.That(context.Set<CategoryGroup>().ToArray(), Has.Length.EqualTo(5));
+            }
+        }
+
+        [Test]
+        public void ShouldQueryCustomerIntelligenceModel()
+        {
+            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
+            model.Dump();
+
+            using (var connection = CreateConnection())
+            using (var context = new DbContext(connection, model.Compile(), false))
+            {
                 Assert.That(context.Set<Client>().ToArray(), Has.Length.EqualTo(1));
                 Assert.That(context.Set<Contact>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<Firm>().ToArray(), Has.Length.EqualTo(2));
-                Assert.That(context.Set<FirmCategory1>().ToArray(), Has.Length.EqualTo(10));
-                Assert.That(context.Set<FirmCategory2>().ToArray(), Has.Length.EqualTo(10));
-                Assert.That(context.Set<FirmCategory3>().ToArray(), Has.Length.EqualTo(10));
-                Assert.That(context.Set<OrganizationUnit>().ToArray(), Has.Length.EqualTo(6));
-                Assert.That(context.Set<Territory>().ToArray(), Has.Length.EqualTo(5));
+                Assert.That(context.Set<FirmAccount>().ToArray(), Has.Length.EqualTo(3));
+                Assert.That(context.Set<FirmCategory>().ToArray(), Has.Length.EqualTo(3));
+                Assert.That(context.Set<FirmCategoryGroup>().ToArray(), Has.Length.EqualTo(4));
             }
         }
 
         [Test]
         public void ShouldQueryClients()
         {
-            var model = CreateCustomerIntelligenceModel();
+            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
 
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
@@ -52,38 +65,45 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         [Test]
         public void ShouldQueryFirms()
         {
-            var model = CreateCustomerIntelligenceModel();
+            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
 
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
             {
-                var firms = context.Set<Firm>()
-                    .Include(x => x.OrganizationUnit)
-                    .Include(x => x.Territory)
-                    .Include(x => x.Categories3)
+                var firm = context.Set<Firm>()
                     .Include(x => x.Client)
-                    .Include(x => x.Client.Accounts)
-                    .ToList();
+                    .Include(x => x.Client.Contacts)
+                    .Include(x => x.Accounts)
+                    .Include(x => x.Categories)
+                    .Include(x => x.CategoryGroups)
+                    .OrderBy(x => x.Id)
+                    .FirstOrDefault();
 
-                Assert.That(firms, Has.Count.EqualTo(2));
-                Assert.That(firms.First().OrganizationUnit, Is.Not.Null.And.Property("Name").EqualTo("Новосибирск"));
-                Assert.That(firms.First().Territory, Is.Not.Null.And.Property("Name").EqualTo("Новосибирск.Региональная территория"));
-                Assert.That(firms.First().Categories3, Has.Count.EqualTo(10));
-                Assert.That(firms.Last().Categories3, Has.Count.EqualTo(0));
-                Assert.That(firms.First().Client, Is.Not.Null);
-                Assert.That(firms.Last().Client, Is.Not.Null);
-                Assert.That(firms.First().Client.Accounts, Has.Count.EqualTo(1));
+                Assert.That(firm, Is.Not.Null);
+                Assert.That(firm.Name, Is.Not.Null.And.EqualTo("Firm 1"));
+                Assert.That(firm.CategoryGroupId, Is.Not.Null.And.EqualTo(5));
+                Assert.That(firm.Client, Is.Not.Null.And.Property("Name").EqualTo("Client 1"));
+                Assert.That(firm.Client.CategoryGroupId, Is.Not.Null.And.EqualTo(1));
+                Assert.That(firm.Client.Contacts, Is.Not.Null.And.Count.EqualTo(3));
+                Assert.That(firm.Accounts, Is.Not.Null.And.Count.EqualTo(2));
+                Assert.That(firm.OrganizationUnitId, Is.Not.Null.And.EqualTo(6));
+                Assert.That(firm.TerritoryId, Is.Not.Null.And.EqualTo(141639431487489));
+                Assert.That(firm.Categories, Is.Not.Null.And.Count.EqualTo(1));
+                Assert.That(firm.CategoryGroups, Is.Not.Null.And.Count.EqualTo(3));
             }
         }
 
-        [Test, Explicit]
-        public void ShouldQueryFirmsForCustomModel()
+        [Test]
+        public void ShouldQueryFirmsViaCustomModel()
         {
             var builder = new DbModelBuilder();
             builder.Conventions.Remove<PluralizingEntitySetNameConvention>();
             builder.Conventions.Remove<PluralizingTableNameConvention>();
 
             builder.Entity<Firm>();
+            builder.Entity<FirmAccount>().HasKey(x => new { x.AccountId, x.FirmId });
+            builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId }).ToTable("FirmCategories");
+            builder.Entity<FirmCategoryGroup>().HasKey(x => new { x.CategoryGroupId, x.FirmId }).ToTable("FirmCategoryGroups");
 
             var model = builder.Build(EffortProvider);
             model.Dump();
@@ -91,13 +111,22 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
             {
-                var firms = context.Set<Firm>().ToArray();
+                var firm = context.Set<Firm>()
+                    .Include(x => x.Categories)
+                    .Include(x => x.CategoryGroups)
+                    .OrderBy(x => x.Id)
+                    .FirstOrDefault();
+                
+                Assert.That(firm, Is.Not.Null);
+                Assert.That(firm.Name, Is.Not.Null.And.EqualTo("Firm 1"));
+                Assert.That(firm.Categories, Is.Not.Null.And.Count.EqualTo(1));
+                Assert.That(firm.CategoryGroups, Is.Not.Null.And.Count.EqualTo(3));
             }
         }
 
-        private static DbModel CreateCustomerIntelligenceModel()
+        private static DbModel CreateModel(AdvancedSearchModel model)
         {
-            return BuildModel(CustomerIntelligenceMetadataSource, CustomerIntelligenceTypeProvider);
+            return BuildModel(AdvancedSearchMetadataSource, model, CustomerIntelligenceTypeProvider);
         }
   }
 }

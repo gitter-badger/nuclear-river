@@ -182,7 +182,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         public void ShouldBuildValidModelForCustomerIntelligenceContext()
         {
             var provider = CreateProvider(new AdvancedSearchMetadataSource());
-            var contextId = LookupContextId(provider);
+            var contextId = IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence");
 
             BoundedContextElement boundedContext;
             provider.TryGetMetadata(IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence"), out boundedContext);
