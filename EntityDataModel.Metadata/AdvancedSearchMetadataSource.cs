@@ -13,7 +13,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
         public AdvancedSearchMetadataSource()
         {
-            _metadata = new Dictionary<Uri, IMetadataElement> { { CustomerIntelligenceContext.Identity.Id, CustomerIntelligenceContext } };
+            _metadata = new Dictionary<Uri, IMetadataElement>
+                        {
+                            { BusinessDirectory.Context.Identity.Id, BusinessDirectory.Context },
+                            { CustomerIntelligence.Context.Identity.Id, CustomerIntelligence.Context },
+                        };
         }
 
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata

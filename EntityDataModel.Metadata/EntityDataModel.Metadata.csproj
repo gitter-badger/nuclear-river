@@ -41,6 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AdvancedSearchIdentity.cs" />
+    <Compile Include="AdvancedSearchMetadataSource.BusinessDirectory.cs" />
     <Compile Include="Metadata\BaseMetadataElement.cs" />
     <Compile Include="Metadata\EnumTypeElement.cs" />
     <Compile Include="Metadata\FluentSyntax\EnumTypeElementBuilder.cs" />
