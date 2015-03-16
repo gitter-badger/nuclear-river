@@ -30,8 +30,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.OData", "Web.OData\Web.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
 	ProjectSection(SolutionItems) = preProject
-		TestData\CustomerIntelligence.sql = TestData\CustomerIntelligence.sql
+		TestData\CustomerIntelligence Schema.sql = TestData\CustomerIntelligence Schema.sql
+		TestData\ERM Facts Schema.sql = TestData\ERM Facts Schema.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication", "Replication\Replication.csproj", "{D3CF7E9E-4A8E-4583-A951-50CA940BD353}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +78,10 @@ Global
 		{4D48AAC9-C244-41A3-9E89-187860717B1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D48AAC9-C244-41A3-9E89-187860717B1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D48AAC9-C244-41A3-9E89-187860717B1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3CF7E9E-4A8E-4583-A951-50CA940BD353}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3CF7E9E-4A8E-4583-A951-50CA940BD353}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3CF7E9E-4A8E-4583-A951-50CA940BD353}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3CF7E9E-4A8E-4583-A951-50CA940BD353}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
