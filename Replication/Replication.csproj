@@ -41,13 +41,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\CustomerIntelligence\Client.cs" />
-    <Compile Include="Model\CustomerIntelligence\ClientContact.cs" />
+    <Compile Include="Model\CustomerIntelligence\Contact.cs" />
     <Compile Include="Model\CustomerIntelligence\Firm.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmAccount.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategoryGroup.cs" />
     <Compile Include="Model\FactTable\Client.cs" />
-    <Compile Include="Model\FactTable\ClientContact.cs" />
+    <Compile Include="Model\FactTable\Contact.cs" />
     <Compile Include="Model\FactTable\Firm.cs" />
     <Compile Include="Model\FactTable\FirmAccount.cs" />
     <Compile Include="Model\FactTable\FirmCategory.cs" />

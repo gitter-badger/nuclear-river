@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Model.FactTable
 {
-    internal sealed class ClientContact
+    internal sealed class Contact
     {
         public long Id { get; set; }
         public int Role { get; set; }
