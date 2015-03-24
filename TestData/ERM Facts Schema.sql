@@ -41,9 +41,9 @@ go
 create table ERM.Firm(
 	Id bigint not null
     , Name nvarchar(250) not null
-    , CreatedOn datetime2(2) not null
-    , LastDisqualifiedOn datetime2(2) not null
-    , LastDistributedOn datetime2(2) not null
+    , CreatedOn datetimeoffset(2) not null
+    , LastDisqualifiedOn datetimeoffset(2) null
+    , LastDistributedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Firms_HasPhone default 0
     , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
     , AddressCount int not null constraint DF_Firms_AddressCount default 0
