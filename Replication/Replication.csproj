@@ -89,7 +89,6 @@
     <Compile Include="Transforming\Operation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="Transforming\FactsTransformation.cs" />
-    <None Include="ClassDiagram1.cd" />
     <Compile Include="Data\Context\FactsContext2.cs" />
   </ItemGroup>
   <ItemGroup>
