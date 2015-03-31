@@ -6,6 +6,7 @@ using LinqToDB;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -21,8 +22,51 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal class FactsTransformationTests : BaseFixture
+    internal class FactsTransformationTests : BaseTransformationFixture
     {
+        [TestCase(200000, 1, TestName = "Should convert 'Employee' value.")]
+        [TestCase(200001, 2, TestName = "Should convert 'InfluenceDecisions' value.")]
+        [TestCase(200002, 3, TestName = "Should convert 'MakingDecisions' value.")]
+        [TestCase(Int32.MinValue, 0, TestName = "Should not fail for an unknown value.")]
+        public void ShouldConvertContactRole(int ermRole, int expectedRole)
+        {
+            const int entityId = 1;
+
+            var ermContext = new Mock<IErmContext>();
+            ermContext.SetupGet(x => x.Contacts).Returns(Enumerate(new Erm::Contact { Id = entityId, Role = ermRole }));
+
+            Transformation.Create(ermContext.Object)
+                .Transform(Operation.Create<Facts::Contact>(entityId))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == entityId && contact.Role == expectedRole)));
+        }
+
+        [Test]
+        public void ShouldProcessContactPhones()
+        {
+            var ermContext = new Mock<IErmContext>();
+            ermContext.SetupGet(x => x.Contacts).Returns(Enumerate(
+                new Erm::Contact { Id = 1 },
+                new Erm::Contact { Id = 2, MainPhoneNumber = "<phone>" },
+                new Erm::Contact { Id = 3, AdditionalPhoneNumber = "<phone>" },
+                new Erm::Contact { Id = 4, MobilePhoneNumber = "<phone>" },
+                new Erm::Contact { Id = 5, HomePhoneNumber = "<phone>" }
+                ));
+
+            Transformation.Create(ermContext.Object)
+                .Transform(Operation.Create<Facts::Contact>(1))
+                .Transform(Operation.Create<Facts::Contact>(2))
+                .Transform(Operation.Create<Facts::Contact>(3))
+                .Transform(Operation.Create<Facts::Contact>(4))
+                .Transform(Operation.Create<Facts::Contact>(5))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 1 && !contact.HasPhone)))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 2 && contact.HasPhone)))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 3 && contact.HasPhone)))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 4 && contact.HasPhone)))
+                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 5 && contact.HasPhone)));
+
+            ermContext.VerifyGet(x => x.Contacts, Times.Exactly(5), "The transformation was applied sequentially (not in bulk).");
+        }
+
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action test)
         {
@@ -90,11 +134,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             return Case(VerifyElementDeletion<TErmElement, TFactElement>).SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
         }
 
-        private static TestCaseData Case(Action action)
-        {
-            return new TestCaseData(action);
-        }
-
         private void VerifyElementInsertion<TErmElement, TFactElement>()
             where TErmElement : IIdentifiable, new()
             where TFactElement : IIdentifiable, new()
@@ -104,7 +143,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(ErmConnection, FactsConnection)
                           .Transform(Operation.Create<TFactElement>(entityId))
-                          .VerifyInsertion<TFactElement>(entityId, Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
+                          .Verify(x => x.Insert(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
         private void VerifyElementUpdate<TErmElement, TFactElement>()
@@ -117,7 +156,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(ErmConnection, FactsConnection)
                           .Transform(Operation.Update<TFactElement>(entityId))
-                          .VerifyUpdate<TFactElement>(entityId, Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
+                          .Verify(x => x.Update(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
         private void VerifyElementDeletion<TErmElement, TFactElement>()
@@ -129,26 +168,37 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(ErmConnection, FactsConnection)
                           .Transform(Operation.Delete<TFactElement>(entityId))
-                          .VerifyDelete<TFactElement>(entityId, Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
+                          .Verify(x => x.Delete(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
         }
+
+        #region Transformation
 
         private class Transformation
         {
             private readonly FactsTransformation _transformation;
             private readonly Mock<IDataMapper> _mapper;
 
-            private Transformation(IDataContext source, IDataContext target)
+            private Transformation(IFactsContext source, IFactsContext target)
             {
-                var erm = new ErmContext(source);
-                var facts = new FactsContext(target);
-
                 _mapper = new Mock<IDataMapper>();
-                _transformation = new FactsTransformation(new FactsTransformationContext(erm), facts, _mapper.Object);
+                _transformation = new FactsTransformation(source, target, _mapper.Object);
             }
 
-            public static Transformation Create(IDataContext source, IDataContext target)
+            public static Transformation Create(IDataContext source = null, IDataContext target = null)
             {
-                return new Transformation(source, target);
+                return Create(
+                    new ErmContext(source ?? new Mock<IDataContext>().Object),
+                    new FactsContext(target ?? new Mock<IDataContext>().Object));
+            }
+
+            public static Transformation Create(IErmContext source = null, IFactsContext target = null)
+            {
+                return Create(new FactsTransformationContext(source ?? new Mock<IErmContext>().Object), target);
+            }
+
+            public static Transformation Create(IFactsContext source = null, IFactsContext target = null)
+            {
+                return new Transformation(source ?? new Mock<IFactsContext>().Object, target ?? new Mock<IFactsContext>().Object);
             }
 
             public Transformation Transform(params OperationInfo[] operations)
@@ -157,54 +207,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return this;
             }
 
-            public Transformation VerifyInsertion<T>(long id, Func<Times> times, string failMessage = null) where T : IIdentifiable
+            public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times = null, string failMessage = null)
             {
-                return Verify(x => x.Insert(HasId<T>(id)), times, failMessage);
-            }
-
-            public Transformation VerifyUpdate<T>(long id, Func<Times> times, string failMessage = null) where T : IIdentifiable
-            {
-                return Verify(x => x.Update(HasId<T>(id)), times, failMessage);
-            }
-
-            public Transformation VerifyDelete<T>(long id, Func<Times> times, string failMessage = null) where T : IIdentifiable
-            {
-                return Verify(x => x.Delete(HasId<T>(id)), times, failMessage);
-            }
-
-            public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times, string failMessage = null)
-            {
-                _mapper.Verify(action, times, failMessage);
+                _mapper.Verify(action, times ?? Times.AtLeastOnce, failMessage);
                 return this;
             }
         }
 
-        private static class Operation
-        {
-            public static OperationInfo Create<T>(long entityId)
-            {
-                return Build<T>(Transforming.Operation.Created, entityId);
-            }
-
-            public static OperationInfo Update<T>(long entityId)
-            {
-                return Build<T>(Transforming.Operation.Updated, entityId);
-            }
-
-            public static OperationInfo Delete<T>(long entityId)
-            {
-                return Build<T>(Transforming.Operation.Deleted, entityId);
-            }
-
-            private static OperationInfo Build<T>(Transforming.Operation operation, long entityId)
-            {
-                return new OperationInfo(operation, typeof(T), entityId);
-            }
-        }
-
-        private static T HasId<T>(long id) where T : IIdentifiable
-        {
-            return It.Is<T>(item => item.Id == id);
-        }
+        #endregion
     }
 }

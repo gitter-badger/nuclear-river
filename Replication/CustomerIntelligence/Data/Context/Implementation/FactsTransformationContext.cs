@@ -70,6 +70,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                               {
                                   Id = client.Id,
                                   Name = client.Name,
+                                  LastDisqualifiedOn = client.LastDisqualifyTime,
                                   HasPhone = (client.MainPhoneNumber ?? client.AdditionalPhoneNumber1 ?? client.AdditionalPhoneNumber2) != null,
                                   HasWebsite = client.Website != null
                               };
@@ -84,7 +85,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        select new Contact
                               {
                                   Id = contact.Id,
-                                  Role = contact.Role,
+                                  Role = ConvertAccountRole(contact.Role),
                                   IsFired = contact.IsFired,
                                   HasPhone = (contact.MainPhoneNumber ?? contact.MobilePhoneNumber ?? contact.HomePhoneNumber ?? contact.AdditionalPhoneNumber) != null,
                                   HasWebsite = contact.Website != null,
@@ -93,6 +94,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        private static int ConvertAccountRole(int value)
+        {
+            switch (value)
+            {
+                case 200000:
+                    return 1;
+                case 200001:
+                    return 2;
+                case 200002:
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
 
         public IQueryable<Firm> Firms
         {

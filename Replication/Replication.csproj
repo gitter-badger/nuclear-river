@@ -48,6 +48,7 @@
     <Compile Include="CustomerIntelligence\Data\Context\IErmContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\ErmContext.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmAddress.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\Order.cs" />
@@ -57,6 +58,8 @@
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\BaseTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />

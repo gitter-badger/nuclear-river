@@ -108,35 +108,6 @@
                               HasWebsite = client.Website != null
                           };
         }
-
-        public static IQueryable<Fact.Contact> Contacts(IDataContext context)
-        {
-            return from contact in ErmContext.Contacts(context)
-                   select new Fact.Contact
-                          {
-                              Id = contact.Id,
-                              Role = ConvertAccountRole(contact.Role),
-                              IsFired = contact.IsFired,
-                              HasPhone = (contact.MainPhoneNumber ?? contact.MobilePhoneNumber ?? contact.HomePhoneNumber ?? contact.AdditionalPhoneNumber) != null,
-                              HasWebsite = contact.Website != null,
-                              ClientId = contact.ClientId
-                          };
-        }
-
-        private static int ConvertAccountRole(int value)
-        {
-            switch (value)
-            {
-                case 200000:
-                    return 1;
-                case 200001:
-                    return 2;
-                case 200002:
-                    return 3;
-                default:
-                    return 0;
-            }
-        }
  */
     }
 }

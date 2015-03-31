@@ -1,8 +1,10 @@
 ﻿using System;
 
+using NuClear.AdvancedSearch.Replication.Model;
+
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class Firm
+    public sealed class Firm : IIdentifiable
     {
         public long Id { get; set; }
 

@@ -7,7 +7,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    public class CustomerIntelligenceContext
+    public class CustomerIntelligenceContext : ICustomerIntelligenceContext
     {
         private readonly IDataContext _context;
 
@@ -20,11 +20,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
-        public IQueryable<FirmAccount> Accounts
+        public IQueryable<Client> Clients
         {
             get
             {
-                return _context.GetTable<FirmAccount>();
+                return _context.GetTable<Client>();
+            }
+        }
+
+        public IQueryable<Contact> Contacts
+        {
+            get
+            {
+                return _context.GetTable<Contact>();
+            }
+        }
+
+        public IQueryable<Firm> Firms
+        {
+            get
+            {
+                return _context.GetTable<Firm>();
             }
         }
     }
