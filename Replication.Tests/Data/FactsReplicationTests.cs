@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.Data.Context;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 
 using NUnit.Framework;
 

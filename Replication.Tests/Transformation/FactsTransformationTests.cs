@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
 using System.Linq.Expressions;
 
 using LinqToDB;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Data.Context;
 using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.AdvancedSearch.Replication.Model.CustomerIntelligence;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.AdvancedSearch.Replication.Transforming;
 
@@ -18,6 +17,9 @@ using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
+    using Erm = CustomerIntelligence.Model.Erm;
+    using Facts = CustomerIntelligence.Model.Facts;
+
     [TestFixture]
     internal class FactsTransformationTests : BaseFixture
     {
@@ -32,38 +34,38 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             get
             {
                 // insert
-                yield return CaseToVerifyElementInsertion<Erm.Account, Fact.Account>();
-                yield return CaseToVerifyElementInsertion<Erm.CategoryFirmAddress, Fact.CategoryFirmAddress>();
-                yield return CaseToVerifyElementInsertion<Erm.CategoryOrganizationUnit, Fact.CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementInsertion<Erm.Client, Fact.Client>();
-                yield return CaseToVerifyElementInsertion<Erm.Contact, Fact.Contact>();
-                yield return CaseToVerifyElementInsertion<Erm.Firm, Fact.Firm>();
-                yield return CaseToVerifyElementInsertion<Erm.FirmAddress, Fact.FirmAddress>();
-                yield return CaseToVerifyElementInsertion<Erm.FirmContact, Fact.FirmContact>();
-                yield return CaseToVerifyElementInsertion<Erm.LegalPerson, Fact.LegalPerson>();
-                yield return CaseToVerifyElementInsertion<Erm.Order, Fact.Order>();
+                yield return CaseToVerifyElementInsertion<Erm::Account, Facts::Account>();
+                yield return CaseToVerifyElementInsertion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
+                yield return CaseToVerifyElementInsertion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
+                yield return CaseToVerifyElementInsertion<Erm::Client, Facts::Client>();
+                yield return CaseToVerifyElementInsertion<Erm::Contact, Facts::Contact>();
+                yield return CaseToVerifyElementInsertion<Erm::Firm, Facts::Firm>();
+                yield return CaseToVerifyElementInsertion<Erm::FirmAddress, Facts::FirmAddress>();
+                yield return CaseToVerifyElementInsertion<Erm::FirmContact, Facts::FirmContact>();
+                yield return CaseToVerifyElementInsertion<Erm::LegalPerson, Facts::LegalPerson>();
+                yield return CaseToVerifyElementInsertion<Erm::Order, Facts::Order>();
                 // update
-                yield return CaseToVerifyElementUpdate<Erm.Account, Fact.Account>();
-                yield return CaseToVerifyElementUpdate<Erm.CategoryFirmAddress, Fact.CategoryFirmAddress>();
-                yield return CaseToVerifyElementUpdate<Erm.CategoryOrganizationUnit, Fact.CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementUpdate<Erm.Client, Fact.Client>();
-                yield return CaseToVerifyElementUpdate<Erm.Contact, Fact.Contact>();
-                yield return CaseToVerifyElementUpdate<Erm.Firm, Fact.Firm>();
-                yield return CaseToVerifyElementUpdate<Erm.FirmAddress, Fact.FirmAddress>();
-                yield return CaseToVerifyElementUpdate<Erm.FirmContact, Fact.FirmContact>();
-                yield return CaseToVerifyElementUpdate<Erm.LegalPerson, Fact.LegalPerson>();
-                yield return CaseToVerifyElementUpdate<Erm.Order, Fact.Order>();
+                yield return CaseToVerifyElementUpdate<Erm::Account, Facts::Account>();
+                yield return CaseToVerifyElementUpdate<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
+                yield return CaseToVerifyElementUpdate<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
+                yield return CaseToVerifyElementUpdate<Erm::Client, Facts::Client>();
+                yield return CaseToVerifyElementUpdate<Erm::Contact, Facts::Contact>();
+                yield return CaseToVerifyElementUpdate<Erm::Firm, Facts::Firm>();
+                yield return CaseToVerifyElementUpdate<Erm::FirmAddress, Facts::FirmAddress>();
+                yield return CaseToVerifyElementUpdate<Erm::FirmContact, Facts::FirmContact>();
+                yield return CaseToVerifyElementUpdate<Erm::LegalPerson, Facts::LegalPerson>();
+                yield return CaseToVerifyElementUpdate<Erm::Order, Facts::Order>();
                 // delete
-                yield return CaseToVerifyElementDeletion<Erm.Account, Fact.Account>();
-                yield return CaseToVerifyElementDeletion<Erm.CategoryFirmAddress, Fact.CategoryFirmAddress>();
-                yield return CaseToVerifyElementDeletion<Erm.CategoryOrganizationUnit, Fact.CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementDeletion<Erm.Client, Fact.Client>();
-                yield return CaseToVerifyElementDeletion<Erm.Contact, Fact.Contact>();
-                yield return CaseToVerifyElementDeletion<Erm.Firm, Fact.Firm>();
-                yield return CaseToVerifyElementDeletion<Erm.FirmAddress, Fact.FirmAddress>();
-                yield return CaseToVerifyElementDeletion<Erm.FirmContact, Fact.FirmContact>();
-                yield return CaseToVerifyElementDeletion<Erm.LegalPerson, Fact.LegalPerson>();
-                yield return CaseToVerifyElementDeletion<Erm.Order, Fact.Order>();
+                yield return CaseToVerifyElementDeletion<Erm::Account, Facts::Account>();
+                yield return CaseToVerifyElementDeletion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
+                yield return CaseToVerifyElementDeletion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
+                yield return CaseToVerifyElementDeletion<Erm::Client, Facts::Client>();
+                yield return CaseToVerifyElementDeletion<Erm::Contact, Facts::Contact>();
+                yield return CaseToVerifyElementDeletion<Erm::Firm, Facts::Firm>();
+                yield return CaseToVerifyElementDeletion<Erm::FirmAddress, Facts::FirmAddress>();
+                yield return CaseToVerifyElementDeletion<Erm::FirmContact, Facts::FirmContact>();
+                yield return CaseToVerifyElementDeletion<Erm::LegalPerson, Facts::LegalPerson>();
+                yield return CaseToVerifyElementDeletion<Erm::Order, Facts::Order>();
             }
         }
 
@@ -146,10 +148,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public static Transformation Create(IDataContext source, IDataContext target)
             {
-                var transformation = new Transformation(source, target);
-
-
-                return transformation;
+                return new Transformation(source, target);
             }
 
             public Transformation Transform(params OperationInfo[] operations)
@@ -206,45 +205,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         private static T HasId<T>(long id) where T : IIdentifiable
         {
             return It.Is<T>(item => item.Id == id);
-        }
-    }
-
-    internal static class DataContextExtensions
-    {
-        public static IDataContext Has<T>(this IDataContext context, long id) where T : IIdentifiable, new()
-        {
-            return context.Has(Create<T>(id));
-        }
-
-        public static IDataContext Has<T>(this IDataContext context, T obj)
-        {
-            using(new NoSqlTrace())
-            {
-                context.Insert(obj);
-                return context;
-            }
-        }
-
-        public static T Read<T>(this IDataContext context, long id) where T : class
-        {
-            var parameter = Expression.Parameter(typeof(T), "x");
-            var predicate = Expression.Lambda<Func<T, bool>>(Expression.Equal(Expression.Property(parameter, "Id"), Expression.Constant(id)), parameter);
-
-            return context.GetTable<T>().FirstOrDefault(predicate);
-        }
-
-        private static T Create<T>(long id) where T : IIdentifiable, new()
-        {
-            var obj = new T();
-            obj.GetType().GetProperty("Id").SetValue(obj, id);
-            return obj;
-        }
-
-        private static Object Create(Type type, long id)
-        {
-            var obj = Activator.CreateInstance(type);
-            obj.GetType().GetProperty("Id").SetValue(obj, id);
-            return obj;
         }
     }
 }

@@ -54,10 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\DataConnectionExtensions.cs" />
-    <Compile Include="Data\BaseFixture.cs" />
+    <Compile Include="BaseFixture.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
     <Compile Include="Data\FactsReplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Data\DataContextExtensions.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
   </ItemGroup>
   <ItemGroup>

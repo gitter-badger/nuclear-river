@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 
 using LinqToDB;
 using LinqToDB.Data;
@@ -11,14 +9,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
 {
     internal static class DataConnectionExtensions
     {
-        public static T Read<T>(this DataConnection db, long id) where T : class
-        {
-            var parameter = Expression.Parameter(typeof(T), "x");
-            var predicate = Expression.Lambda<Func<T, bool>>(Expression.Equal(Expression.Property(parameter, "Id"), Expression.Constant(id)), parameter);
-
-            return db.GetTable<T>().FirstOrDefault(predicate);
-        }
-
         public static void Reload<T>(this DataConnection db, IEnumerable<T> data)
         {
             db.Truncate<T>();
