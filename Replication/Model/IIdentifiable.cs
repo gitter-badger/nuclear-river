@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Model
 {
-    internal interface IEntity
+    public interface IIdentifiable
     {
         long Id { get; }
     }

@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Transforming
 {
-    public enum ChangeKind
+    public enum Operation
     {
         Created,
         Updated,

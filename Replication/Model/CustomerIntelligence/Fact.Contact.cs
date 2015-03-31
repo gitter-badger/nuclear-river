@@ -2,7 +2,7 @@
 {
     public static partial class Fact
     {
-        public sealed class Contact
+        public sealed class Contact : IIdentifiable
         {
             public long Id { get; set; }
 

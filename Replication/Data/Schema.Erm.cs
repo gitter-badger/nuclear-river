@@ -2,7 +2,7 @@ using System;
 
 using LinqToDB.Mapping;
 
-using NuClear.AdvancedSearch.Replication.Model.Erm;
+using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.Data
 {
@@ -30,9 +30,25 @@ namespace NuClear.AdvancedSearch.Replication.Data
                 config.HasAttribute<Erm.Contact>(new TableAttribute { Schema = BillingSchema, Name = "Contacts", IsColumnAttributeRequired = false });
                 config.HasAttribute<Erm.Firm>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "Firms", IsColumnAttributeRequired = false });
                 config.HasAttribute<Erm.FirmAddress>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "FirmAddresses", IsColumnAttributeRequired = false });
+                config.HasAttribute<Erm.FirmContact>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "FirmContacts", IsColumnAttributeRequired = false });
                 config.HasAttribute<Erm.LegalPerson>(new TableAttribute { Schema = BillingSchema, Name = "LegalPersons", IsColumnAttributeRequired = false });
+                config.HasAttribute<Erm.Order>(new TableAttribute { Schema = BillingSchema, Name = "Orders", IsColumnAttributeRequired = false });
 
-                config.Entity<Erm.Contact>().HasSchemaName(BillingSchema).HasTableName("Contacts").Property(x => x.Role).HasColumnName("AccountRole");
+                config.Entity<Erm.Account>().HasSchemaName(BillingSchema).HasTableName("Accounts").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.CategoryFirmAddress>().HasSchemaName(BillingSchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.CategoryOrganizationUnit>().HasSchemaName(BillingSchema).HasTableName("CategoryOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.Client>().HasSchemaName(BillingSchema).HasTableName("Clients").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.Contact>()
+                    .HasSchemaName(BillingSchema)
+                    .HasTableName("Contacts")
+                    .Property(x => x.Id).IsPrimaryKey()
+                    .Property(x => x.Role).HasColumnName("AccountRole")
+                    ;
+                config.Entity<Erm.Firm>().HasSchemaName(BusinessDirectorySchema).HasTableName("Firms").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.FirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("FirmAddresses").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.FirmContact>().HasSchemaName(BusinessDirectorySchema).HasTableName("FirmContacts").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.LegalPerson>().HasSchemaName(BillingSchema).HasTableName("LegalPersons").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Erm.Order>().HasSchemaName(BillingSchema).HasTableName("Orders").Property(x => x.Id).IsPrimaryKey();
 
                 return schema;
             }

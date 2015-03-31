@@ -15,15 +15,19 @@ namespace NuClear.AdvancedSearch.Replication.Data
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-                config.HasAttribute<Fact.FirmCategory>(new TableAttribute { Schema = ErmSchema, Name = "FirmCategories", IsColumnAttributeRequired = false });
-                config.HasAttribute<Fact.FirmCategoryGroup>(new TableAttribute { Schema = ErmSchema, Name = "FirmCategoryGroups", IsColumnAttributeRequired = false });
+//                config.HasAttribute<Fact.CategoryFirmAddress>(new TableAttribute { Schema = ErmSchema, Name = "CategoryFirmAddresses", IsColumnAttributeRequired = false });
+//                config.HasAttribute<Fact.CategoryOrganizationUnit>(new TableAttribute { Schema = ErmSchema, Name = "CategoryOrganizationUnits", IsColumnAttributeRequired = false });
 
-                config.Entity<Fact.Client>().HasSchemaName(ErmSchema);
-                config.Entity<Fact.Contact>().HasSchemaName(ErmSchema);
-                config.Entity<Fact.Firm>().HasSchemaName(ErmSchema);
-                config.Entity<Fact.FirmAccount>().HasSchemaName(ErmSchema);
-                config.Entity<Fact.FirmCategory>().HasSchemaName(ErmSchema);
-                config.Entity<Fact.FirmCategoryGroup>().HasSchemaName(ErmSchema);
+                config.Entity<Fact.Account>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.CategoryFirmAddress>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.CategoryOrganizationUnit>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.Client>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.Contact>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.Firm>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.FirmAddress>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.FirmContact>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.LegalPerson>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Fact.Order>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
 
                 return schema;
             }

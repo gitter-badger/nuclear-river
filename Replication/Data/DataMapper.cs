@@ -4,7 +4,7 @@ using LinqToDB;
 
 namespace NuClear.AdvancedSearch.Replication.Data
 {
-    internal sealed class DataMapper
+    public sealed class DataMapper : IDataMapper
     {
         private readonly IDataContext _context;
 
