@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}</ProjectGuid>
+    <ProjectGuid>{4063CD85-B769-4B52-8A05-3E315337017E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.AdvancedSearch.EntityDataModel.OData</RootNamespace>
-    <AssemblyName>2GIS.NuClear.AdvancedSearch.EntityDataModel.OData</AssemblyName>
+    <RootNamespace>NuClear.AdvancedSearch.ServiceBus.Contracts</RootNamespace>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.ServiceBus.Contracts</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -36,33 +36,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Building\EdmModelBuilder.cs" />
+    <Compile Include="DTO\ChangesDescriptor.cs" />
+    <Compile Include="DTO\ChangesDetail.cs" />
+    <Compile Include="DTO\ChangesType.cs" />
+    <Compile Include="DTO\EntityChangesContext.cs" />
+    <Compile Include="DTO\OperationScopeNode.cs" />
+    <Compile Include="ITrackedUseCaseParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="2GIS.NuClear.Metamodeling">
-      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.0.12\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
-    </Reference>
-    <Reference Include="2GIS.NuClear.Model.Common">
-      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.OData.Edm">
-      <HintPath>..\packages\Microsoft.OData.Edm.6.10.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
-      <Project>{7ad073f2-b143-4fdd-9e31-9b6f955e6c9b}</Project>
-      <Name>EntityDataModel.Metadata</Name>
-    </ProjectReference>
+    <Compile Include="DTO\TrackedUseCase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
