@@ -30,62 +30,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   };
 
                 var orders = _context.Orders.Where(x => orderStates.Contains(x.WorkflowStepId));
-                /*
+                
+                var clients = from client in _context.Clients
+                              join contact in _context.Contacts on client.Id equals contact.ClientId into clientContacts
+                              select new
+                                     {
+                                         client.Id,
+                                         client.LastDisqualifiedOn,
+                                         HasPhone = client.HasPhone || clientContacts.Any(x => x.HasPhone), // TODO: consider the sql to optimize it if needed
+                                         HasWebsite = client.HasWebsite || clientContacts.Any(x => x.HasWebsite) // TODO: consider the sql to optimize it if needed
+                                     };
 
-                            var firms = ErmContext.Firms(context);
-                            var firmAddresses = ErmContext.FirmAddresses(context);
-                            var clients = ErmContext.Clients(context);
-                            var orders = ErmContext.Orders(context).Where(x => orderStates.Contains(x.WorkflowStepId));
-                            var addressContacts = from contact in ErmContext.FirmContacts(context)
-                                                  group contact by contact.FirmAddressId
-                                                      into groupByAddress
-                                                      select new
-                                                      {
-                                                          FirmAddressId = groupByAddress.Key,
-                                                          HasPhone = groupByAddress.Select(x => x.ContactType == 1).Max(),
-                                                          HasWebsite = groupByAddress.Select(x => x.ContactType == 4).Max()
-                                                      };
-                            var firmContacts = from address in firmAddresses
-                                               join contact in addressContacts on address.Id equals contact.FirmAddressId
-                                               select new
-                                               {
-                                                   address.FirmId,
-                                                   contact.HasPhone,
-                                                   contact.HasWebsite
-                                               }
-                                                   into newContacts
-                                                   group newContacts by newContacts.FirmId
-                                                       into groupByAddress
-                                                       select new
-                                                       {
-                                                           FirmId = groupByAddress.Key,
-                                                           HasPhone = groupByAddress.Select(x => x.HasPhone).Max(),
-                                                           HasWebsite = groupByAddress.Select(x => x.HasWebsite).Max()
-                                                       };
-
-                            return from firm in firms
-                                   join client in clients on firm.ClientId equals client.Id into firmClients
-                                   from firmClient in firmClients.DefaultIfEmpty()
-                                   select new Fact.Firm
-                                          {
-                                              Id = firm.Id,
-                                              Name = firm.Name,
-                                              CreatedOn = firm.CreatedOn,
-                                              LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifyTime : firm.LastDisqualifyTime),
-                                              LastDistributedOn = orders.Where(d => d.FirmId == firm.Id).Max(d => d.EndDistributionDateFact),
-                                              HasPhone = firmContacts.Where(x => x.FirmId == firm.Id).Max(x => x.HasPhone),
-                                              HasWebsite = firmContacts.Where(x => x.FirmId == firm.Id).Max(x => x.HasWebsite),
-                                              AddressCount = firmAddresses.Count(x => x.FirmId == firm.Id),
-                                              ClientId = firm.ClientId,
-                                              OrganizationUnitId = firm.OrganizationUnitId,
-                                              TerritoryId = firm.TerritoryId
-                                          };
-                 */
-
-
-                // TODO: update HasPhone/HasWebsite from clients and contacts
                 return from firm in _context.Firms
-                       join client in _context.Clients on firm.ClientId equals client.Id into firmClients
+                       join client in clients on firm.ClientId equals client.Id into firmClients
                        from firmClient in firmClients.DefaultIfEmpty()
                        select new Firm
                               {
@@ -93,9 +50,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Name = firm.Name,
                                   CreatedOn = firm.CreatedOn,
                                   LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
-                                  LastDistributedOn = orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().DefaultIfEmpty().Max(),
-                                  //HasPhone = firm.HasPhone || (firmClient != null && firmClient.HasPhone),
-                                  //HasWebsite = firm.HasWebsite,
+                                  LastDistributedOn = orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
+                                  HasPhone = firm.HasPhone || (firmClient != null && firmClient.HasPhone),
+                                  HasWebsite = firm.HasWebsite || (firmClient != null && firmClient.HasWebsite),
                                   AddressCount = _context.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
                                   //CategoryGroupId = context.GetTable<Fact.FirmCategoryGroup>().Where(x => x.FirmId == firm.Id).Max(x => x.CategoryGroupId),
                                   ClientId = firm.ClientId,
@@ -119,26 +76,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 //                                  Balance = account.Balance
 //                              };
 //            }
-//        }
-
-//        public static IQueryable<FirmCategory> FirmCategories(IDataContext context)
-//        {
-//            return from firmCategory in context.GetTable<Fact.FirmCategory>()
-//                   select new FirmCategory
-//                          {
-//                              FirmId = firmCategory.FirmId,
-//                              CategoryId = firmCategory.CategoryId
-//                          };
-//        }
-//
-//        public static IQueryable<FirmCategoryGroup> FirmCategoryGroups(IDataContext context)
-//        {
-//            return from firmCategoryGroup in context.GetTable<Fact.FirmCategoryGroup>()
-//                   select new FirmCategoryGroup
-//                          {
-//                              FirmId = firmCategoryGroup.FirmId,
-//                              CategoryGroupId = firmCategoryGroup.CategoryGroupId
-//                          };
 //        }
 
         public IQueryable<Client> Clients
@@ -184,6 +121,37 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   IsFired = contact.IsFired,
                                   ClientId = contact.ClientId
                               };
+            }
+        }
+
+        public IQueryable<FirmAccount> FirmAccounts
+        {
+            get
+            {
+                return from firm in _context.Firms
+                       join legalPerson in _context.LegalPersons on firm.ClientId equals legalPerson.ClientId
+                       join account in _context.Accounts on legalPerson.Id equals account.LegalPersonId
+                       select new FirmAccount
+                              {
+                                  AccountId = account.Id,
+                                  FirmId = firm.Id,
+                                  Balance = account.Balance
+                              };
+            }
+        }
+
+        public IQueryable<FirmCategory> FirmCategories
+        {
+            get
+            {
+                // TODO: need to resolve links up to level1 and level2
+                return (from categoryFirmAddress in _context.CategoryFirmAddresses
+                        join firmAddress in _context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                        select new FirmCategory
+                               {
+                                   FirmId = firmAddress.FirmId,
+                                   CategoryId = categoryFirmAddress.CategoryId
+                               }).Distinct();
             }
         }
 

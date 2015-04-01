@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
        
         public static void Truncate<T>(this DataConnection connection)
         {
-            if (connection.DataProvider.Name != ProviderName.SqlServer)
+            if (!connection.DataProvider.Name.StartsWith(ProviderName.SqlServer, StringComparison.Ordinal))
             {
                 return;
             }

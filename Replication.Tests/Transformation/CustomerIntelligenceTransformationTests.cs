@@ -71,6 +71,68 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldProcessFirmHasPhoneFlag()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Firms).Returns(Enumerate(
+                new Facts::Firm { Id = 1, Name = "no phone" },
+                new Facts::Firm { Id = 2, Name = "has own phone", HasPhone = true },
+                new Facts::Firm { Id = 3, Name = "has phone in client", ClientId = 1},
+                new Facts::Firm { Id = 4, Name = "has phone in client contact", ClientId = 2}
+                ));
+            context.SetupGet(x => x.Clients).Returns(Enumerate(
+                new Facts::Client { Id = 1, HasPhone = true },
+                new Facts::Client { Id = 2 }
+                ));
+            context.SetupGet(x => x.Contacts).Returns(Enumerate(
+                new Facts::Contact { Id = 1, HasPhone = true, ClientId = 2 }
+                ));
+
+            Transformation.Create(context.Object)
+                .Transform(Operation.Create<CI::Firm>(1))
+                .Transform(Operation.Create<CI::Firm>(2))
+                .Transform(Operation.Create<CI::Firm>(3))
+                .Transform(Operation.Create<CI::Firm>(4))
+                .Transform(Operation.Create<CI::Firm>(5))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 1, HasPhone = false }, x => new { x.Id, x.HasPhone }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasPhone = true }, x => new { x.Id, x.HasPhone }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasPhone = true }, x => new { x.Id, x.HasPhone }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasPhone = true }, x => new { x.Id, x.HasPhone }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasPhone = true }, x => new { x.Id, x.HasPhone }))));
+        }
+
+        [Test]
+        public void ShouldProcessFirmHasWebsiteFlag()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Firms).Returns(Enumerate(
+                new Facts::Firm { Id = 1, Name = "no website" },
+                new Facts::Firm { Id = 2, Name = "has own website", HasWebsite = true },
+                new Facts::Firm { Id = 3, Name = "has website in client", ClientId = 1 },
+                new Facts::Firm { Id = 4, Name = "has website in client contact", ClientId = 2 }
+                ));
+            context.SetupGet(x => x.Clients).Returns(Enumerate(
+                new Facts::Client { Id = 1, HasWebsite = true },
+                new Facts::Client { Id = 2 }
+                ));
+            context.SetupGet(x => x.Contacts).Returns(Enumerate(
+                new Facts::Contact { Id = 1, HasWebsite = true, ClientId = 2 }
+                ));
+
+            Transformation.Create(context.Object)
+                .Transform(Operation.Create<CI::Firm>(1))
+                .Transform(Operation.Create<CI::Firm>(2))
+                .Transform(Operation.Create<CI::Firm>(3))
+                .Transform(Operation.Create<CI::Firm>(4))
+                .Transform(Operation.Create<CI::Firm>(5))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 1, HasWebsite = false }, x => new { x.Id, x.HasWebsite }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))));
+        }
+
+        [Test]
         public void ShouldProcessFirmAddressCount()
         {
             var context = new Mock<IFactsContext>();
@@ -87,6 +149,84 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Transform(Operation.Create<CI::Firm>(2))
                 .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 1, AddressCount = 0 }, x => new { x.Id, x.AddressCount }))))
                 .Verify(m => m.Insert(It.Is(Arg.Match(new CI::Firm { Id = 2, AddressCount = 1 }, x => new { x.Id, x.AddressCount }))));
+        }
+
+        [Test]
+        public void ShouldProcessFirmAccounts()
+        {
+            var facts = new Mock<ICustomerIntelligenceContext>();
+            facts.SetupGet(x => x.Firms).Returns(Enumerate(
+                new CI::Firm { Id = 2 },
+                new CI::Firm { Id = 3 }
+                ));
+            facts.SetupGet(x => x.FirmAccounts).Returns(Enumerate(
+                new CI::FirmAccount { FirmId = 2, AccountId = 2 },
+                new CI::FirmAccount { FirmId = 2, AccountId = 3 },
+                new CI::FirmAccount { FirmId = 3, AccountId = 1 }
+                ));
+
+            var ci = new Mock<ICustomerIntelligenceContext>();
+            ci.SetupGet(x => x.Firms).Returns(Enumerate(
+                new CI::Firm { Id = 1 },
+                new CI::Firm { Id = 2 }
+                ));
+            ci.SetupGet(x => x.FirmAccounts).Returns(Enumerate(
+                new CI::FirmAccount { FirmId = 1, AccountId = 1 },
+                new CI::FirmAccount { FirmId = 2, AccountId = 1 },
+                new CI::FirmAccount { FirmId = 2, AccountId = 2 }
+                ));
+
+            Transformation.Create(facts.Object, ci.Object)
+                .Transform(Operation.Create<CI::Firm>(3))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::FirmAccount { FirmId = 3, AccountId = 1 }, x => new { x.FirmId, x.AccountId }))), failMessage: "accounts should be added for an inserting firm");
+
+            Transformation.Create(facts.Object, ci.Object)
+                .Transform(Operation.Update<CI::Firm>(2))
+                .Verify(m => m.Delete(It.Is(Arg.Match(new CI::FirmAccount { FirmId = 2, AccountId = 1 }, x => new { x.FirmId, x.AccountId }))), failMessage: "old accounts should be deleted for an updating firm")
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::FirmAccount { FirmId = 2, AccountId = 3 }, x => new { x.FirmId, x.AccountId }))), failMessage: "new accounts should be added for an updating firm");
+
+            Transformation.Create(facts.Object, ci.Object)
+                .Transform(Operation.Delete<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Arg.Match(new CI::FirmAccount { FirmId = 1, AccountId = 1 }, x => new { x.FirmId, x.AccountId }))), failMessage: "accounts should be deleted for a deleting firm");
+        }
+
+        [Test]
+        public void ShouldProcessFirmCategories()
+        {
+            var facts = new Mock<ICustomerIntelligenceContext>();
+            facts.SetupGet(x => x.Firms).Returns(Enumerate(
+                new CI::Firm { Id = 2 },
+                new CI::Firm { Id = 3 }
+                ));
+            facts.SetupGet(x => x.FirmCategories).Returns(Enumerate(
+                new CI::FirmCategory { FirmId = 2, CategoryId = 2 },
+                new CI::FirmCategory { FirmId = 2, CategoryId = 3 },
+                new CI::FirmCategory { FirmId = 3, CategoryId = 1 }
+                ));
+
+            var ci = new Mock<ICustomerIntelligenceContext>();
+            ci.SetupGet(x => x.Firms).Returns(Enumerate(
+                new CI::Firm { Id = 1 },
+                new CI::Firm { Id = 2 }
+                ));
+            ci.SetupGet(x => x.FirmCategories).Returns(Enumerate(
+                new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
+                new CI::FirmCategory { FirmId = 2, CategoryId = 2 }
+                ));
+
+            Transformation.Create(facts.Object, ci.Object)
+                .Transform(Operation.Create<CI::Firm>(3))
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "contacts should be added for an inserting firm");
+                                                                                                                                                   
+            Transformation.Create(facts.Object, ci.Object)                                                                                         
+                .Transform(Operation.Update<CI::Firm>(2))                                                                                          
+                .Verify(m => m.Delete(It.Is(Arg.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "old contacts should be deleted for an updating firm")
+                .Verify(m => m.Insert(It.Is(Arg.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 3 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "new contacts should be added for an updating firm");
+                                                                                                                                                   
+            Transformation.Create(facts.Object, ci.Object)                                                                                         
+                .Transform(Operation.Delete<CI::Firm>(1))                                                                                          
+                .Verify(m => m.Delete(It.Is(Arg.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "contacts should be deleted for a deleting firm");
         }
 
         [TestCaseSource("Cases")]
@@ -124,7 +264,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsConnection.Has(source);
 
-            Transformation.Create(FactsConnection)
+            Transformation.Create(FactsConnection, CustomerIntelligenceConnection)
                 .Transform(Operation.Create<TTarget>(target.Id))
                 .Verify(m => m.Insert(It.Is(Arg.Match(target, projector))), Times.Once, string.Format("The {0} element was not inserted.", typeof(TTarget).Name));
         }
@@ -135,7 +275,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsConnection.Has(source);
             CustomerIntelligenceConnection.Has(target);
 
-            Transformation.Create(FactsConnection)
+            Transformation.Create(FactsConnection, CustomerIntelligenceConnection)
                 .Transform(Operation.Update<TTarget>(target.Id))
                 .Verify(m => m.Update(It.Is(Arg.Match(target, projector))), Times.Once, string.Format("The {0} element was not updated.", typeof(TTarget).Name));
         }

@@ -25,6 +25,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.HasAttribute<FirmCategory>(new TableAttribute { Schema = CustomerIntelligenceSchema, Name = "FirmCategories", IsColumnAttributeRequired = false });
                 config.HasAttribute<FirmCategoryGroup>(new TableAttribute { Schema = CustomerIntelligenceSchema, Name = "FirmCategoryGroups", IsColumnAttributeRequired = false });
 
+                config.Entity<Firm>().Property(x => x.Client).HasAttribute(
+                    new AssociationAttribute
+                    {
+                        ThisKey = "ClientId",
+                        OtherKey = "Id"
+                    });
+
                 return schema;
             }
         }

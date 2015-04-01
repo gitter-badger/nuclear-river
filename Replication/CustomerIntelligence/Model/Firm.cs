@@ -29,5 +29,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
         public long OrganizationUnitId { get; set; }
 
         public long TerritoryId { get; set; }
+
+        public Client Client { get; set; }
     }
 }

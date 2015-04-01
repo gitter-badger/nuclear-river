@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Data\DataConnectionExtensions.cs" />
     <Compile Include="BaseFixture.cs" />
+    <Compile Include="Data\CustomerIntelligenceReplicationTests.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
     <Compile Include="Data\FactsReplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

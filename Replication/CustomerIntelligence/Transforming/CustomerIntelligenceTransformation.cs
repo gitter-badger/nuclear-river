@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+
+using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.AdvancedSearch.Replication.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
@@ -18,6 +24,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     { typeof(Client), (context, ids) => context.Clients.Where(x => ids.Contains(x.Id)) },
                     { typeof(Contact), (context, ids) => context.Contacts.Where(x => ids.Contains(x.Id)) },
                 };
+
+        private static readonly Dictionary<Type, IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>> RelatedQueries;
+
+        static CustomerIntelligenceTransformation()
+        {
+            RelatedQueries = new Dictionary<Type, IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>>
+                             {
+                                 { typeof(Firm), new List<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>
+                                                 {
+                                                     (context, ids) => context.FirmAccounts.Where(x => ids.Contains(x.FirmId)),
+                                                     (context, ids) => context.FirmCategories.Where(x => ids.Contains(x.FirmId))
+                                                 } }
+                             };
+        }
 
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
@@ -55,6 +75,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     continue;
                 }
 
+                IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>> relatedQueries;
+                if (RelatedQueries.TryGetValue(entityType, out relatedQueries))
+                {
+                    foreach (var relatedQuery in relatedQueries)
+                    {
+                        var data = Utility.Merge(relatedQuery(_source, entityIds), relatedQuery(_target, entityIds));
+                        var toDel = data.Item1;
+                        var toAdd = data.Item2;
+
+                        Load(Operation.Deleted, toDel.AsQueryable());
+                        Load(Operation.Created, toAdd.AsQueryable());
+                    }
+                }
+
                 Load(operation, query(GetOperationContext(operation), entityIds));
             }
 
@@ -74,6 +108,40 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 default:
                     throw new ArgumentOutOfRangeException("operation");
             }
+        }
+
+        #region Utility
+
+        private static class Utility
+        {
+            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiable>(null, null)).GetGenericMethodDefinition();
+
+            private static readonly ConcurrentDictionary<Type, MethodInfo> Methods = new ConcurrentDictionary<Type, MethodInfo>();
+
+            public static Tuple<IEnumerable, IEnumerable> Merge(IQueryable newData, IQueryable oldData)
+            {
+                if (newData.ElementType != oldData.ElementType)
+                {
+                    throw new InvalidOperationException("The types are not matched.");
+                }
+
+                var type = newData.ElementType;
+                var method = Methods.GetOrAdd(type, t => MergeMethodInfo.MakeGenericMethod(t));
+
+                return (Tuple<IEnumerable, IEnumerable>)method.Invoke(null, new object[] { newData, oldData });
+            }
+
+            private static Tuple<IEnumerable, IEnumerable> Merge<T>(IEnumerable<T> newSetData, IEnumerable<T> oldSetData)
+            {
+                var newSet = new HashSet<T>(newSetData);
+                var oldSet = new HashSet<T>(oldSetData);
+                var toDel = oldSet.Where(x => !newSet.Contains(x));
+                var toAdd = newSet.Where(x => !oldSet.Contains(x));
+
+                return Tuple.Create<IEnumerable, IEnumerable>(toDel, toAdd);
+            }
+
+            #endregion
         }
     }
 }

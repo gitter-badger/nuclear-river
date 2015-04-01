@@ -88,7 +88,6 @@
     <Compile Include="Transforming\Operation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\Implementation\FactsContext2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
