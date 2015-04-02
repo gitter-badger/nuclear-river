@@ -32,10 +32,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             const int entityId = 1;
 
-            var ermContext = new Mock<IErmContext>();
-            ermContext.SetupGet(x => x.Contacts).Returns(Enumerate(new Erm::Contact { Id = entityId, Role = ermRole }));
+            var ermContext = Mock.Of<IErmContext>(ctx => ctx.Contacts == Inquire(new Erm::Contact { Id = entityId, Role = ermRole }));
 
-            Transformation.Create(ermContext.Object)
+            Transformation.Create(ermContext)
                 .Transform(Operation.Create<Facts::Contact>(entityId))
                 .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == entityId && contact.Role == expectedRole)));
         }
@@ -43,16 +42,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldProcessContactPhones()
         {
-            var ermContext = new Mock<IErmContext>();
-            ermContext.SetupGet(x => x.Contacts).Returns(Enumerate(
-                new Erm::Contact { Id = 1 },
-                new Erm::Contact { Id = 2, MainPhoneNumber = "<phone>" },
-                new Erm::Contact { Id = 3, AdditionalPhoneNumber = "<phone>" },
-                new Erm::Contact { Id = 4, MobilePhoneNumber = "<phone>" },
-                new Erm::Contact { Id = 5, HomePhoneNumber = "<phone>" }
-                ));
+            var ermContext = Mock.Of<IErmContext>(
+                ctx => ctx.Contacts == Inquire(
+                    new Erm::Contact { Id = 1 },
+                    new Erm::Contact { Id = 2, MainPhoneNumber = "<phone>" },
+                    new Erm::Contact { Id = 3, AdditionalPhoneNumber = "<phone>" },
+                    new Erm::Contact { Id = 4, MobilePhoneNumber = "<phone>" },
+                    new Erm::Contact { Id = 5, HomePhoneNumber = "<phone>" }));
 
-            Transformation.Create(ermContext.Object)
+            Transformation.Create(ermContext)
                 .Transform(Operation.Create<Facts::Contact>(1))
                 .Transform(Operation.Create<Facts::Contact>(2))
                 .Transform(Operation.Create<Facts::Contact>(3))
@@ -64,7 +62,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 4 && contact.HasPhone)))
                 .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 5 && contact.HasPhone)));
 
-            ermContext.VerifyGet(x => x.Contacts, Times.Exactly(5), "The transformation was applied sequentially (not in bulk).");
+            Mock.Get(ermContext).VerifyGet(x => x.Contacts, Times.Exactly(5), "The transformation was applied sequentially (not in bulk).");
         }
 
         [TestCaseSource("Cases")]
@@ -77,98 +75,97 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             get
             {
+                const int notnull = 1;
+
                 // insert
-                yield return CaseToVerifyElementInsertion<Erm::Account, Facts::Account>();
-                yield return CaseToVerifyElementInsertion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
-                yield return CaseToVerifyElementInsertion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementInsertion<Erm::Client, Facts::Client>();
-                yield return CaseToVerifyElementInsertion<Erm::Contact, Facts::Contact>();
-                yield return CaseToVerifyElementInsertion<Erm::Firm, Facts::Firm>();
-                yield return CaseToVerifyElementInsertion<Erm::FirmAddress, Facts::FirmAddress>();
-                yield return CaseToVerifyElementInsertion<Erm::FirmContact, Facts::FirmContact>();
-                yield return CaseToVerifyElementInsertion<Erm::LegalPerson, Facts::LegalPerson>();
-                yield return CaseToVerifyElementInsertion<Erm::Order, Facts::Order>();
+                yield return CaseToVerifyElementInsertion(new Erm::Account { Id = 1 }, new Facts::Account { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::CategoryFirmAddress { Id = 1 }, new Facts::CategoryFirmAddress { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::CategoryOrganizationUnit { Id = 1 }, new Facts::CategoryOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::Client { Id = 1 }, new Facts::Client { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::Contact { Id = 1 }, new Facts::Contact { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::Firm { Id = 1 }, new Facts::Firm { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::FirmAddress { Id = 1 }, new Facts::FirmAddress { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::FirmContact { Id = 1, FirmAddressId = notnull }, new Facts::FirmContact { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::LegalPerson { Id = 1, ClientId = notnull }, new Facts::LegalPerson { Id = 1 });
+                yield return CaseToVerifyElementInsertion(new Erm::Order { Id = 1, WorkflowStepId = 4 }, new Facts::Order { Id = 1 });
                 // update
-                yield return CaseToVerifyElementUpdate<Erm::Account, Facts::Account>();
-                yield return CaseToVerifyElementUpdate<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
-                yield return CaseToVerifyElementUpdate<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementUpdate<Erm::Client, Facts::Client>();
-                yield return CaseToVerifyElementUpdate<Erm::Contact, Facts::Contact>();
-                yield return CaseToVerifyElementUpdate<Erm::Firm, Facts::Firm>();
-                yield return CaseToVerifyElementUpdate<Erm::FirmAddress, Facts::FirmAddress>();
-                yield return CaseToVerifyElementUpdate<Erm::FirmContact, Facts::FirmContact>();
-                yield return CaseToVerifyElementUpdate<Erm::LegalPerson, Facts::LegalPerson>();
-                yield return CaseToVerifyElementUpdate<Erm::Order, Facts::Order>();
+                yield return CaseToVerifyElementUpdate(new Erm::Account { Id = 1 }, new Facts::Account { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::CategoryFirmAddress { Id = 1 }, new Facts::CategoryFirmAddress { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::CategoryOrganizationUnit { Id = 1 }, new Facts::CategoryOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::Client { Id = 1 }, new Facts::Client { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::Contact { Id = 1 }, new Facts::Contact { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::Firm { Id = 1 }, new Facts::Firm { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::FirmAddress { Id = 1 }, new Facts::FirmAddress { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::FirmContact { Id = 1, FirmAddressId = notnull }, new Facts::FirmContact { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::LegalPerson { Id = 1, ClientId = notnull }, new Facts::LegalPerson { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::Order { Id = 1, WorkflowStepId = 4 }, new Facts::Order { Id = 1 });
                 // delete
-                yield return CaseToVerifyElementDeletion<Erm::Account, Facts::Account>();
-                yield return CaseToVerifyElementDeletion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>();
-                yield return CaseToVerifyElementDeletion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>();
-                yield return CaseToVerifyElementDeletion<Erm::Client, Facts::Client>();
-                yield return CaseToVerifyElementDeletion<Erm::Contact, Facts::Contact>();
-                yield return CaseToVerifyElementDeletion<Erm::Firm, Facts::Firm>();
-                yield return CaseToVerifyElementDeletion<Erm::FirmAddress, Facts::FirmAddress>();
-                yield return CaseToVerifyElementDeletion<Erm::FirmContact, Facts::FirmContact>();
-                yield return CaseToVerifyElementDeletion<Erm::LegalPerson, Facts::LegalPerson>();
-                yield return CaseToVerifyElementDeletion<Erm::Order, Facts::Order>();
+                yield return CaseToVerifyElementDeletion(new Erm::Account { Id = 1 }, new Facts::Account { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::CategoryFirmAddress { Id = 1 }, new Facts::CategoryFirmAddress { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::CategoryOrganizationUnit { Id = 1 }, new Facts::CategoryOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::Client { Id = 1 }, new Facts::Client { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::Contact { Id = 1 }, new Facts::Contact { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::Firm { Id = 1 }, new Facts::Firm { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::FirmAddress { Id = 1 }, new Facts::FirmAddress { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::FirmContact { Id = 1, FirmAddressId = notnull }, new Facts::FirmContact { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::LegalPerson { Id = 1, ClientId = notnull }, new Facts::LegalPerson { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Erm::Order { Id = 1, WorkflowStepId = 4 }, new Facts::Order { Id = 1 });
             }
         }
 
-        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            return Case(VerifyElementInsertion<TErmElement, TFactElement>).SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementInsertion(source, target)).SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            return Case(VerifyElementUpdate<TErmElement, TFactElement>).SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementUpdate(source, target)).SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementDeletion<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private TestCaseData CaseToVerifyElementDeletion<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            return Case(VerifyElementDeletion<TErmElement, TFactElement>).SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementDeletion(source, target)).SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementInsertion<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            const int entityId = 1;
-            ErmConnection.Has<TErmElement>(entityId);
+            ErmConnection.Has(source);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Create<TFactElement>(entityId))
-                          .Verify(x => x.Insert(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
+                          .Transform(Operation.Create<TFactElement>(target.Id))
+                          .Verify(x => x.Insert(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementUpdate<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            const long entityId = 1;
-            ErmConnection.Has<TErmElement>(entityId);
-            FactsConnection.Has<TFactElement>(entityId);
+            ErmConnection.Has(source);
+            FactsConnection.Has(target);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Update<TFactElement>(entityId))
-                          .Verify(x => x.Update(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
+                          .Transform(Operation.Update<TFactElement>(target.Id))
+                          .Verify(x => x.Update(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementDeletion<TErmElement, TFactElement>()
-            where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+        private void VerifyElementDeletion<TErmElement, TFactElement>(TErmElement source, TFactElement target)
+            where TErmElement : IIdentifiableObject, new()
+            where TFactElement : IIdentifiableObject, new()
         {
-            const long entityId = 1;
-            FactsConnection.Has<TFactElement>(entityId);
+            FactsConnection.Has(target);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Delete<TFactElement>(entityId))
-                          .Verify(x => x.Delete(HasId<TFactElement>(entityId)), Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
+                          .Transform(Operation.Delete<TFactElement>(target.Id))
+                          .Verify(x => x.Delete(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
         }
 
         #region Transformation

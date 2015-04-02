@@ -3,18 +3,37 @@ using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Data
+namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    [TestFixture, Explicit]
-    internal class CustomerIntelligenceReplicationTests : BaseFixture
+    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    internal class BulkCopyingOfCustomerIntelligence : BaseDataFixture
     {
         [Test]
         public void ReloadFirms()
         {
             Reload(ctx => ctx.Firms);
+        }
+
+        [Test]
+        public void ReloadFirmBalances()
+        {
+            Reload(ctx => ctx.FirmBalances);
+        }
+
+        [Test]
+        public void ReloadFirmCategories()
+        {
+            Reload(ctx => ctx.FirmCategories);
+        }
+
+        [Test]
+        public void ReloadFirmCategoryGroups()
+        {
+            Reload(ctx => ctx.FirmCategoryGroups);
         }
 
         [Test]

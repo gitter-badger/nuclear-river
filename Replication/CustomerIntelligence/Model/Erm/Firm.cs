@@ -4,7 +4,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class Firm : IIdentifiable
+    public sealed class Firm : IIdentifiableObject
     {
         public Firm()
         {
@@ -30,5 +30,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Firm && IdentifiableObjectEqualityComparer<Firm>.Default.Equals(this, (Firm)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<Firm>.Default.GetHashCode(this);
+        }
     }
 }

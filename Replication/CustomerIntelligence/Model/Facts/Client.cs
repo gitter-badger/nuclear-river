@@ -4,7 +4,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public sealed class Client : IIdentifiable
+    public sealed class Client : IIdentifiableObject
     {
         public long Id { get; set; }
 
@@ -15,5 +15,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
         public bool HasPhone { get; set; }
 
         public bool HasWebsite { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Client && IdentifiableObjectEqualityComparer<Client>.Default.Equals(this, (Client)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<Client>.Default.GetHashCode(this);
+        }
     }
 }

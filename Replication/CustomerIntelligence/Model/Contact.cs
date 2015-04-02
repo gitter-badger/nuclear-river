@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class Contact : IIdentifiable
+    public sealed class Contact : IIdentifiableObject
     {
         public long Id { get; set; }
 
@@ -11,5 +11,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
         public bool IsFired { get; set; }
 
         public long ClientId { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Contact && IdentifiableObjectEqualityComparer<Contact>.Default.Equals(this, (Contact)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<Contact>.Default.GetHashCode(this);
+        }
     }
 }

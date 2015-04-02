@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class CategoryFirmAddress : IIdentifiable
+    public sealed class CategoryFirmAddress : IIdentifiableObject
     {
         public CategoryFirmAddress()
         {
@@ -18,5 +18,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CategoryFirmAddress && IdentifiableObjectEqualityComparer<CategoryFirmAddress>.Default.Equals(this, (CategoryFirmAddress)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<CategoryFirmAddress>.Default.GetHashCode(this);
+        }
     }
 }

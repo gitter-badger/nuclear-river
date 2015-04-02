@@ -53,16 +53,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\DataConnectionExtensions.cs" />
     <Compile Include="BaseFixture.cs" />
-    <Compile Include="Data\CustomerIntelligenceReplicationTests.cs" />
+    <Compile Include="Data\DataConnectionExtensions.cs" />
+    <Compile Include="BaseDataFixture.cs" />
+    <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
-    <Compile Include="Data\FactsReplicationTests.cs" />
+    <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataContextExtensions.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
+    <Compile Include="Transformation\CustomerIntelligenceTransformationContextTests.cs" />
+    <Compile Include="ProjectionEqualityComparer.cs" />
+    <Compile Include="IdentifiableObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

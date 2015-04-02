@@ -4,12 +4,16 @@ if not exists (select * from sys.schemas where name = 'ERM')
 go
 
 -- drop tables
-if object_id('ERM.FirmCategoryGroups') is not null drop table ERM.FirmCategoryGroups;
-if object_id('ERM.FirmCategories') is not null drop table ERM.FirmCategories;
-if object_id('ERM.FirmAccount') is not null drop table ERM.FirmAccount;
+if object_id('ERM.Order') is not null drop table ERM.[Order];
+if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
+if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
+if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
+if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
 if object_id('ERM.Firm') is not null drop table ERM.Firm;
 
+if object_id('ERM.Account') is not null drop table ERM.Account;
 if object_id('ERM.Contact') is not null drop table ERM.Contact;
+if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
 if object_id('ERM.Client') is not null drop table ERM.Client;
 go
 
@@ -18,6 +22,7 @@ go
 create table ERM.Client(
 	Id bigint not null
     , Name nvarchar(250) not null
+    , LastDisqualifiedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Clients_HasPhone default 0
     , HasWebsite bit not null constraint DF_Clients_HasWebsite default 0
     , constraint PK_Clients primary key (Id)
@@ -33,7 +38,26 @@ create table ERM.Contact(
     , HasWebsite bit not null constraint DF_Contacts_HasWebsite default 0
     , ClientId bigint not null
     , constraint PK_Contacts primary key (Id)
-    --, constraint FK_Contacts_Clients foreign key (ClientId) references ERM.Clients (Id)
+)
+go
+create nonclustered index IX_Contacts_HasPhone_HasWebsite
+on ERM.Contact (HasPhone, HasWebsite)
+go
+
+-- LegalPerson
+create table ERM.LegalPerson(
+	Id bigint not null
+    , ClientId bigint not null
+    , constraint PK_LegalPersons primary key (Id)
+)
+go
+
+-- Account
+create table ERM.Account(
+	Id bigint not null
+    , Balance decimal(19,4) not null
+    , LegalPersonId bit not null
+    , constraint PK_Accounts primary key (Id)
 )
 go
 
@@ -51,33 +75,50 @@ create table ERM.Firm(
     , OrganizationUnitId bigint not null
     , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
-    --, constraint FK_Firms_Clients foreign key (ClientId) references ERM.Clients (Id)
 )
 go
 
--- FirmAccount
-create table ERM.FirmAccount(
-	AccountId bigint not null
+-- FirmAddress
+create table ERM.FirmAddress(
+	Id bigint not null
     , FirmId bigint not null
-    , Balance decimal(19,4) not null
-    , constraint PK_FirmAccounts primary key (AccountId, FirmId)
+    , constraint PK_FirmAddresses primary key (Id)
 )
 go
 
--- FirmCategories
-create table ERM.FirmCategories(
-	FirmId bigint not null
+-- FirmContact
+create table ERM.FirmContact(
+	Id bigint not null
+    , ContactType int not null
+    , FirmAddressId bigint not null
+    , constraint PK_FirmContacts primary key (Id)
+)
+go
+
+-- CategoryFirmAddress
+create table ERM.CategoryFirmAddress(
+	Id bigint not null
     , CategoryId bigint not null
-    , constraint PK_FirmCategories primary key (FirmId, CategoryId)
-    --, constraint FK_FirmCategories_Firms foreign key (FirmId) references ERM.Firms (Id)
+    , FirmAddressId bigint not null
+    , constraint PK_CategoryFirmAddresses primary key (Id)
 )
 go
 
--- FirmCategoryGroups
-create table ERM.FirmCategoryGroups(
-	FirmId bigint not null
+-- CategoryOrganizationUnit
+create table ERM.CategoryOrganizationUnit(
+	Id bigint not null
+	, CategoryId bigint not null
     , CategoryGroupId bigint not null
-    , constraint PK_FirmCategoryGroups primary key (FirmId, CategoryGroupId)
-    --, constraint FK_FirmCategoryGroups_Firms foreign key (FirmId) references ERM.Firms (Id)
+    , OrganizationUnitId bigint not null
+    , constraint PK_CategoryOrganizationUnits primary key (Id)
+)
+go
+
+-- Order
+create table ERM.[Order](
+	Id bigint not null
+    , EndDistributionDateFact datetimeoffset(2) not null
+    , FirmId bigint null
+    , constraint PK_Orders primary key (Id)
 )
 go

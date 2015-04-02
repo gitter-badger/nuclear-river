@@ -15,22 +15,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-                config.Entity<Client>().HasSchemaName(CustomerIntelligenceSchema);
-                config.Entity<Contact>().HasSchemaName(CustomerIntelligenceSchema);
-                config.Entity<Firm>().HasSchemaName(CustomerIntelligenceSchema);
-                config.Entity<FirmAccount>().HasSchemaName(CustomerIntelligenceSchema)
-                    .Property(x => x.AccountId).IsPrimaryKey()
-                    .Property(x => x.FirmId).IsPrimaryKey();
-
                 config.HasAttribute<FirmCategory>(new TableAttribute { Schema = CustomerIntelligenceSchema, Name = "FirmCategories", IsColumnAttributeRequired = false });
                 config.HasAttribute<FirmCategoryGroup>(new TableAttribute { Schema = CustomerIntelligenceSchema, Name = "FirmCategoryGroups", IsColumnAttributeRequired = false });
 
-                config.Entity<Firm>().Property(x => x.Client).HasAttribute(
-                    new AssociationAttribute
-                    {
-                        ThisKey = "ClientId",
-                        OtherKey = "Id"
-                    });
+                config.Entity<Client>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Contact>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Firm>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<FirmBalance>().HasSchemaName(CustomerIntelligenceSchema)
+                    .Property(x => x.AccountId).IsPrimaryKey()
+                    .Property(x => x.FirmId).IsPrimaryKey();
+                config.Entity<FirmCategory>().HasSchemaName(CustomerIntelligenceSchema)
+                    .Property(x => x.CategoryId).IsPrimaryKey()
+                    .Property(x => x.FirmId).IsPrimaryKey();
+                config.Entity<FirmCategoryGroup>().HasSchemaName(CustomerIntelligenceSchema)
+                    .Property(x => x.CategoryGroupId).IsPrimaryKey()
+                    .Property(x => x.FirmId).IsPrimaryKey();
 
                 return schema;
             }

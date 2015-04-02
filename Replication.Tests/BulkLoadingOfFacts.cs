@@ -3,13 +3,14 @@ using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Data
+namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    [TestFixture, Explicit]
-    internal class FactsReplicationTests : BaseFixture
+    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    internal class BulkLoadingOfFacts : BaseDataFixture
     {
         [Test]
         public void ReloadAccounts()

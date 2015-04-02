@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                              {
                                  { typeof(Firm), new List<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>
                                                  {
-                                                     (context, ids) => context.FirmAccounts.Where(x => ids.Contains(x.FirmId)),
+                                                     (context, ids) => context.FirmBalances.Where(x => ids.Contains(x.FirmId)),
                                                      (context, ids) => context.FirmCategories.Where(x => ids.Contains(x.FirmId))
                                                  } }
                              };
@@ -114,7 +114,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private static class Utility
         {
-            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiable>(null, null)).GetGenericMethodDefinition();
+            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiableObject>(null, null)).GetGenericMethodDefinition();
 
             private static readonly ConcurrentDictionary<Type, MethodInfo> Methods = new ConcurrentDictionary<Type, MethodInfo>();
 
@@ -140,8 +140,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                 return Tuple.Create<IEnumerable, IEnumerable>(toDel, toAdd);
             }
-
-            #endregion
         }
+
+        #endregion
     }
 }

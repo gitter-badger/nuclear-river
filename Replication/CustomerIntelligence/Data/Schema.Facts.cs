@@ -15,9 +15,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-//                config.HasAttribute<Fact.CategoryFirmAddress>(new TableAttribute { Schema = ErmSchema, Name = "CategoryFirmAddresses", IsColumnAttributeRequired = false });
-//                config.HasAttribute<Fact.CategoryOrganizationUnit>(new TableAttribute { Schema = ErmSchema, Name = "CategoryOrganizationUnits", IsColumnAttributeRequired = false });
-
                 config.Entity<Account>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryFirmAddress>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryOrganizationUnit>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();

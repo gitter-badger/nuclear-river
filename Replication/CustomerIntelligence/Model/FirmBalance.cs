@@ -2,20 +2,13 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class FirmAccount : IIdentifiable
+    public sealed class FirmBalance : IObject
     {
-        public long Id { get; set; }
-
         public long AccountId { get; set; }
 
         public long FirmId { get; set; }
 
         public decimal Balance { get; set; }
-
-        private bool Equals(FirmAccount other)
-        {
-            return Id == other.Id && AccountId == other.AccountId && FirmId == other.FirmId && Balance == other.Balance;
-        }
 
         public override bool Equals(object obj)
         {
@@ -27,19 +20,23 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             {
                 return true;
             }
-            return obj is FirmAccount && Equals((FirmAccount)obj);
+            return obj is FirmBalance && Equals((FirmBalance)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = Id.GetHashCode();
-                hashCode = (hashCode * 397) ^ AccountId.GetHashCode();
+                var hashCode = AccountId.GetHashCode();
                 hashCode = (hashCode * 397) ^ FirmId.GetHashCode();
                 hashCode = (hashCode * 397) ^ Balance.GetHashCode();
                 return hashCode;
             }
+        }
+
+        private bool Equals(FirmBalance other)
+        {
+            return AccountId == other.AccountId && FirmId == other.FirmId && Balance == other.Balance;
         }
     }
 }

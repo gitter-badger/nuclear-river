@@ -44,11 +44,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmAccount> FirmAccounts
+        public IQueryable<FirmBalance> FirmBalances
         {
             get
             {
-                return _context.GetTable<FirmAccount>();
+                return _context.GetTable<FirmBalance>();
             }
         }
 
@@ -57,6 +57,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return _context.GetTable<FirmCategory>();
+            }
+        }
+
+        public IQueryable<FirmCategoryGroup> FirmCategoryGroups
+        {
+            get
+            {
+                return _context.GetTable<FirmCategoryGroup>();
             }
         }
     }

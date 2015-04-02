@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class Account : IIdentifiable
+    public sealed class Account : IIdentifiableObject
     {
         public Account()
         {
@@ -18,5 +18,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Account && IdentifiableObjectEqualityComparer<Account>.Default.Equals(this, (Account)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<Account>.Default.GetHashCode(this);
+        }
     }
 }

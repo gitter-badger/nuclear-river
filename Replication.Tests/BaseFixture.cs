@@ -1,19 +1,7 @@
 using System;
-using System.Collections.Concurrent;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
+using System.Linq.Expressions;
 
-using LinqToDB;
-using LinqToDB.Data;
-using LinqToDB.Expressions;
-using LinqToDB.Mapping;
-using LinqToDB.SqlQuery;
-
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.AdvancedSearch.Replication.Model;
 
 using NUnit.Framework;
 
@@ -21,98 +9,26 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 {
     internal abstract class BaseFixture
     {
-        private static readonly ConcurrentDictionary<ConnectionStringSettings, DataConnection> Connections = new ConcurrentDictionary<ConnectionStringSettings, DataConnection>();
-
-        static BaseFixture()
+        protected static TestCaseData Case(Action action)
         {
-#if DEBUG
-            DataConnection.TurnTraceSwitchOn(TraceLevel.Verbose);
-            DataConnection.WriteTraceLine = (s1, s2) => Debug.WriteLine(s1, s2);
-#endif
+            return new TestCaseData(action);
         }
 
-        [TearDown]
-        public void FixtureTearDown()
+        #region Predicate
+
+        protected static class Predicate
         {
-            foreach (var connection in Connections.Values.Select(x => x.Connection))
+            public static Expression<Func<T, bool>> ById<T>(long id) where T : IIdentifiableObject
             {
-                connection.Close();
-            }
-            Connections.Clear();
-        }
-
-        protected DataConnection ErmConnection
-        {
-            get { return CreateConnection("Erm", Schema.Erm); }
-        }
-
-        protected DataConnection FactsConnection
-        {
-            get { return CreateConnection("Facts", Schema.Facts); }
-        }
-
-        protected DataConnection CustomerIntelligenceConnection
-        {
-            get { return CreateConnection("CustomerIntelligence", Schema.CustomerIntelligence); }
-        }
-
-        protected DataConnection CreateConnection(string connectionStringName, MappingSchema schema)
-        {
-            var connectionSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (connectionSettings == null)
-            {
-                throw new ArgumentException("The connection settings was not found.", "connectionStringName");
+                return item => item.Id == id;
             }
 
-            return Connections.GetOrAdd(
-                connectionSettings,
-                settings =>
-                {
-                    var provider = DataConnection.GetDataProvider(settings.Name);
-                    
-                    var connection = provider.CreateConnection(settings.ConnectionString);
-                    connection.Open();
-
-                    return TuneConnectionIfSqlite(new DataConnection(provider, connection).AddMappingSchema(schema));
-                });
-        }
-
-        private static DataConnection TuneConnectionIfSqlite(DataConnection db)
-        {
-            if (db.DataProvider.Name == ProviderName.SQLite)
+            public static Expression<Func<T, bool>> Match<T, TProjection>(T expected, Func<T, TProjection> projector)
             {
-                using (new NoSqlTrace())
-                {
-                    var schema = db.MappingSchema;
-                    foreach (var table in Tables.Value)
-                    {
-                        var attributes = schema.GetAttributes<TableAttribute>(table);
-                        if (attributes != null && attributes.Length > 0)
-                        {
-                            // SQLite does not support schemas
-                            Array.ForEach(attributes, attr => attr.Schema = null);
-
-                            // create empty table
-                            CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
-                        }
-                    }
-
-                    // SQLite does not support schemas
-                    Tables.Value.SelectMany(table => db.MappingSchema.GetAttributes<TableAttribute>(table)).ToList().ForEach(x => x.Schema = null);
-                }
+                return item => new ProjectionEqualityComparer<T, TProjection>(projector).Equals(item, expected);
             }
-            return db;
         }
 
-        private static readonly MethodInfo CreateTableMethodInfo = MemberHelper.MethodOf(() => DataExtensions.CreateTable<object>(default(IDataContext), default(string), default(string), default(string), default(string), default(string), DefaulNullable.None)).GetGenericMethodDefinition();
-
-        private static readonly Lazy<Type[]> Tables = new Lazy<Type[]>(
-            () =>
-            {
-                var accessor = typeof(Firm);
-                return accessor.Assembly.GetTypes()
-                    .Where(t => t.IsClass && (t.Namespace ?? "").Contains(accessor.Namespace ?? ""))
-                    .ToArray();
-            });
+        #endregion
     }
 }

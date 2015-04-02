@@ -1,6 +1,8 @@
+using NuClear.AdvancedSearch.Replication.Model;
+
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class FirmCategory
+    public sealed class FirmCategory : IObject
     {
         public long FirmId { get; set; }
 
@@ -19,17 +21,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             return obj is FirmCategory && Equals((FirmCategory)obj);
         }
 
-        private bool Equals(FirmCategory other)
-        {
-            return FirmId == other.FirmId && CategoryId == other.CategoryId;
-        }
-
         public override int GetHashCode()
         {
             unchecked
             {
                 return (FirmId.GetHashCode() * 397) ^ CategoryId.GetHashCode();
             }
+        }
+
+        private bool Equals(FirmCategory other)
+        {
+            return FirmId == other.FirmId && CategoryId == other.CategoryId;
         }
     }
 }

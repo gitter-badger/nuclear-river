@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class Contact : IIdentifiable
+    public sealed class Contact : IIdentifiableObject
     {
         public Contact()
         {
@@ -30,5 +30,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Contact && IdentifiableObjectEqualityComparer<Contact>.Default.Equals(this, (Contact)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return IdentifiableObjectEqualityComparer<Contact>.Default.GetHashCode(this);
+        }
     }
 }

@@ -94,6 +94,78 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<Firm> Firms
+        {
+            get
+            {
+                return from firm in _ermContext.Firms
+                       select new Firm
+                              {
+                                  Id = firm.Id,
+                                  Name = firm.Name,
+                                  CreatedOn = firm.CreatedOn,
+                                  LastDisqualifiedOn = firm.LastDisqualifyTime,
+                                  ClientId = firm.ClientId,
+                                  OrganizationUnitId = firm.OrganizationUnitId,
+                                  TerritoryId = firm.TerritoryId
+                              };
+            }
+        }
+
+        public IQueryable<FirmAddress> FirmAddresses
+        {
+            get
+            {
+                return from firmAddress in _ermContext.FirmAddresses
+                       select new FirmAddress
+                              {
+                                  Id = firmAddress.Id,
+                                  FirmId = firmAddress.FirmId,
+                              };
+            }
+        }
+
+        public IQueryable<FirmContact> FirmContacts
+        {
+            get
+            {
+                return from firmContact in _ermContext.FirmContacts
+                       select new FirmContact
+                              {
+                                  Id = firmContact.Id,
+                                  ContactType = firmContact.ContactType,
+                                  FirmAddressId = (long)firmContact.FirmAddressId,
+                              };
+            }
+        }
+
+        public IQueryable<LegalPerson> LegalPersons
+        {
+            get
+            {
+                return from legalPerson in _ermContext.LegalPersons
+                       select new LegalPerson
+                              {
+                                  Id = legalPerson.Id,
+                                  ClientId = (long)legalPerson.ClientId,
+                              };
+            }
+        }
+
+        public IQueryable<Order> Orders
+        {
+            get
+            {
+                return from order in _ermContext.Orders
+                       select new Order
+                              {
+                                  Id = order.Id,
+                                  EndDistributionDateFact = order.EndDistributionDateFact,
+                                  FirmId = order.FirmId,
+                              };
+            }
+        }
+
         private static int ConvertAccountRole(int value)
         {
             switch (value)
@@ -108,79 +180,5 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                     return 0;
             }
         }
-
-        public IQueryable<Firm> Firms
-        {
-            get
-            {
-                return from firm in _ermContext.Firms
-                       select new Firm
-                       {
-                           Id = firm.Id,
-                           Name = firm.Name,
-//                           Role = contact.Role,
-//                           IsFired = contact.IsFired,
-//                           HasPhone = (contact.MainPhoneNumber ?? contact.MobilePhoneNumber ?? contact.HomePhoneNumber ?? contact.AdditionalPhoneNumber) != null,
-//                           HasWebsite = contact.Website != null,
-//                           ClientId = contact.ClientId
-                       };
-            }
-        }
-
-        public IQueryable<FirmAddress> FirmAddresses
-        {
-            get
-            {
-                return from firmAddress in _ermContext.FirmAddresses
-                       select new FirmAddress
-                       {
-                           Id = firmAddress.Id,
-                           FirmId = firmAddress.FirmId,
-                       };
-            }
-        }
-
-        public IQueryable<FirmContact> FirmContacts
-        {
-            get
-            {
-                return from firmContact in _ermContext.FirmContacts
-                       select new FirmContact
-                       {
-                           Id = firmContact.Id,
-                           ContactType = firmContact.ContactType,
-                           FirmAddressId = firmContact.FirmAddressId,
-                       };
-            }
-        }
-
-        public IQueryable<LegalPerson> LegalPersons
-        {
-            get
-            {
-                return from legalPerson in _ermContext.LegalPersons
-                       select new LegalPerson
-                       {
-                           Id = legalPerson.Id,
-                           ClientId = legalPerson.ClientId,
-                       };
-            }
-        }
-
-        public IQueryable<Order> Orders
-        {
-            get
-            {
-                return from order in _ermContext.Orders
-                       select new Order
-                       {
-                           Id = order.Id,
-                           EndDistributionDateFact = order.EndDistributionDateFact,
-                           WorkflowStepId = order.WorkflowStepId,
-                           FirmId = order.FirmId,
-                       };
-            }
-        }
-
     }
 }
