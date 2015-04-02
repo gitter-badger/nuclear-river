@@ -9,7 +9,7 @@ using Moq;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         {
             var source = new Mock<IMetadataSource>();
             source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
-            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { IdBuilder.For<AdvancedSearchIdentity>(), context } });
+            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { Metadata.Id.For<AdvancedSearchIdentity>(), context } });
 
             return source.Object;
         }
