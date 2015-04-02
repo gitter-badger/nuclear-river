@@ -5,6 +5,7 @@ using System.Linq;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
@@ -18,7 +19,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private PrimitiveTypeElement(ElementaryTypeKind elementaryTypeKind)
             : base(Enumerable.Empty<IMetadataFeature>())
         {
-            _identity = IdBuilder.For<AdvancedSearchIdentity>(elementaryTypeKind.ToString()).AsIdentity();
+            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(elementaryTypeKind.ToString());
+            _identity = uri.AsIdentity();
             PrimitiveType = elementaryTypeKind;
         }
 
