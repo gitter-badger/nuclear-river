@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ITrackedUseCaseParser.cs" />
     <Compile Include="TrackedUseCaseParser.cs" />
     <Compile Include="AdvancedSearchTypeModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
