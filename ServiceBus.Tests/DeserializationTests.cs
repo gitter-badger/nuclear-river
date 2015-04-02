@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 
-using NuClear.AdvancedSearch.ServiceBus.Contracts.DTO;
 using NuClear.AdvancedSearch.ServiceBus.Tests.Properties;
+using NuClear.OperationsTracking.API.Changes;
 
 using NUnit.Framework;
 
@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.ServiceBus.Tests
 
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));
 
-            var store = trackedUseCase.Operations.First().ChangesContext.Store;
+            var store = trackedUseCase.Operations.First().ChangesContext.Changes;
             Assert.That(store.Count, Is.EqualTo(1));
 
             var change = store.First();

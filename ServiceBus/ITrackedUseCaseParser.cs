@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-using NuClear.AdvancedSearch.ServiceBus.Contracts.DTO;
+using NuClear.OperationsTracking.API.UseCases;
 
 namespace NuClear.AdvancedSearch.ServiceBus
 {

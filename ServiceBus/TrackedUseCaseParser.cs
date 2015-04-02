@@ -1,7 +1,6 @@
 ﻿using System.IO;
 
-using NuClear.AdvancedSearch.ServiceBus.Contracts;
-using NuClear.AdvancedSearch.ServiceBus.Contracts.DTO;
+using NuClear.OperationsTracking.API.UseCases;
 
 using ProtoBuf.Meta;
 

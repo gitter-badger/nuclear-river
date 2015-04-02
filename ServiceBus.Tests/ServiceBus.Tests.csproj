@@ -30,6 +30,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Messaging.API">
+      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.1\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Metamodeling">
+      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.1.3\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Model.Common">
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.OperationsTracking.API">
+      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.1\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Tracing.API">
+      <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -51,13 +66,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ServiceBus.Contracts\ServiceBus.Contracts.csproj">
-      <Project>{4063cd85-b769-4b52-8a05-3e315337017e}</Project>
-      <Name>ServiceBus.Contracts</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ServiceBus\ServiceBus.csproj">
       <Project>{938F9EC1-5AA9-4664-8BDD-E0146468DD75}</Project>
       <Name>ServiceBus</Name>
