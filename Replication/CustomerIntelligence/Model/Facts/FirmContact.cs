@@ -6,7 +6,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
     {
         public long Id { get; set; }
 
-        public int ContactType { get; set; }
+        public bool HasPhone { get; set; }
+        
+        public bool HasWebsite { get; set; }
 
         public long FirmAddressId { get; set; }
 

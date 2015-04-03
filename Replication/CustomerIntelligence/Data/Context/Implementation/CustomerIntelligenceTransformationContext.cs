@@ -54,33 +54,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 // FIXME {all, 03.04.2015}: the obtained SQL is too complex and slow
 
-                var clients = from client in _context.Clients
-                              join contact in _context.Contacts on client.Id equals contact.ClientId into clientContacts
-                              select new
-                                     {
-                                         client.Id,
-                                         client.LastDisqualifiedOn,
-                                         HasPhone = client.HasPhone || clientContacts.Any(x => x.HasPhone), // TODO: consider the sql to optimize it if needed
-                                         HasWebsite = client.HasWebsite || clientContacts.Any(x => x.HasWebsite) // TODO: consider the sql to optimize it if needed
-                                     };
+                var clientsHavingPhone = from contact in _context.Contacts
+                                         where contact.HasPhone
+                                         select contact.ClientId;
+                var clientsHavingWebsite = from contact in _context.Contacts
+                                           where contact.HasWebsite
+                                           select contact.ClientId;
 
-                var contacts = from firmContact in _context.FirmContacts
-                               join firmAddress in _context.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
-                               group firmContact by firmAddress.FirmId
-                               into groupByAddress
-                               select new
-                                      {
-                                          FirmId = groupByAddress.Key,
-                                          HasPhone = groupByAddress.Any(x => x.ContactType == 1),
-                                          HasWebsite = groupByAddress.Any(x => x.ContactType == 4)
-                                      };
+                var firmsHavingPhone = from firmContact in _context.FirmContacts.Where(x => x.HasPhone)
+                                       join firmAddress in _context.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
+                                       select firmAddress.FirmId;
+                var firmsHavingWebsite = from firmContact in _context.FirmContacts.Where(x => x.HasWebsite)
+                                         join firmAddress in _context.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
+                                         select firmAddress.FirmId;
 
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from firm in _context.Firms
-                       join client in clients on firm.ClientId equals client.Id into firmClients
+                       join client in _context.Clients on firm.ClientId equals client.Id into firmClients
                        from firmClient in firmClients.DefaultIfEmpty()
-                       join contact in contacts on firm.Id equals contact.FirmId into firmContacts
-                       from firmContact in firmContacts.DefaultIfEmpty()
                        select new Firm
                               {
                                   Id = firm.Id,
@@ -88,8 +79,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   CreatedOn = firm.CreatedOn,
                                   LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
                                   LastDistributedOn = _context.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
-                                  HasPhone = (firmContact != null && firmContact.HasPhone) || (firmClient != null && firmClient.HasPhone),
-                                  HasWebsite = (firmContact != null && firmContact.HasWebsite) || (firmClient != null && firmClient.HasWebsite),
+                                  HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
+                                  HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _context.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
                                   //CategoryGroupId = null,
                                   ClientId = firm.ClientId,

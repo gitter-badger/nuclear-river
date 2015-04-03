@@ -139,9 +139,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::FirmAddress { Id = 4, FirmId = 5 }
                 ));
             context.SetupGet(x => x.FirmContacts).Returns(Inquire(
-                new Facts::FirmContact { Id = 1, ContactType = 1, FirmAddressId = 2 },
-                new Facts::FirmContact { Id = 2, ContactType = 4, FirmAddressId = 3 },
-                new Facts::FirmContact { Id = 2, ContactType = 42, FirmAddressId = 4 }
+                new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = 2 },
+                new Facts::FirmContact { Id = 2, HasWebsite = true, FirmAddressId = 3 },
+                new Facts::FirmContact { Id = 3, FirmAddressId = 4 }
                 ));
 
             Transformation.Create(context.Object)

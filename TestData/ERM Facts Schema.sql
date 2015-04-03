@@ -40,7 +40,7 @@ create table ERM.Contact(
     , constraint PK_Contacts primary key (Id)
 )
 go
-create nonclustered index IX_Contacts_HasPhone_HasWebsite
+create nonclustered index IX_Contact_HasPhone_HasWebsite
 on ERM.Contact (HasPhone, HasWebsite)
 go
 
@@ -89,10 +89,17 @@ go
 -- FirmContact
 create table ERM.FirmContact(
 	Id bigint not null
-    , ContactType int not null
+    , HasPhone bit not null constraint DF_FirmContacts_HasPhone default 0
+    , HasWebsite bit not null constraint DF_FirmContacts_HasWebsite default 0
     , FirmAddressId bigint not null
     , constraint PK_FirmContacts primary key (Id)
 )
+go
+create nonclustered index IX_FirmContact_HasPhone_FirmAddressId
+on ERM.FirmContact (HasPhone, FirmAddressId)
+go
+create nonclustered index IX_FirmContact_HasWebsite_FirmAddressId
+on ERM.FirmContact (HasWebsite,FirmAddressId)
 go
 
 -- CategoryFirmAddress

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
@@ -130,10 +131,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from firmContact in _ermContext.FirmContacts
+                       where firmContact.FirmAddressId != null && (firmContact.ContactType == ContactType.Phone || firmContact.ContactType == ContactType.Website)
                        select new FirmContact
                               {
                                   Id = firmContact.Id,
-                                  ContactType = firmContact.ContactType,
+                                  HasPhone = firmContact.ContactType == ContactType.Phone,
+                                  HasWebsite = firmContact.ContactType == ContactType.Website,
                                   FirmAddressId = (long)firmContact.FirmAddressId,
                               };
             }
@@ -144,6 +147,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from legalPerson in _ermContext.LegalPersons
+                       where legalPerson.ClientId != null
                        select new LegalPerson
                               {
                                   Id = legalPerson.Id,
@@ -156,7 +160,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
+                var orderStates = new HashSet<int>
+                                  {
+                                      OrderState.OnTermination,
+                                      OrderState.Archive
+                                  };
+
                 return from order in _ermContext.Orders
+                       where orderStates.Contains(order.WorkflowStepId)
                        select new Order
                               {
                                   Id = order.Id,
@@ -179,6 +190,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 default:
                     return 0;
             }
+        }
+
+        private static class ContactType
+        {
+            public const int Phone = 1;
+            public const int Website = 4;
+        }
+
+        private static class OrderState
+        {
+            public const int OnTermination = 4;
+            public const int Archive = 6;
         }
     }
 }

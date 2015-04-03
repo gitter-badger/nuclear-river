@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using LinqToDB;
@@ -76,7 +75,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from firmContact in _context.GetTable<FirmContact>()
-                       where firmContact.FirmAddressId != null
                        select firmContact;
             }
         }
@@ -86,7 +84,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from legalPerson in _context.GetTable<LegalPerson>()
-                       where legalPerson.IsActive && !legalPerson.IsDeleted && legalPerson.ClientId != null
+                       where legalPerson.IsActive && !legalPerson.IsDeleted
                        select legalPerson;
             }
         }
@@ -115,22 +113,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var orderStates = new HashSet<int>
-                                  {
-                                      OrderState.OnTermination,
-                                      OrderState.Archive
-                                  };
-
                 return from order in _context.GetTable<Order>()
-                       where order.IsActive && !order.IsDeleted && orderStates.Contains(order.WorkflowStepId)
+                       where order.IsActive && !order.IsDeleted
                        select order;
             }
-        }
-
-        private static class OrderState
-        {
-            public const int OnTermination = 4;
-            public const int Archive = 6;
         }
     }
 }
