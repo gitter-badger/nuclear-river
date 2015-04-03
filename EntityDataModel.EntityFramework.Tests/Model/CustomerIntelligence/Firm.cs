@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public long TerritoryId { get; set; }
 
         public Client Client { get; set; }
-        public ICollection<FirmAccount> Accounts { get; set; }
+        public ICollection<FirmBalance> Accounts { get; set; }
         public ICollection<FirmCategory> Categories { get; set; }
         public ICollection<FirmCategoryGroup> CategoryGroups { get; set; }
     }

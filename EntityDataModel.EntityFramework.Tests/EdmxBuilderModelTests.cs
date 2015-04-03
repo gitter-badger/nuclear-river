@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 Assert.That(context.Set<Client>().ToArray(), Has.Length.EqualTo(1));
                 Assert.That(context.Set<Contact>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<Firm>().ToArray(), Has.Length.EqualTo(2));
-                Assert.That(context.Set<FirmAccount>().ToArray(), Has.Length.EqualTo(3));
+                Assert.That(context.Set<FirmBalance>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<FirmCategory>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<FirmCategoryGroup>().ToArray(), Has.Length.EqualTo(4));
             }
@@ -101,7 +101,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             builder.Conventions.Remove<PluralizingTableNameConvention>();
 
             builder.Entity<Firm>();
-            builder.Entity<FirmAccount>().HasKey(x => new { x.AccountId, x.FirmId });
+            builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId }).ToTable("FirmCategories");
             builder.Entity<FirmCategoryGroup>().HasKey(x => new { x.CategoryGroupId, x.FirmId }).ToTable("FirmCategoryGroups");
 
