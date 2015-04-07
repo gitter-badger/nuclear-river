@@ -13,6 +13,9 @@ namespace NuClear.AdvancedSearch.ServiceBus
         public TrackedUseCase Parse(Stream stream)
         {
             var trackedUseCase = (TrackedUseCase)_typeModel.Deserialize(stream, null, typeof(TrackedUseCase));
+            trackedUseCase.Tracker.SynchronizeAuxiliaryData();
+            trackedUseCase.Tracker.Complete();
+
             return trackedUseCase;
         }
     }

@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="2GIS.NuClear.Messaging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsLogging.API.1.0.0\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.1\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -60,7 +60,7 @@
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsLogging.API.1.0.0\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.0.0.0\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -119,7 +119,9 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

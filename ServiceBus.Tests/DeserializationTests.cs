@@ -21,17 +21,17 @@ namespace NuClear.AdvancedSearch.ServiceBus.Tests
 
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));
 
-            var store = trackedUseCase.Operations.First().ChangesContext.Changes;
+            var store = trackedUseCase.Operations.First().ChangesContext.UntypedChanges;
             Assert.That(store.Count, Is.EqualTo(1));
 
             var change = store.First();
-            Assert.That(change.Key, Is.StringContaining("Firm"));
+            Assert.That(change.Key, Is.EqualTo(new UnknownEntityType().SetId(146)));
 
             Assert.That(change.Value.Count, Is.EqualTo(1));
 
             var changesDescriptor = change.Value.First().Value;
 
-            Assert.That(changesDescriptor.Id, Is.EqualTo(70000001017863350));
+            Assert.That(changesDescriptor.Id, Is.EqualTo(13));
             Assert.That(changesDescriptor.Details.Count, Is.EqualTo(1));
 
             var changesType = changesDescriptor.Details.First().ChangesType;

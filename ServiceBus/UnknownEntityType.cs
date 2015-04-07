@@ -16,7 +16,7 @@ namespace NuClear.AdvancedSearch.ServiceBus
             get { return "Unknown EntityType with Id=" + Id; }
         }
 
-        internal UnknownEntityType SetId(int id)
+        public UnknownEntityType SetId(int id)
         {
             _id = id;
             return this;
