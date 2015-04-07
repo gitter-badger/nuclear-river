@@ -1,30 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-
-using LinqToDB;
+using System.Linq.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    public sealed class FactsContext : IFactsContext
+    public sealed class FactsFilteredContext : IFactsContext
     {
-        private readonly IDataContext _context;
+        private readonly IFactsContext _context;
+        private readonly Type _elementType;
+        private readonly IEnumerable<long> _ids;
 
-        public FactsContext(IDataContext context)
+        public FactsFilteredContext(IFactsContext context, Type elementType, IEnumerable<long> ids)
         {
             if (context == null)
             {
                 throw new ArgumentNullException("context");
             }
+
             _context = context;
+            _elementType = elementType;
+            _ids = ids;
         }
 
         public IQueryable<Account> Accounts
         {
             get
             {
-                return _context.GetTable<Account>();
+                return Filter(_context.Accounts);
             }
         }
 
@@ -32,7 +38,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<CategoryFirmAddress>();
+                return Filter(_context.CategoryFirmAddresses);
             }
         }
 
@@ -40,7 +46,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<CategoryOrganizationUnit>();
+                return Filter(_context.CategoryOrganizationUnits);
             }
         }
 
@@ -48,7 +54,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<Client>();
+                return Filter(_context.Clients);
             }
         }
 
@@ -56,7 +62,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<Contact>();
+                return Filter(_context.Contacts);
             }
         }
 
@@ -64,7 +70,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<Firm>();
+                return Filter(_context.Firms);
             }
         }
 
@@ -72,7 +78,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<FirmAddress>();
+                return Filter(_context.FirmAddresses);
             }
         }
 
@@ -80,7 +86,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<FirmContact>();
+                return Filter(_context.FirmContacts);
             }
         }
 
@@ -88,7 +94,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<LegalPerson>();
+                return Filter(_context.LegalPersons);
             }
         }
 
@@ -96,10 +102,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _context.GetTable<Order>();
+                return Filter(_context.Orders);
             }
         }
 
+        private IQueryable<T> Filter<T>(IQueryable<T> elements)
+            where T : IIdentifiableObject
+        {
+            return elements.Where(LookupPredicate<T>());
+        }
 
+        private Expression<Func<T, bool>> LookupPredicate<T>()
+            where T : IIdentifiableObject
+        {
+            if (typeof(T) == _elementType)
+            {
+                return x => _ids.Contains(x.Id);
+            }
+            return _ => true;
+        }
     }
 }

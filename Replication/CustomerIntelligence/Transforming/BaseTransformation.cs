@@ -9,7 +9,6 @@ using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.AdvancedSearch.Replication.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -26,22 +25,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _mapper = mapper;
         }
 
-        protected void Load(Operation operation, IQueryable query)
+        protected void Insert(IQueryable query)
         {
-            switch (operation)
-            {
-                case Operation.Created:
-                    Adapter.Insert(_mapper, query);
-                    break;
-                case Operation.Updated:
-                    Adapter.Update(_mapper, query);
-                    break;
-                case Operation.Deleted:
-                    Adapter.Delete(_mapper, query);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("operation");
-            }
+            Adapter.Insert(_mapper, query);
+        }
+
+        protected void Update(IQueryable query)
+        {
+            Adapter.Update(_mapper, query);
+        }
+
+        protected void Delete(IQueryable query)
+        {
+            Adapter.Delete(_mapper, query);
         }
 
         #region Adapter

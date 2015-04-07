@@ -9,35 +9,40 @@ using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.AdvancedSearch.Replication.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed class CustomerIntelligenceTransformation : BaseTransformation
     {
-        private static readonly Dictionary<Type, Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>> Queries =
-            new Dictionary<Type, Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>
-                {
-                    { typeof(Firm), (context, ids) => context.Firms.Where(x => ids.Contains(x.Id)) },
-                    { typeof(Client), (context, ids) => context.Clients.Where(x => ids.Contains(x.Id)) },
-                    { typeof(Contact), (context, ids) => context.Contacts.Where(x => ids.Contains(x.Id)) },
-                };
-
-        private static readonly Dictionary<Type, IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>> RelatedQueries;
-
-        static CustomerIntelligenceTransformation()
-        {
-            RelatedQueries = new Dictionary<Type, IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>>
-                             {
-                                 { typeof(Firm), new List<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>>
-                                                 {
-                                                     (context, ids) => context.FirmBalances.Where(x => ids.Contains(x.FirmId)),
-                                                     (context, ids) => context.FirmCategories.Where(x => ids.Contains(x.FirmId))
-                                                 } }
-                             };
-        }
+        private static readonly Dictionary<Type, AggregateInfo> Aggregates = new Dictionary<Type, AggregateInfo>
+            {
+                { 
+                    typeof(Firm), 
+                    new AggregateInfo(
+                        (context, ids) => context.Firms.Where(x => ids.Contains(x.Id)), 
+                        valueObjects: new[]
+                        {
+                            new ValueObjectInfo((context, ids) => context.FirmBalances.Where(x => ids.Contains(x.FirmId))), 
+                            new ValueObjectInfo((context, ids) => context.FirmCategories.Where(x => ids.Contains(x.FirmId))),
+                            new ValueObjectInfo((context, ids) => context.FirmCategoryGroups.Where(x => ids.Contains(x.FirmId)))
+                        }) 
+                },
+                { 
+                    typeof(Client), 
+                    new AggregateInfo(
+                        (context, ids) => context.Clients.Where(x => ids.Contains(x.Id)), 
+                        new[]
+                        {
+                            new EntityInfo((context, ids) => (
+                                from contact in context.Contacts
+                                where ids.Contains(contact.ClientId)
+                                select contact))
+                        }) 
+                }
+            };
 
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
@@ -58,67 +63,147 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _target = target;
         }
 
-        public IEnumerable<OperationInfo> Transform(IEnumerable<OperationInfo> operations)
+        public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            var result = Enumerable.Empty<OperationInfo>();
-
-            foreach (var slice in operations.GroupBy(x => new { x.EntityType, x.Operation }))
+            foreach (var slice in operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType }))
             {
                 var operation = slice.Key.Operation;
-                var entityType = slice.Key.EntityType;
-                var entityIds = slice.Select(x => x.EntityId).ToArray();
+                var aggregateType = slice.Key.AggregateType;
+                var aggregateIds = slice.Select(x => x.AggregateId).ToArray();
 
-                Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query;
-                if (!Queries.TryGetValue(entityType, out query))
+                AggregateInfo aggregateInfo;
+                if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))
                 {
-                    // exception?
-                    continue;
+                    throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                 }
 
-                IEnumerable<Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable>> relatedQueries;
-                if (RelatedQueries.TryGetValue(entityType, out relatedQueries))
+                if (operation == typeof(InitializeAggregate))
                 {
-                    foreach (var relatedQuery in relatedQueries)
-                    {
-                        var data = Utility.Merge(relatedQuery(_source, entityIds), relatedQuery(_target, entityIds));
-                        var toDel = data.Item1;
-                        var toAdd = data.Item2;
-
-                        Load(Operation.Deleted, toDel.AsQueryable());
-                        Load(Operation.Created, toAdd.AsQueryable());
-                    }
+                    InitializeAggregate(aggregateInfo, aggregateIds);
+                }
+                
+                if (operation == typeof(RecalculateAggregate))
+                {
+                    RecalculateAggregate(aggregateInfo, aggregateIds);
                 }
 
-                Load(operation, query(GetOperationContext(operation), entityIds));
+                if (operation == typeof(DestroyAggregate))
+                {
+                    DestroyAggregate(aggregateInfo, aggregateIds);
+                }
             }
-
-            return result;
         }
 
-        private ICustomerIntelligenceContext GetOperationContext(Operation operation)
+        private void InitializeAggregate(AggregateInfo aggregateInfo, long[] ids)
         {
-            switch (operation)
+            Insert(aggregateInfo.Query(_source, ids));
+
+            foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                case Operation.Created:
-                    return _source;
-                case Operation.Updated:
-                    return _source;
-                case Operation.Deleted:
-                    return _target;
-                default:
-                    throw new ArgumentOutOfRangeException("operation");
+                Insert(valueObjectInfo.Query(_source, ids));
             }
         }
 
-        #region Utility
+        private void RecalculateAggregate(AggregateInfo aggregateInfo, long[] ids)
+        {
+            foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
+            {
+                var query = valueObjectInfo.Query;
+                var result = MergeTool.Merge(query(_source, ids), query(_target, ids));
 
-        private static class Utility
+                var elementsToInsert = result.Difference;
+                var elementsToUpdate = result.Intersection;
+                var elementsToDelete = result.Complement;
+
+                Insert(elementsToInsert.AsQueryable());
+                Update(elementsToUpdate.AsQueryable());
+                Delete(elementsToDelete.AsQueryable());
+            }
+
+            Update(aggregateInfo.Query(_source, ids));
+
+            foreach (var entityInfo in aggregateInfo.Entities)
+            {
+                var query = entityInfo.Query;
+                var result = MergeTool.Merge(query(_source, ids), query(_target, ids));
+
+                var elementsToInsert = result.Difference;
+                var elementsToUpdate = result.Intersection;
+                var elementsToDelete = result.Complement;
+
+                Insert(elementsToInsert.AsQueryable());
+                Update(elementsToUpdate.AsQueryable());
+                Delete(elementsToDelete.AsQueryable());
+            }
+        }
+
+        private void DestroyAggregate(AggregateInfo aggregateInfo, long[] ids)
+        {
+            foreach (var entityInfo in aggregateInfo.Entities)
+            {
+                Delete(entityInfo.Query(_target, ids));
+            }
+
+            foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
+            {
+                Delete(valueObjectInfo.Query(_target, ids));
+            }
+
+            Delete(aggregateInfo.Query(_target, ids));
+        }
+
+        #region Aggregate structure
+
+        private class AggregateInfo
+        {
+            public AggregateInfo(
+                Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query,
+                IEnumerable<EntityInfo> entities = null,
+                IEnumerable<ValueObjectInfo> valueObjects = null)
+            {
+                Query = query;
+                Entities = entities ?? Enumerable.Empty<EntityInfo>();
+                ValueObjects = valueObjects ?? Enumerable.Empty<ValueObjectInfo>();
+            }
+
+            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
+
+            public IEnumerable<EntityInfo> Entities { get; private set; }
+
+            public IEnumerable<ValueObjectInfo> ValueObjects { get; private set; }
+        }
+
+        private class EntityInfo
+        {
+            public EntityInfo(Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query)
+            {
+                Query = query;
+            }
+
+            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
+        }
+
+        private class ValueObjectInfo
+        {
+            public ValueObjectInfo(Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query)
+            {
+                Query = query;
+            }
+
+            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
+        }
+
+        #endregion
+
+        #region MergeTool
+
+        private static class MergeTool
         {
             private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiableObject>(null, null)).GetGenericMethodDefinition();
 
             private static readonly ConcurrentDictionary<Type, MethodInfo> Methods = new ConcurrentDictionary<Type, MethodInfo>();
 
-            public static Tuple<IEnumerable, IEnumerable> Merge(IQueryable newData, IQueryable oldData)
+            public static MergeResult Merge(IQueryable newData, IQueryable oldData)
             {
                 if (newData.ElementType != oldData.ElementType)
                 {
@@ -128,17 +213,25 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var type = newData.ElementType;
                 var method = Methods.GetOrAdd(type, t => MergeMethodInfo.MakeGenericMethod(t));
 
-                return (Tuple<IEnumerable, IEnumerable>)method.Invoke(null, new object[] { newData, oldData });
+                return (MergeResult)method.Invoke(null, new object[] { newData, oldData });
             }
 
-            private static Tuple<IEnumerable, IEnumerable> Merge<T>(IEnumerable<T> newSetData, IEnumerable<T> oldSetData)
+            private static MergeResult Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
             {
-                var newSet = new HashSet<T>(newSetData);
-                var oldSet = new HashSet<T>(oldSetData);
-                var toDel = oldSet.Where(x => !newSet.Contains(x));
-                var toAdd = newSet.Where(x => !oldSet.Contains(x));
+                var set1 = new HashSet<T>(data1);
+                var set2 = new HashSet<T>(data2);
+                var difference = set1.Where(x => !set2.Contains(x));
+                var intersection = set1.Where(x => set1.Contains(x)); // NOTE: it's important to note that the operation result is not symmetric
+                var complement = set2.Where(x => !set1.Contains(x));
 
-                return Tuple.Create<IEnumerable, IEnumerable>(toDel, toAdd);
+                return new MergeResult { Difference = difference, Intersection = intersection, Complement = complement };
+            }
+
+            public class MergeResult
+            {
+                public IEnumerable Difference { get; set; }
+                public IEnumerable Intersection { get; set; }
+                public IEnumerable Complement { get; set; }
             }
         }
 

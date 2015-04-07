@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 using LinqToDB;
@@ -9,10 +11,10 @@ using Moq;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.AdvancedSearch.Replication.Transforming;
 
 using NUnit.Framework;
 
@@ -20,49 +22,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
     using Erm = CustomerIntelligence.Model.Erm;
     using Facts = CustomerIntelligence.Model.Facts;
+    using CI = CustomerIntelligence.Model;
 
     [TestFixture]
     internal class FactsTransformationTests : BaseTransformationFixture
     {
-        [TestCase(200000, 1, TestName = "Should convert 'Employee' value.")]
-        [TestCase(200001, 2, TestName = "Should convert 'InfluenceDecisions' value.")]
-        [TestCase(200002, 3, TestName = "Should convert 'MakingDecisions' value.")]
-        [TestCase(Int32.MinValue, 0, TestName = "Should not fail for an unknown value.")]
-        public void ShouldConvertContactRole(int ermRole, int expectedRole)
-        {
-            const int entityId = 1;
-
-            var ermContext = Mock.Of<IErmContext>(ctx => ctx.Contacts == Inquire(new Erm::Contact { Id = entityId, Role = ermRole }));
-
-            Transformation.Create(ermContext)
-                .Transform(Operation.Create<Facts::Contact>(entityId))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == entityId && contact.Role == expectedRole)));
-        }
-
         [Test]
-        public void ShouldProcessContactPhones()
+        public void ShouldCreateFirm()
         {
-            var ermContext = Mock.Of<IErmContext>(
-                ctx => ctx.Contacts == Inquire(
-                    new Erm::Contact { Id = 1 },
-                    new Erm::Contact { Id = 2, MainPhoneNumber = "<phone>" },
-                    new Erm::Contact { Id = 3, AdditionalPhoneNumber = "<phone>" },
-                    new Erm::Contact { Id = 4, MobilePhoneNumber = "<phone>" },
-                    new Erm::Contact { Id = 5, HomePhoneNumber = "<phone>" }));
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
 
-            Transformation.Create(ermContext)
-                .Transform(Operation.Create<Facts::Contact>(1))
-                .Transform(Operation.Create<Facts::Contact>(2))
-                .Transform(Operation.Create<Facts::Contact>(3))
-                .Transform(Operation.Create<Facts::Contact>(4))
-                .Transform(Operation.Create<Facts::Contact>(5))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 1 && !contact.HasPhone)))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 2 && contact.HasPhone)))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 3 && contact.HasPhone)))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 4 && contact.HasPhone)))
-                .Verify(m => m.Insert(It.Is<Facts::Contact>(contact => contact.Id == 5 && contact.HasPhone)));
-
-            Mock.Get(ermContext).VerifyGet(x => x.Contacts, Times.Exactly(5), "The transformation was applied sequentially (not in bulk).");
+            Transformation.Create(source)
+                .Transform(Fact.Create<Facts::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new Facts::Firm { Id = 1 }))));
         }
 
         [TestCaseSource("Cases")]
@@ -140,7 +113,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmConnection.Has(source);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Create<TFactElement>(entityId))
+                          .Transform(Fact.Create<TFactElement>(entityId))
                           .Verify(x => x.Insert(It.Is(Predicate.ById<TFactElement>(entityId))), Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
@@ -152,7 +125,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsConnection.Has(target);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Update<TFactElement>(target.Id))
+                          .Transform(Fact.Update<TFactElement>(target.Id))
                           .Verify(x => x.Update(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
@@ -161,7 +134,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsConnection.Has(target);
 
             Transformation.Create(ErmConnection, FactsConnection)
-                          .Transform(Operation.Delete<TFactElement>(target.Id))
+                          .Transform(Fact.Delete<TFactElement>(target.Id))
                           .Verify(x => x.Delete(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
         }
 
@@ -170,40 +143,51 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         private class Transformation
         {
             private readonly FactsTransformation _transformation;
-            private readonly Mock<IDataMapper> _mapper;
+            private readonly IDataMapper _mapper;
+            private readonly List<AggregateOperation> _operations;
 
-            private Transformation(IFactsContext source, IFactsContext target)
+            private Transformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
             {
-                _mapper = new Mock<IDataMapper>();
-                _transformation = new FactsTransformation(source, target, _mapper.Object);
+                _mapper = mapper ?? Mock.Of<IDataMapper>();
+                _transformation = new FactsTransformation(source, target, _mapper);
+                _operations = new List<AggregateOperation>();
             }
 
-            public static Transformation Create(IDataContext source = null, IDataContext target = null)
+            public static Transformation Create(IDataContext source = null, IDataContext target = null, IDataMapper mapper = null)
             {
-                return Create(
-                    new ErmContext(source ?? new Mock<IDataContext>().Object),
-                    new FactsContext(target ?? new Mock<IDataContext>().Object));
+                return Create(new ErmContext(source ?? new Mock<IDataContext>().Object), new FactsContext(target ?? new Mock<IDataContext>().Object), mapper);
             }
 
-            public static Transformation Create(IErmContext source = null, IFactsContext target = null)
+            public static Transformation Create(IErmContext source = null, IFactsContext target = null, IDataMapper mapper = null)
             {
-                return Create(new FactsTransformationContext(source ?? new Mock<IErmContext>().Object), target);
+                return Create(new FactsTransformationContext(source ?? new Mock<IErmContext>().Object), target, mapper);
             }
 
-            public static Transformation Create(IFactsContext source = null, IFactsContext target = null)
+            public static Transformation Create(IFactsContext source = null, IFactsContext target = null, IDataMapper mapper = null)
             {
-                return new Transformation(source ?? new Mock<IFactsContext>().Object, target ?? new Mock<IFactsContext>().Object);
+                return new Transformation(source ?? new Mock<IFactsContext>().Object, target ?? new Mock<IFactsContext>().Object, mapper);
             }
 
-            public Transformation Transform(params OperationInfo[] operations)
+            public Transformation Transform(params FactOperation[] operations)
             {
-                _transformation.Transform(operations);
+                _operations.AddRange(_transformation.Transform(operations));
                 return this;
             }
 
             public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times = null, string failMessage = null)
             {
-                _mapper.Verify(action, times ?? Times.AtLeastOnce, failMessage);
+                Mock.Get(_mapper).Verify(action, times ?? Times.AtLeastOnce, failMessage);
+                return this;
+            }
+
+            public Transformation Verify(IEnumerable<AggregateOperation> expected, Func<AggregateOperation, bool> predicate = null)
+            {
+                var operations = _operations.AsEnumerable();
+                if (predicate != null)
+                {
+                    operations = operations.Where(predicate);
+                }
+                Assert.That(operations.ToArray(), Is.EquivalentTo(expected.ToArray()));
                 return this;
             }
         }

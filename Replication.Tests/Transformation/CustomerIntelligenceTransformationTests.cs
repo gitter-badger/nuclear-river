@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Linq.Expressions;
 
 using LinqToDB;
@@ -9,269 +8,384 @@ using Moq;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.AdvancedSearch.Replication.Transforming;
 
 using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
-    using Facts = CustomerIntelligence.Model.Facts;
     using CI = CustomerIntelligence.Model;
 
-    /// <remarks>
-    /// Executes in invariant culture to simplify expected result after the formatting.
-    /// </remarks>>
-    [TestFixture, SetCulture("")]
+    [TestFixture]
     internal class CustomerIntelligenceTransformationTests : BaseTransformationFixture
     {
         [Test]
-        public void ShouldProcessFirmDisqualifiedDate()
+        public void ShouldInitializeClient()
         {
-            var firmDate = new DateTimeOffset(2015, 1, 1, 12, 30, 0, new TimeSpan());
-            var clientDate = new DateTimeOffset(2015, 2, 1, 12, 30, 0, new TimeSpan());
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
 
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1, LastDisqualifiedOn = firmDate },
-                new Facts::Firm { Id = 2, LastDisqualifiedOn = firmDate , ClientId = 1}
-                ));
-            context.SetupGet(x => x.Clients).Returns(Inquire(
-                new Facts::Client { Id = 1, LastDisqualifiedOn = clientDate }
-                ));
-
-            Transformation.Create(context.Object)
-                .Transform(Operation.Create<CI::Firm>(1))
-                .Transform(Operation.Create<CI::Firm>(2))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, LastDisqualifiedOn = firmDate }, x => new { x.Id, x.LastDisqualifiedOn }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 2, LastDisqualifiedOn = clientDate }, x => new { x.Id, x.LastDisqualifiedOn }))));
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Client>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))));
         }
 
         [Test]
-        public void ShouldProcessFirmDistributionDate()
+        public void ShouldInitializeClientHavingContact()
         {
-            var date = new DateTimeOffset(2015, 2, 1, 12, 30, 0, new TimeSpan());
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }) &&
+                ctx.Contacts == Inquire(new CI::Contact { Id = 1, ClientId = 1 }));
 
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1 },
-                new Facts::Firm { Id = 2 }
-                ));
-            context.SetupGet(x => x.Orders).Returns(Inquire(
-                new Facts::Order { Id = 1, EndDistributionDateFact = date, FirmId = 2 }
-                ));
-
-            Transformation.Create(context.Object)
-                .Transform(Operation.Create<CI::Firm>(1))
-                .Transform(Operation.Create<CI::Firm>(2))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, LastDistributedOn = null }, x => new { x.Id, x.LastDistributedOn }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 2, LastDistributedOn = date }, x => new { x.Id, x.LastDistributedOn }))));
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Client>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Contact { Id = 1 }, x => x.Id))), Times.Never);
         }
 
         [Test]
-        public void ShouldProcessFirmHasPhoneFlag()
+        public void ShouldRecalculateClient()
         {
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1, Name = "no phone" },
-                new Facts::Firm { Id = 2, Name = "has phone in client", ClientId = 1},
-                new Facts::Firm { Id = 3, Name = "has phone in client contact", ClientId = 2}
-                ));
-            context.SetupGet(x => x.Clients).Returns(Inquire(
-                new Facts::Client { Id = 1, HasPhone = true },
-                new Facts::Client { Id = 2 }
-                ));
-            context.SetupGet(x => x.Contacts).Returns(Inquire(
-                new Facts::Contact { Id = 1, HasPhone = true, ClientId = 2 }
-                ));
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(new CI::Client { Id = 1, Name = "new name" }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(new CI::Client { Id = 1, Name = "old name" }));
 
-            Transformation.Create(context.Object)
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Client>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1, Name = "new name" }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateClientHavingContact()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(
+                    new CI::Client { Id = 1 },
+                    new CI::Client { Id = 2 },
+                    new CI::Client { Id = 3 }
+                    ) &&
+                ctx.Contacts == Inquire(
+                    new CI::Contact { Id = 1, ClientId = 1 },
+                    new CI::Contact { Id = 2, ClientId = 2 }
+                    ));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(
+                    new CI::Client { Id = 1 },
+                    new CI::Client { Id = 2 },
+                    new CI::Client { Id = 3 }
+                    ) &&
+                ctx.Contacts == Inquire(
+                    new CI::Contact { Id = 2, ClientId = 2 },
+                    new CI::Contact { Id = 3, ClientId = 3 }
+                    ));
+
+            Transformation.Create(source, target)
                 .Transform(
-                    Operation.Create<CI::Firm>(1), 
-                    Operation.Create<CI::Firm>(2), 
-                    Operation.Create<CI::Firm>(3))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, HasPhone = false }, x => new { x.Id, x.HasPhone }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 2, HasPhone = true }, x => new { x.Id, x.HasPhone }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 3, HasPhone = true }, x => new { x.Id, x.HasPhone }))));
+                    Aggregate.Recalculate<CI::Client>(1),
+                    Aggregate.Recalculate<CI::Client>(2),
+                    Aggregate.Recalculate<CI::Client>(3))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 2 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 3 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Contact { Id = 1, ClientId = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Contact { Id = 2, ClientId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Contact { Id = 3, ClientId = 3 }))));
         }
 
         [Test]
-        public void ShouldProcessFirmHasWebsiteFlag()
+        public void ShouldDestroyClient()
         {
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1, Name = "no website" },
-                new Facts::Firm { Id = 2, Name = "has website in client", ClientId = 1 },
-                new Facts::Firm { Id = 3, Name = "has website in client contact", ClientId = 2 }
-                ));
-            context.SetupGet(x => x.Clients).Returns(Inquire(
-                new Facts::Client { Id = 1, HasWebsite = true },
-                new Facts::Client { Id = 2 }
-                ));
-            context.SetupGet(x => x.Contacts).Returns(Inquire(
-                new Facts::Contact { Id = 1, HasWebsite = true, ClientId = 2 }
-                ));
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
 
-            Transformation.Create(context.Object)
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Client>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldDestroyClientHavingContact()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }) &&
+                ctx.Contacts == Inquire(new CI::Contact { Id = 1, ClientId = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Client>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Contact { Id = 1, ClientId = 1 }))));
+        }
+
+        [Test]
+        public void ShouldInitializeFirm()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Firms == Inquire(new CI::Firm { Id = 1 }));
+
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
+        }
+        
+        [Test]
+        public void ShouldInitializeFirmHavingBalance()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmBalances == Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123.45m }));
+
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123.45m }))));
+        }
+        
+        [Test]
+        public void ShouldInitializeFirmHavingCategory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmCategories == Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }));
+
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
+        }
+        
+        [Test]
+        public void ShouldInitializeFirmHavingCategoryGroup()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmCategoryGroups == Inquire(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }));
+
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))));
+        }
+        
+        [Test]
+        public void ShouldInitializeFirmHavingClient()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
+                ctx.Firms == Inquire(new CI::Firm { Id = 1, ClientId = 1 }) &&
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
+
+            Transformation.Create(source)
+                .Transform(Aggregate.Initialize<CI::Firm>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
+        }
+
+        [Test]
+        public void ShouldRecalculateFirm()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Firms == Inquire(new CI::Firm { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Firms == Inquire(new CI::Firm { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Firm>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmHavingBalance()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmBalances == Inquire(
+                    new CI::FirmBalance { FirmId = 1, Balance = 123 },
+                    new CI::FirmBalance { FirmId = 2, Balance = 456 }
+                    ));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmBalances == Inquire(
+                    new CI::FirmBalance { FirmId = 2, Balance = 123 },
+                    new CI::FirmBalance { FirmId = 3, Balance = 123 }
+                    ));
+
+            Transformation.Create(source, target)
                 .Transform(
-                    Operation.Create<CI::Firm>(1),
-                    Operation.Create<CI::Firm>(2),
-                    Operation.Create<CI::Firm>(3))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, HasWebsite = false }, x => new { x.Id, x.HasWebsite }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 2, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 3, HasWebsite = true }, x => new { x.Id, x.HasWebsite }))));
+                    Aggregate.Recalculate<CI::Firm>(1),
+                    Aggregate.Recalculate<CI::Firm>(2),
+                    Aggregate.Recalculate<CI::Firm>(3))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
         }
 
         [Test]
-        public void ShouldProcessFirmAddressCount()
+        public void ShouldRecalculateFirmHavingCategory()
         {
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1 },
-                new Facts::Firm { Id = 2 }
-                ));
-            context.SetupGet(x => x.FirmAddresses).Returns(Inquire(
-                new Facts::FirmAddress { Id = 1, FirmId = 2 }
-                ));
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmCategories == Inquire(
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                    new CI::FirmCategory { FirmId = 2, CategoryId = 2 }
+                    ));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmCategories == Inquire(
+                    new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
+                    new CI::FirmCategory { FirmId = 3, CategoryId = 1 }
+                    ));
 
-            Transformation.Create(context.Object)
-                .Transform(Operation.Create<CI::Firm>(1))
-                .Transform(Operation.Create<CI::Firm>(2))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, AddressCount = 0 }, x => new { x.Id, x.AddressCount }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 2, AddressCount = 1 }, x => new { x.Id, x.AddressCount }))));
+            Transformation.Create(source, target)
+                .Transform(
+                    Aggregate.Recalculate<CI::Firm>(1),
+                    Aggregate.Recalculate<CI::Firm>(2),
+                    Aggregate.Recalculate<CI::Firm>(3))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }))));
         }
 
         [Test]
-        public void ShouldProcessFirmAccounts()
+        public void ShouldRecalculateFirmHavingCategoryGroup()
         {
-            var facts = new Mock<ICustomerIntelligenceContext>();
-            facts.SetupGet(x => x.Firms).Returns(Inquire(
-                new CI::Firm { Id = 2 },
-                new CI::Firm { Id = 3 }
-                ));
-            facts.SetupGet(x => x.FirmBalances).Returns(Inquire(
-                new CI::FirmBalance { FirmId = 2, Balance = 2 },
-                new CI::FirmBalance { FirmId = 2, Balance = 3 },
-                new CI::FirmBalance { FirmId = 3, Balance = 1 }
-                ));
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmCategoryGroups == Inquire(
+                    new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 },
+                    new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }
+                    ));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(
+                    new CI::Firm { Id = 1 },
+                    new CI::Firm { Id = 2 },
+                    new CI::Firm { Id = 3 }
+                    ) &&
+                ctx.FirmCategoryGroups == Inquire(
+                    new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 1 },
+                    new CI::FirmCategoryGroup { FirmId = 3, CategoryGroupId = 1 }
+                    ));
 
-            var ci = new Mock<ICustomerIntelligenceContext>();
-            ci.SetupGet(x => x.Firms).Returns(Inquire(
-                new CI::Firm { Id = 1 },
-                new CI::Firm { Id = 2 }
-                ));
-            ci.SetupGet(x => x.FirmBalances).Returns(Inquire(
-                new CI::FirmBalance { FirmId = 1, Balance = 1 },
-                new CI::FirmBalance { FirmId = 2, Balance = 1 },
-                new CI::FirmBalance { FirmId = 2, Balance = 2 }
-                ));
-
-            Transformation.Create(facts.Object, ci.Object)
-                .Transform(Operation.Create<CI::Firm>(3))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 1 }, x => new { x.FirmId, x.Balance }))), failMessage: "accounts should be added for an inserting firm");
-
-            Transformation.Create(facts.Object, ci.Object)
-                .Transform(Operation.Update<CI::Firm>(2))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 1 }, x => new { x.FirmId, x.Balance }))), failMessage: "old accounts should be deleted for an updating firm")
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 3 }, x => new { x.FirmId, x.Balance }))), failMessage: "new accounts should be added for an updating firm");
-
-            Transformation.Create(facts.Object, ci.Object)
-                .Transform(Operation.Delete<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 1 }, x => new { x.FirmId, x.Balance }))), failMessage: "accounts should be deleted for a deleting firm");
+            Transformation.Create(source, target)
+                .Transform(
+                    Aggregate.Recalculate<CI::Firm>(1),
+                    Aggregate.Recalculate<CI::Firm>(2),
+                    Aggregate.Recalculate<CI::Firm>(3))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 3, CategoryGroupId = 1 }))));
         }
 
         [Test]
-        public void ShouldProcessFirmCategories()
+        public void ShouldRecalculateFirmHavingClient()
         {
-            var facts = new Mock<ICustomerIntelligenceContext>();
-            facts.SetupGet(x => x.Firms).Returns(Inquire(
-                new CI::Firm { Id = 2 },
-                new CI::Firm { Id = 3 }
-                ));
-            facts.SetupGet(x => x.FirmCategories).Returns(Inquire(
-                new CI::FirmCategory { FirmId = 2, CategoryId = 2 },
-                new CI::FirmCategory { FirmId = 2, CategoryId = 3 },
-                new CI::FirmCategory { FirmId = 3, CategoryId = 1 }
-                ));
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1, ClientId = 1 }) &&
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
 
-            var ci = new Mock<ICustomerIntelligenceContext>();
-            ci.SetupGet(x => x.Firms).Returns(Inquire(
-                new CI::Firm { Id = 1 },
-                new CI::Firm { Id = 2 }
-                ));
-            ci.SetupGet(x => x.FirmCategories).Returns(Inquire(
-                new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
-                new CI::FirmCategory { FirmId = 2, CategoryId = 2 }
-                ));
-
-            Transformation.Create(facts.Object, ci.Object)
-                .Transform(Operation.Create<CI::Firm>(3))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "contacts should be added for an inserting firm");
-                                                                                                                                                   
-            Transformation.Create(facts.Object, ci.Object)                                                                                         
-                .Transform(Operation.Update<CI::Firm>(2))                                                                                          
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "old contacts should be deleted for an updating firm")
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 3 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "new contacts should be added for an updating firm");
-                                                                                                                                                   
-            Transformation.Create(facts.Object, ci.Object)                                                                                         
-                .Transform(Operation.Delete<CI::Firm>(1))                                                                                          
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }, x => new { x.FirmId, x.CategoryId }))), failMessage: "contacts should be deleted for a deleting firm");
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Firm>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
         }
 
-        [TestCaseSource("Cases")]
-        public void ShouldProcessChanges(Action test)
+        [Test]
+        public void ShouldDestroyFirm()
         {
-            test();
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Firms == Inquire(new CI::Firm { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
         }
 
-        private IEnumerable Cases
+        [Test]
+        public void ShouldDestroyFirmHavingBalance()
         {
-            get
-            {
-                yield return Case(() => VerifyElementInsertion(new Facts::Firm { Id = 1 }, new CI::Firm { Id = 1 }, x => new { x.Id })).SetName("Should insert firm");
-                yield return Case(() => VerifyElementInsertion(new Facts::Client { Id = 1 }, new CI::Client { Id = 1 }, x => new { x.Id })).SetName("Should insert client");
-                yield return Case(() => VerifyElementInsertion(new Facts::Contact { Id = 1 }, new CI::Contact { Id = 1 }, x => new { x.Id })).SetName("Should insert contact");
-                yield return Case(() => VerifyElementUpdate(new Facts::Firm { Id = 1 }, new CI::Firm { Id = 1 }, x => new { x.Id })).SetName("Should update firm");
-                yield return Case(() => VerifyElementUpdate((new Facts::Client { Id = 1 }), new CI::Client { Id = 1 }, x => new { x.Id })).SetName("Should update client");
-                yield return Case(() => VerifyElementUpdate((new Facts::Contact { Id = 1 }), new CI::Contact { Id = 1 }, x => new { x.Id })).SetName("Should update contact");
-                yield return Case(() => VerifyElementDeletion(new Facts::Firm { Id = 1 }, new CI::Firm { Id = 1 }, x => new { x.Id })).SetName("Should delete firm");
-                yield return Case(() => VerifyElementDeletion(new Facts::Client { Id = 1 }, new CI::Client { Id = 1 }, x => new { x.Id })).SetName("Should delete client");
-                yield return Case(() => VerifyElementDeletion(new Facts::Contact { Id = 1 }, new CI::Contact { Id = 1 }, x => new { x.Id })).SetName("Should delete contact");
-            }
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmBalances == Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123 }));
+
+            Transformation.Create(source, target)
+                .Transform(
+                    Aggregate.Destroy<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))));
         }
 
-        private void VerifyElementInsertion<TSource, TTarget, TProjection>(TSource source, TTarget target, Func<TTarget, TProjection> projector)
-            where TTarget : IIdentifiableObject
+        [Test]
+        public void ShouldDestroyFirmHavingCategory()
         {
-            FactsConnection.Has(source);
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmCategories == Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }));
 
-            Transformation.Create(FactsConnection, CustomerIntelligenceConnection)
-                .Transform(Operation.Create<TTarget>(target.Id))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(target, projector))), Times.Once, string.Format("The {0} element was not inserted.", typeof(TTarget).Name));
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
         }
 
-        private void VerifyElementUpdate<TSource, TTarget, TProjection>(TSource source, TTarget target, Func<TTarget, TProjection> projector)
-            where TTarget : IIdentifiableObject
+        [Test]
+        public void ShouldDestroyFirmHavingCategoryGroup()
         {
-            FactsConnection.Has(source);
-            CustomerIntelligenceConnection.Has(target);
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmCategoryGroups == Inquire(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }));
 
-            Transformation.Create(FactsConnection, CustomerIntelligenceConnection)
-                .Transform(Operation.Update<TTarget>(target.Id))
-                .Verify(m => m.Update(It.Is(Predicate.Match(target, projector))), Times.Once, string.Format("The {0} element was not updated.", typeof(TTarget).Name));
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))));
         }
 
-        private void VerifyElementDeletion<TSource, TTarget, TProjection>(TSource source, TTarget target, Func<TTarget, TProjection> projector)
-            where TTarget : IIdentifiableObject
+        [Test]
+        public void ShouldDestroyFirmHavingClient()
         {
-            CustomerIntelligenceConnection.Has(target);
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1, ClientId = 1 }) &&
+                ctx.Clients == Inquire(new CI::Client { Id = 1 }));
 
-            Transformation.Create(FactsConnection, CustomerIntelligenceConnection)
-                .Transform(Operation.Delete<TTarget>(target.Id))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(target, projector))), Times.Once, string.Format("The {0} element was not deleted.", typeof(TTarget).Name));
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
         }
 
         #region Transformation
@@ -304,7 +418,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return new Transformation(source ?? new Mock<ICustomerIntelligenceContext>().Object, target ?? new Mock<ICustomerIntelligenceContext>().Object);
             }
 
-            public Transformation Transform(params OperationInfo[] operations)
+            public Transformation Transform(params AggregateOperation[] operations)
             {
                 _transformation.Transform(operations);
                 return this;

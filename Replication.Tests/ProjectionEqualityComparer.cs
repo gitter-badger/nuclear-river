@@ -41,14 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             var strX = ToSrting(x);
             var strY = ToSrting(y);
 
-            var areEqual = String.CompareOrdinal(strX, strY) == 0;
-            if (!areEqual)
-            {
-                Debug.WriteLine(strY, "(l-operand)");
-                Debug.WriteLine(strX, "(r-operand)");
-            }
-
-            return areEqual;
+            return String.CompareOrdinal(strX, strY) == 0;
         }
 
         public int GetHashCode(T obj)

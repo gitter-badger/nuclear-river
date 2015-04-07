@@ -23,6 +23,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                 return item => item.Id == id;
             }
 
+            public static Expression<Func<T, bool>> Match<T>(T expected)
+            {
+                return Match(expected, x => x);
+            }
+
             public static Expression<Func<T, bool>> Match<T, TProjection>(T expected, Func<T, TProjection> projector)
             {
                 return item => new ProjectionEqualityComparer<T, TProjection>(projector).Equals(item, expected);

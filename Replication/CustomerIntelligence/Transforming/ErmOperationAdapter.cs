@@ -26,24 +26,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                                                           { Code.Order, typeof(Order) }
                                                                       };
 
-        public IEnumerable<OperationInfo> Convert(IEnumerable<Tuple<ErmOperation, ErmEntityType, ErmEntityId>> changes)
-        {
-            foreach (var change in changes)
-            {
-                Type entityType;
-                if (!EntityTypeMap.TryGetValue(change.Item2, out entityType))
-                {
-                    // exception
-                    continue;
-                }
-                
-                var operation = (Operation)change.Item1;
-                var entityId = change.Item3;
-
-                yield return new OperationInfo(operation, entityType, entityId);
-            }
-        }
-
+//        public IEnumerable<OperationInfo> Convert(IEnumerable<Tuple<ErmOperation, ErmEntityType, ErmEntityId>> changes)
+//        {
+//            foreach (var change in changes)
+//            {
+//                Type entityType;
+//                if (!EntityTypeMap.TryGetValue(change.Item2, out entityType))
+//                {
+//                    // exception
+//                    continue;
+//                }
+//                
+//                var operation = (Operation)change.Item1;
+//                var entityId = change.Item3;
+//
+//                yield return new OperationInfo(operation, entityType, entityId);
+//            }
+//        }
+//
         private static class Code
         {
             public const int Account = 142;
