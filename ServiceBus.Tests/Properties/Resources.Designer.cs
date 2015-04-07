@@ -63,6 +63,26 @@ namespace NuClear.AdvancedSearch.ServiceBus.Tests.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] ComplexUseCase {
+            get {
+                object obj = ResourceManager.GetObject("ComplexUseCase", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] EmptyUseCase {
+            get {
+                object obj = ResourceManager.GetObject("EmptyUseCase", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] UpdateFirm {
             get {
                 object obj = ResourceManager.GetObject("UpdateFirm", resourceCulture);
