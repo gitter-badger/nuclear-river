@@ -4,6 +4,10 @@ using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.Jobs.Schedulers;
 using NuClear.Jobs.Unity;
+using NuClear.Security;
+using NuClear.Security.API;
+using NuClear.Security.API.UserContext;
+using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
 using NuClear.Tracing.API;
@@ -23,6 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                  };
             container.ConfigureSettingsAspects(settingsContainer)
                      .ConfigureTracing(tracer, tracerContextManager)
+                     .ConfigureSecurityAspects()
                      .ConfigureQuartz()
                      .PerformTypeRegistrations();
 
@@ -35,6 +40,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         {
             return container.RegisterInstance(tracer)
                             .RegisterInstance(tracerContextManager);
+        }
+
+        private static IUnityContainer ConfigureSecurityAspects(this IUnityContainer container)
+        {
+            return container
+                .RegisterType<IUserAuthenticationService, NullUserAuthenticationService>(Lifetime.PerScope)
+                .RegisterType<IUserProfileService, NullUserProfileService>(Lifetime.PerScope)
+                .RegisterType<IUserContext, UserContext>(Lifetime.PerScope, new InjectionFactory(c => new UserContext(null, null)))
+                .RegisterType<IUserLogonAuditor, LoggerContextUserLogonAuditor>(Lifetime.Singleton)
+                .RegisterType<IUserIdentityLogonService, UserIdentityLogonService>(Lifetime.PerScope)
+                .RegisterType<ISignInService, WindowsIdentitySignInService>(Lifetime.PerScope)
+                .RegisterType<IUserImpersonationService, UserImpersonationService>(Lifetime.PerScope);
         }
 
         private static IUnityContainer ConfigureQuartz(this IUnityContainer container)

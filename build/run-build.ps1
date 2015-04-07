@@ -1,4 +1,4 @@
-﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
+param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
 	$TaskList = @('Run-UnitTests')
@@ -54,5 +54,5 @@ $Properties.EnvironmentMetadata = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.16\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.28\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties
