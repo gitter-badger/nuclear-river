@@ -1,6 +1,6 @@
 ﻿using NuClear.Assembling.Zones;
 
-namespace Replication.EntryPoint.DI
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
     public sealed class ReplicationZone : IZone
     {

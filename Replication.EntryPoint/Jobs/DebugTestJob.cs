@@ -7,7 +7,7 @@ using NuClear.Tracing.API;
 
 using Quartz;
 
-namespace Replication.EntryPoint.Jobs
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 {
     public sealed class DebugTestJob : TaskServiceJobBase
     {

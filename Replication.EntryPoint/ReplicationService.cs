@@ -2,7 +2,7 @@
 
 using NuClear.Jobs.Schedulers;
 
-namespace Replication.EntryPoint
+namespace NuClear.AdvancedSearch.Replication.EntryPoint
 {
     public partial class ReplicationService : ServiceBase
     {

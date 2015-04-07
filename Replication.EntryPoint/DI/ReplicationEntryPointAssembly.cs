@@ -1,7 +1,7 @@
 ﻿using NuClear.Assembling.Zones;
 using NuClear.Jobs;
 
-namespace Replication.EntryPoint.DI
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
     public class ReplicationEntryPointAssembly : IZoneAssembly<ReplicationZone>,
                                                  IZoneAnchor<ReplicationZone>,

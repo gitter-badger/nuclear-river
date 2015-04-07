@@ -6,6 +6,8 @@ using System.ServiceProcess;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.EntryPoint.DI;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Jobs.Schedulers;
 using NuClear.Settings.API;
 using NuClear.Tracing.API;
@@ -13,10 +15,7 @@ using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;
 using NuClear.Tracing.Log4Net.Config;
 
-using Replication.EntryPoint.DI;
-using Replication.EntryPoint.Settings;
-
-namespace Replication.EntryPoint
+namespace NuClear.AdvancedSearch.Replication.EntryPoint
 {
     internal static class Program
     {

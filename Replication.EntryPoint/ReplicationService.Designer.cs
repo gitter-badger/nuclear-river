@@ -1,4 +1,4 @@
-﻿namespace Replication.EntryPoint
+﻿namespace NuClear.AdvancedSearch.Replication.EntryPoint
 {
     partial class ReplicationService
     {

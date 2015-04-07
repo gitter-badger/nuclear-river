@@ -1,7 +1,7 @@
 ﻿using NuClear.Settings;
 using NuClear.Settings.API;
 
-namespace Replication.EntryPoint.Settings
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
     public sealed class EnvironmentsAspect : ISettingsAspect, IEnvironmentSettings
     {
