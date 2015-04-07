@@ -56,16 +56,16 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint
                 {
                     schedulerManager.Start();
 
-                    Console.WriteLine("ERM сервис запущен.");
-                    Console.WriteLine("Нажмите ENTER для останова...");
+                    Console.WriteLine("Advanced Search Replication service successfully started.");
+                    Console.WriteLine("Press ENTER to stop...");
 
                     Console.ReadLine();
 
-                    Console.WriteLine("ERM сервис останавливается...");
+                    Console.WriteLine("Advanced Search Replication service is stopping...");
 
                     schedulerManager.Stop();
 
-                    Console.WriteLine("ERM сервис остановлен. Нажмите ENTER для выхода...");
+                    Console.WriteLine("Advanced Search Replication service stopped successfully. Press ENTER to exit...");
                     Console.ReadLine();
                 }
                 else
