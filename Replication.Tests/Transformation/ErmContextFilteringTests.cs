@@ -33,6 +33,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldReadBranchOfficeOrganizationUnit()
+        {
+            ErmConnection.Has(new BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 123 })
+                         .Has(new BranchOfficeOrganizationUnit { Id = 2, IsActive = false, IsDeleted = false })
+                         .Has(new BranchOfficeOrganizationUnit { Id = 3, IsActive = false, IsDeleted = true })
+                         .Has(new BranchOfficeOrganizationUnit { Id = 4, IsActive = true, IsDeleted = true });
+
+            Reader.Create(ErmConnection)
+                  .VerifyRead(x => x.BranchOfficeOrganizationUnits.ById(1), Inquire(new BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 123 }))
+                  .VerifyRead(x => x.BranchOfficeOrganizationUnits.ById(2), Inquire<BranchOfficeOrganizationUnit>())
+                  .VerifyRead(x => x.BranchOfficeOrganizationUnits.ById(3), Inquire<BranchOfficeOrganizationUnit>())
+                  .VerifyRead(x => x.BranchOfficeOrganizationUnits.ById(4), Inquire<BranchOfficeOrganizationUnit>());
+        }
+
+        [Test]
         public void ShouldReadCategoryFirmAddress()
         {
             ErmConnection.Has(new CategoryFirmAddress { Id = 1, CategoryId = 123, FirmAddressId = 456 })

@@ -85,6 +85,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   //CategoryGroupId = null,
                                   ClientId = firm.ClientId,
                                   OrganizationUnitId = firm.OrganizationUnitId,
+                                  OwnerId = firm.OwnerId,
                                   TerritoryId = firm.TerritoryId
                               };
             }
@@ -94,15 +95,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from firm in _context.Firms
-                       join legalPerson in _context.LegalPersons on firm.ClientId equals legalPerson.ClientId
-                       join account in _context.Accounts on legalPerson.Id equals account.LegalPersonId
-                       select new FirmBalance
-                              {
-                                  AccountId = account.Id,
-                                  FirmId = firm.Id,
-                                  Balance = account.Balance
-                              };
+                return from account in _context.Accounts
+                       join legalPerson in _context.LegalPersons on account.LegalPersonId equals legalPerson.Id
+                       join client in _context.Clients on legalPerson.ClientId equals client.Id
+                       join branchOfficeOrganizationUnit in _context.BranchOfficeOrganizationUnits on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
+                       join firm in _context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
+                       where firm.ClientId == client.Id
+                       select new FirmBalance { AccountId = account.Id, FirmId = firm.Id, Balance = account.Balance };
             }
         }
 

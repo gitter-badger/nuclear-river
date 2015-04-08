@@ -31,7 +31,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
             {
                 return true;
             }
-            return obj is FactOperation && Equals((FactOperation)obj);
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+            return Equals((FactOperation)obj);
         }
 
         public override int GetHashCode()
@@ -47,6 +51,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
         private bool Equals(FactOperation other)
         {
             return FactType == other.FactType && FactId == other.FactId;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}<{1}>({2})", GetType().Name, FactType.Name, FactId);
         }
     }
 }

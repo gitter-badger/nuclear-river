@@ -8,6 +8,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 
         public decimal Balance { get; set; }
 
+        public long BranchOfficeOrganizationUnitId { get; set; }
+
         public long LegalPersonId { get; set; }
 
         public override bool Equals(object obj)

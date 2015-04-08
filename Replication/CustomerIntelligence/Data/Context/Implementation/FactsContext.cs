@@ -28,6 +28,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
+        {
+            get
+            {
+                return _context.GetTable<BranchOfficeOrganizationUnit>();
+            }
+        }
+
         public IQueryable<CategoryFirmAddress> CategoryFirmAddresses
         {
             get
@@ -99,7 +107,5 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 return _context.GetTable<Order>();
             }
         }
-
-
     }
 }

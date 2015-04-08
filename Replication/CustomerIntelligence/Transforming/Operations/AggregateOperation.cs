@@ -31,7 +31,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
             {
                 return true;
             }
-            return obj is FactOperation && Equals((FactOperation)obj);
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return Equals((AggregateOperation)obj);
         }
 
         public override int GetHashCode()
@@ -44,9 +49,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
             }
         }
 
-        private bool Equals(FactOperation other)
+        private bool Equals(AggregateOperation other)
         {
-            return AggregateType == other.FactType && AggregateId == other.FactId;
+            return AggregateType == other.AggregateType && AggregateId == other.AggregateId;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}<{1}>({2})", GetType().Name, AggregateType.Name, AggregateId);
         }
     }
 }

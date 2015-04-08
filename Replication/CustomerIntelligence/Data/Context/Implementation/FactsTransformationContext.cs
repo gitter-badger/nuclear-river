@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 {
     public sealed class FactsTransformationContext : IFactsContext
     {
-        private readonly IErmContext _ermContext;
+        private readonly IErmContext _context;
 
         public FactsTransformationContext(IErmContext context)
         {
@@ -16,20 +16,34 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 throw new ArgumentNullException("context");
             }
-            _ermContext = context;
+            _context = context;
         }
 
         public IQueryable<Account> Accounts
         {
             get
             {
-                return from account in _ermContext.Accounts
+                return from account in _context.Accounts
                        select new Account
                               {
                                   Id = account.Id,
                                   Balance = account.Balance,
+                                  BranchOfficeOrganizationUnitId = account.BranchOfficeOrganizationUnitId,
                                   LegalPersonId = account.LegalPersonId,
                               };
+            }
+        }
+
+        public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
+        {
+            get
+            {
+                return from branchOfficeOrganizationUnit in _context.BranchOfficeOrganizationUnits
+                       select new BranchOfficeOrganizationUnit
+                       {
+                           Id = branchOfficeOrganizationUnit.Id,
+                           OrganizationUnitId = branchOfficeOrganizationUnit.OrganizationUnitId
+                       };
             }
         }
 
@@ -37,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from categoryFirmAddress in _ermContext.CategoryFirmAddresses
+                return from categoryFirmAddress in _context.CategoryFirmAddresses
                        select new CategoryFirmAddress
                               {
                                   Id = categoryFirmAddress.Id,
@@ -51,7 +65,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits
+                return from categoryOrganizationUnit in _context.CategoryOrganizationUnits
                        select new CategoryOrganizationUnit
                               {
                                   Id = categoryOrganizationUnit.Id,
@@ -66,7 +80,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from client in _ermContext.Clients
+                return from client in _context.Clients
                        select new Client
                               {
                                   Id = client.Id,
@@ -82,7 +96,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from contact in _ermContext.Contacts
+                return from contact in _context.Contacts
                        select new Contact
                               {
                                   Id = contact.Id,
@@ -99,7 +113,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from firm in _ermContext.Firms
+                return from firm in _context.Firms
                        select new Firm
                               {
                                   Id = firm.Id,
@@ -108,6 +122,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   LastDisqualifiedOn = firm.LastDisqualifyTime,
                                   ClientId = firm.ClientId,
                                   OrganizationUnitId = firm.OrganizationUnitId,
+                                  OwnerId = firm.OwnerId,
                                   TerritoryId = firm.TerritoryId
                               };
             }
@@ -117,7 +132,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from firmAddress in _ermContext.FirmAddresses
+                return from firmAddress in _context.FirmAddresses
                        select new FirmAddress
                               {
                                   Id = firmAddress.Id,
@@ -130,7 +145,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from firmContact in _ermContext.FirmContacts
+                return from firmContact in _context.FirmContacts
                        where firmContact.FirmAddressId != null && (firmContact.ContactType == ContactType.Phone || firmContact.ContactType == ContactType.Website)
                        select new FirmContact
                               {
@@ -146,7 +161,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from legalPerson in _ermContext.LegalPersons
+                return from legalPerson in _context.LegalPersons
                        where legalPerson.ClientId != null
                        select new LegalPerson
                               {
@@ -166,7 +181,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                       OrderState.Archive
                                   };
 
-                return from order in _ermContext.Orders
+                return from order in _context.Orders
                        where orderStates.Contains(order.WorkflowStepId)
                        select new Order
                               {

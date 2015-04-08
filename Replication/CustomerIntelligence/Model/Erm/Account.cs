@@ -13,6 +13,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public decimal Balance { get; set; }
 
+        public long BranchOfficeOrganizationUnitId { get; set; }
+        
         public long LegalPersonId { get; set; }
 
         public bool IsActive { get; set; }

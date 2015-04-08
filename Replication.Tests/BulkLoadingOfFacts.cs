@@ -19,6 +19,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
+        public void ReloadBranchOfficeOrganizationUnits()
+        {
+            Reload(ctx => ctx.BranchOfficeOrganizationUnits);
+        }
+
+        [Test]
         public void ReloadCategoryFirmAddresses()
         {
             Reload(ctx => ctx.CategoryFirmAddresses);

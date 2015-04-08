@@ -24,6 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 var config = schema.GetFluentMappingBuilder();
 
                 config.HasAttribute<Account>(new TableAttribute { Schema = BillingSchema, Name = "Accounts", IsColumnAttributeRequired = false });
+                config.HasAttribute<BranchOfficeOrganizationUnit>(new TableAttribute { Schema = BillingSchema, Name = "BranchOfficeOrganizationUnits", IsColumnAttributeRequired = false });
                 config.HasAttribute<CategoryFirmAddress>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "CategoryFirmAddresses", IsColumnAttributeRequired = false });
                 config.HasAttribute<CategoryOrganizationUnit>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "CategoryOrganizationUnits", IsColumnAttributeRequired = false });
                 config.HasAttribute<Client>(new TableAttribute { Schema = BillingSchema, Name = "Clients", IsColumnAttributeRequired = false });
@@ -35,8 +36,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.HasAttribute<Order>(new TableAttribute { Schema = BillingSchema, Name = "Orders", IsColumnAttributeRequired = false });
 
                 config.Entity<Account>().HasSchemaName(BillingSchema).HasTableName("Accounts").Property(x => x.Id).IsPrimaryKey();
-                config.Entity<CategoryFirmAddress>().HasSchemaName(BillingSchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
-                config.Entity<CategoryOrganizationUnit>().HasSchemaName(BillingSchema).HasTableName("CategoryOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<BranchOfficeOrganizationUnit>().HasSchemaName(BillingSchema).HasTableName("BranchOfficeOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<CategoryFirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<CategoryOrganizationUnit>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Client>().HasSchemaName(BillingSchema).HasTableName("Clients").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Contact>()
                     .HasSchemaName(BillingSchema)
@@ -44,7 +46,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                     .Property(x => x.Id).IsPrimaryKey()
                     .Property(x => x.Role).HasColumnName("AccountRole")
                     ;
-                config.Entity<Firm>().HasSchemaName(BusinessDirectorySchema).HasTableName("Firms").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Firm>()
+                    .HasSchemaName(BusinessDirectorySchema)
+                    .HasTableName("Firms")
+                    .Property(x => x.Id).IsPrimaryKey()
+                    .Property(x => x.OwnerId).HasColumnName("OwnerCode");
                 config.Entity<FirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("FirmAddresses").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<FirmContact>().HasSchemaName(BusinessDirectorySchema).HasTableName("FirmContacts").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<LegalPerson>().HasSchemaName(BillingSchema).HasTableName("LegalPersons").Property(x => x.Id).IsPrimaryKey();

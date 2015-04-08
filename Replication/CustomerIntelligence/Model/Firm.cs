@@ -28,6 +28,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public long OrganizationUnitId { get; set; }
 
+        public long OwnerId { get; set; }
+
         public long TerritoryId { get; set; }
 
         public override bool Equals(object obj)

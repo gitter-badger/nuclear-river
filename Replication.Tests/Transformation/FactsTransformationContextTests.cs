@@ -26,6 +26,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldTransformBranchOfficeOrganizationUnit()
+        {
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 })))
+                          .VerifyTransform(x => x.BranchOfficeOrganizationUnits.ById(1), Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
+        }
+
+        [Test]
         public void ShouldTransformCategoryFirmAddress()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Erm::CategoryFirmAddress { Id = 1, CategoryId = 2, FirmAddressId = 3 })))
@@ -85,9 +92,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Firms == Inquire(
-                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4 }
+                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }
                 )))
-                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4 }));
+                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }));
         }
 
         [Test]

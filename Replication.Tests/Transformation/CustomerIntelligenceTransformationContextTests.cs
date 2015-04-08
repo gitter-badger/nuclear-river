@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Moq;
 
@@ -158,23 +159,33 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var context = new Mock<IFactsContext>();
             context.SetupGet(x => x.Firms).Returns(Inquire(
-                new Facts::Firm { Id = 1, ClientId = 1 }
+                new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
+                new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
+                new Facts::Firm { Id = 3, ClientId = 1, OrganizationUnitId = 1 }
                 ));
             context.SetupGet(x => x.Clients).Returns(Inquire(
-                new Facts::Client { Id = 1 }
+                new Facts::Client { Id = 1 },
+                new Facts::Client { Id = 2 }
                 ));
             context.SetupGet(x => x.LegalPersons).Returns(Inquire(
-                new Facts::LegalPerson { Id = 1, ClientId = 1 }
+                new Facts::LegalPerson { Id = 1, ClientId = 1 },
+                new Facts::LegalPerson { Id = 2, ClientId = 2 }
+                ));
+            context.SetupGet(x => x.BranchOfficeOrganizationUnits).Returns(Inquire(
+                new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 },
+                new Facts::BranchOfficeOrganizationUnit { Id = 2, OrganizationUnitId = 2 }
                 ));
             context.SetupGet(x => x.Accounts).Returns(Inquire(
-                new Facts::Account { Id = 1, Balance = 123.45m, LegalPersonId = 1 },
-                new Facts::Account { Id = 2, Balance = 345.67m, LegalPersonId = 1 }
+                new Facts::Account { Id = 1, Balance = 123, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 },
+                new Facts::Account { Id = 2, Balance = 234, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 2 },
+                new Facts::Account { Id = 3, Balance = 345, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 2 }
                 ));
 
             Transformation.Create(context.Object)
-                .VerifyTransform(x => x.FirmBalances, Inquire(
-                    new CI::FirmBalance { FirmId = 1, Balance = 123.45m, AccountId = 1 },
-                    new CI::FirmBalance { FirmId = 1, Balance = 345.67m, AccountId = 2 }
+                .VerifyTransform(x => x.FirmBalances.OrderBy(fb => fb.FirmId), Inquire(
+                    new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1 },
+                    new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
+                    new CI::FirmBalance { FirmId = 3, Balance = 123, AccountId = 1 }
                     ), "The balance should be processed.");
         }
 

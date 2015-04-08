@@ -8,6 +8,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
     {
         IQueryable<Account> Accounts { get; }
 
+        IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits { get; }
+
         IQueryable<CategoryFirmAddress> CategoryFirmAddresses { get; }
 
         IQueryable<CategoryOrganizationUnit> CategoryOrganizationUnits { get; }

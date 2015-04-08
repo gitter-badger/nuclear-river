@@ -12,6 +12,7 @@ if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
 if object_id('ERM.Firm') is not null drop table ERM.Firm;
 
 if object_id('ERM.Account') is not null drop table ERM.Account;
+if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
 if object_id('ERM.Contact') is not null drop table ERM.Contact;
 if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
 if object_id('ERM.Client') is not null drop table ERM.Client;
@@ -44,6 +45,14 @@ create nonclustered index IX_Contact_HasPhone_HasWebsite
 on ERM.Contact (HasPhone, HasWebsite)
 go
 
+-- BranchOfficeOrganizationUnit
+create table ERM.BranchOfficeOrganizationUnit(
+	Id bigint not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_BranchOfficeOrganizationUnits primary key (Id)
+)
+go
+
 -- LegalPerson
 create table ERM.LegalPerson(
 	Id bigint not null
@@ -56,7 +65,8 @@ go
 create table ERM.Account(
 	Id bigint not null
     , Balance decimal(19,4) not null
-    , LegalPersonId bit not null
+    , BranchOfficeOrganizationUnitId bigint not null
+    , LegalPersonId bigint not null
     , constraint PK_Accounts primary key (Id)
 )
 go
@@ -73,6 +83,7 @@ create table ERM.Firm(
     , AddressCount int not null constraint DF_Firms_AddressCount default 0
     , ClientId bigint null
     , OrganizationUnitId bigint not null
+    , OwnerId bigint not null
     , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
