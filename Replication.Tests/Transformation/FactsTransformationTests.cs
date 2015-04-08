@@ -28,14 +28,377 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class FactsTransformationTests : BaseTransformationFixture
     {
         [Test]
-        public void ShouldCreateFirm()
+        public void ShouldInitializeClientIfClientCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+
+            Transformation.Create(source, FactsConnection)
+                          .Transform(Fact.Create<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Initialize<CI::Client>(1)));
+        }
+
+        [Test]
+        public void ShouldInitializeFirmIfFirmCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Firm>(1))
+                .Verify(Inquire(Aggregate.Initialize<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldDestroyClientIfClientDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection.Has(new Facts::Client { Id = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                          .Transform(Fact.Delete<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Destroy<CI::Client>(1)));
+        }
+
+        [Test]
+        public void ShouldDestroyFirmIfFirmDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                          .Transform(Fact.Delete<Facts::Firm>(1))
+                          .Verify(Inquire(Aggregate.Destroy<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateClientIfFirmCreated()
         {
             var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+                ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1}));
 
-            Transformation.Create(source)
-                .Transform(Fact.Create<Facts::Firm>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new Facts::Firm { Id = 1 }))));
+            FactsConnection.Has(new Facts::Client { Id = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Firm>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldRecalculateClientIfFirmDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Client { Id = 1 })
+                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::Firm>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfAccountCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => 
+                ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1}));
+
+            FactsConnection.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                           .Has(new Facts::Client { Id = 1 })
+                           .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Account>(1))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfAccountDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                .Has(new Facts::Client { Id = 2 })
+                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::Account>(5))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => 
+                ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+
+            FactsConnection.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1})
+                           .Has(new Facts::Client { Id = 1 })
+                           .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::BranchOfficeOrganizationUnit>(1))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                .Has(new Facts::Client { Id = 2 })
+                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::BranchOfficeOrganizationUnit>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryFirmAddressCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::CategoryFirmAddress>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryFirmAddressDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                .Has(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::CategoryFirmAddress>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOrganizationUnitCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 }));
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+                .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
+                .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::CategoryOrganizationUnit>(6))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOrganizationUnitDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+                .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
+                .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 })
+                .Has(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::CategoryOrganizationUnit>(6))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfClientCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+
+            FactsConnection.Has(new Facts::Firm { Id = 1, ClientId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Client>(1))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfClientDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Client { Id = 1 })
+                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::Client>(1))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfContactCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.Contacts == Inquire(new Facts::Contact { Id = 3, ClientId = 1 }));
+
+            FactsConnection
+                .Has(new Facts::Client { Id = 1 })
+                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Contact>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfContactDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Client { Id = 1 })
+                .Has(new Facts::Firm { Id = 2, ClientId = 1 })
+                .Has(new Facts::Contact { Id = 3, ClientId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::Contact>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmAddressCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 2, FirmId = 1 }));
+
+            FactsConnection.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::FirmAddress>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmAddressDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::FirmAddress>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmContactCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::FirmContact>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmContactDeleted()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                .Has(new Facts::FirmContact { Id = 3, FirmAddressId = 2 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::FirmContact>(3))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfLegalPersonCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 1 }));
+
+            FactsConnection.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1})
+                           .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                           .Has(new Facts::Client { Id = 1 })
+                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::LegalPerson>(1))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfLegalPersonDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                .Has(new Facts::Client { Id = 2 })
+                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::LegalPerson>(4))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfOrderCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx =>
+                ctx.Orders == Inquire(new Facts::Order { Id = 2, FirmId = 1 }));
+
+            FactsConnection.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Create<Facts::Order>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfOrderDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsConnection
+                .Has(new Facts::Firm { Id = 1 })
+                .Has(new Facts::Order { Id = 2, FirmId = 1 });
+
+            Transformation.Create(source, FactsConnection)
+                .Transform(Fact.Delete<Facts::Order>(2))
+                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [TestCaseSource("Cases")]
@@ -51,18 +414,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 const int notnull = 1;
 
                 // insert
-                yield return CaseToVerifyElementInsertion<Erm.Account, Facts.Account>(new Erm::Account { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.CategoryFirmAddress, Facts.CategoryFirmAddress>(new Erm::CategoryFirmAddress { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.CategoryOrganizationUnit, Facts.CategoryOrganizationUnit>(new Erm::CategoryOrganizationUnit { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.Client, Facts.Client>(new Erm::Client { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.Contact, Facts.Contact>(new Erm::Contact { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.Firm, Facts.Firm>(new Erm::Firm { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.FirmAddress, Facts.FirmAddress>(new Erm::FirmAddress { Id = 1 });
-                yield return CaseToVerifyElementInsertion<Erm.FirmContact, Facts.FirmContact>(new Erm::FirmContact { Id = 1, ContactType = 1, FirmAddressId = notnull });
-                yield return CaseToVerifyElementInsertion<Erm.LegalPerson, Facts.LegalPerson>(new Erm::LegalPerson { Id = 1, ClientId = notnull });
-                yield return CaseToVerifyElementInsertion<Erm.Order, Facts.Order>(new Erm::Order { Id = 1, WorkflowStepId = 4 });
+                yield return CaseToVerifyElementInsertion<Erm::Account, Facts::Account>(new Erm::Account { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::BranchOfficeOrganizationUnit, Facts::BranchOfficeOrganizationUnit>(new Erm::BranchOfficeOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>(new Erm::CategoryFirmAddress { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>(new Erm::CategoryOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::Client, Facts::Client>(new Erm::Client { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::Contact, Facts::Contact>(new Erm::Contact { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::Firm, Facts::Firm>(new Erm::Firm { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::FirmAddress, Facts::FirmAddress>(new Erm::FirmAddress { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::FirmContact, Facts::FirmContact>(new Erm::FirmContact { Id = 1, ContactType = 1, FirmAddressId = notnull });
+                yield return CaseToVerifyElementInsertion<Erm::LegalPerson, Facts::LegalPerson>(new Erm::LegalPerson { Id = 1, ClientId = notnull });
+                yield return CaseToVerifyElementInsertion<Erm::Order, Facts::Order>(new Erm::Order { Id = 1, WorkflowStepId = 4 });
                 // update
                 yield return CaseToVerifyElementUpdate(new Erm::Account { Id = 1 }, new Facts::Account { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::BranchOfficeOrganizationUnit { Id = 1 }, new Facts::BranchOfficeOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::CategoryFirmAddress { Id = 1 }, new Facts::CategoryFirmAddress { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::CategoryOrganizationUnit { Id = 1 }, new Facts::CategoryOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::Client { Id = 1 }, new Facts::Client { Id = 1 });
@@ -74,6 +439,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 yield return CaseToVerifyElementUpdate(new Erm::Order { Id = 1, WorkflowStepId = 4 }, new Facts::Order { Id = 1 });
                 // delete
                 yield return CaseToVerifyElementDeletion(new Facts::Account { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Facts::BranchOfficeOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::CategoryFirmAddress { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::CategoryOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::Client { Id = 1 });
@@ -166,6 +532,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             public static Transformation Create(IFactsContext source = null, IFactsContext target = null, IDataMapper mapper = null)
             {
                 return new Transformation(source ?? new Mock<IFactsContext>().Object, target ?? new Mock<IFactsContext>().Object, mapper);
+            }
+
+            public static Transformation Create(IFactsContext source, IDataContext target)
+            {
+                return new Transformation(source, new FactsContext(target), new DataMapper(target));
             }
 
             public Transformation Transform(params FactOperation[] operations)

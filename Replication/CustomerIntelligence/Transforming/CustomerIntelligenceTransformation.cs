@@ -18,31 +18,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     public sealed class CustomerIntelligenceTransformation : BaseTransformation
     {
         private static readonly Dictionary<Type, AggregateInfo> Aggregates = new Dictionary<Type, AggregateInfo>
+        {
             {
-                { 
-                    typeof(Firm), 
-                    new AggregateInfo(
-                        (context, ids) => context.Firms.Where(x => ids.Contains(x.Id)), 
-                        valueObjects: new[]
-                        {
-                            new ValueObjectInfo((context, ids) => context.FirmBalances.Where(x => ids.Contains(x.FirmId))), 
-                            new ValueObjectInfo((context, ids) => context.FirmCategories.Where(x => ids.Contains(x.FirmId))),
-                            new ValueObjectInfo((context, ids) => context.FirmCategoryGroups.Where(x => ids.Contains(x.FirmId)))
-                        }) 
-                },
-                { 
-                    typeof(Client), 
-                    new AggregateInfo(
-                        (context, ids) => context.Clients.Where(x => ids.Contains(x.Id)), 
+                typeof(Firm),
+                new AggregateInfo(
+                    Query.FirmsById,
+                    valueObjects:
                         new[]
                         {
-                            new EntityInfo((context, ids) => (
-                                from contact in context.Contacts
-                                where ids.Contains(contact.ClientId)
-                                select contact))
-                        }) 
-                }
-            };
+                            new ValueObjectInfo(FirmChildren.FirmBalances),
+                            new ValueObjectInfo(FirmChildren.FirmCategories),
+                            new ValueObjectInfo(FirmChildren.FirmCategoryGroups)
+                        })
+            },
+            { typeof(Client), new AggregateInfo(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) }) }
+        };
 
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
@@ -191,6 +181,54 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
+        }
+
+        #endregion
+
+        #region Query
+
+        private static class Query
+        {
+            public static IQueryable<Client> ClientsById(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Clients, ids);
+            }
+
+            public static IQueryable<Firm> FirmsById(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Firms, ids);
+            }
+
+            private static IQueryable<TEntity> FilterById<TEntity>(IQueryable<TEntity> facts, IEnumerable<long> ids) where TEntity : IIdentifiableObject
+            {
+                return facts.Where(fact => ids.Contains(fact.Id));
+            }
+        }
+
+        private static class FirmChildren
+        {
+            public static IQueryable<FirmBalance> FirmBalances(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return context.FirmBalances.Where(x => ids.Contains(x.FirmId));
+            }
+
+            public static IQueryable<FirmCategory> FirmCategories(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return context.FirmCategories.Where(x => ids.Contains(x.FirmId));
+            }
+
+            public static IQueryable<FirmCategoryGroup> FirmCategoryGroups(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return context.FirmCategoryGroups.Where(x => ids.Contains(x.FirmId));
+            }
+        }
+
+        private static class ClientChildren
+        {
+            public static IQueryable<Contact> Contacts(ICustomerIntelligenceContext context, IEnumerable<long> ids)
+            {
+                return context.Contacts.Where(x => ids.Contains(x.ClientId));
+            }
         }
 
         #endregion
