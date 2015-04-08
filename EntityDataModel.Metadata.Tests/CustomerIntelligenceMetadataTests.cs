@@ -2,7 +2,7 @@
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         {
             BoundedContextElement contextElement;
 
-            var id = IdBuilder.For<AdvancedSearchIdentity>(name);
+            var id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(name);
             Assert.That(_provider.TryGetMetadata(id, out contextElement), Is.True);
             Assert.That(contextElement, Is.Not.Null);
         }
@@ -117,7 +117,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 
         private bool TryGetMetadata(string path, out IMetadataElement element)
         {
-            var id = IdBuilder.For<AdvancedSearchIdentity>(path);
+            var id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(path);
             return _provider.TryGetMetadata(id, out element);
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 
 // ReSharper disable once CheckNamespace
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
@@ -50,7 +50,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 throw new InvalidOperationException("The context name was not specified.");
             }
 
-            var contextId = IdBuilder.For<AdvancedSearchIdentity>(_name).AsIdentity();
+            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(_name);
+            var contextId = uri.AsIdentity();
 
             StructuralModelElement conceptualModel = null;
             StructuralModelElement storeModel = null;

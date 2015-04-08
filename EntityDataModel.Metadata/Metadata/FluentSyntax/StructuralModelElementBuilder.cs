@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 
 // ReSharper disable once CheckNamespace
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata

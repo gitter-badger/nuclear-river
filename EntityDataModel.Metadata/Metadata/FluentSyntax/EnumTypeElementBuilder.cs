@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 
 // ReSharper disable once CheckNamespace
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 {
     public sealed class EnumTypeElementBuilder : MetadataElementBuilder<EnumTypeElementBuilder, EnumTypeElement>
     {
-        private string _name;
         private readonly Dictionary<string, long> _enumMembers = new Dictionary<string, long>();
+        private string _name;
 
         public EnumTypeElementBuilder Name(string name)
         {

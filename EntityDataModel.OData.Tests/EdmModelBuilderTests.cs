@@ -11,7 +11,7 @@ using NuClear.AdvancedSearch.Engine.Tests;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -182,10 +182,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         public void ShouldBuildValidModelForCustomerIntelligenceContext()
         {
             var provider = CreateProvider(new AdvancedSearchMetadataSource());
-            var contextId = IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence");
+            var contextId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>("CustomerIntelligence");
 
             BoundedContextElement boundedContext;
-            provider.TryGetMetadata(IdBuilder.For<AdvancedSearchIdentity>("CustomerIntelligence"), out boundedContext);
+            provider.TryGetMetadata(contextId, out boundedContext);
 
             var model = BuildModel(provider, contextId);
 
@@ -198,7 +198,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
         {
             var source = new Mock<IMetadataSource>();
             source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
-            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { IdBuilder.For<AdvancedSearchIdentity>(), context } });
+            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> {
+                                                                                            {
+                                                                                                Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(), context
+                                                                                            } });
 
             return source.Object;
         }

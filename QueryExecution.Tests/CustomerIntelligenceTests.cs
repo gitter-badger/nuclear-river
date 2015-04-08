@@ -10,6 +10,7 @@ using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.Metamodeling.Elements.Identities;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -62,7 +63,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
 
         private string BuildQuery(string modelName, string type, string filter)
         {
-            var model = Models[IdBuilder.For<AdvancedSearchIdentity>(modelName)];
+            var model = Models[Metadata.Id.For<AdvancedSearchIdentity>(modelName)];
 
             var firmType = LookupClrType(model, type);
 
@@ -134,8 +135,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         private const string BusinessDirectory = "BusinessDirectory";
         private const string CustomerIntelligence = "CustomerIntelligence";
 
-        private static readonly Uri BusinessDirectoryId = IdBuilder.For<AdvancedSearchIdentity>(BusinessDirectory);
-        private static readonly Uri CustomerIntelligenceId = IdBuilder.For<AdvancedSearchIdentity>(CustomerIntelligence);
+        private static readonly Uri BusinessDirectoryId = Metadata.Id.For<AdvancedSearchIdentity>(BusinessDirectory);
+        private static readonly Uri CustomerIntelligenceId = Metadata.Id.For<AdvancedSearchIdentity>(CustomerIntelligence);
 
         private static IMetadataSource AdvancedSearchMetadataSource
         {
