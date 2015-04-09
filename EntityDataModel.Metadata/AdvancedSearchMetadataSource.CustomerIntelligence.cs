@@ -54,6 +54,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .AsOneOptionally())
                         .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
+                        .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
                         .Relation(EntityRelationElement.Config.Name("Categories")
                             .DirectTo(
@@ -95,6 +96,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
                     EntityElement.Config.Name(TableName.FirmBalance)
