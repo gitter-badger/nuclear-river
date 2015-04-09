@@ -63,7 +63,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.1.0.0\lib\net451\2GIS.NuClear.OperationsTracking.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.1.0.2\lib\net451\2GIS.NuClear.OperationsTracking.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
