@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace NuClear.AdvancedSearch.ServiceBus.Tests
 {
     [TestFixture]
-    public sealed class DeserializationTests
+    public sealed class ServiceBusTests
     {
         [Test]
         public void EmptyUseCase()
