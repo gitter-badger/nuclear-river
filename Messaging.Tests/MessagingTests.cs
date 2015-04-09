@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
-using NuClear.Messaging.API;
-using NuClear.Messaging.API.Processing.Processors.Topologies;
+using NuClear.AdvancedSearch.Messaging.Tests.Properties;
+using NuClear.Messaging.API.Flows.Metadata;
+using NuClear.Messaging.API.Processing.Processors;
+using NuClear.Metamodeling.Provider;
+using NuClear.OperationsProcessing.API;
+using NuClear.OperationsProcessing.API.Metadata;
 
 using NUnit.Framework;
 
@@ -14,18 +16,19 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
     public sealed class MessagingTests
     {
         [Test]
-        public void Test1()
+        public void PrimaryTest1()
         {
-            var container = new UnityContainer().ConfigureUnity();
-            var topology = container.Resolve<IMessageProcessingTopology>();
+            var container = new UnityContainer().ConfigureUnity(Resources.UpdateFirm);
 
-            var messages = GetMessage1();
-            topology.ProcessAsync(messages);
-        }
+            var processorFactory = container.Resolve<IMessageFlowProcessorFactory>();
 
-        private static IReadOnlyList<IMessage> GetMessage1()
-        {
-            return null;
+            var metadataProvider = container.Resolve<IMetadataProvider>();
+            var id = "Replicate2AdvancedSearchFlow".AsPrimaryProcessingFlowId();
+            MessageFlowMetadata messageFlowMetadata;
+            metadataProvider.TryGetMetadata(id, out messageFlowMetadata);
+
+            var settings = container.Resolve<IPerformedOperationsFlowProcessorSettings>();
+            var processor = processorFactory.CreateSync(messageFlowMetadata, settings);
         }
     }
 }
