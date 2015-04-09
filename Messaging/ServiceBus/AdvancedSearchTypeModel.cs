@@ -4,7 +4,7 @@ using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 
 using ProtoBuf.Meta;
 
-namespace NuClear.AdvancedSearch.ServiceBus
+namespace NuClear.AdvancedSearch.Messaging.ServiceBus
 {
     public sealed class AdvancedSearchTypeModel
     {

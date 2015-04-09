@@ -4,7 +4,7 @@ using NuClear.OperationsTracking.API.UseCases;
 
 using ProtoBuf.Meta;
 
-namespace NuClear.AdvancedSearch.ServiceBus
+namespace NuClear.AdvancedSearch.Messaging.ServiceBus
 {
     public sealed class TrackedUseCaseParser : ITrackedUseCaseParser
     {

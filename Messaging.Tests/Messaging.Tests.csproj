@@ -103,18 +103,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ServiceBus\ServiceBus.csproj">
-      <Project>{938F9EC1-5AA9-4664-8BDD-E0146468DD75}</Project>
-      <Name>ServiceBus</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Resources\UpdateFirm.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging\Messaging.csproj">
+      <Project>{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}</Project>
+      <Name>Messaging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

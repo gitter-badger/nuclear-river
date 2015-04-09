@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
-using NuClear.AdvancedSearch.ServiceBus;
 using NuClear.OperationsTracking.API.Changes;
 
 using NUnit.Framework;

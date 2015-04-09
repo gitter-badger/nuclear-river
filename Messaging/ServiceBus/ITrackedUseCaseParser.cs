@@ -2,7 +2,7 @@
 
 using NuClear.OperationsTracking.API.UseCases;
 
-namespace NuClear.AdvancedSearch.ServiceBus
+namespace NuClear.AdvancedSearch.Messaging.ServiceBus
 {
     public interface ITrackedUseCaseParser
     {
