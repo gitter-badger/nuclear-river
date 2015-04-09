@@ -47,7 +47,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.2\lib\net451\2GIS.NuClear.Model.Common.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
