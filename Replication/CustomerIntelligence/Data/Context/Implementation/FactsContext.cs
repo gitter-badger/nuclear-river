@@ -22,90 +22,62 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
         public IQueryable<Account> Accounts
         {
-            get
-            {
-                return _context.GetTable<Account>();
-            }
+            get { return _context.GetTable<Account>(); }
+        }
+
+        public IQueryable<Category> Categories
+        {
+            get { return _context.GetTable<Category>(); }
         }
 
         public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
         {
-            get
-            {
-                return _context.GetTable<BranchOfficeOrganizationUnit>();
-            }
+            get { return _context.GetTable<BranchOfficeOrganizationUnit>(); }
         }
 
         public IQueryable<CategoryFirmAddress> CategoryFirmAddresses
         {
-            get
-            {
-                return _context.GetTable<CategoryFirmAddress>();
-            }
+            get { return _context.GetTable<CategoryFirmAddress>(); }
         }
 
         public IQueryable<CategoryOrganizationUnit> CategoryOrganizationUnits
         {
-            get
-            {
-                return _context.GetTable<CategoryOrganizationUnit>();
-            }
+            get { return _context.GetTable<CategoryOrganizationUnit>(); }
         }
 
         public IQueryable<Client> Clients
         {
-            get
-            {
-                return _context.GetTable<Client>();
-            }
+            get { return _context.GetTable<Client>(); }
         }
 
         public IQueryable<Contact> Contacts
         {
-            get
-            {
-                return _context.GetTable<Contact>();
-            }
+            get { return _context.GetTable<Contact>(); }
         }
 
         public IQueryable<Firm> Firms
         {
-            get
-            {
-                return _context.GetTable<Firm>();
-            }
+            get { return _context.GetTable<Firm>(); }
         }
 
         public IQueryable<FirmAddress> FirmAddresses
         {
-            get
-            {
-                return _context.GetTable<FirmAddress>();
-            }
+            get { return _context.GetTable<FirmAddress>(); }
         }
 
         public IQueryable<FirmContact> FirmContacts
         {
-            get
-            {
-                return _context.GetTable<FirmContact>();
-            }
+            get { return _context.GetTable<FirmContact>(); }
         }
 
         public IQueryable<LegalPerson> LegalPersons
         {
-            get
-            {
-                return _context.GetTable<LegalPerson>();
-            }
+            get { return _context.GetTable<LegalPerson>(); }
         }
 
         public IQueryable<Order> Orders
         {
-            get
-            {
-                return _context.GetTable<Order>();
-            }
+            get { return _context.GetTable<Order>(); }
         }
     }
 }

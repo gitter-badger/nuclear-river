@@ -47,6 +47,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<Category> Categories
+        {
+            get
+            {
+                return from category in _context.Categories
+                       select new Category
+                       {
+                           Id = category.Id, 
+                           Level = category.Level, 
+                           ParentId = category.ParentId
+                       };
+            }
+        }
+
         public IQueryable<CategoryFirmAddress> CategoryFirmAddresses
         {
             get

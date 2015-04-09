@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
@@ -22,6 +23,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         public void ReloadBranchOfficeOrganizationUnits()
         {
             Reload(ctx => ctx.BranchOfficeOrganizationUnits);
+        }
+
+        [Test]
+        public void ReloadCategories()
+        {
+            Reload(ctx => ctx.Categories);
         }
 
         [Test]
@@ -80,8 +87,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         private void Reload<T>(Func<IFactsContext, IEnumerable<T>> loader)
         {
-            using (var ermDb = ErmDb)
-            using (var factDb = FactsDb)
+            using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
+            using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
                 var context = new FactsTransformationContext(new ErmContext(ermDb));
                 factDb.Reload(loader(context));

@@ -109,14 +109,30 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                // TODO {all, 02.04.2015}: it's needed to resolve links up to level1 and level2
-                return (from categoryFirmAddress in _context.CategoryFirmAddresses
-                        join firmAddress in _context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
-                        select new FirmCategory
-                               {
-                                   FirmId = firmAddress.FirmId,
-                                   CategoryId = categoryFirmAddress.CategoryId
-                               }).Distinct();
+                var categories1 = _context.Categories.Where(x => x.Level == 1);
+                var categories2 = _context.Categories.Where(x => x.Level == 2);
+                var categories3 = _context.Categories.Where(x => x.Level == 3);
+
+                var level3 = from firmAddress in _context.FirmAddresses
+                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category3.Id };
+
+                var level2 = from firmAddress in _context.FirmAddresses
+                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             join category2 in categories2 on category3.ParentId equals category2.Id
+                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category2.Id };
+
+                var level1 = from firmAddress in _context.FirmAddresses
+                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             join category2 in categories2 on category3.ParentId equals category2.Id
+                             join category1 in categories1 on category2.ParentId equals category1.Id
+                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category1.Id };
+
+                // perform union using distinct
+                return level3.Union(level2).Union(level1);
             }
         }
 

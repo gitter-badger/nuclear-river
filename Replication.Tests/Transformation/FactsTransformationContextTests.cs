@@ -33,6 +33,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldTransformCategory()
+        {
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Categories == Inquire(new Erm::Category { Id = 1, Level = 2, ParentId = 3 })))
+                          .VerifyTransform(x => x.Categories.ById(1), Inquire(new Facts::Category { Id = 1, Level = 2, ParentId = 3 }));
+        }
+
+        [Test]
         public void ShouldTransformCategoryFirmAddress()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Erm::CategoryFirmAddress { Id = 1, CategoryId = 2, FirmAddressId = 3 })))

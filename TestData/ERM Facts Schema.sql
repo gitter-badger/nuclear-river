@@ -4,20 +4,66 @@ if not exists (select * from sys.schemas where name = 'ERM')
 go
 
 -- drop tables
-if object_id('ERM.Order') is not null drop table ERM.[Order];
-if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
-if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
-if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
-if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
-if object_id('ERM.Firm') is not null drop table ERM.Firm;
-
 if object_id('ERM.Account') is not null drop table ERM.Account;
 if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
-if object_id('ERM.Contact') is not null drop table ERM.Contact;
-if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
+if object_id('ERM.Category') is not null drop table ERM.Category;
+if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
+if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
 if object_id('ERM.Client') is not null drop table ERM.Client;
+if object_id('ERM.Contact') is not null drop table ERM.Contact;
+if object_id('ERM.Firm') is not null drop table ERM.Firm;
+if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
+if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
+if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
+if object_id('ERM.Order') is not null drop table ERM.[Order];
 go
 
+
+-- Account
+create table ERM.Account(
+	Id bigint not null
+    , Balance decimal(19,4) not null
+    , BranchOfficeOrganizationUnitId bigint not null
+    , LegalPersonId bigint not null
+    , constraint PK_Accounts primary key (Id)
+)
+go
+
+-- BranchOfficeOrganizationUnit
+create table ERM.BranchOfficeOrganizationUnit(
+	Id bigint not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_BranchOfficeOrganizationUnits primary key (Id)
+)
+go
+
+-- Category
+create table ERM.Category(
+	Id bigint not null
+    , [Level] int not null
+    , ParentId bigint null
+    , constraint PK_Categories primary key (Id)
+)
+go
+
+-- CategoryFirmAddress
+create table ERM.CategoryFirmAddress(
+	Id bigint not null
+    , CategoryId bigint not null
+    , FirmAddressId bigint not null
+    , constraint PK_CategoryFirmAddresses primary key (Id)
+)
+go
+
+-- CategoryOrganizationUnit
+create table ERM.CategoryOrganizationUnit(
+	Id bigint not null
+	, CategoryId bigint not null
+    , CategoryGroupId bigint not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_CategoryOrganizationUnits primary key (Id)
+)
+go
 
 -- Client
 create table ERM.Client(
@@ -43,32 +89,6 @@ create table ERM.Contact(
 go
 create nonclustered index IX_Contact_HasPhone_HasWebsite
 on ERM.Contact (HasPhone, HasWebsite)
-go
-
--- BranchOfficeOrganizationUnit
-create table ERM.BranchOfficeOrganizationUnit(
-	Id bigint not null
-    , OrganizationUnitId bigint not null
-    , constraint PK_BranchOfficeOrganizationUnits primary key (Id)
-)
-go
-
--- LegalPerson
-create table ERM.LegalPerson(
-	Id bigint not null
-    , ClientId bigint not null
-    , constraint PK_LegalPersons primary key (Id)
-)
-go
-
--- Account
-create table ERM.Account(
-	Id bigint not null
-    , Balance decimal(19,4) not null
-    , BranchOfficeOrganizationUnitId bigint not null
-    , LegalPersonId bigint not null
-    , constraint PK_Accounts primary key (Id)
-)
 go
 
 -- Firm
@@ -113,22 +133,11 @@ create nonclustered index IX_FirmContact_HasWebsite_FirmAddressId
 on ERM.FirmContact (HasWebsite,FirmAddressId)
 go
 
--- CategoryFirmAddress
-create table ERM.CategoryFirmAddress(
+-- LegalPerson
+create table ERM.LegalPerson(
 	Id bigint not null
-    , CategoryId bigint not null
-    , FirmAddressId bigint not null
-    , constraint PK_CategoryFirmAddresses primary key (Id)
-)
-go
-
--- CategoryOrganizationUnit
-create table ERM.CategoryOrganizationUnit(
-	Id bigint not null
-	, CategoryId bigint not null
-    , CategoryGroupId bigint not null
-    , OrganizationUnitId bigint not null
-    , constraint PK_CategoryOrganizationUnits primary key (Id)
+    , ClientId bigint not null
+    , constraint PK_LegalPersons primary key (Id)
 )
 go
 

@@ -18,6 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             { typeof(Account), new FactInfo(Query.AccountsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByAccount)) },
             { typeof(BranchOfficeOrganizationUnit), new FactInfo(Query.BranchOfficeOrganizationUnitsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByBranchOfficeOrganizationUnit)) },
+            { typeof(Category), new FactInfo(Query.CategoriesById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategory)) },
             { typeof(CategoryFirmAddress), new FactInfo(Query.CategoryFirmAddressById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategoryFirmAddress)) },
             { typeof(CategoryOrganizationUnit), new FactInfo(Query.CategoryOrganizationUnitById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategoryOrganizationUnit)) },
             { typeof(Client), new FactInfo(Query.ClientsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByClient)) { AggregateType = typeof(CI::Client) } },
@@ -200,6 +201,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return FilterById(context.BranchOfficeOrganizationUnits, ids);
             }
 
+            public static IQueryable<Category> CategoriesById(IFactsContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Categories, ids);
+            }
+
             public static IQueryable<CategoryFirmAddress> CategoryFirmAddressById(IFactsContext context, IEnumerable<long> ids)
             {
                 return FilterById(context.CategoryFirmAddresses, ids);
@@ -288,6 +294,36 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                        join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                        where firm.ClientId == client.Id
                        select firm.Id;
+            }
+
+            public static IEnumerable<long> ByCategory(IFactsContext context, IEnumerable<long> ids)
+            {
+                var categories1 = context.Categories.Where(x => x.Level == 1);
+                var categories2 = context.Categories.Where(x => x.Level == 2);
+                var categories3 = context.Categories.Where(x => x.Level == 3);
+
+                var level3 = from firmAddress in context.FirmAddresses
+                             join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             where ids.Contains(category3.Id)
+                             select firmAddress.FirmId;
+
+                var level2 = from firmAddress in context.FirmAddresses
+                             join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             join category2 in categories2 on category3.ParentId equals category2.Id
+                             where ids.Contains(category2.Id)
+                             select firmAddress.FirmId;
+
+                var level1 = from firmAddress in context.FirmAddresses
+                             join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                             join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
+                             join category2 in categories2 on category3.ParentId equals category2.Id
+                             join category1 in categories1 on category2.ParentId equals category1.Id
+                             where ids.Contains(category1.Id)
+                             select firmAddress.FirmId;
+
+                return level3.Union(level2).Union(level1);
             }
 
             public static IEnumerable<long> ByCategoryFirmAddress(IFactsContext context, IEnumerable<long> ids)

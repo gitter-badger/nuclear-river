@@ -48,6 +48,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldReadCategories()
+        {
+            ErmDb.Has(new Category { Id = 1, Level = 1, ParentId = 123 })
+                 .Has(new Category { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new Category { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new Category { Id = 4, IsActive = true, IsDeleted = true });
+
+            Reader.Create(ErmDb)
+                  .VerifyRead(x => x.Categories.ById(1), Inquire(new Category { Id = 1, Level = 1, ParentId = 123 }))
+                  .VerifyRead(x => x.Categories.ById(2), Inquire<Category>())
+                  .VerifyRead(x => x.Categories.ById(3), Inquire<Category>())
+                  .VerifyRead(x => x.Categories.ById(4), Inquire<Category>());
+        }
+
+        [Test]
         public void ShouldReadCategoryFirmAddress()
         {
             ErmDb.Has(new CategoryFirmAddress { Id = 1, CategoryId = 123, FirmAddressId = 456 })

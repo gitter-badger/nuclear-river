@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
@@ -50,8 +51,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
         {
-            using (var factsDb = FactsDb)
-            using (var ciDb = CustomerIntelligenceDb)
+            using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
+            using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
                 var context = new CustomerIntelligenceTransformationContext(new FactsContext(factsDb));
                 ciDb.Reload(loader(context));

@@ -231,6 +231,156 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel3Created()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Category>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel2Created()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Category>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel1Created()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Category>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel3Updated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Category>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel2Updated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Category>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel1Updated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Category>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel3Deleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Category>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel2Deleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Category>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOfLevel1Deleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
+                   .Has(new Facts::Category { Id = 1, Level = 1 })
+                   .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
+                   .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Category>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressCreated()
         {
             var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
@@ -588,6 +738,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 // insert
                 yield return CaseToVerifyElementInsertion<Erm::Account, Facts::Account>(new Erm::Account { Id = 1 });
                 yield return CaseToVerifyElementInsertion<Erm::BranchOfficeOrganizationUnit, Facts::BranchOfficeOrganizationUnit>(new Erm::BranchOfficeOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementInsertion<Erm::Category, Facts::Category>(new Erm::Category { Id = 1 });
                 yield return CaseToVerifyElementInsertion<Erm::CategoryFirmAddress, Facts::CategoryFirmAddress>(new Erm::CategoryFirmAddress { Id = 1 });
                 yield return CaseToVerifyElementInsertion<Erm::CategoryOrganizationUnit, Facts::CategoryOrganizationUnit>(new Erm::CategoryOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementInsertion<Erm::Client, Facts::Client>(new Erm::Client { Id = 1 });
@@ -600,6 +751,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 // update
                 yield return CaseToVerifyElementUpdate(new Erm::Account { Id = 1 }, new Facts::Account { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::BranchOfficeOrganizationUnit { Id = 1 }, new Facts::BranchOfficeOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementUpdate(new Erm::Category { Id = 1 }, new Facts::Category { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::CategoryFirmAddress { Id = 1 }, new Facts::CategoryFirmAddress { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::CategoryOrganizationUnit { Id = 1 }, new Facts::CategoryOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::Client { Id = 1 }, new Facts::Client { Id = 1 });
@@ -615,6 +767,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 // delete
                 yield return CaseToVerifyElementDeletion(new Facts::Account { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::BranchOfficeOrganizationUnit { Id = 1 });
+                yield return CaseToVerifyElementDeletion(new Facts::Category { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::CategoryFirmAddress { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::CategoryOrganizationUnit { Id = 1 });
                 yield return CaseToVerifyElementDeletion(new Facts::Client { Id = 1 });

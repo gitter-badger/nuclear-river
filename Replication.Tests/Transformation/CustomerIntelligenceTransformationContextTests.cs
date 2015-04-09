@@ -193,6 +193,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirmCategory()
         {
             var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Categories)
+                   .Returns(Inquire(
+                        new Facts::Category { Id = 1, Level = 1 }, 
+                        new Facts::Category { Id = 2, Level = 2, ParentId = 1 }, 
+                        new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
+                        new Facts::Category { Id = 4, Level = 3, ParentId = 2 }));
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1 }
                 ));
@@ -201,15 +207,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::FirmAddress { Id = 2, FirmId = 1 }
                 ));
             context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(
-                new Facts::CategoryFirmAddress { FirmAddressId = 1, CategoryId = 1 },
-                new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 1 },
-                new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 2 }
+                new Facts::CategoryFirmAddress { FirmAddressId = 1, CategoryId = 3 },
+                new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 }
                 ));
 
             Transformation.Create(context.Object)
                 .VerifyTransform(x => x.FirmCategories, Inquire(
                     new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 }
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
 
@@ -244,7 +251,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             public Transformation VerifyTransform<T, TProjection>(Func<ICustomerIntelligenceContext, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
             {
                 // TODO: convert to a custom NUnit constraint, at least for fail logging
-                Assert.That(reader(_transformation), Is.EqualTo(expected).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
+                Assert.That(reader(_transformation), Is.EquivalentTo(expected).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
                 return this;
             }
         }

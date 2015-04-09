@@ -30,6 +30,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<Category> Categories
+        {
+            get
+            {
+                return from category in _context.GetTable<Category>()
+                       where category.IsActive && !category.IsDeleted
+                       select category;
+            }
+        }
+
         public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
         {
             get

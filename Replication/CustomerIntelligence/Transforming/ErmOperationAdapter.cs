@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
-using NuClear.AdvancedSearch.Replication.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -26,24 +26,35 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                                                           { Code.Order, typeof(Order) }
                                                                       };
 
-//        public IEnumerable<OperationInfo> Convert(IEnumerable<Tuple<ErmOperation, ErmEntityType, ErmEntityId>> changes)
-//        {
-//            foreach (var change in changes)
-//            {
-//                Type entityType;
-//                if (!EntityTypeMap.TryGetValue(change.Item2, out entityType))
-//                {
-//                    // exception
-//                    continue;
-//                }
-//                
-//                var operation = (Operation)change.Item1;
-//                var entityId = change.Item3;
-//
-//                yield return new OperationInfo(operation, entityType, entityId);
-//            }
-//        }
-//
+        public IEnumerable<FactOperation> Convert(IEnumerable<Tuple<ErmOperation, ErmEntityType, ErmEntityId>> changes)
+        {
+            foreach (var change in changes)
+            {
+                Type entityType;
+                if (!EntityTypeMap.TryGetValue(change.Item2, out entityType))
+                {
+                    // exception
+                    continue;
+                }
+
+                var operation = change.Item1;
+                var entityId = change.Item3;
+
+                switch (operation)
+                {
+                    case OperationCode.Created:
+                        yield return new CreateFact(entityType, entityId);
+                        break;
+                    case OperationCode.Updated:
+                        yield return new UpdateFact(entityType, entityId);
+                        break;
+                    case OperationCode.Deleted:
+                        yield return new DeleteFact(entityType, entityId);
+                        break;
+                }
+            }
+        }
+
         private static class Code
         {
             public const int Account = 142;
@@ -56,6 +67,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             public const int FirmContact = 165;
             public const int LegalPerson = 147;
             public const int Order = 151;
+        }
+
+        private static class OperationCode
+        {
+            public const int Created = 1;
+            public const int Updated = 2;
+            public const int Deleted = 3;
         }
     }
 }
