@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 
-namespace NuClear.AdvancedSearch.ServiceBus.Tests.DI
+namespace NuClear.AdvancedSearch.Messaging.Tests.DI
 {
     public static class Bootstrapper
     {

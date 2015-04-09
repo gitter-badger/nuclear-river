@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using System.Linq;
 
-using NuClear.AdvancedSearch.ServiceBus.Tests.Properties;
+using NuClear.AdvancedSearch.Messaging.Tests.Properties;
+using NuClear.AdvancedSearch.ServiceBus;
 using NuClear.OperationsTracking.API.Changes;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.ServiceBus.Tests
+namespace NuClear.AdvancedSearch.Messaging.Tests
 {
     [TestFixture]
     public sealed class ServiceBusTests

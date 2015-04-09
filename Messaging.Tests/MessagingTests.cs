@@ -2,14 +2,13 @@
 
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.ServiceBus.Tests.DI;
+using NuClear.AdvancedSearch.Messaging.Tests.DI;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Processing.Processors.Topologies;
-using NuClear.OperationsTracking.API.UseCases;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.ServiceBus.Tests
+namespace NuClear.AdvancedSearch.Messaging.Tests
 {
     [TestFixture]
     public sealed class MessagingTests
