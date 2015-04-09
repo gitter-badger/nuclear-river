@@ -47,17 +47,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             return elements.AsQueryable();
         }
 
-        protected DataConnection ErmConnection
+        protected DataConnection ErmDb
         {
             get { return CreateConnection("Erm", Schema.Erm); }
         }
 
-        protected DataConnection FactsConnection
+        protected DataConnection FactsDb
         {
             get { return CreateConnection("Facts", Schema.Facts); }
         }
 
-        protected DataConnection CustomerIntelligenceConnection
+        protected DataConnection CustomerIntelligenceDb
         {
             get { return CreateConnection("CustomerIntelligence", Schema.CustomerIntelligence); }
         }

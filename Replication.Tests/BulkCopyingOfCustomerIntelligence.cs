@@ -50,8 +50,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
         {
-            using (var factsDb = FactsConnection)
-            using (var ciDb = CustomerIntelligenceConnection)
+            using (var factsDb = FactsDb)
+            using (var ciDb = CustomerIntelligenceDb)
             {
                 var context = new CustomerIntelligenceTransformationContext(new FactsContext(factsDb));
                 ciDb.Reload(loader(context));

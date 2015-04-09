@@ -18,6 +18,7 @@ using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
+// ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
     using Erm = CustomerIntelligence.Model.Erm;
@@ -32,19 +33,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
 
-            Transformation.Create(source, FactsConnection)
+            Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Client>(1)));
         }
 
         [Test]
-        public void ShouldInitializeFirmIfFirmCreated()
+        public void ShouldRecalculateClientIfClientUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Firm>(1))
-                .Verify(Inquire(Aggregate.Initialize<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
 
         [Test]
@@ -52,36 +54,36 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection.Has(new Facts::Client { Id = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(source, FactsConnection)
+            Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Client>(1)));
         }
 
         [Test]
-        public void ShouldDestroyFirmIfFirmDeleted()
+        public void ShouldRecalculateClientIfFirmCreated()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1 }));
 
-            FactsConnection.Has(new Facts::Firm { Id = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                          .Transform(Fact.Delete<Facts::Firm>(1))
-                          .Verify(Inquire(Aggregate.Destroy<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Firm>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
         }
 
         [Test]
-        public void ShouldRecalculateClientIfFirmCreated()
+        public void ShouldRecalculateClientIfFirmUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1}));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 3 }));
 
-            FactsConnection.Has(new Facts::Client { Id = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Firm>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Firm>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(2), Aggregate.Recalculate<CI::Client>(3)));
         }
 
         [Test]
@@ -89,29 +91,79 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Client { Id = 1 })
-                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::Firm>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Firm>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldInitializeFirmIfFirmCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Firm>(1))
+                          .Verify(Inquire(Aggregate.Initialize<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+            FactsDb.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Firm>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldDestroyFirmIfFirmDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Firm>(1))
+                          .Verify(Inquire(Aggregate.Destroy<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfAccountCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => 
-                ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1}));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 }));
 
-            FactsConnection.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
-                           .Has(new Facts::Client { Id = 1 })
-                           .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
-                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+            FactsDb.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                   .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Account>(1))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Account>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfAccountUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 2, ClientId = 2 })
+                   .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Account>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -119,32 +171,47 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
-                .Has(new Facts::Client { Id = 2 })
-                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
-                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
-                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                   .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::Account>(5))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Account>(5))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => 
-                ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
 
-            FactsConnection.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1})
-                           .Has(new Facts::Client { Id = 1 })
-                           .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
-                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+            FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                   .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::BranchOfficeOrganizationUnit>(1))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::BranchOfficeOrganizationUnit>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                   .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::BranchOfficeOrganizationUnit>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -152,31 +219,44 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
-                .Has(new Facts::Client { Id = 2 })
-                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
-                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
-                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                   .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::BranchOfficeOrganizationUnit>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::BranchOfficeOrganizationUnit>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::CategoryFirmAddress>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::CategoryFirmAddress>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryFirmAddressUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::CategoryFirmAddress>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -184,30 +264,47 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
-                .Has(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::CategoryFirmAddress>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::CategoryFirmAddress>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 }));
+            var source =
+                Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 }));
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
-                .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
-                .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 });
+            FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+                   .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::CategoryOrganizationUnit>(6))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::CategoryOrganizationUnit>(6))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfCategoryOrganizationUnitUpdated()
+        {
+            var source =
+                Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 1 })
+                   .Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1, CategoryId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::CategoryOrganizationUnit>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -215,28 +312,39 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
-                .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
-                .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 })
-                .Has(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
+            FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+                   .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
+                   .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 })
+                   .Has(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::CategoryOrganizationUnit>(6))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::CategoryOrganizationUnit>(6))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfClientCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
 
-            FactsConnection.Has(new Facts::Firm { Id = 1, ClientId = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Client>(1))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)), op => op is RecalculateAggregate);
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)), op => op is RecalculateAggregate);
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfClientUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 1, ClientId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Client>(1)));
         }
 
         [Test]
@@ -244,28 +352,41 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Client { Id = 1 })
-                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::Client>(1))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)), op => op is RecalculateAggregate);
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Client>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)), op => op is RecalculateAggregate);
         }
 
         [Test]
         public void ShouldRecalculateFirmIfContactCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.Contacts == Inquire(new Facts::Contact { Id = 3, ClientId = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 3, ClientId = 1 }));
 
-            FactsConnection
-                .Has(new Facts::Client { Id = 1 })
-                .Has(new Facts::Firm { Id = 2, ClientId = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Contact>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Contact>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfContactUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 2 }));
+
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::Firm { Id = 1, ClientId = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 2 })
+                   .Has(new Facts::Contact { Id = 1, ClientId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Contact>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -273,27 +394,39 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Client { Id = 1 })
-                .Has(new Facts::Firm { Id = 2, ClientId = 1 })
-                .Has(new Facts::Contact { Id = 3, ClientId = 1 });
+            FactsDb.Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1 })
+                   .Has(new Facts::Contact { Id = 3, ClientId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::Contact>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Contact>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 2, FirmId = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 2, FirmId = 1 }));
 
-            FactsConnection.Has(new Facts::Firm { Id = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::FirmAddress>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::FirmAddress>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmAddressUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::FirmAddress>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -301,60 +434,88 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::FirmAddress>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::FirmAddress>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfFirmContactCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::FirmContact>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::FirmContact>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfFirmContactUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 1, FirmAddressId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2 })
+                   .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
+                   .Has(new Facts::FirmContact { Id = 1, FirmAddressId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::FirmContact>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfFirmContactDeleted()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
-                .Has(new Facts::FirmContact { Id = 3, FirmAddressId = 2 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                   .Has(new Facts::FirmContact { Id = 3, FirmAddressId = 2 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::FirmContact>(3))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::FirmContact>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 1 }));
 
-            FactsConnection.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1})
-                           .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
-                           .Has(new Facts::Client { Id = 1 })
-                           .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+            FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::LegalPerson>(1))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::LegalPerson>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfLegalPersonUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                   .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::LegalPerson>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -362,29 +523,41 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
-                .Has(new Facts::Client { Id = 2 })
-                .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
-                .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
-                .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::Client { Id = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
+                   .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
+                   .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::LegalPerson>(4))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::LegalPerson>(4))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
         public void ShouldRecalculateFirmIfOrderCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
-                ctx.Orders == Inquire(new Facts::Order { Id = 2, FirmId = 1 }));
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 2, FirmId = 1 }));
 
-            FactsConnection.Has(new Facts::Firm { Id = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Create<Facts::Order>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::Order>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateFirmIfOrderUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 1, FirmId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::Firm { Id = 2 })
+                   .Has(new Facts::Order { Id = 1, FirmId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Order>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -392,13 +565,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<IFactsContext>();
 
-            FactsConnection
-                .Has(new Facts::Firm { Id = 1 })
-                .Has(new Facts::Order { Id = 2, FirmId = 1 });
+            FactsDb.Has(new Facts::Firm { Id = 1 })
+                   .Has(new Facts::Order { Id = 2, FirmId = 1 });
 
-            Transformation.Create(source, FactsConnection)
-                .Transform(Fact.Delete<Facts::Order>(2))
-                .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::Order>(2))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [TestCaseSource("Cases")]
@@ -434,7 +606,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 yield return CaseToVerifyElementUpdate(new Erm::Contact { Id = 1 }, new Facts::Contact { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::Firm { Id = 1 }, new Facts::Firm { Id = 1 });
                 yield return CaseToVerifyElementUpdate(new Erm::FirmAddress { Id = 1 }, new Facts::FirmAddress { Id = 1 });
-                yield return CaseToVerifyElementUpdate(new Erm::FirmContact { Id = 1, ContactType = 1, FirmAddressId = notnull }, new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = notnull });
+                yield return
+                    CaseToVerifyElementUpdate(
+                        new Erm::FirmContact { Id = 1, ContactType = 1, FirmAddressId = notnull },
+                        new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = notnull });
                 yield return CaseToVerifyElementUpdate(new Erm::LegalPerson { Id = 1, ClientId = notnull }, new Facts::LegalPerson { Id = 1, ClientId = notnull });
                 yield return CaseToVerifyElementUpdate(new Erm::Order { Id = 1, WorkflowStepId = 4 }, new Facts::Order { Id = 1 });
                 // delete
@@ -452,56 +627,64 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             }
         }
 
-        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source)
-            where TErmElement : IIdentifiableObject, new()
+        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiableObject, new()
             where TFactElement : IIdentifiableObject, new()
         {
-            return Case(() => VerifyElementInsertion<TErmElement, TFactElement>(source)).SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementInsertion<TErmElement, TFactElement>(source))
+                .SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target)
-            where TErmElement : IIdentifiableObject, new()
+        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiableObject, new()
             where TFactElement : IIdentifiableObject, new()
         {
-            return Case(() => VerifyElementUpdate(source, target)).SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementUpdate(source, target))
+                .SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
         }
 
         private TestCaseData CaseToVerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiableObject, new()
         {
-            return Case(() => VerifyElementDeletion(target)).SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
+            return Case(() => VerifyElementDeletion(target))
+                .SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source)
-            where TErmElement : IIdentifiableObject, new()
+        private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiableObject, new()
             where TFactElement : IIdentifiableObject, new()
         {
             var entityId = source.Id;
-            ErmConnection.Has(source);
+            ErmDb.Has(source);
 
-            Transformation.Create(ErmConnection, FactsConnection)
+            Transformation.Create(ErmDb, FactsDb)
                           .Transform(Fact.Create<TFactElement>(entityId))
-                          .Verify(x => x.Insert(It.Is(Predicate.ById<TFactElement>(entityId))), Times.Once, string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
+                          .Verify(
+                              x => x.Insert(It.Is(Predicate.ById<TFactElement>(entityId))),
+                              Times.Once,
+                              string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target)
-            where TErmElement : IIdentifiableObject, new()
+        private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiableObject, new()
             where TFactElement : IIdentifiableObject, new()
         {
-            ErmConnection.Has(source);
-            FactsConnection.Has(target);
+            ErmDb.Has(source);
+            FactsDb.Has(target);
 
-            Transformation.Create(ErmConnection, FactsConnection)
+            Transformation.Create(ErmDb, FactsDb)
                           .Transform(Fact.Update<TFactElement>(target.Id))
-                          .Verify(x => x.Update(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
+                          .Verify(
+                              x => x.Update(It.Is(Predicate.ById<TFactElement>(target.Id))),
+                              Times.Once,
+                              string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
         private void VerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiableObject, new()
         {
-            FactsConnection.Has(target);
+            FactsDb.Has(target);
 
-            Transformation.Create(ErmConnection, FactsConnection)
+            Transformation.Create(ErmDb, FactsDb)
                           .Transform(Fact.Delete<TFactElement>(target.Id))
-                          .Verify(x => x.Delete(It.Is(Predicate.ById<TFactElement>(target.Id))), Times.Once, string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
+                          .Verify(
+                              x => x.Delete(It.Is(Predicate.ById<TFactElement>(target.Id))),
+                              Times.Once,
+                              string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
         }
 
         #region Transformation
@@ -547,7 +730,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times = null, string failMessage = null)
             {
-                Mock.Get(_mapper).Verify(action, times ?? Times.AtLeastOnce, failMessage);
+                Mock.Get(_mapper)
+                    .Verify(action, times ?? Times.AtLeastOnce, failMessage);
                 return this;
             }
 

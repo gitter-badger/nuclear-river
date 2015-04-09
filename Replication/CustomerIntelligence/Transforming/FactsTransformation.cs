@@ -80,7 +80,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 }
             }
 
-            return result;
+            return result.Distinct();
         }
 
         private IEnumerable<AggregateOperation> CreateFact(FactInfo info, long[] ids)
@@ -114,6 +114,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             Update(info.Query(_source, ids));
+
+            if (info.AggregateType != null)
+            {
+                JoinWith(ref result, ids, id => new RecalculateAggregate(info.AggregateType, id));
+            }
 
             foreach (var aggregateInfo in info.Aggregates)
             {

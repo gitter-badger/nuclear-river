@@ -80,8 +80,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         private void Reload<T>(Func<IFactsContext, IEnumerable<T>> loader)
         {
-            using (var ermDb = ErmConnection)
-            using (var factDb = FactsConnection)
+            using (var ermDb = ErmDb)
+            using (var factDb = FactsDb)
             {
                 var context = new FactsTransformationContext(new ErmContext(ermDb));
                 factDb.Reload(loader(context));
