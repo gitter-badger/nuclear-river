@@ -38,15 +38,17 @@
       <HintPath>..\packages\2GIS.NuClear.Messaging.1.0.2\lib\net451\2GIS.NuClear.Messaging.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Messaging.API">
+    <Reference Include="2GIS.NuClear.Messaging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.2\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging.DI.Factories.Unity, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.DI.Factories.Unity.1.0.2\lib\net451\2GIS.NuClear.Messaging.DI.Factories.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Metamodeling">
+    <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.2\lib\net451\2GIS.NuClear.Metamodeling.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.2\lib\net451\2GIS.NuClear.Model.Common.dll</HintPath>
@@ -56,8 +58,9 @@
       <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.2\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Tracing.API">
+    <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.2\lib\net451\2GIS.NuClear.Tracing.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.3.5.1404.0\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
