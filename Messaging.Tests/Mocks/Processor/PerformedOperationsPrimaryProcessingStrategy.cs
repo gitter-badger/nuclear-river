@@ -3,7 +3,7 @@ using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.Primary;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks
+namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Processor
 {
     public sealed class PerformedOperationsPrimaryProcessingStrategy : MessageFlowProcessorResolveStrategyBase
     {
