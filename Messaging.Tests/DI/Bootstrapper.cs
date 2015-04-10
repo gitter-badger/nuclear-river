@@ -1,8 +1,12 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Collections.Generic;
+
+using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.AdvancedSearch.Messaging.ServiceBus;
+using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
+using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.Messaging.API.Processing.Actors.Transformers;
@@ -30,13 +34,13 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.DI
 {
     public static class Bootstrapper
     {
-        public static IUnityContainer ConfigureUnity(this IUnityContainer container, byte[] messageBytes)
+        public static IUnityContainer ConfigureUnity(this IUnityContainer container, IReadOnlyList<byte[]> messageBytes)
         {
             var settings = new PerformedOperationsPrimaryFlowProcessorSettings
             {
                 AppropriatedStages = new[]
                 {
-                    //MessageProcessingStage.Transforming,
+                    MessageProcessingStage.Transforming,
                     MessageProcessingStage.Processing,
                     MessageProcessingStage.Handle
                 }
@@ -51,11 +55,15 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.DI
                 new ReferencesEvaluatorProcessor()
             });
 
+            var receiver = new ServiceBusOperationsReceiver(new TrackedUseCaseParser(), messageBytes);
+
             return container
+                        .RegisterType<ITrackedUseCaseParser, TrackedUseCaseParser>(Lifetime.Singleton)
+
                         .RegisterType<ITracer, NullTracer>()
                         .RegisterInstance<IMetadataProvider>(metadataProvider)
                         .RegisterInstance<IPerformedOperationsFlowProcessorSettings>(settings)
-                        .RegisterType<ITrackedUseCaseParser, TrackedUseCaseParser>(Lifetime.Singleton)
+                        .RegisterInstance(receiver)
                         .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageFlowProcessorResolveStrategy, Mocks.Processor.PerformedOperationsPrimaryProcessingStrategy>("primary", Lifetime.Singleton)
                         .RegisterType<IMessageFlowReceiverResolveStrategy, Mocks.Receiver.PerformedOperationsPrimaryProcessingStrategy>("primary", Lifetime.Singleton)

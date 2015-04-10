@@ -1,4 +1,6 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
+
+using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
@@ -18,19 +20,35 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         [Test]
         public void PrimaryTest1()
         {
-            var container = new UnityContainer().ConfigureUnity(Resources.UpdateFirm);
+            var useCases = new[]
+            {
+                Resources.UpdateFirm,
+                Resources.ComplexUseCase
+            };
+
+            var flowId = "Replicate2AdvancedSearchFlow".AsPrimaryProcessingFlowId();
+
+            var container = new UnityContainer().ConfigureUnity(useCases);
 
             var processorFactory = container.Resolve<IMessageFlowProcessorFactory>();
-
-            var metadataProvider = container.Resolve<IMetadataProvider>();
-            var id = "Replicate2AdvancedSearchFlow".AsPrimaryProcessingFlowId();
-            MessageFlowMetadata messageFlowMetadata;
-            metadataProvider.TryGetMetadata(id, out messageFlowMetadata);
+            var metadata = GetMetadata(container, flowId);
 
             var settings = container.Resolve<IPerformedOperationsFlowProcessorSettings>();
-            var processor = processorFactory.CreateSync(messageFlowMetadata, settings);
+            var processor = processorFactory.CreateSync(metadata, settings);
             processor.Process();
+        }
 
+        private static MessageFlowMetadata GetMetadata(IUnityContainer container, Uri id)
+        {
+            var metadataProvider = container.Resolve<IMetadataProvider>();
+
+            MessageFlowMetadata messageFlowMetadata;
+            if (!metadataProvider.TryGetMetadata(id, out messageFlowMetadata))
+            {
+                throw new ArgumentException();
+            }
+
+            return messageFlowMetadata;
         }
     }
 }
