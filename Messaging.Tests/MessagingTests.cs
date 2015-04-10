@@ -29,6 +29,8 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
 
             var settings = container.Resolve<IPerformedOperationsFlowProcessorSettings>();
             var processor = processorFactory.CreateSync(messageFlowMetadata, settings);
+            processor.Process();
+
         }
     }
 }
