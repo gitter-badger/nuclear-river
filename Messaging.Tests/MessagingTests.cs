@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.Practices.Unity;
@@ -6,6 +8,7 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
+using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Metamodeling.Provider;
@@ -22,14 +25,18 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         [Test]
         public void PrimaryTest1()
         {
+            var succeeded = Enumerable.Empty<IMessage>();
+            var failed = Enumerable.Empty<IMessage>();
+
             var receiver = new MockMessageReceiver(new[]
             {
                 Resources.UpdateFirm,
                 Resources.ComplexUseCase
             },
-            (succeeded, failed) =>
+            (x, y) =>
             {
-                Assert.That(succeeded.Count(), Is.EqualTo(2));
+                succeeded = x;
+                failed = y;
             });
 
             var container = new UnityContainer().ConfigureUnity(receiver);
@@ -37,6 +44,9 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
 
             var processor = GetProcessor(container, flowId);
             processor.Process();
+
+            Assert.That(succeeded.Count(), Is.EqualTo(2));
+            Assert.That(failed.Count(), Is.EqualTo(0));
         }
 
         private static ISyncMessageFlowProcessor GetProcessor(IUnityContainer container, Uri id)
