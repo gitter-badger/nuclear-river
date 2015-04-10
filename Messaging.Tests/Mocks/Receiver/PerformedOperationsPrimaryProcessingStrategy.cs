@@ -33,6 +33,7 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
 
             protected override IReadOnlyList<TrackedUseCase> Peek()
             {
+                // TODO: заменить на тестовый use case
                 var stream = new MemoryStream(Resources.UpdateFirm);
                 var useCase = _parser.Parse(stream);
 

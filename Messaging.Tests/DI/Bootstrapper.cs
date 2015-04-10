@@ -19,6 +19,7 @@ using NuClear.Messaging.DI.Factories.Unity.Receivers.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Stages;
 using NuClear.Messaging.DI.Factories.Unity.Transformers;
 using NuClear.Metamodeling.Processors;
+using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.OperationsProcessing.API;
@@ -42,9 +43,13 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.DI
             };
 
             var metadataProvider = new MetadataProvider(new IMetadataSource[]
-                                                        {
-                                                            new PerformedOperationsMessageFlowsMetadataSource()
-                                                        }, new IMetadataProcessor[0]);
+            {
+                new PerformedOperationsMessageFlowsMetadataSource()
+            },
+            new IMetadataProcessor[]
+            {
+                new ReferencesEvaluatorProcessor()
+            });
 
             return container
                         .RegisterType<ITracer, NullTracer>()
