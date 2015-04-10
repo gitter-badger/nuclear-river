@@ -16,6 +16,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
 
         public long CategoryGroupId { get; set; }
         public long OrganizationUnitId { get; set; }
+        public long OwnerId { get; set; }
         public long TerritoryId { get; set; }
 
         public Client Client { get; set; }
