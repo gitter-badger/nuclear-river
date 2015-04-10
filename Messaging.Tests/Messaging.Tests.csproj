@@ -109,7 +109,7 @@
     <Compile Include="MessagingTests.cs" />
     <Compile Include="Mocks\Processor\PerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="Mocks\Receiver\PerformedOperationsPrimaryProcessingStrategy.cs" />
-    <Compile Include="Mocks\Receiver\ServiceBusOperationsReceiver.cs" />
+    <Compile Include="Mocks\Receiver\MockMessageReceiver.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -7,7 +7,7 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
     public sealed class PerformedOperationsPrimaryProcessingStrategy : MessageFlowReceiverResolveStrategyBase
     {
         public PerformedOperationsPrimaryProcessingStrategy(IMetadataProvider metadataProvider)
-            : base(metadataProvider, typeof(ServiceBusOperationsReceiver), PerformedOperations.IsPerformedOperationsPrimarySource)
+            : base(metadataProvider, typeof(MockMessageReceiver), PerformedOperations.IsPerformedOperationsPrimarySource)
         {
 
         }

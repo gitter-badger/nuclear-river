@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
+using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
@@ -20,25 +22,24 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         [Test]
         public void PrimaryTest1()
         {
-            var useCases = new[]
+            var receiver = new MockMessageReceiver(new[]
             {
                 Resources.UpdateFirm,
                 Resources.ComplexUseCase
-            };
+            },
+            (succeeded, failed) =>
+            {
+                Assert.That(succeeded.Count(), Is.EqualTo(2));
+            });
 
+            var container = new UnityContainer().ConfigureUnity(receiver);
             var flowId = "Replicate2AdvancedSearchFlow".AsPrimaryProcessingFlowId();
 
-            var container = new UnityContainer().ConfigureUnity(useCases);
-
-            var processorFactory = container.Resolve<IMessageFlowProcessorFactory>();
-            var metadata = GetMetadata(container, flowId);
-
-            var settings = container.Resolve<IPerformedOperationsFlowProcessorSettings>();
-            var processor = processorFactory.CreateSync(metadata, settings);
+            var processor = GetProcessor(container, flowId);
             processor.Process();
         }
 
-        private static MessageFlowMetadata GetMetadata(IUnityContainer container, Uri id)
+        private static ISyncMessageFlowProcessor GetProcessor(IUnityContainer container, Uri id)
         {
             var metadataProvider = container.Resolve<IMetadataProvider>();
 
@@ -48,7 +49,11 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
                 throw new ArgumentException();
             }
 
-            return messageFlowMetadata;
+            var settings = container.Resolve<IPerformedOperationsFlowProcessorSettings>();
+            var processorFactory = container.Resolve<IMessageFlowProcessorFactory>();
+            var processor = processorFactory.CreateSync(messageFlowMetadata, settings);
+
+            return processor;
         }
     }
 }
