@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication", "Replication\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.EntryPoint", "Replication.EntryPoint\Replication.EntryPoint.csproj", "{C332689C-FFAB-44D4-91BD-920B134C0982}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProcessing", "Replication.OperationsProcessing\Replication.OperationsProcessing.csproj", "{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}"
 	ProjectSection(SolutionItems) = preProject
 		build\default.ps1 = build\default.ps1
@@ -98,6 +100,10 @@ Global
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.Build.0 = Release|Any CPU
 		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
