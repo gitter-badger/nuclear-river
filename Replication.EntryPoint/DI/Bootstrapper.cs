@@ -103,7 +103,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureQuartz(this IUnityContainer container)
         {
             return container
-                .RegisterType<IJobFactory, JobFactory>(Lifetime.Singleton, new InjectionFactory(c => c.Resolve<UnityJobFactory>()))
+                .RegisterType<IJobFactory, JobFactory>(Lifetime.Singleton, new InjectionConstructor(container.Resolve<UnityJobFactory>(), container.Resolve<ITracer>()))
                 .RegisterType<IJobStoreFactory, JobStoreFactory>(Lifetime.Singleton)
                 .RegisterType<ISchedulerManager, SchedulerManager>(Lifetime.Singleton);
         }
