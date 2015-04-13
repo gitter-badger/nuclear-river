@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication", "Replication\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.EntryPoint", "Replication.EntryPoint\Replication.EntryPoint.csproj", "{C332689C-FFAB-44D4-91BD-920B134C0982}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProcessing", "Replication.OperationsProcessing\Replication.OperationsProcessing.csproj", "{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C332689C-FFAB-44D4-91BD-920B134C0982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
