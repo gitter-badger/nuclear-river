@@ -226,7 +226,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 123 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
         }
 
@@ -263,7 +264,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }))));
         }
 
@@ -300,7 +302,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 1 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 3, CategoryGroupId = 1 }))));
         }
 

@@ -34,6 +34,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             { typeof(Client), new AggregateInfo(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) }) }
         };
 
+        private static readonly Dictionary<Type, int> OperationPriority = new Dictionary<Type, int>
+        {
+            { typeof(InitializeAggregate), 3 },
+            { typeof(RecalculateAggregate), 2 },
+            { typeof(DestroyAggregate), 1 }
+        };
+
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
 
@@ -55,7 +62,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            foreach (var slice in operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType }))
+            foreach (var slice in operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType }).OrderByDescending(x => GetPriority(x.Key.Operation)))
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
@@ -82,6 +89,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     DestroyAggregate(aggregateInfo, aggregateIds);
                 }
             }
+        }
+
+        private static int GetPriority(Type operation)
+        {
+            int order;
+            return OperationPriority.TryGetValue(operation, out order) ? order : 0;
         }
 
         private void InitializeAggregate(AggregateInfo aggregateInfo, long[] ids)
@@ -259,7 +272,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var set1 = new HashSet<T>(data1);
                 var set2 = new HashSet<T>(data2);
                 var difference = set1.Where(x => !set2.Contains(x));
-                var intersection = set1.Where(x => set1.Contains(x)); // NOTE: it's important to note that the operation result is not symmetric
+                var intersection = set1.Where(x => set2.Contains(x)); // NOTE: it's important to note that the operation result is not symmetric
                 var complement = set2.Where(x => !set1.Contains(x));
 
                 return new MergeResult { Difference = difference, Intersection = intersection, Complement = complement };
