@@ -61,6 +61,7 @@
     <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataContextExtensions.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="Transformation\FactsTransformationContextTests.cs" />
     <Compile Include="Transformation\ErmContextFilteringTests.cs" />

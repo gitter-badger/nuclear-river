@@ -13,7 +13,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
         public static void Reload<T>(this DataConnection db, IEnumerable<T> data)
         {
             db.Truncate<T>();
-            db.BulkCopy(data);
+            db.BulkCopy(new BulkCopyOptions { BulkCopyTimeout = Settings.SqlBulkCopyTimeout }, data);
         }
        
         public static void Truncate<T>(this DataConnection connection)
