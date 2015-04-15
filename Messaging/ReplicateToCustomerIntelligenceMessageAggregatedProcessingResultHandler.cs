@@ -9,7 +9,7 @@ using NuClear.Messaging.API.Processing.Stages;
 
 namespace NuClear.AdvancedSearch.Messaging
 {
-    public sealed class ReplicateToAdvancedSearchMessageAggregatedProcessingResultHandler : IMessageAggregatedProcessingResultsHandler
+    public sealed class ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler : IMessageAggregatedProcessingResultsHandler
     {
         public IEnumerable<StageResult> Handle(IEnumerable<KeyValuePair<Guid, List<IAggregatableMessage>>> processingResultBuckets)
         {
@@ -17,8 +17,8 @@ namespace NuClear.AdvancedSearch.Messaging
             {
                 OriginalMessageId = x.Key,
                 WellKnownMessages = x.Value
-                    .Where(y => y.TargetFlow.Equals(Replicate2AdvancedSearchFlow.Instance))
-                    .OfType<Replicate2AdvancedSearchAggregatableMessage>()
+                    .Where(y => y.TargetFlow.Equals(PrimaryReplicate2CustomerIntelligenceFlow.Instance))
+                    .OfType<Replicate2CustomerIntelligenceAggregatableMessage>()
                     .ToList(),
             })
             .Where(x => x.WellKnownMessages.Any())
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Messaging
             return results;
         }
 
-        private static StageResult HandleMessage(Guid originalMessageId, IEnumerable<Replicate2AdvancedSearchAggregatableMessage> messages)
+        private static StageResult HandleMessage(Guid originalMessageId, IEnumerable<Replicate2CustomerIntelligenceAggregatableMessage> messages)
         {
             try
             {

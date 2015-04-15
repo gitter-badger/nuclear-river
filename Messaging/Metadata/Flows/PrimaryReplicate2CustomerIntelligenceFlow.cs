@@ -4,7 +4,7 @@ using NuClear.Messaging.API.Flows;
 
 namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
 {
-    public sealed class Replicate2AdvancedSearchFlow : MessageFlowBase<Replicate2AdvancedSearchFlow>
+    public sealed class PrimaryReplicate2CustomerIntelligenceFlow : MessageFlowBase<PrimaryReplicate2CustomerIntelligenceFlow>
     {
         public override Guid Id
         {
@@ -13,7 +13,7 @@ namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
 
         public override string Description
         {
-            get { return "Маркер для потока выполненных операций в системе обеспечивающих репликацию изменений в Advanced Search"; }
+            get { return "Маркер для потока выполненных операций в системе обеспечивающих репликацию изменений в домен Customer Intelligence"; }
         }
     }
 }

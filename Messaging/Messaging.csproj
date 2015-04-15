@@ -115,10 +115,10 @@
   <ItemGroup>
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Replicate2AdvancedSearchAggregatableMessage.cs" />
-    <Compile Include="Metadata\Flows\Replicate2AdvancedSearchFlow.cs" />
-    <Compile Include="ReplicateToAdvancedSearchMessageAggregatedProcessingResultHandler.cs" />
-    <Compile Include="ReplicateToAdvancedSearchPerformedOperationsPrimaryProcessingStrategy.cs" />
+    <Compile Include="Replicate2CustomerIntelligenceAggregatableMessage.cs" />
+    <Compile Include="Metadata\Flows\PrimaryReplicate2CustomerIntelligenceFlow.cs" />
+    <Compile Include="ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
+    <Compile Include="ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="ServiceBus\AdvancedSearchTypeModel.cs" />
     <Compile Include="ServiceBus\ITrackedUseCaseParser.cs" />
     <Compile Include="ServiceBus\TrackedUseCaseParser.cs" />

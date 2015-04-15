@@ -7,7 +7,7 @@ using NuClear.Messaging.API.Processing;
 
 namespace NuClear.AdvancedSearch.Messaging
 {
-    public sealed class Replicate2AdvancedSearchAggregatableMessage : MessageBase, IAggregatableMessage
+    public sealed class Replicate2CustomerIntelligenceAggregatableMessage : MessageBase, IAggregatableMessage
     {
         private readonly Guid _id = Guid.NewGuid();
 
@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Messaging
 
         public IMessageFlow TargetFlow
         {
-            get { return Replicate2AdvancedSearchFlow.Instance; }
+            get { return PrimaryReplicate2CustomerIntelligenceFlow.Instance; }
         }
     }
 }
