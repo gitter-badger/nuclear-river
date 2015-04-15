@@ -85,7 +85,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.2\lib\net451\2GIS.NuClear.Metamodeling.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2Gis.NuClear.Metamodeling.Domain, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
@@ -215,6 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
+    <Compile Include="DI\MetadataSourcesMassProcessor.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />

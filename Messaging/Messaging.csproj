@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Assembling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Assembling.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Assembling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Messaging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.1.0.2\lib\net451\2GIS.NuClear.Messaging.dll</HintPath>
       <Private>True</Private>
@@ -113,10 +117,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DI\MessagingAssembly.cs" />
+    <Compile Include="DI\MetadataZone.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replicate2CustomerIntelligenceAggregatableMessage.cs" />
-    <Compile Include="Metadata\Flows\PrimaryReplicate2CustomerIntelligenceFlow.cs" />
+    <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
     <Compile Include="ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
     <Compile Include="ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="ServiceBus\AdvancedSearchTypeModel.cs" />
@@ -129,7 +135,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

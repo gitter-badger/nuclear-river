@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Messaging
 
         public IMessageFlow TargetFlow
         {
-            get { return PrimaryReplicate2CustomerIntelligenceFlow.Instance; }
+            get { return Replicate2CustomerIntelligenceFlow.Instance; }
         }
     }
 }

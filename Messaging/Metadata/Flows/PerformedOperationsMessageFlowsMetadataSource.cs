@@ -17,10 +17,10 @@ namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
         {
             HierarchyMetadata performedOperationsMetadataRoot =
                PerformedOperations.Flows
-                                  .Primary(MessageFlowMetadata.Config.For<PrimaryReplicate2CustomerIntelligenceFlow>()
+                                  .Primary(MessageFlowMetadata.Config.For<Replicate2CustomerIntelligenceFlow>()
                                                 .Strategy<ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy>()
                                                 .Handler<ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler>()
-                                                .To.Primary().Flow<PrimaryReplicate2CustomerIntelligenceFlow>().Connect);
+                                                .To.Primary().Flow<Replicate2CustomerIntelligenceFlow>().Connect);
 
             _metadata = new Dictionary<Uri, IMetadataElement> { { performedOperationsMetadataRoot.Identity.Id, performedOperationsMetadataRoot } };
         }

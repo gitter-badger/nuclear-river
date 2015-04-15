@@ -50,7 +50,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
                                  {
-                                     new TaskServiceJobsMassProcessor(container) 
+                                     new TaskServiceJobsMassProcessor(container),
+                                     new MetadataSourcesMassProcessor(container)
                                  };
 
             container.AttachQueryableContainerExtension()
@@ -63,6 +64,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureOperationsProcessing();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
+            ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, false, typeof(object));
 
             return container;
         }

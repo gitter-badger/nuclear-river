@@ -4,7 +4,7 @@ using NuClear.Messaging.API.Flows;
 
 namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
 {
-    public sealed class PrimaryReplicate2CustomerIntelligenceFlow : MessageFlowBase<PrimaryReplicate2CustomerIntelligenceFlow>
+    public sealed class Replicate2CustomerIntelligenceFlow : MessageFlowBase<Replicate2CustomerIntelligenceFlow>
     {
         public override Guid Id
         {

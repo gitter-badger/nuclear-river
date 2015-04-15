@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.Messaging
             {
                 OriginalMessageId = x.Key,
                 WellKnownMessages = x.Value
-                    .Where(y => y.TargetFlow.Equals(PrimaryReplicate2CustomerIntelligenceFlow.Instance))
+                    .Where(y => y.TargetFlow.Equals(Replicate2CustomerIntelligenceFlow.Instance))
                     .OfType<Replicate2CustomerIntelligenceAggregatableMessage>()
                     .ToList(),
             })
