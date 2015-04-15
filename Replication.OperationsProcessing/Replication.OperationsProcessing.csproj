@@ -40,11 +40,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.2\lib\net451\2GIS.NuClear.Metamodeling.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.2\lib\net451\2GIS.NuClear.Model.Common.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
@@ -60,11 +60,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.2\lib\net451\2GIS.NuClear.Settings.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Settings.1.1.0\lib\net451\2GIS.NuClear.Settings.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.2\lib\net451\2GIS.NuClear.Settings.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
@@ -80,7 +80,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
