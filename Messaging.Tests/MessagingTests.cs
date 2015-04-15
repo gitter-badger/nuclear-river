@@ -3,6 +3,7 @@ using System.Linq;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
@@ -38,7 +39,7 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
             });
 
             var container = new UnityContainer().ConfigureUnity(receiver);
-            var flowId = "Replicate2AdvancedSearchFlow".AsPrimaryProcessingFlowId();
+            var flowId = typeof(PrimaryReplicate2CustomerIntelligenceFlow).Name.AsPrimaryProcessingFlowId();
 
             var processor = GetProcessor(container, flowId);
             processor.Process();
