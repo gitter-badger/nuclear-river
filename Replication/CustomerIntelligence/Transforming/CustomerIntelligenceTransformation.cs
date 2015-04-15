@@ -15,26 +15,21 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class CustomerIntelligenceTransformation : BaseTransformation
+    public sealed class CustomerIntelligenceTransformation
     {
-        private static readonly Dictionary<Type, AggregateInfo> Aggregates = new Dictionary<Type, AggregateInfo>
+        private static readonly Dictionary<Type, AggregateInfo> Aggregates = new []
         {
-            {
-                typeof(Firm),
-                new AggregateInfo(
-                    Query.FirmsById,
-                    valueObjects:
-                        new[]
-                        {
-                            new ValueObjectInfo(FirmChildren.FirmBalances),
-                            new ValueObjectInfo(FirmChildren.FirmCategories),
-                            new ValueObjectInfo(FirmChildren.FirmCategoryGroups)
-                        })
-            },
-            { typeof(Client), new AggregateInfo(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) }) }
-        };
+            AggregateInfo.Create<Firm>(Query.FirmsById, valueObjects:
+                new[]
+                {
+                    new ValueObjectInfo(FirmChildren.FirmBalances),
+                    new ValueObjectInfo(FirmChildren.FirmCategories),
+                    new ValueObjectInfo(FirmChildren.FirmCategoryGroups)
+                }),
+            AggregateInfo.Create<Client>(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) })
+        }.ToDictionary(x => x.AggregateType);
 
-        private static readonly Dictionary<Type, int> OperationPriority = new Dictionary<Type, int>
+        private static readonly Dictionary<Type, int> OperationPriorities = new Dictionary<Type, int>
         {
             { typeof(InitializeAggregate), 3 },
             { typeof(RecalculateAggregate), 2 },
@@ -43,9 +38,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
+        private readonly IDataMapper _mapper;
 
         public CustomerIntelligenceTransformation(ICustomerIntelligenceContext source, ICustomerIntelligenceContext target, IDataMapper mapper)
-            : base(mapper)
         {
             if (source == null)
             {
@@ -58,6 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _source = source;
             _target = target;
+            _mapper = mapper;
         }
 
         public void Transform(IEnumerable<AggregateOperation> operations)
@@ -94,16 +90,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private static int GetPriority(Type operation)
         {
             int order;
-            return OperationPriority.TryGetValue(operation, out order) ? order : 0;
+            return OperationPriorities.TryGetValue(operation, out order) ? order : 0;
         }
 
         private void InitializeAggregate(AggregateInfo aggregateInfo, long[] ids)
         {
-            Insert(aggregateInfo.Query(_source, ids));
+            _mapper.InsertAll(aggregateInfo.Query(_source, ids));
 
             foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                Insert(valueObjectInfo.Query(_source, ids));
+                _mapper.InsertAll(valueObjectInfo.Query(_source, ids));
             }
         }
 
@@ -118,12 +114,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var elementsToUpdate = result.Intersection;
                 var elementsToDelete = result.Complement;
 
-                Insert(elementsToInsert.AsQueryable());
-                Update(elementsToUpdate.AsQueryable());
-                Delete(elementsToDelete.AsQueryable());
+                _mapper.InsertAll(elementsToInsert.AsQueryable());
+                _mapper.UpdateAll(elementsToUpdate.AsQueryable());
+                _mapper.DeleteAll(elementsToDelete.AsQueryable());
             }
 
-            Update(aggregateInfo.Query(_source, ids));
+            _mapper.UpdateAll(aggregateInfo.Query(_source, ids));
 
             foreach (var entityInfo in aggregateInfo.Entities)
             {
@@ -134,9 +130,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var elementsToUpdate = result.Intersection;
                 var elementsToDelete = result.Complement;
 
-                Insert(elementsToInsert.AsQueryable());
-                Update(elementsToUpdate.AsQueryable());
-                Delete(elementsToDelete.AsQueryable());
+                _mapper.InsertAll(elementsToInsert.AsQueryable());
+                _mapper.UpdateAll(elementsToUpdate.AsQueryable());
+                _mapper.DeleteAll(elementsToDelete.AsQueryable());
             }
         }
 
@@ -144,59 +140,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             foreach (var entityInfo in aggregateInfo.Entities)
             {
-                Delete(entityInfo.Query(_target, ids));
+                _mapper.DeleteAll(entityInfo.Query(_target, ids));
             }
 
             foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                Delete(valueObjectInfo.Query(_target, ids));
+                _mapper.DeleteAll(valueObjectInfo.Query(_target, ids));
             }
 
-            Delete(aggregateInfo.Query(_target, ids));
+            _mapper.DeleteAll(aggregateInfo.Query(_target, ids));
         }
-
-        #region Aggregate structure
-
-        private class AggregateInfo
-        {
-            public AggregateInfo(
-                Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query,
-                IEnumerable<EntityInfo> entities = null,
-                IEnumerable<ValueObjectInfo> valueObjects = null)
-            {
-                Query = query;
-                Entities = entities ?? Enumerable.Empty<EntityInfo>();
-                ValueObjects = valueObjects ?? Enumerable.Empty<ValueObjectInfo>();
-            }
-
-            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
-
-            public IEnumerable<EntityInfo> Entities { get; private set; }
-
-            public IEnumerable<ValueObjectInfo> ValueObjects { get; private set; }
-        }
-
-        private class EntityInfo
-        {
-            public EntityInfo(Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query)
-            {
-                Query = query;
-            }
-
-            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
-        }
-
-        private class ValueObjectInfo
-        {
-            public ValueObjectInfo(Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> query)
-            {
-                Query = query;
-            }
-
-            public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> Query { get; private set; }
-        }
-
-        #endregion
 
         #region Query
 
@@ -271,8 +224,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 var set1 = new HashSet<T>(data1);
                 var set2 = new HashSet<T>(data2);
+
+                // NOTE: avoiding enumerable extensions to reuse hashset performance
                 var difference = set1.Where(x => !set2.Contains(x));
-                var intersection = set1.Where(x => set2.Contains(x)); // NOTE: it's important to note that the operation result is not symmetric
+                var intersection = set1.Where(x => set2.Contains(x));
                 var complement = set2.Where(x => !set1.Contains(x));
 
                 return new MergeResult { Difference = difference, Intersection = intersection, Complement = complement };

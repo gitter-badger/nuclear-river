@@ -62,11 +62,16 @@
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FactInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\DestroyAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
+    <Compile Include="Data\DataMapperExtensions.cs" />
     <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\BaseTransformation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
     <Compile Include="Model\IObject.cs" />
     <Compile Include="Model\IIdentifiableObject.cs" />

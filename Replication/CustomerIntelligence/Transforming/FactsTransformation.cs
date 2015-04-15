@@ -12,36 +12,42 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     using CI = CustomerIntelligence.Model;
 
-    public sealed class FactsTransformation : BaseTransformation
+    public sealed class FactsTransformation
     {
-        private static readonly Dictionary<Type, FactInfo> Facts = new Dictionary<Type, FactInfo>
+        private static readonly Dictionary<Type, FactInfo> Facts = new []
         {
-            { typeof(Account), new FactInfo(Query.AccountsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByAccount)) },
-            { typeof(BranchOfficeOrganizationUnit), new FactInfo(Query.BranchOfficeOrganizationUnitsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByBranchOfficeOrganizationUnit)) },
-            { typeof(Category), new FactInfo(Query.CategoriesById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategory)) },
-            { typeof(CategoryFirmAddress), new FactInfo(Query.CategoryFirmAddressById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategoryFirmAddress)) },
-            { typeof(CategoryOrganizationUnit), new FactInfo(Query.CategoryOrganizationUnitById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByCategoryOrganizationUnit)) },
-            { typeof(Client), new FactInfo(Query.ClientsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByClient)) { AggregateType = typeof(CI::Client) } },
-            { typeof(Contact), new FactInfo(Query.ContactsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByContacts)) },
-            { typeof(Firm), new FactInfo(Query.FirmsById, new DependentAggregateInfo(typeof(CI::Client), ClientRelation.ByFirm)) { AggregateType = typeof(CI::Firm) } },
-            { typeof(FirmAddress), new FactInfo(Query.FirmAddressesById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByFirmAddress)) },
-            { typeof(FirmContact), new FactInfo(Query.FirmContactsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByFirmContacts)) },
-            { typeof(LegalPerson), new FactInfo(Query.LegalPersonsById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByLegalPerson)) },
-            { typeof(Order), new FactInfo(Query.OrdersById, new DependentAggregateInfo(typeof(CI::Firm), FirmRelation.ByOrder)) }
-        };
+            FactInfo.Create<Account>(Query.AccountsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByAccount)),
+            FactInfo.Create<BranchOfficeOrganizationUnit>(Query.BranchOfficeOrganizationUnitsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByBranchOfficeOrganizationUnit)),
+            FactInfo.Create<Category>(Query.CategoriesById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategory)),
+            FactInfo.Create<CategoryFirmAddress>(Query.CategoryFirmAddressById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategoryFirmAddress)),
+            FactInfo.Create<CategoryOrganizationUnit>(Query.CategoryOrganizationUnitById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategoryOrganizationUnit)),
+            FactInfo.Create<Client>(Query.ClientsById, FactDependencyInfo.Create<CI::Client>(), FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByClient)),
+            FactInfo.Create<Contact>(Query.ContactsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByContacts)),
+            FactInfo.Create<Firm>(Query.FirmsById, FactDependencyInfo.Create<CI::Firm>(), FactDependencyInfo.Create<CI::Client>(ClientRelation.ByFirm)),
+            FactInfo.Create<FirmAddress>(Query.FirmAddressesById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByFirmAddress)),
+            FactInfo.Create<FirmContact>(Query.FirmContactsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByFirmContacts)),
+            FactInfo.Create<LegalPerson>(Query.LegalPersonsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByLegalPerson)),
+            FactInfo.Create<Order>(Query.OrdersById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByOrder))
+        }.ToDictionary(x => x.FactType);
 
-        private static readonly Dictionary<Type, int> OperationPriority = new Dictionary<Type, int>
+        private static readonly Dictionary<Type, int> OperationPriorities = new Dictionary<Type, int>
         {
             { typeof(CreateFact), 3 },
             { typeof(UpdateFact), 2 },
             { typeof(DeleteFact), 1 }
         };
 
+        private static readonly Dictionary<Type, int> FactPriorities = new Dictionary<Type, int>
+        {
+            { typeof(Firm), -2 },
+            { typeof(Client), -1 },
+        };
+
         private readonly IFactsContext _source;
         private readonly IFactsContext _target;
+        private readonly IDataMapper _mapper;
 
         public FactsTransformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
-            : base(mapper)
         {
             if (source == null)
             {
@@ -54,13 +60,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _source = source;
             _target = target;
+            _mapper = mapper;
         }
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
-            foreach (var slice in operations.GroupBy(x => new { Operation = x.GetType(), x.FactType }).OrderByDescending(x => GetPriority(x.Key.Operation)))
+            var slices = from operation in operations
+                         group operation by new { Operation = operation.GetType(), operation.FactType }
+                         into slice
+                         orderby GetPriority(OperationPriorities, slice.Key.Operation), GetPriority(FactPriorities, slice.Key.FactType)
+                         select slice;
+
+            foreach (var slice in slices)
             {
                 var operation = slice.Key.Operation;
                 var factType = slice.Key.FactType;
@@ -91,114 +104,50 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return result.Distinct();
         }
 
-        private static int GetPriority(Type operation)
+        private static int GetPriority(IReadOnlyDictionary<Type, int> priorities, Type operation)
         {
             int order;
-            return OperationPriority.TryGetValue(operation, out order) ? order : 0;
+            return priorities.TryGetValue(operation, out order) ? order : 0;
         }
 
         private IEnumerable<AggregateOperation> CreateFact(FactInfo info, long[] ids)
         {
-            var result = Enumerable.Empty<AggregateOperation>();
+            _mapper.InsertAll(info.Query(_source, ids));
 
-            Insert(info.Query(_source, ids));
-
-            if (info.AggregateType != null)
-            {
-                JoinWith(ref result, ids, id => new InitializeAggregate(info.AggregateType, id));
-            }
-
-            foreach (var aggregateInfo in info.Aggregates)
-            {
-                var aggregateType = aggregateInfo.AggregateType;
-                JoinWith(ref result, aggregateInfo.Query(_target, ids).ToArray(), id => new RecalculateAggregate(aggregateType, id));
-            }
-
-            return result;
+            return ProcessDependencies(info.Aggregates, ids, (dependency, id) =>
+                dependency.IsDirectDependency
+                ? (AggregateOperation)new InitializeAggregate(dependency.AggregateType, id)
+                : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id)).ToArray();
         }
 
         private IEnumerable<AggregateOperation> UpdateFact(FactInfo info, long[] ids)
         {
-            var result = Enumerable.Empty<AggregateOperation>();
+            IEnumerable<AggregateOperation> result = ProcessDependencies(info.Aggregates.Where(x => !x.IsDirectDependency), ids, 
+                                                     (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id)).ToArray();
 
-            foreach (var aggregateInfo in info.Aggregates)
-            {
-                var aggregateType = aggregateInfo.AggregateType;
-                JoinWith(ref result, aggregateInfo.Query(_target, ids).ToArray(), id => new RecalculateAggregate(aggregateType, id));
-            }
+            _mapper.UpdateAll(info.Query(_source, ids));
 
-            Update(info.Query(_source, ids));
+            result = result.Concat(ProcessDependencies(info.Aggregates, ids, (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id)).ToArray());
 
-            if (info.AggregateType != null)
-            {
-                JoinWith(ref result, ids, id => new RecalculateAggregate(info.AggregateType, id));
-            }
-
-            foreach (var aggregateInfo in info.Aggregates)
-            {
-                var aggregateType = aggregateInfo.AggregateType;
-                JoinWith(ref result, aggregateInfo.Query(_target, ids).ToArray(), id => new RecalculateAggregate(aggregateType, id));
-            }
-            
             return result;
         }
 
         private IEnumerable<AggregateOperation> DeleteFact(FactInfo info, long[] ids)
         {
-            var result = Enumerable.Empty<AggregateOperation>();
+            var result = ProcessDependencies(info.Aggregates, ids, (dependency, id) =>
+                dependency.IsDirectDependency
+                ? (AggregateOperation)new DestroyAggregate(dependency.AggregateType, id)
+                : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id)).ToArray();
 
-            foreach (var aggregateInfo in info.Aggregates)
-            {
-                var aggregateType = aggregateInfo.AggregateType;
-                JoinWith(ref result, aggregateInfo.Query(_target, ids).ToArray(), id => new RecalculateAggregate(aggregateType, id));
-            }
-
-            Delete(info.Query(_target, ids));
-
-            if (info.AggregateType != null)
-            {
-                JoinWith(ref result, ids, id => new DestroyAggregate(info.AggregateType, id));
-            }
+            _mapper.DeleteAll(info.Query(_target, ids));
 
             return result;
         }
 
-        private static void JoinWith(ref IEnumerable<AggregateOperation> collection, IEnumerable<long> ids, Func<long, AggregateOperation> create)
+        private IEnumerable<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, long[] ids, Func<FactDependencyInfo, long, AggregateOperation> build)
         {
-            collection = collection.Concat(ids.Select(create));
+            return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id)));
         }
-
-        #region Descriptions
-
-        private class FactInfo
-        {
-            public FactInfo(Func<IFactsContext, IEnumerable<long>, IQueryable> query, params DependentAggregateInfo[] aggregates)
-            {
-                Query = query;
-                Aggregates = aggregates ?? Enumerable.Empty<DependentAggregateInfo>();
-            }
-
-            public Func<IFactsContext, IEnumerable<long>, IQueryable> Query { get; private set; }
-
-            public IEnumerable<DependentAggregateInfo> Aggregates { get; private set; }
-
-            public Type AggregateType { get; set; }
-        }
-
-        private class DependentAggregateInfo
-        {
-            public DependentAggregateInfo(Type aggregateType, Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> query)
-            {
-                AggregateType = aggregateType;
-                Query = query;
-            }
-
-            public Type AggregateType { get; private set; }
-
-            public Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> Query { get; private set; }
-        }
-
-        #endregion
 
         #region Queries
 
