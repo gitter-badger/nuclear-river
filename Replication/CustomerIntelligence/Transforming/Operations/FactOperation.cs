@@ -15,11 +15,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
 
             FactType = factType;
             FactId = factId;
+            Priority = 0;
         }
 
         public Type FactType { get; private set; }
 
         public long FactId { get; private set; }
+
+        public int Priority { get; protected set; }
 
         public override bool Equals(object obj)
         {

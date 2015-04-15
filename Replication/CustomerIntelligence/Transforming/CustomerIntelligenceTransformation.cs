@@ -29,13 +29,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             AggregateInfo.Create<Client>(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) })
         }.ToDictionary(x => x.AggregateType);
 
-        private static readonly Dictionary<Type, int> OperationPriorities = new Dictionary<Type, int>
-        {
-            { typeof(InitializeAggregate), 3 },
-            { typeof(RecalculateAggregate), 2 },
-            { typeof(DestroyAggregate), 1 }
-        };
-
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
         private readonly IDataMapper _mapper;
@@ -58,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            foreach (var slice in operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType }).OrderByDescending(x => GetPriority(x.Key.Operation)))
+            foreach (var slice in operations.GroupBy(x => new { Operation = x, x.AggregateType }).OrderByDescending(x => x.Key.Operation.Priority))
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
@@ -70,27 +63,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                 }
 
-                if (operation == typeof(InitializeAggregate))
+                if (operation is InitializeAggregate)
                 {
                     InitializeAggregate(aggregateInfo, aggregateIds);
                 }
                 
-                if (operation == typeof(RecalculateAggregate))
+                if (operation is RecalculateAggregate)
                 {
                     RecalculateAggregate(aggregateInfo, aggregateIds);
                 }
 
-                if (operation == typeof(DestroyAggregate))
+                if (operation is DestroyAggregate)
                 {
                     DestroyAggregate(aggregateInfo, aggregateIds);
                 }
             }
-        }
-
-        private static int GetPriority(Type operation)
-        {
-            int order;
-            return OperationPriorities.TryGetValue(operation, out order) ? order : 0;
         }
 
         private void InitializeAggregate(AggregateInfo aggregateInfo, long[] ids)

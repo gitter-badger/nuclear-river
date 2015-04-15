@@ -723,6 +723,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
+        [Test]
+        public void ShouldEnqueueOperationsInOrderForFirmIfFirmAddressCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => 
+                ctx.Firms == Inquire(new Facts::Firm { Id = 2 }) && 
+                ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 1 }, new Facts::FirmAddress { Id = 2, FirmId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::FirmAddress>(1), Fact.Create<Facts::Firm>(2), Fact.Create<Facts::FirmAddress>(2))
+                          .Verify(Inquire(Aggregate.Initialize<CI::Firm>(2), Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
+        }
+
+
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action test)
         {
@@ -895,7 +910,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 {
                     operations = operations.Where(predicate);
                 }
-                Assert.That(operations.ToArray(), Is.EquivalentTo(expected.ToArray()));
+                Assert.That(operations.ToArray(), Is.EqualTo(expected.ToArray()));
                 return this;
             }
         }

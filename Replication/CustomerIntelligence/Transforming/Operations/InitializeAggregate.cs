@@ -7,6 +7,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
         public InitializeAggregate(Type aggregateType, long aggregateId)
             : base(aggregateType, aggregateId)
         {
+            Priority = 3;
         }
     }
 }

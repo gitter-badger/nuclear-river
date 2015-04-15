@@ -30,17 +30,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             FactInfo.Create<Order>(Query.OrdersById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByOrder))
         }.ToDictionary(x => x.FactType);
 
-        private static readonly Dictionary<Type, int> OperationPriorities = new Dictionary<Type, int>
-        {
-            { typeof(CreateFact), 3 },
-            { typeof(UpdateFact), 2 },
-            { typeof(DeleteFact), 1 }
-        };
-
         private static readonly Dictionary<Type, int> FactPriorities = new Dictionary<Type, int>
         {
-            { typeof(Firm), -2 },
-            { typeof(Client), -1 },
+            { typeof(Firm), 2 },
+            { typeof(Client), 1 },
         };
 
         private readonly IFactsContext _source;
@@ -68,9 +61,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var result = Enumerable.Empty<AggregateOperation>();
 
             var slices = from operation in operations
-                         group operation by new { Operation = operation.GetType(), operation.FactType }
+                         group operation by new { Operation = operation, operation.FactType }
                          into slice
-                         orderby GetPriority(OperationPriorities, slice.Key.Operation), GetPriority(FactPriorities, slice.Key.FactType)
+                         orderby slice.Key.Operation.Priority descending, GetPriority(FactPriorities, slice.Key.FactType) descending
                          select slice;
 
             foreach (var slice in slices)
@@ -85,17 +78,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                if (operation == typeof(CreateFact))
+                if (operation is CreateFact)
                 {
                     result = result.Concat(CreateFact(factInfo, factIds));
                 }
                 
-                if (operation == typeof(UpdateFact))
+                if (operation is UpdateFact)
                 {
                     result = result.Concat(UpdateFact(factInfo, factIds));
                 }
 
-                if (operation == typeof(DeleteFact))
+                if (operation is DeleteFact)
                 {
                     result = result.Concat(DeleteFact(factInfo, factIds));
                 }
