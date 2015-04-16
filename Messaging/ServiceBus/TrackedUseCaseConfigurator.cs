@@ -6,18 +6,16 @@ using ProtoBuf.Meta;
 
 namespace NuClear.AdvancedSearch.Messaging.ServiceBus
 {
-    public sealed class AdvancedSearchTypeModel
+    public sealed class TrackedUseCaseConfigurator : IRuntimeTypeModelConfigurator
     {
-        public static TypeModel CreateTypeModel()
+        public RuntimeTypeModel Configure(RuntimeTypeModel typeModel)
         {
-            var typeModel = ProtoBufTypeModelForTrackedUseCaseConfigurator.Configure();
-
             typeModel.Add(typeof(UnknownOperationIdentitySurrogate), false)
-                    .Add(1, "Id");
+                     .Add(1, "Id");
             typeModel.Add(typeof(IOperationIdentity), false).SetSurrogate(typeof(UnknownOperationIdentitySurrogate));
 
             typeModel.Add(typeof(UnknownEntityTypeSurrogate), false)
-                    .Add(1, "Id");
+                     .Add(1, "Id");
             typeModel.Add(typeof(IEntityType), false).SetSurrogate(typeof(UnknownEntityTypeSurrogate));
 
             return typeModel;
