@@ -1,5 +1,4 @@
-﻿using NuClear.AdvancedSearch.Messaging.DI;
-using NuClear.Assembling.Zones;
+﻿using NuClear.Assembling.Zones;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
@@ -11,9 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             {
                 return CompositionRoot.Config
                                       .RequireZone<ReplicationZone>()
-                                      .UseAnchor<ReplicationEntryPointAssembly>()
-                                      .RequireZone<MetadataZone>()
-                                      .UseAnchor<MessagingAssembly>();
+                                      .UseAnchor<ReplicationEntryPointAssembly>();
             }
         }
     }

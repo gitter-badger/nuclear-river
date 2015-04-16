@@ -1,5 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
@@ -34,6 +35,7 @@ using NuClear.Metamodeling.Domain.Processors.Concrete;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
+using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Metamodeling.Validators;
 using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
@@ -60,7 +62,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             var massProcessors = new IMassProcessor[]
                                  {
                                      new TaskServiceJobsMassProcessor(container),
-                                     new MetadataSourcesMassProcessor(container)
                                  };
 
             container.AttachQueryableContainerExtension()
@@ -74,7 +75,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureOperations();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
-            ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, false, typeof(object));
 
             return container;
         }
@@ -96,6 +96,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // validators
             container.RegisterType<IMetadataValidatorsSuite, MetadataValidatorsSuite>(Lifetime.Singleton);
+
+            // register matadata sources without massprocessor
+            container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(PerformedOperationsMessageFlowsMetadataSource), Lifetime.Singleton);
 
             return container;
         }

@@ -117,8 +117,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DI\MessagingAssembly.cs" />
-    <Compile Include="DI\MetadataZone.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replicate2CustomerIntelligenceAggregatableMessage.cs" />
