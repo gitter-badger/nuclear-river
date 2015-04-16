@@ -4,9 +4,9 @@ using NuClear.OperationsProcessing.API.Metadata;
 
 namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
 {
-    public sealed class PerformedOperationsPrimaryProcessingStrategy : MessageFlowReceiverResolveStrategyBase
+    public sealed class MockReceiverResolveStrategy : MessageFlowReceiverResolveStrategyBase
     {
-        public PerformedOperationsPrimaryProcessingStrategy(IMetadataProvider metadataProvider)
+        public MockReceiverResolveStrategy(IMetadataProvider metadataProvider)
             : base(metadataProvider, typeof(MockMessageReceiver), PerformedOperations.IsPerformedOperationsPrimarySource)
         {
 

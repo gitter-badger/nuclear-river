@@ -107,8 +107,8 @@
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="MessagingTests.cs" />
-    <Compile Include="Mocks\Processor\PerformedOperationsPrimaryProcessingStrategy.cs" />
-    <Compile Include="Mocks\Receiver\PerformedOperationsPrimaryProcessingStrategy.cs" />
+    <Compile Include="Mocks\Processor\PrimaryProcessorResolveStrategy.cs" />
+    <Compile Include="Mocks\Receiver\MockReceiverResolveStrategy.cs" />
     <Compile Include="Mocks\Receiver\MockMessageReceiver.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

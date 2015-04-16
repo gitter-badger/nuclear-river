@@ -3,11 +3,11 @@ using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.Primary;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Processor
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor
 {
-    public sealed class PerformedOperationsPrimaryProcessingStrategy : MessageFlowProcessorResolveStrategyBase
+    public sealed class PrimaryProcessorResolveStrategy : MessageFlowProcessorResolveStrategyBase
     {
-        public PerformedOperationsPrimaryProcessingStrategy(IMetadataProvider metadataProvider)
+        public PrimaryProcessorResolveStrategy(IMetadataProvider metadataProvider)
             : base(metadataProvider, typeof(PerformedOperationsPrimaryFlowProcessor), PerformedOperations.IsPerformedOperationsPrimarySource)
         {
         }

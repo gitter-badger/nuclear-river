@@ -1,7 +1,8 @@
 ﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Processor;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
@@ -20,6 +21,7 @@ using NuClear.Messaging.DI.Factories.Unity.Handlers;
 using NuClear.Messaging.DI.Factories.Unity.Processors;
 using NuClear.Messaging.DI.Factories.Unity.Processors.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Receivers;
+using NuClear.Messaging.DI.Factories.Unity.Receivers.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Stages;
 using NuClear.Messaging.DI.Factories.Unity.Transformers;
 using NuClear.Messaging.DI.Factories.Unity.Validators;
@@ -130,11 +132,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.PerScope)
 
-                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, PerformedOperationsPrimaryProcessingStrategy>(Lifetime.Singleton)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, PrimaryProcessorResolveStrategy>(Lifetime.Singleton)
+                            // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, [FinalProcessorResolveStrategy]>(Lifetime.PerScope)
 
                             // TODO: Insert *ReceiverResolveStrategy implemented in AS that uses ServiceBusOperationsReceiver
-                            // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, [PrimaryReceiverResolveStrategy]>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, PrimaryReceiverResolveStrategy>(Lifetime.PerScope)
                             // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, [FinalReceiverResolveStrategy]>(Lifetime.PerScope)
+
                             .RegisterType<IMessageValidatorFactory, UnityMessageValidatorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.PerScope)
 
