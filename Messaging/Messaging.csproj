@@ -30,18 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.Assembling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Assembling.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Assembling.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="2GIS.NuClear.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7c5ecbf1338a415c, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Common.1.0.3\lib\net451\2GIS.NuClear.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="2GIS.NuClear.Messaging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Messaging.1.0.3\lib\net451\2GIS.NuClear.Messaging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="2GIS.NuClear.Messaging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.3\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
       <Private>True</Private>
@@ -64,14 +52,6 @@
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.1.0.3\lib\net451\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="2GIS.NuClear.OperationsProcessing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.3\lib\net451\2GIS.NuClear.OperationsProcessing.API.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.SQLStore, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.3\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
@@ -121,7 +101,6 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -135,7 +114,9 @@
     <Compile Include="ServiceBus\UnknownOperationIdentitySurrogate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
