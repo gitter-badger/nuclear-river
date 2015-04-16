@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 
 using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
@@ -16,11 +15,10 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         public void EmptyUseCase()
         {
             // arrange
-            var stream = new MemoryStream(Resources.EmptyUseCase);
             var trackedUseCaseParser = new TrackedUseCaseParser();
 
             // act
-            var trackedUseCase = trackedUseCaseParser.Parse(stream);
+            var trackedUseCase = trackedUseCaseParser.Parse(Resources.EmptyUseCase);
 
             // assert
             Assert.That(trackedUseCase.Operations, Is.Empty);
@@ -30,11 +28,10 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         public void UpdateFirmUseCase()
         {
             // arrange
-            var stream = new MemoryStream(Resources.UpdateFirm);
             var trackedUseCaseParser = new TrackedUseCaseParser();
 
             // act
-            var trackedUseCase = trackedUseCaseParser.Parse(stream);
+            var trackedUseCase = trackedUseCaseParser.Parse(Resources.UpdateFirm);
 
             // assert
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));
@@ -60,11 +57,10 @@ namespace NuClear.AdvancedSearch.Messaging.Tests
         public void ComplexUseCase()
         {
             // arrange
-            var stream = new MemoryStream(Resources.ComplexUseCase);
             var trackedUseCaseParser = new TrackedUseCaseParser();
 
             // act
-            var trackedUseCase = trackedUseCaseParser.Parse(stream);
+            var trackedUseCase = trackedUseCaseParser.Parse(Resources.ComplexUseCase);
 
             // assert
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));

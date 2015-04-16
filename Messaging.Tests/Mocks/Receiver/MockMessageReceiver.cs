@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Receivers;
 
@@ -25,8 +23,7 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
         {
             var useCases = _messageBytes.Select(x =>
             {
-                var stream = new MemoryStream(x);
-                var useCase = _parser.Parse(stream);
+                var useCase = _parser.Parse(x);
                 return useCase;
             });
 

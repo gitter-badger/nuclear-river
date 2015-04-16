@@ -126,8 +126,6 @@
     <Compile Include="ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
     <Compile Include="ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="ServiceBus\AdvancedSearchTypeModel.cs" />
-    <Compile Include="ServiceBus\ITrackedUseCaseParser.cs" />
-    <Compile Include="ServiceBus\TrackedUseCaseParser.cs" />
     <Compile Include="ServiceBus\UnknownEntityType.cs" />
     <Compile Include="ServiceBus\UnknownEntityTypeSurrogate.cs" />
     <Compile Include="ServiceBus\UnknownOperationIdentity.cs" />
