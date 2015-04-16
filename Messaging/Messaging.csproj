@@ -131,6 +131,7 @@
     <Compile Include="ServiceBus\UnknownEntityType.cs" />
     <Compile Include="ServiceBus\UnknownEntityTypeSurrogate.cs" />
     <Compile Include="ServiceBus\UnknownOperationIdentity.cs" />
+    <Compile Include="ServiceBus\UnknownOperationIdentityRegistry.cs" />
     <Compile Include="ServiceBus\UnknownOperationIdentitySurrogate.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -224,6 +224,7 @@
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />
     <Compile Include="Factories\Messaging\Receiver\PrimaryReceiverResolveStrategy.cs" />
+    <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Jobs\DebugTestJob.cs" />
     <Compile Include="Jobs\OperationsFinalProcessingJob.cs" />

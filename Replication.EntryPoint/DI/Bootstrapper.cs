@@ -1,8 +1,10 @@
 ﻿using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
@@ -24,6 +26,7 @@ using NuClear.Messaging.DI.Factories.Unity.Receivers;
 using NuClear.Messaging.DI.Factories.Unity.Receivers.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Stages;
 using NuClear.Messaging.DI.Factories.Unity.Transformers;
+using NuClear.Messaging.DI.Factories.Unity.Transformers.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Validators;
 using NuClear.Messaging.Transports.ServiceBus;
 using NuClear.Messaging.Transports.ServiceBus.API;
@@ -32,6 +35,8 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Validators;
+using NuClear.Model.Common.Operations.Identity;
+using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Final.Transports;
@@ -65,7 +70,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureTracing(tracer, tracerContextManager)
                      .ConfigureSecurityAspects()
                      .ConfigureQuartz()
-                     .ConfigureOperationsProcessing();
+                     .ConfigureOperationsProcessing()
+                     .ConfigureOperations();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, false, typeof(object));
@@ -116,6 +122,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
+            IdentitySurrogate.SetResolver(x => container.Resolve(x));
+
             // primary
             container.RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
@@ -142,12 +150,15 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageValidatorFactory, UnityMessageValidatorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.PerScope)
 
-                            // TODO: Insert PerformedOperationsPrimaryProcessingStrategy implemented in AS that uses BinaryEntireBrokeredMessage2TrackedUseCaseTransformer 
-                            // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, [PrimaryMessageTransformerResolveStrategy]>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, PrimaryMessageTransformerResolveStrategy>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope);
+        }
 
-            return container;
+        private static IUnityContainer ConfigureOperations(this IUnityContainer container)
+        {
+            return container
+                .RegisterType<IOperationIdentityRegistry, UnknownOperationIdentityRegistry>(Lifetime.Singleton);
         }
     }
 }

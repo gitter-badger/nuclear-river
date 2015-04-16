@@ -1,4 +1,8 @@
-﻿using NuClear.Jobs.Settings;
+﻿using System.Configuration;
+
+using NuClear.Jobs.Settings;
+using NuClear.Metamodeling.Domain.Operations.Detail;
+using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Settings;
 using NuClear.Settings.API;
 
@@ -15,8 +19,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 
         public ReplicationServiceSettings()
         {
+            var serviceBusConnectionString = ConfigurationManager.ConnectionStrings["ServiceBus"].ConnectionString;
+
             Aspects.Use(new EnvironmentsAspect());
             Aspects.Use(new PersistentStoreAspect());
+            Aspects.Use(new ServiceBusReceiverSettingsAspect(serviceBusConnectionString));
         }
 
         int ITaskServiceProcessingSettings.MaxWorkingThreads
