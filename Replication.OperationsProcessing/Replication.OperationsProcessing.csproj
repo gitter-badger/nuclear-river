@@ -77,6 +77,9 @@
   <ItemGroup>
     <Compile Include="Final\ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
     <Compile Include="Final\Transports\FinalProcessingQueueReceiver.cs" />
+    <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
+    <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
+    <Compile Include="Primary\ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +87,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

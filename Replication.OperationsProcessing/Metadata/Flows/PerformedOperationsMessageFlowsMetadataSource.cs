@@ -6,8 +6,9 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.OperationsProcessing.API.Metadata;
+using NuClear.Replication.OperationsProcessing.Primary;
 
-namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
+namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
 {
     public sealed class PerformedOperationsMessageFlowsMetadataSource : MetadataSourceBase<MetadataMessageFlowsIdentity>
     {

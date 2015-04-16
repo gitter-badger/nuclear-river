@@ -126,10 +126,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
-    <Compile Include="ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="ServiceBus\TrackedUseCaseConfigurator.cs" />
     <Compile Include="ServiceBus\UnknownEntityType.cs" />
     <Compile Include="ServiceBus\UnknownEntityTypeSurrogate.cs" />

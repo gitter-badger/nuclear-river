@@ -179,6 +179,10 @@
       <Project>{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}</Project>
       <Name>Messaging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
+      <Project>{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}</Project>
+      <Name>Replication.OperationsProcessing</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

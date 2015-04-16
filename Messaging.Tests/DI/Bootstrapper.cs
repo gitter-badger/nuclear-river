@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
@@ -25,6 +24,7 @@ using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Primary;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Tracing.API;
 
 namespace NuClear.AdvancedSearch.Messaging.Tests.DI
@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.Messaging.Tests.DI
                         .RegisterInstance(receiver)
                         .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageFlowProcessorResolveStrategy, Mocks.Processor.PrimaryProcessorResolveStrategy>("primary", Lifetime.Singleton)
-                        .RegisterType<IMessageFlowReceiverResolveStrategy, Mocks.Receiver.MockReceiverResolveStrategy>("primary", Lifetime.Singleton)
+                        .RegisterType<IMessageFlowReceiverResolveStrategy, MockReceiverResolveStrategy>("primary", Lifetime.Singleton)
                         .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.Singleton)

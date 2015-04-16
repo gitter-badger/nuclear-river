@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 
-using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.OperationsProcessing.Transports.SQLStore.Primary;
 using NuClear.OperationsTracking.API.UseCases;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
-namespace NuClear.AdvancedSearch.Messaging
+namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy :
         MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, PrimaryAggregatableMessage>

@@ -2,7 +2,7 @@ using System;
 
 using NuClear.Messaging.API.Flows;
 
-namespace NuClear.AdvancedSearch.Messaging.Metadata.Flows
+namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
 {
     public sealed class Replicate2CustomerIntelligenceFlow : MessageFlowBase<Replicate2CustomerIntelligenceFlow>
     {

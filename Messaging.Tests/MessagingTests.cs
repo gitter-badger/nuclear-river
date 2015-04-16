@@ -3,7 +3,6 @@ using System.Linq;
 
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
 using NuClear.AdvancedSearch.Messaging.Tests.DI;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
@@ -13,6 +12,7 @@ using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Metadata;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
 using NUnit.Framework;
 
