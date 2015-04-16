@@ -1,6 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Processor;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
@@ -17,6 +18,7 @@ using NuClear.Messaging.DI.Factories.Unity.Accumulators;
 using NuClear.Messaging.DI.Factories.Unity.Common;
 using NuClear.Messaging.DI.Factories.Unity.Handlers;
 using NuClear.Messaging.DI.Factories.Unity.Processors;
+using NuClear.Messaging.DI.Factories.Unity.Processors.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Receivers;
 using NuClear.Messaging.DI.Factories.Unity.Stages;
 using NuClear.Messaging.DI.Factories.Unity.Transformers;
@@ -127,6 +129,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.Singleton)
                             .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.PerScope)
+
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, PerformedOperationsPrimaryProcessingStrategy>(Lifetime.Singleton)
 
                             // TODO: Insert *ReceiverResolveStrategy implemented in AS that uses ServiceBusOperationsReceiver
                             // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, [PrimaryReceiverResolveStrategy]>(Lifetime.PerScope)

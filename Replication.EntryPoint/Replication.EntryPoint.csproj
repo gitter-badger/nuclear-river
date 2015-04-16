@@ -108,6 +108,10 @@
       <HintPath>..\packages\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.1.0.2\lib\net451\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="2GIS.NuClear.OperationsProcessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.1.0.2\lib\net451\2GIS.NuClear.OperationsProcessing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.2\lib\net451\2GIS.NuClear.OperationsProcessing.API.dll</HintPath>
       <Private>True</Private>
@@ -223,6 +227,7 @@
     <Compile Include="Jobs\DebugTestJob.cs" />
     <Compile Include="Jobs\OperationsFinalProcessingJob.cs" />
     <Compile Include="Jobs\OperationsPrimaryProcessingJob.cs" />
+    <Compile Include="Processor\PerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="ReplicationService.cs">
       <SubType>Component</SubType>
     </Compile>
