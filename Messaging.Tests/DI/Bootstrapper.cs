@@ -1,7 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Messaging.Metadata.Flows;
-using NuClear.AdvancedSearch.Messaging.ServiceBus;
+using NuClear.AdvancedSearch.Messaging.Tests.Mocks;
 using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Processing.Actors.Handlers;

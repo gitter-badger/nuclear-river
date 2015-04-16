@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 
 using NuClear.AdvancedSearch.Messaging.ServiceBus;
+using NuClear.AdvancedSearch.Messaging.Tests.Mocks;
 using NuClear.AdvancedSearch.Messaging.Tests.Properties;
 using NuClear.OperationsTracking.API.Changes;
 

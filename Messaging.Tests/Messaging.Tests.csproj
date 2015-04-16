@@ -142,7 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
-    <Compile Include="ITrackedUseCaseParser.cs" />
+    <Compile Include="Mocks\ITrackedUseCaseParser.cs" />
     <Compile Include="MessagingTests.cs" />
     <Compile Include="Mocks\Processor\PrimaryProcessorResolveStrategy.cs" />
     <Compile Include="Mocks\Receiver\MockReceiverResolveStrategy.cs" />
@@ -154,7 +154,7 @@
     </Compile>
     <Compile Include="ServiceBusTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TrackedUseCaseParser.cs" />
+    <Compile Include="Mocks\TrackedUseCaseParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
