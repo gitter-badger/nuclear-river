@@ -7,63 +7,29 @@ if (Test-Path 'Env:\TEAMCITY_VERSION') {
 }
 
 Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\versioning.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\winservice.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\winrm.psm1" -DisableNameChecking
 
 Task Default -depends Hello
 Task Hello { "Билдскрипт запущен без цели, укажите цель" }
 
 Task Set-BuildNumber {
-	$version = Get-Version
+	$commonMetadata = Get-Metadata 'Common'
 	
 	if (Test-Path 'Env:\TEAMCITY_VERSION') {
-		Write-Host "##teamcity[buildNumber '$($version.SemanticVersion)']"
+		Write-Host "##teamcity[buildNumber '$($commonMetadata.Version.SemanticVersion)']"
 	}
 }
 
 Task Update-AssemblyInfo {
-	$globalDir = Join-Path $global:Context.Dir.Solution '.'
-	$assemblyInfos = Get-ChildItem $globalDir -Filter 'AssemblyInfo.cs' -Recurse
+	$commonMetadata = Get-Metadata 'Common'
+
+	$assemblyInfos = Get-ChildItem $commonMetadata.Dir.Solution -Filter 'AssemblyInfo.Version.cs' -Recurse
 	Update-AssemblyInfo $assemblyInfos
-}
-
-Task Build-NuGet -depends Set-BuildNumber, Update-AssemblyInfo {
-
-	$SolutionRelatedAllProjectsDir = '.'
-
-	$tempDir = Join-Path $global:Context.Dir.Temp 'NuGet'
-	if (!(Test-Path $tempDir)){
-		md $tempDir | Out-Null
-	}
-
-	Create-NuspecFiles $SolutionRelatedAllProjectsDir
-
-	$projects = Find-Projects $SolutionRelatedAllProjectsDir -Exclude '*.Tests.csproj'
-	
-	# bug (https://nuget.codeplex.com/workitem/4013) NuGet fails to extract properties from PCL project
-	# bug will be fixed in NuGet 3.0
-	$Properties = @{
-		'Version' = (Get-Version).SemanticVersion
-		'Author' = '2GIS'
-		'Description' = 'This is Release version of assembly'
-	}
-	
-	Build-PackagesFromProjects $projects $tempDir $Properties
-	
-	Publish-Artifacts $tempDir 'NuGet'
-}
-
-Task Deploy-NuGet {
-	$artifactName = Get-Artifacts 'NuGet'
-
-	$source = 'http://nuget.2gis.local'
-	$apiKey = ':enrbq rjl'
-
-	$packges = Get-ChildItem $artifactName -Include '*.nupkg' -Exclude '*.symbols.nupkg' -Recurse
-	Deploy-Packages $packges $source $apiKey
 }
 
 Task Run-UnitTests -depends Set-BuildNumber, Update-AssemblyInfo{
@@ -80,14 +46,14 @@ Task Run-UnitTests -depends Set-BuildNumber, Update-AssemblyInfo{
 
 Task Build-OData -depends Update-AssemblyInfo {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-EntryPointMetadata 'Web.OData'
+	$entryPointMetadata = Get-Metadata 'Web.OData'
 	
 	Build-WebPackage $projectFileName $entryPointMetadata
 }
 
 Task Deploy-OData {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-EntryPointMetadata 'Web.OData'
+	$entryPointMetadata = Get-Metadata 'Web.OData'
 	
 	Deploy-WebPackage $projectFileName $entryPointMetadata
 	Validate-WebSite $entryPointMetadata 'CustomerIntelligence/$metadata'
