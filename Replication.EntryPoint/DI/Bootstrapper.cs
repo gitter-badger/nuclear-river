@@ -148,11 +148,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.PerScope)
 
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, PrimaryProcessorResolveStrategy>(Lifetime.Singleton)
-                            // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, [FinalProcessorResolveStrategy]>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, FinalProcessorResolveStrategy>(Lifetime.PerScope)
 
                             // TODO: Insert *ReceiverResolveStrategy implemented in AS that uses ServiceBusOperationsReceiver
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, PrimaryReceiverResolveStrategy>(Lifetime.PerScope)
-                            // .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, [FinalReceiverResolveStrategy]>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, FinalReceiverResolveStrategy>(Lifetime.PerScope)
 
                             .RegisterType<IMessageValidatorFactory, UnityMessageValidatorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.PerScope)
