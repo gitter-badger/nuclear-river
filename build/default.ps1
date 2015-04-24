@@ -11,8 +11,6 @@ Import-Module "$BuildToolsRoot\modules\versioning.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\winservice.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\winrm.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 
 Task Default -depends Hello
@@ -63,34 +61,19 @@ Task Deploy-OData {
 Task Build-TaskService -Depends Update-AssemblyInfo {
 
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
-	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
-
-	Build-WinService $projectFileName $entryPointMetadata
+	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
 
 Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline {
-	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
-	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
-
-	Deploy-WinService $projectFileName $entryPointMetadata
+	Deploy-WinService 'Replication.EntryPoint'
 }
 
 Task Take-TaskServiceOffline -Depends Import-WinServiceModule {
-
-	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
-	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
-
-	Take-WinServiceOffline $projectFileName $entryPointMetadata
+	Take-WinServiceOffline 'Replication.EntryPoint'
 }
 
 Task Import-WinServiceModule {
-	$module = Get-Module 'winservice'
-
-	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
-	foreach($targetHost in $entryPointMetadata.TargetHosts){
-		$session = Get-CachedSession $targetHost
-		Import-ModuleToSession $session $module
-	}
+	Load-WinServiceModule 'Replication.EntryPoint'
 }
 
 Task Build-Packages -depends `

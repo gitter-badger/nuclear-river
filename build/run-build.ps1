@@ -29,7 +29,8 @@ $Properties.EnvironmentMetadata = @{
 			'TargetHosts' = @('uk-erm-test01')
 		}
 		'Replication.EntryPoint' = @{
-			'DisplayName' = '2GIS ERM AdvancedSearch Replication Service'
+			'ServiceName' = 'AdvSearch'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
 			'QuartzConfigs' = @()
 			'TargetHosts' = @('uk-erm-test01')
 		}
@@ -49,5 +50,5 @@ $Properties.EnvironmentMetadata = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.35-TaskServ-e67c27-63\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.35-TaskServ-2e63a3-64\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties
