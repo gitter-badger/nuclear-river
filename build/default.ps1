@@ -27,7 +27,7 @@ Task Set-BuildNumber {
 Task Update-AssemblyInfo {
 	$commonMetadata = Get-Metadata 'Common'
 
-	$assemblyInfos = Get-ChildItem $commonMetadata.Dir.Solution -Filter 'AssemblyInfo.Version.cs' -Recurse
+	$assemblyInfos = Get-ChildItem $commonMetadata.Dir.Solution -Filter 'AssemblyInfo*.cs' -Recurse
 	Update-AssemblyInfo $assemblyInfos
 }
 
