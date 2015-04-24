@@ -1,31 +1,21 @@
-param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
+﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Run-UnitTests')
+	$TaskList = @('Build-TaskService', 'Deploy-TaskService')
 }
 
 if ($Properties.Count -eq 0){
- 	$Properties = @{
-		'Revision' = '000000'
-		'Build' = 0
-		'Branch' = 'local'
-		'EnvironmentName' = 'Test.21'
+ 	$Properties.EnvironmentName = 'Test.21'
 	}
-}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 cls
 
-$Properties.GlobalVersion = '0.0.0'
-
+$Properties.SemanticVersion = '0.0.0'
 $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
-$Properties.Dir = @{
-	'Solution' = Join-Path $PSScriptRoot '..'
-	'Temp' = Join-Path $PSScriptRoot 'temp'
-	'Artifacts' = Join-Path $PSScriptRoot 'artifacts'
-}
+$Properties.SolutionDir = Join-Path $PSScriptRoot '..'
 
 $Properties.EnvironmentMetadata = @{
 	'Test.21' = @{
@@ -35,24 +25,30 @@ $Properties.EnvironmentMetadata = @{
 		}
 		'Web.OData' = @{
 			'ValidateWebsite' = $true
+			'IisAppPath' = 'search21.api.test.erm.2gis.ru'
 			'TargetHosts' = @('uk-erm-test01')
-			'IisAppPath' = "search21.api.test.erm.2gis.ru"
+		}
+		'Replication.EntryPoint' = @{
+			'ServiceName' = 'AdvSearch'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
+			'QuartzConfigs' = @()
+			'TargetHosts' = @('uk-erm-test01')
 		}
 	}
 }
 
 # Restore-Packages
 & {
-	$NugetPath = Join-Path $Properties.Dir.Solution '.nuget\NuGet.exe'
+	$NugetPath = Join-Path $Properties.SolutionDir '.nuget\NuGet.exe'
 	if (!(Test-Path $NugetPath)){
 		$webClient = New-Object System.Net.WebClient
 		$webClient.UseDefaultCredentials = $true
 		$webClient.Proxy.Credentials = $webClient.Credentials
 		$webClient.DownloadFile('https://www.nuget.org/nuget.exe', $NugetPath)
 	}
-	$solution = Get-ChildItem $Properties.Dir.Solution -Filter '*.sln'
+	$solution = Get-ChildItem $Properties.SolutionDir -Filter '*.sln'
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.Dir.Solution)\packages\2GIS.NuClear.BuildTools.0.0.33\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.38\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties
