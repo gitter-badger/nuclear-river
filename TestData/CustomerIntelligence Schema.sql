@@ -6,7 +6,7 @@ go
 -- drop tables
 if object_id('CustomerIntelligence.FirmCategoryGroups') is not null drop table CustomerIntelligence.FirmCategoryGroups;
 if object_id('CustomerIntelligence.FirmCategories') is not null drop table CustomerIntelligence.FirmCategories;
-if object_id('CustomerIntelligence.FirmAccount') is not null drop table CustomerIntelligence.FirmAccount;
+if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
 if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm;
 
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
@@ -38,25 +38,26 @@ create table CustomerIntelligence.Firm(
 	Id bigint not null
     , Name nvarchar(250) not null
     , CreatedOn datetimeoffset(2) not null
-    , LastDisqualifiedOn datetimeoffset(2) not null
-    , LastDistributedOn datetimeoffset(2) not null
+    , LastDisqualifiedOn datetimeoffset(2) null
+    , LastDistributedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Firms_HasPhone default 0
     , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
     , AddressCount int not null constraint DF_Firms_AddressCount default 0
     , CategoryGroupId bigint not null
     , ClientId bigint null
     , OrganizationUnitId bigint not null
+    , OwnerId bigint not null
     , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
 go
 
--- FirmAccount
-create table CustomerIntelligence.FirmAccount(
-	AccountId bigint not null
-    , FirmId bigint not null
+-- FirmBalance
+create table CustomerIntelligence.FirmBalance(
+    FirmId bigint not null
+    , AccountId bigint not null
     , Balance decimal(19,4) not null
-    , constraint PK_FirmAccounts primary key (AccountId, FirmId)
+    , constraint PK_FirmBalances primary key (FirmId, AccountId)
 )
 go
 

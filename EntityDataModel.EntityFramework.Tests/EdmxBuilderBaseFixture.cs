@@ -74,7 +74,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                     typeof(Category),
                     typeof(CategoryGroup),
                     typeof(Firm),
-                    typeof(FirmAccount),
+                    typeof(FirmBalance),
                     typeof(FirmCategory),
                     typeof(FirmCategoryGroup),
                     typeof(Client),

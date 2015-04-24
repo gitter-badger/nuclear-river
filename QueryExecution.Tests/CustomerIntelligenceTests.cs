@@ -55,7 +55,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [TestCase("$filter=Client/CategoryGroupId eq @id&@id=12345", Result = "Firm[].Where($it => ($it.Client.CategoryGroupId == Convert(12345)))", Description = "Поиск по ценовой категории клиента.")]
         [TestCase("$filter=Client/Contacts/any(x:x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
         [TestCase("$filter=Client/Contacts/any(x:x/IsFired ne true)", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (x.IsFired != True)))", Description = "Поиск по наличию рабочего контакта.")]
-        [TestCase("$filter=Accounts/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Accounts.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
+        [TestCase("$filter=Balances/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Balances.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
         public string ShouldAcceptMainCriteria(string filter)
         {
             return BuildQuery(CustomerIntelligence, "Firm", filter);

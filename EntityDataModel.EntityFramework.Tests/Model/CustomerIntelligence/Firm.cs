@@ -16,10 +16,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
 
         public long CategoryGroupId { get; set; }
         public long OrganizationUnitId { get; set; }
+        public long OwnerId { get; set; }
         public long TerritoryId { get; set; }
 
         public Client Client { get; set; }
-        public ICollection<FirmAccount> Accounts { get; set; }
+        public ICollection<FirmBalance> Accounts { get; set; }
         public ICollection<FirmCategory> Categories { get; set; }
         public ICollection<FirmCategoryGroup> CategoryGroups { get; set; }
     }
