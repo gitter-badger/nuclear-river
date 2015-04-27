@@ -7,7 +7,7 @@ using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 
 using ProtoBuf.Meta;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks
+namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks
 {
     public sealed class TrackedUseCaseParser : ITrackedUseCaseParser
     {

@@ -3,9 +3,9 @@ using System.Linq;
 
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Messaging.Tests.DI;
-using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
-using NuClear.AdvancedSearch.Messaging.Tests.Properties;
+using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI;
+using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
+using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Properties;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
@@ -16,7 +16,7 @@ using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests
+namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
 {
     [TestFixture]
     public sealed class MessagingTests

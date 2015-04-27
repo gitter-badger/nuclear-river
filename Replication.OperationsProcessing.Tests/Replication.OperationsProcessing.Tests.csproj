@@ -7,8 +7,8 @@
     <ProjectGuid>{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.AdvancedSearch.Messaging.Tests</RootNamespace>
-    <AssemblyName>2GIS.NuClear.AdvancedSearch.Messaging.Tests</AssemblyName>
+    <RootNamespace>NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests</RootNamespace>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

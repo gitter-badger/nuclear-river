@@ -1,7 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Messaging.Tests.Mocks;
-using NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver;
+using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks;
+using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Actors.Strategies;
@@ -27,7 +27,7 @@ using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Tracing.API;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.DI
+namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
 {
     public static class Bootstrapper
     {

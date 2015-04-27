@@ -5,7 +5,7 @@ using System.Linq;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Receivers;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
+namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver
 {
     public sealed class MockMessageReceiver : IMessageReceiver
     {

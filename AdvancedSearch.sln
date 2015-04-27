@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9
 		build\run-build.ps1 = build\run-build.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Tests", "Messaging.Tests\Messaging.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProcessing.Tests", "Replication.OperationsProcessing.Tests\Replication.OperationsProcessing.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

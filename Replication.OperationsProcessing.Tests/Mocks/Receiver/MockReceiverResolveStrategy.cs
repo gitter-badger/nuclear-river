@@ -2,7 +2,7 @@
 using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 
-namespace NuClear.AdvancedSearch.Messaging.Tests.Mocks.Receiver
+namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver
 {
     public sealed class MockReceiverResolveStrategy : MessageFlowReceiverResolveStrategyBase
     {
