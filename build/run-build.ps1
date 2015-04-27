@@ -1,7 +1,7 @@
 ﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-TaskService', 'Deploy-TaskService')
+	$TaskList = @('Build-TaskService')
 }
 
 if ($Properties.Count -eq 0){
@@ -20,7 +20,7 @@ $Properties.SolutionDir = Join-Path $PSScriptRoot '..'
 $Properties.EnvironmentMetadata = @{
 	'Test.21' = @{
 		'Transform' = @{
-			'Xdt' = @('Erm.Release.config')
+			'Xdt' = @('Erm.Release.config', 'log4net.Release.config')
 			'Regex' = @{}
 		}
 		'Web.OData' = @{
