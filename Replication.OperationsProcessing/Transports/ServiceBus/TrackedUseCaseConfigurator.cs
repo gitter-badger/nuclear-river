@@ -4,7 +4,7 @@ using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 
 using ProtoBuf.Meta;
 
-namespace NuClear.AdvancedSearch.Messaging.ServiceBus
+namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     public sealed class TrackedUseCaseConfigurator : IRuntimeTypeModelConfigurator
     {

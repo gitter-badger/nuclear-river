@@ -1,6 +1,6 @@
 ﻿using NuClear.Model.Common.Operations.Identity;
 
-namespace NuClear.AdvancedSearch.Messaging.ServiceBus
+namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     public sealed class UnknownOperationIdentity : OperationIdentityBase<UnknownOperationIdentity>
     {

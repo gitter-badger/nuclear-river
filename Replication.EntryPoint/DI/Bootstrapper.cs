@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
@@ -42,6 +41,7 @@ using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Final.Transports;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;

@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Messaging.ServiceBus;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsTracking.API.UseCases;
+using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 
 using ProtoBuf.Meta;
 

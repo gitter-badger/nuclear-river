@@ -1,6 +1,6 @@
 ﻿using NuClear.Model.Common.Entities;
 
-namespace NuClear.AdvancedSearch.Messaging.ServiceBus
+namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     public sealed class UnknownEntityType : EntityTypeBase<UnknownEntityType>
     {

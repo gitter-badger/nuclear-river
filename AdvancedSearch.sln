@@ -47,8 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9
 		build\run-build.ps1 = build\run-build.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "Messaging\Messaging.csproj", "{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Tests", "Messaging.Tests\Messaging.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
 EndProject
 Global
@@ -105,10 +103,6 @@ Global
 		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}.Release|Any CPU.Build.0 = Release|Any CPU
-		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
