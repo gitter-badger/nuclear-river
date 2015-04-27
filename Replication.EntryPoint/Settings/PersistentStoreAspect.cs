@@ -11,9 +11,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 
         private readonly ConnectionStringSettings _storeConnectionStringSettings;
 
-        public PersistentStoreAspect()
+        public PersistentStoreAspect(IConnectionStringSettings connectionStringSettings)
         {
-            _storeConnectionStringSettings = ConfigurationManager.ConnectionStrings[StoreConnectionStringName];
+            _storeConnectionStringSettings = connectionStringSettings.GetConnectionStringSettings(StoreConnectionStringName);
         }
 
 
