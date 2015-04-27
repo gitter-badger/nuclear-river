@@ -99,7 +99,7 @@
     <Compile Include="Model\CustomerIntelligence\Firm.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategoryGroup.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
-    <Compile Include="Model\CustomerIntelligence\FirmAccount.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmBalance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
@@ -109,7 +109,7 @@
     <EmbeddedResource Include="Data\Client.csv" />
     <EmbeddedResource Include="Data\OrganizationUnit.csv" />
     <EmbeddedResource Include="Data\Territory.csv" />
-    <EmbeddedResource Include="Data\FirmAccount.csv" />
+    <EmbeddedResource Include="Data\FirmBalance.csv" />
     <EmbeddedResource Include="Data\CategoryGroup.csv" />
     <EmbeddedResource Include="Data\FirmCategories.csv" />
     <EmbeddedResource Include="Data\FirmCategoryGroups.csv" />

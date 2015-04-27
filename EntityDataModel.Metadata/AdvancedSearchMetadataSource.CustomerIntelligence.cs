@@ -24,9 +24,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                         .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(ElementaryTypeKind.Boolean))
                         .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(ElementaryTypeKind.Boolean))
                         .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
-                        .Relation(EntityRelationElement.Config.Name("Accounts")
+                        .Relation(EntityRelationElement.Config.Name("Balances")
                             .DirectTo(
-                                EntityElement.Config.Name(EntityName.FirmAccount)
+                                EntityElement.Config.Name(EntityName.FirmBalance)
                                     .HasKey("AccountId", "FirmId")
                                     .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
@@ -54,6 +54,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                             .AsOneOptionally())
                         .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
+                        .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
                         .Relation(EntityRelationElement.Config.Name("Categories")
                             .DirectTo(
@@ -95,9 +96,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
-                    EntityElement.Config.Name(TableName.FirmAccount)
+                    EntityElement.Config.Name(TableName.FirmBalance)
                                  .HasKey("FirmId", "AccountId")
                                  .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
@@ -116,7 +118,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .ConceptualModel(ConceptualModel)
                     .StoreModel(StoreModel)
                     .Map(EntityName.Firm, TableName.Firm)
-                    .Map(EntityName.FirmAccount, TableName.FirmAccount)
+                    .Map(EntityName.FirmBalance, TableName.FirmBalance)
                     .Map(EntityName.Client, TableName.Client)
                     .Map(EntityName.Contact, TableName.Contact)
                     .Map(EntityName.FirmCategory, TableName.FirmCategory)
@@ -132,7 +134,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string Client = "Client";
                 public const string Contact = "Contact";
                 public const string Firm = "Firm";
-                public const string FirmAccount = "FirmAccount";
+                public const string FirmBalance = "FirmBalance";
                 public const string FirmCategory = "FirmCategory";
                 public const string FirmCategoryGroup = "FirmCategoryGroup";
             }
@@ -142,7 +144,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string Client = TableSchema + "." + "Client";
                 public const string Contact = TableSchema + "." + "Contact";
                 public const string Firm = TableSchema + "." + "Firm";
-                public const string FirmAccount = TableSchema + "." + "FirmAccount";
+                public const string FirmBalance = TableSchema + "." + "FirmBalance";
                 public const string FirmCategory = TableSchema + "." + "FirmCategories";
                 public const string FirmCategoryGroup = TableSchema + "." + "FirmCategoryGroups";
 
