@@ -172,6 +172,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Common.Logging.Log4Net1213.3.1.0\lib\net40\Common.Logging.Log4Net1213.dll</HintPath>
     </Reference>
+    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -212,6 +216,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
@@ -219,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
+    <Compile Include="DI\Bootstrapper.Transformation.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />
@@ -239,7 +245,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ConnectionStringName.cs" />
+    <Compile Include="Settings\ConnectionStringsSettingsAspect.cs" />
     <Compile Include="Settings\EnvironmentsAspect.cs" />
+    <Compile Include="Settings\IConnectionStringSettings.cs" />
     <Compile Include="Settings\IEnvironmentSettings.cs" />
     <Compile Include="Settings\IReplicationServiceSettings.cs" />
     <Compile Include="Settings\PersistentStoreAspect.cs" />
@@ -255,7 +264,9 @@
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="quartz.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -269,6 +280,10 @@
     <ProjectReference Include="..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8e3d39d6-6bee-4edc-ace0-8c24ca929164}</Project>
       <Name>Replication.OperationsProcessing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Replication\Replication.csproj">
+      <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
+      <Name>Replication</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

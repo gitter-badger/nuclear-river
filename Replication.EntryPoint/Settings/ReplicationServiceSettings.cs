@@ -24,6 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
             Aspects.Use(new EnvironmentsAspect());
             Aspects.Use(new PersistentStoreAspect());
             Aspects.Use(new ServiceBusReceiverSettingsAspect(serviceBusConnectionString));
+            Aspects.Use(new ConnectionStringsSettingsAspect());
         }
 
         int ITaskServiceProcessingSettings.MaxWorkingThreads

@@ -54,7 +54,7 @@ using Quartz.Spi;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
-    public static class Bootstrapper
+    public static partial class Bootstrapper
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
@@ -72,7 +72,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureSecurityAspects()
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
-                     .ConfigureOperations();
+                     .ConfigureOperations()
+                     .ConfigureTransformation();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
 
