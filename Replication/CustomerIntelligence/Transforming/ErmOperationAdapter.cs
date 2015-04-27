@@ -6,10 +6,6 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    using ErmEntityType = System.Int32;
-    using ErmEntityId = System.Int64;
-    using ErmOperation = System.Int32;
-
     public sealed class ErmOperationAdapter
     {
         private static readonly Dictionary<int, Type> EntityTypeMap = new Dictionary<int, Type>
@@ -26,33 +22,36 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                                                           { Code.Order, typeof(Order) }
                                                                       };
 
-        public IEnumerable<FactOperation> Convert(IEnumerable<Tuple<ErmOperation, ErmEntityType, ErmEntityId>> changes)
+        public IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> changes)
         {
             foreach (var change in changes)
             {
                 Type entityType;
-                if (!EntityTypeMap.TryGetValue(change.Item2, out entityType))
+                if (!EntityTypeMap.TryGetValue(change.EntityType, out entityType))
                 {
-                    // exception
                     continue;
                 }
 
-                var operation = change.Item1;
-                var entityId = change.Item3;
-
-                switch (operation)
+                switch (change.Change)
                 {
                     case OperationCode.Created:
-                        yield return new CreateFact(entityType, entityId);
+                        yield return new CreateFact(entityType, change.EntityId);
                         break;
                     case OperationCode.Updated:
-                        yield return new UpdateFact(entityType, entityId);
+                        yield return new UpdateFact(entityType, change.EntityId);
                         break;
                     case OperationCode.Deleted:
-                        yield return new DeleteFact(entityType, entityId);
+                        yield return new DeleteFact(entityType, change.EntityId);
                         break;
                 }
             }
+        }
+
+        public class ErmOperation
+        {
+            public int EntityType { get; set; }
+            public long EntityId { get; set; }
+            public int Change { get; set; }
         }
 
         private static class Code
