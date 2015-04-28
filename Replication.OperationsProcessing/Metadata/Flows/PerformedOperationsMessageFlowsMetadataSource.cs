@@ -6,7 +6,8 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.OperationsProcessing.API.Metadata;
-using NuClear.Replication.OperationsProcessing.Stages;
+using NuClear.Replication.OperationsProcessing.Final;
+using NuClear.Replication.OperationsProcessing.Primary;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
 {
@@ -15,13 +16,14 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
         private static readonly HierarchyMetadata MetadataRoot =
             PerformedOperations.Flows
                                .Primary(MessageFlowMetadata.Config.For<Replicate2CustomerIntelligenceFlow>()
-                                                           .Strategy<FilteringStrategy>()
-                                                           .Handler<FactProcessingHandler>()
-                                                           .To.Primary().Flow<Replicate2CustomerIntelligenceFlow>().Connect
                                                            .To.Final().Flow<Replicate2CustomerIntelligenceFlow>().Connect)
                                .Final(MessageFlowMetadata.Config.For<Replicate2CustomerIntelligenceFlow>()
+                                                         .Strategy<FilteringStrategy>()
+                                                         .Handler<FactProcessingHandler>()
+                                                         .To.Final().Flow<FakeFlow>().Connect)
+                               .Final(MessageFlowMetadata.Config.For<FakeFlow>()
                                                          .Strategy<EmptyStrategy>()
-                                                         .To.Final().Flow<Replicate2CustomerIntelligenceFlow>().Connect);
+                                                         .Handler<ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler>());
         
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
 
