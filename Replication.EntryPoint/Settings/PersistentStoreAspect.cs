@@ -7,15 +7,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
     public class PersistentStoreAspect : ISettingsAspect, IPersistentStoreSettings
     {
-        private const string StoreConnectionStringName = "QuartzJobStore";
-
         private readonly ConnectionStringSettings _storeConnectionStringSettings;
 
-        public PersistentStoreAspect()
+        public PersistentStoreAspect(IConnectionStringSettings connectionStringSettings)
         {
-            _storeConnectionStringSettings = ConfigurationManager.ConnectionStrings[StoreConnectionStringName];
+            _storeConnectionStringSettings = connectionStringSettings.GetConnectionStringSettings(ConnectionStringName.QuartzJobStore);
         }
-
 
         ConnectionStringSettings IPersistentStoreSettings.ConnectionStringSettings
         {

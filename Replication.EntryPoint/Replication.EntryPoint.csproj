@@ -273,10 +273,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messaging\Messaging.csproj">
-      <Project>{302c8114-5d0f-49ea-90ac-27e1bc0da7ed}</Project>
-      <Name>Messaging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8e3d39d6-6bee-4edc-ace0-8c24ca929164}</Project>
       <Name>Replication.OperationsProcessing</Name>

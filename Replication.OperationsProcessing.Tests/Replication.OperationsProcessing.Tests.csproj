@@ -7,8 +7,8 @@
     <ProjectGuid>{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.AdvancedSearch.Messaging.Tests</RootNamespace>
-    <AssemblyName>2GIS.NuClear.AdvancedSearch.Messaging.Tests</AssemblyName>
+    <RootNamespace>NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests</RootNamespace>
+    <AssemblyName>2GIS.NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -175,10 +175,6 @@
     <None Include="Resources\UpdateFirm.bin" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Messaging\Messaging.csproj">
-      <Project>{302C8114-5D0F-49EA-90AC-27E1BC0DA7ED}</Project>
-      <Name>Messaging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}</Project>
       <Name>Replication.OperationsProcessing</Name>

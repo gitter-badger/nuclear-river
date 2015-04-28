@@ -40,11 +40,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint
                         new TracerContextSelfHostedEntryProvider(TracerContextKeys.Required.UserAccount)
                     };
 
+
             var tracerContextManager = new TracerContextManager(tracerContextEntryProviders);
             var tracer = Log4NetTracerBuilder.Use
                                              .DefaultXmlConfig
                                              .Console
                                              .EventLog
+                                             .DB(settingsContainer.AsSettings<IConnectionStringSettings>().GetConnectionString(ConnectionStringName.Logging))
                                              .Build;
 
             IUnityContainer container = null;

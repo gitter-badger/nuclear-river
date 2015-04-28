@@ -3,7 +3,7 @@ using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 
 using ProtoBuf;
 
-namespace NuClear.AdvancedSearch.Messaging.ServiceBus
+namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     public sealed class UnknownOperationIdentitySurrogate : IdentitySurrogate
     {

@@ -4,6 +4,9 @@
     {
         Erm,
         Facts,
-        CustomerIntelligence
+        CustomerIntelligence,
+        ServiceBus,
+        QuartzJobStore,
+        Logging
     }
 }
