@@ -9,7 +9,7 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Properties;
 
-namespace NuClear.Replication.OperationsProcessing.Transports
+namespace NuClear.Replication.OperationsProcessing.Transports.InProc
 {
     public sealed class ServiceBusImitationReceiver : IMessageReceiver
     {

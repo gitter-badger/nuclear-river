@@ -2,6 +2,7 @@
 using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.Replication.OperationsProcessing.Transports;
+using NuClear.Replication.OperationsProcessing.Transports.InProc;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver
 {

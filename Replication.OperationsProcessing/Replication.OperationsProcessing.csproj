@@ -132,9 +132,9 @@
     <Compile Include="Stages\FactProcessingHandler.cs" />
     <Compile Include="Stages\EmptyStrategy.cs" />
     <Compile Include="Stages\FilteringStrategy.cs" />
-    <Compile Include="Transports\InProcBridgeReceiver.cs" />
-    <Compile Include="Transports\InProcBridgeSender.cs" />
-    <Compile Include="Transports\ServiceBusImitationReceiver.cs" />
+    <Compile Include="Transports\InProc\InProcBridgeReceiver.cs" />
+    <Compile Include="Transports\InProc\InProcBridgeSender.cs" />
+    <Compile Include="Transports\InProc\ServiceBusImitationReceiver.cs" />
     <Compile Include="Transports\ReplicationMessage.cs" />
     <Compile Include="Transports\ServiceBus\TrackedUseCaseConfigurator.cs" />
     <Compile Include="Transports\ServiceBus\UnknownEntityType.cs" />
