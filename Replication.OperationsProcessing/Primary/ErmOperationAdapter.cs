@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.Model.Common.Entities;
+using NuClear.OperationsTracking.API.Changes;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
+namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ErmOperationAdapter
     {
@@ -27,20 +29,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             foreach (var change in changes)
             {
                 Type entityType;
-                if (!EntityTypeMap.TryGetValue(change.EntityType, out entityType))
+                if (!EntityTypeMap.TryGetValue(change.EntityType.Id, out entityType))
                 {
                     continue;
                 }
 
                 switch (change.Change)
                 {
-                    case OperationCode.Created:
+                    case ChangesType.Added:
                         yield return new CreateFact(entityType, change.EntityId);
                         break;
-                    case OperationCode.Updated:
+                    case ChangesType.Updated:
                         yield return new UpdateFact(entityType, change.EntityId);
                         break;
-                    case OperationCode.Deleted:
+                    case ChangesType.Deleted:
                         yield return new DeleteFact(entityType, change.EntityId);
                         break;
                 }
@@ -49,9 +51,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public class ErmOperation
         {
-            public int EntityType { get; set; }
-            public long EntityId { get; set; }
-            public int Change { get; set; }
+            public ErmOperation(IEntityType entityType, long entityId, ChangesType change)
+            {
+                EntityType = entityType;
+                EntityId = entityId;
+                Change = change;
+            }
+
+            public IEntityType EntityType { get; private set; }
+            public long EntityId { get; private set; }
+            public ChangesType Change { get; private set; }
         }
 
         private static class Code
@@ -66,13 +75,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             public const int FirmContact = 165;
             public const int LegalPerson = 147;
             public const int Order = 151;
-        }
-
-        private static class OperationCode
-        {
-            public const int Created = 1;
-            public const int Updated = 2;
-            public const int Deleted = 3;
         }
     }
 }

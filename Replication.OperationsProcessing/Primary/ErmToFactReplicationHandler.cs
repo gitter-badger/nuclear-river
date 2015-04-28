@@ -12,12 +12,12 @@ using NuClear.Replication.OperationsProcessing.Transports.InProc;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public sealed class FactProcessingHandler : IMessageAggregatedProcessingResultsHandler
+    public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
     {
         private readonly FactsTransformation _factsTransformation;
         private readonly InProcBridgeSender _sender;
 
-        public FactProcessingHandler(InProcBridgeSender sender, FactsTransformation factsTransformation)
+        public ErmToFactReplicationHandler(InProcBridgeSender sender, FactsTransformation factsTransformation)
         {
             _sender = sender;
             _factsTransformation = factsTransformation;
@@ -31,7 +31,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
             var operations = new List<AggregateOperation>();
-            foreach (var message in messages.OfType<FactAggregatableMessage>())
+            foreach (var message in messages.OfType<FactOperationAggregatableMessage>())
             {
                 operations.AddRange(_factsTransformation.Transform(message.Operations));
             }

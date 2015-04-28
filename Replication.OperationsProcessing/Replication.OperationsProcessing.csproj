@@ -121,17 +121,17 @@
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\FakeFlow.cs" />
     <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
-    <Compile Include="Primary\ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
+    <Compile Include="Primary\ErmOperationAdapter.cs" />
+    <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Primary\FactAggregatableMessage.cs" />
-    <Compile Include="Primary\FactProcessingHandler.cs" />
+    <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
+    <Compile Include="Primary\ErmToFactReplicationHandler.cs" />
     <Compile Include="Final\EmptyStrategy.cs" />
-    <Compile Include="Primary\FilteringStrategy.cs" />
     <Compile Include="Transports\InProc\InProcBridgeReceiver.cs" />
     <Compile Include="Transports\InProc\InProcBridgeSender.cs" />
     <Compile Include="Transports\InProc\ServiceBusImitationReceiver.cs" />

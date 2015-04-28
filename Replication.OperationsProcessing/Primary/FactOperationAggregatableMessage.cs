@@ -8,7 +8,7 @@ using NuClear.Messaging.API.Processing;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public class FactAggregatableMessage : IAggregatableMessage
+    public class FactOperationAggregatableMessage : IAggregatableMessage
     {
         public Guid Id { get; set; }
         public IMessageFlow TargetFlow { get; set; }
@@ -17,8 +17,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         public bool Equals(IMessage other)
         {
-            var otherFact = other as FactAggregatableMessage;
-            return otherFact != null && Equals(Id, otherFact.Id);
+            return ReferenceEquals(this, other);
         }
     }
 }
