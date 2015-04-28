@@ -10,7 +10,7 @@ using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Transports;
 using NuClear.Replication.OperationsProcessing.Transports.InProc;
 
-namespace NuClear.Replication.OperationsProcessing.Stages
+namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class FactProcessingHandler : IMessageAggregatedProcessingResultsHandler
     {

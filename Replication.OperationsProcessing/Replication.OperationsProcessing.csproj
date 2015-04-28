@@ -119,6 +119,7 @@
     <Compile Include="Final\ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
     <Compile Include="Final\Transports\FinalProcessingQueueReceiver.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
+    <Compile Include="Metadata\Flows\FakeFlow.cs" />
     <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
     <Compile Include="Primary\ReplicateToCustomerIntelligencePerformedOperationsPrimaryProcessingStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,11 +128,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Stages\CustomerIntelligenceProcessingHandler.cs" />
-    <Compile Include="Stages\FactAggregatableMessage.cs" />
-    <Compile Include="Stages\FactProcessingHandler.cs" />
-    <Compile Include="Stages\EmptyStrategy.cs" />
-    <Compile Include="Stages\FilteringStrategy.cs" />
+    <Compile Include="Primary\FactAggregatableMessage.cs" />
+    <Compile Include="Primary\FactProcessingHandler.cs" />
+    <Compile Include="Final\EmptyStrategy.cs" />
+    <Compile Include="Primary\FilteringStrategy.cs" />
     <Compile Include="Transports\InProc\InProcBridgeReceiver.cs" />
     <Compile Include="Transports\InProc\InProcBridgeSender.cs" />
     <Compile Include="Transports\InProc\ServiceBusImitationReceiver.cs" />

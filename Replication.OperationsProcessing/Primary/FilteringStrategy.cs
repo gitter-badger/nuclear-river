@@ -6,7 +6,7 @@ using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
-namespace NuClear.Replication.OperationsProcessing.Stages
+namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class FilteringStrategy : MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, FactAggregatableMessage>
     {
