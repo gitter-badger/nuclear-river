@@ -1,30 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
-using NuClear.Replication.OperationsProcessing.Transport;
+using NuClear.Replication.OperationsProcessing.Transports;
 
 namespace NuClear.Replication.OperationsProcessing.Stages
 {
     public sealed class FactProcessingHandler : IMessageAggregatedProcessingResultsHandler
     {
-        private readonly InternalSender _sender;
+        private readonly FactsTransformation _factsTransformation;
+        private readonly InProcBridgeSender _sender;
 
-        public FactProcessingHandler(InternalSender sender)
+        public FactProcessingHandler(InProcBridgeSender sender, FactsTransformation factsTransformation)
         {
             _sender = sender;
+            _factsTransformation = factsTransformation;
         }
 
         public IEnumerable<StageResult> Handle(IEnumerable<KeyValuePair<Guid, List<IAggregatableMessage>>> processingResultBuckets)
         {
-            // TODO {a.rechkalov, 23.04.2015}: Вызвать обновление фактов и получить Operations
-            _sender.Push(new[] { new AggregateOperation(), new AggregateOperation(), });
-            return processingResultBuckets.Select(pair => MessageProcessingStage.Handle.ResultFor(pair.Key).AsSucceeded());
+            return processingResultBuckets.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+        }
+
+        private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
+        {
+            var operations = new List<AggregateOperation>();
+            foreach (var message in messages.OfType<FactAggregatableMessage>())
+            {
+                operations.AddRange(_factsTransformation.Transform(message.Operations));
+            }
+
+            _sender.Push(new ReplicationMessage<AggregateOperation>
+                         {
+                             Id = Guid.NewGuid(),
+                             Operations = operations,
+                         });
+            
+            return MessageProcessingStage.Handle.ResultFor(bucketId).AsSucceeded();
         }
     }
 }

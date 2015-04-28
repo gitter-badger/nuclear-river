@@ -120,16 +120,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Stages\CustomerIntelligenceProcessingHandler.cs" />
-    <Compile Include="Stages\FactOperation.cs" />
+    <Compile Include="Stages\FactAggregatableMessage.cs" />
     <Compile Include="Stages\FactProcessingHandler.cs" />
     <Compile Include="Stages\EmptyStrategy.cs" />
     <Compile Include="Stages\FilteringStrategy.cs" />
-    <Compile Include="Transport\InternalReceiver.cs" />
-    <Compile Include="Transport\InternalSender.cs" />
-    <Compile Include="Transport\MockServiceBusReceiver.cs" />
+    <Compile Include="Transports\InProcBridgeReceiver.cs" />
+    <Compile Include="Transports\InProcBridgeSender.cs" />
+    <Compile Include="Transports\ServiceBusImitationReceiver.cs" />
+    <Compile Include="Transports\ReplicationMessage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -142,6 +142,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Replication\Replication.csproj">
+      <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
+      <Name>Replication</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

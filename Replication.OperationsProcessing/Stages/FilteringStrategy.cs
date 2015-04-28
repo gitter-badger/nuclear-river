@@ -1,40 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
 namespace NuClear.Replication.OperationsProcessing.Stages
 {
-    public sealed class FilteringStrategy : MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, FactOperation>
+    public sealed class FilteringStrategy : MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, FactAggregatableMessage>
     {
+        private readonly ErmOperationAdapter _adapter;
+
         public FilteringStrategy()
         {
+            _adapter = new ErmOperationAdapter();
         }
 
-        protected override FactOperation Process(TrackedUseCase message)
+        protected override FactAggregatableMessage Process(TrackedUseCase message)
         {
             var changes = message.Operations.SelectMany(scope => scope.ChangesContext.UntypedChanges)
                                  .SelectMany(type =>
                                              type.Value.SelectMany(change =>
                                                                    change.Value.Details.Select(detail =>
-                                                                                               new
+                                                                                               new ErmOperationAdapter.ErmOperation
                                                                                                {
-                                                                                                   TypeId = type.Key.Id,
+                                                                                                   EntityType = type.Key.Id,
                                                                                                    EntityId = change.Value.Id,
-                                                                                                   Change = detail.ChangesType
+                                                                                                   Change = (int)detail.ChangesType
                                                                                                })))
                                  .ToArray();
 
-            // TODO {a.rechkalov, 23.04.2015}: Реализовать фильтрацию
-            return new FactOperation
+            return new FactAggregatableMessage
                    {
                        Id = Guid.NewGuid(),
                        TargetFlow = MessageFlow,
+                       Operations = _adapter.Convert(changes),
                    };
         }
     }

@@ -8,13 +8,13 @@ using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 namespace NuClear.Replication.OperationsProcessing.Stages
 {
     // TODO {a.rechkalov, 24.04.2015}: Не нужна в принципе, но нужна для корректной работы Primary.
-    public sealed class EmptyStrategy : MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, IMessage, FactOperation>
+    public sealed class EmptyStrategy : MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, IMessage, FactAggregatableMessage>
     {
         public EmptyStrategy()
         {
         }
 
-        protected override FactOperation Process(IMessage message)
+        protected override FactAggregatableMessage Process(IMessage message)
         {
             return null;
         }
