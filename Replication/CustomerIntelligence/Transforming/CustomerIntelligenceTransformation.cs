@@ -51,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            foreach (var slice in operations.GroupBy(x => new { Operation = x, x.AggregateType }).OrderByDescending(x => x.Key.Operation.Priority))
+            foreach (var slice in operations.GroupBy(x => new { Operation = x, x.AggregateType }).OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer()))
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
