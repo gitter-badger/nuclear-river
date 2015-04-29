@@ -15,11 +15,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
     {
         private readonly FactsTransformation _factsTransformation;
-        private readonly InProcBridgeSender _sender;
 
-        public ErmToFactReplicationHandler(InProcBridgeSender sender, FactsTransformation factsTransformation)
+        public ErmToFactReplicationHandler(FactsTransformation factsTransformation)
         {
-            _sender = sender;
             _factsTransformation = factsTransformation;
         }
 
@@ -30,19 +28,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
-            var operations = new List<AggregateOperation>();
-            foreach (var message in messages.OfType<FactOperationAggregatableMessage>())
+            try
             {
-                operations.AddRange(_factsTransformation.Transform(message.Operations));
+                var message = messages.OfType<FactOperationAggregatableMessage>().Single();
+                var aggregateOperations = _factsTransformation.Transform(message.Operations);
+                
+                return MessageProcessingStage.Handle.ResultFor(bucketId).AsSucceeded();
             }
-
-            _sender.Push(new ReplicationMessage<AggregateOperation>
-                         {
-                             Id = Guid.NewGuid(),
-                             Operations = operations,
-                         });
-            
-            return MessageProcessingStage.Handle.ResultFor(bucketId).AsSucceeded();
+            catch (Exception ex)
+            {
+                return MessageProcessingStage.Handle.ResultFor(bucketId).AsFailed().WithExceptions(ex);
+            }
         }
     }
 }
