@@ -10,7 +10,18 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
         [ProtoConverter]
         public static IEntityType From(UnknownEntityTypeSurrogate value)
         {
-            return value == null ? null : new UnknownEntityType().SetId(value.Id);
+            if (value == null)
+            {
+                return null;
+            }
+
+            IEntityType entityType;
+            if (EntityType.Instance.TryParse(value.Id, out entityType))
+            {
+                return entityType;
+            }
+
+            return new UnknownEntityType().SetId(value.Id);
         }
 
         [ProtoConverter]
