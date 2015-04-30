@@ -54,9 +54,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 return from category in _context.Categories
                        select new Category
                        {
-                           Id = category.Id, 
-                           Level = category.Level, 
+                           Id = category.Id,
+                           Name = category.Name,
+                           Level = category.Level,
                            ParentId = category.ParentId
+                       };
+            }
+        }
+
+        public IQueryable<CategoryGroup> CategoryGroups
+        {
+            get
+            {
+                return from categoryGroup in _context.CategoryGroups
+                       select new CategoryGroup
+                       {
+                           Id = categoryGroup.Id,
+                           Name = categoryGroup.Name,
+                           Rate = categoryGroup.Rate
                        };
             }
         }
@@ -203,6 +218,34 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   EndDistributionDateFact = order.EndDistributionDateFact,
                                   FirmId = order.FirmId,
                               };
+            }
+        }
+
+        public IQueryable<Project> Projects
+        {
+            get
+            {
+                return from project in _context.Projects
+                       select new Project
+                       {
+                           Id = project.Id, 
+                           Name = project.Name,
+                           OrganizationUnitId = project.OrganizationUnitId
+                       };
+            }
+        }
+
+        public IQueryable<Territory> Territories
+        {
+            get
+            {
+                return from territory in _context.Territories
+                       select new Territory
+                       {
+                           Id = territory.Id, 
+                           Name = territory.Name, 
+                           OrganizationUnitId = territory.OrganizationUnitId
+                       };
             }
         }
 

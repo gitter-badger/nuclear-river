@@ -24,7 +24,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 {
                     new ValueObjectInfo(FirmChildren.FirmBalances),
                     new ValueObjectInfo(FirmChildren.FirmCategories),
-                    new ValueObjectInfo(FirmChildren.FirmCategoryGroups)
                 }),
             AggregateInfo.Create<Client>(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) })
         }.ToDictionary(x => x.AggregateType);
@@ -168,11 +167,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             public static IQueryable<FirmCategory> FirmCategories(ICustomerIntelligenceContext context, IEnumerable<long> ids)
             {
                 return context.FirmCategories.Where(x => ids.Contains(x.FirmId));
-            }
-
-            public static IQueryable<FirmCategoryGroup> FirmCategoryGroups(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return context.FirmCategoryGroups.Where(x => ids.Contains(x.FirmId));
             }
         }
 

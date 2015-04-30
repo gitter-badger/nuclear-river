@@ -11,6 +11,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
         IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits { get; }
 
         IQueryable<Category> Categories { get; }
+        
+        IQueryable<CategoryGroup> CategoryGroups { get; }
 
         IQueryable<CategoryFirmAddress> CategoryFirmAddresses { get; }
 
@@ -29,5 +31,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
         IQueryable<Contact> Contacts { get; }
 
         IQueryable<Order> Orders { get; }
+
+        IQueryable<Project> Projects { get; }
+
+        IQueryable<Territory> Territories { get; }
     }
 }
