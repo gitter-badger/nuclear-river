@@ -15,14 +15,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
 
             AggregateType = aggregateType;
             AggregateId = aggregateId;
-            Priority = 0;
         }
 
         public Type AggregateType { get; private set; }
 
         public long AggregateId { get; private set; }
-
-        public int Priority { get; protected set; }
 
         public override bool Equals(object obj)
         {

@@ -60,11 +60,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
-            var slices = from operation in operations
-                         group operation by new { Operation = operation, operation.FactType }
-                         into slice
-                         orderby slice.Key.Operation.Priority descending, GetPriority(FactPriorities, slice.Key.FactType) descending
-                         select slice;
+            var slices = operations.GroupBy(operation => new { Operation = operation, operation.FactType })
+                                   .OrderByDescending(slice => slice.Key.Operation, new FactOperationPriorityComparer())
+                                   .ThenByDescending(slice => GetPriority(FactPriorities, slice.Key.FactType));
 
             foreach (var slice in slices)
             {

@@ -75,6 +75,8 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactInfo.cs" />

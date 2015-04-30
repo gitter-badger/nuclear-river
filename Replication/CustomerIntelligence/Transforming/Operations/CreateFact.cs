@@ -7,7 +7,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
         public CreateFact(Type factType, long factId)
             : base(factType, factId)
         {
-            Priority = 3;
         }
     }
 }
