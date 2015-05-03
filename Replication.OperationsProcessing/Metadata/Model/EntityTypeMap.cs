@@ -5,6 +5,7 @@ using System.Linq;
 using NuClear.AdvancedSearch.Replication.Model.EntityTypes;
 using NuClear.Model.Common;
 using NuClear.Model.Common.Entities;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes;
 
 using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
@@ -42,8 +43,11 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
 
         public static void Initialize()
         {
-            EntityTypeMappingRegistry.Initialize(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings(ErmTypeMap); // FIXME {a.rechkalov, 30.04.2015}: Пока зарегистрировать можно только типы из контекста Erm или типы из CI - выбирай, что важнее в данный момент
+            EntityTypeMappingRegistry.Initialize<ErmContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
+            EntityTypeMappingRegistry.AddMappings<ErmContext>(ErmTypeMap);
+
+            EntityTypeMappingRegistry.Initialize<CustomerIntelligenceContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
+            EntityTypeMappingRegistry.AddMappings<CustomerIntelligenceContext>(CustomerIntelligenceTypeMap);
         }
 
         private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()

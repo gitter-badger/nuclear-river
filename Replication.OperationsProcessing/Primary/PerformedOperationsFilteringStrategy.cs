@@ -7,6 +7,7 @@ using NuClear.Model.Common.Entities;
 using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Tracing.API;
 
@@ -53,7 +54,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                     continue;
                 }
 
-                var entityType = change.EntityType.AsEntityType();
+                var entityType = EntityTypeMap<ErmContext>.AsEntityType(change.EntityType);
                 switch (change.Change)
                 {
                     case ChangesType.Added:

@@ -47,8 +47,8 @@
       <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.API.1.0.3\lib\net451\2GIS.NuClear.Model.Common.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.2-Multiple-94c7c5-13\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.OperationsLogging.API.1.0.3\lib\net451\2GIS.NuClear.OperationsLogging.API.dll</HintPath>
@@ -121,6 +121,7 @@
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\FakeFlow.cs" />
     <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
+    <Compile Include="Metadata\Model\Context\CustomerIntelligenceContext.cs" />
     <Compile Include="Metadata\Model\EntityTypeIds.cs" />
     <Compile Include="Metadata\Model\EntityTypeMap.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeAccount.cs" />
@@ -136,6 +137,8 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeFirmContact.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeLegalPerson.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeOrder.cs" />
+    <Compile Include="Metadata\Model\Context\ErmContext.cs" />
+    <Compile Include="Metadata\Model\Context\FactsContext.cs" />
     <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
