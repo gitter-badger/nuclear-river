@@ -20,8 +20,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports
             var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
 
             var element = new XElement("operation");
-            element.Add(new XAttribute("id", operation.AggregateId));
-            element.Add(new XAttribute("type", entityType.Id));
+            element.Add(new XAttribute("entity", operation.AggregateId));
+            element.Add(new XAttribute("entitytype", entityType.Id));
             element.Add(new XAttribute("operation", operation.GetType().Name));
 
             return element;
@@ -30,7 +30,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports
         public static AggregateOperation FromXml(XElement operation)
         {
             var operationType = GetOperationType(operation);
-            var entityType = EntityType.Instance.Parse(int.Parse(operation.Attribute("type").Value));
+            var entityType = EntityType.Instance.Parse(int.Parse(operation.Attribute("entitytype").Value));
             var entity = int.Parse(operation.Attribute("entity").Value);
 
             return (AggregateOperation)Activator.CreateInstance(operationType,

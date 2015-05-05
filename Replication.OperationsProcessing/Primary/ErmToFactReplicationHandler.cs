@@ -6,16 +6,16 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
-using NuClear.Replication.OperationsProcessing.Transports.InProc;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
     {
         private readonly FactsTransformation _factsTransformation;
-        private readonly InProcBridgeSender _sender;
+        private readonly SqlStoreSender _sender;
 
-        public ErmToFactReplicationHandler(FactsTransformation factsTransformation, InProcBridgeSender sender)
+        public ErmToFactReplicationHandler(FactsTransformation factsTransformation, SqlStoreSender sender)
         {
             _factsTransformation = factsTransformation;
             _sender = sender;
