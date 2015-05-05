@@ -76,6 +76,36 @@ Task Import-WinServiceModule {
 	Load-WinServiceModule 'Replication.EntryPoint'
 }
 
+Task Build-ReplicationLib {
+	$projectFileName = Get-ProjectFileName '.' 'Replication'
+	$buildFile = Create-BuildFile $projectFileName
+	Invoke-MSBuild $buildFile
+
+	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
+	Publish-Artifacts $conventionalArtifactFileName 'Replication'
+}
+
+Task Replicate-AllTables -Depends Build-ReplicationLib {
+
+	$libDir = Get-Artifacts 'Replication'
+	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
+	$connectionStrings = Get-ConnectionStrings
+
+	& $scriptFilePath `
+	-LibDir $libDir `
+	-ErmConString $connectionStrings.Erm `
+	-FactsConString $connectionStrings.Facts
+}
+
+function Get-ConnectionStrings {
+	#$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	return @{
+		'Erm' = 'Data Source=uk-sql01;Initial Catalog=Erm21;Integrated Security=True'
+		'Facts' = 'Data Source=uk-sql01;Initial Catalog=CustomerIntelligence21;Integrated Security=True'
+		'CustomerIntelligence' = 'Data Source=uk-sql01;Initial Catalog=CustomerIntelligence21;Integrated Security=True'
+	}
+}
+
 Task Build-Packages -depends `
 Set-BuildNumber, `
 Build-OData, `
