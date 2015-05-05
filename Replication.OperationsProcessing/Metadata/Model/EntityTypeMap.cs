@@ -10,6 +10,7 @@ using NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes;
 
 using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using Erm = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
+using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model
 {
@@ -30,6 +31,21 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                   CreateMapping<EntityTypeOrder, Erm.Order>(),
               }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
+        private static readonly Dictionary<IEntityType, Type> FactsTypeMap
+            = new[]
+              {
+                  CreateMapping<EntityTypeAccount, Facts.Account>(),
+                  CreateMapping<EntityTypeCategoryFirmAddress, Facts.CategoryFirmAddress>(),
+                  CreateMapping<EntityTypeCategoryOrganizationUnit, Facts.CategoryOrganizationUnit>(),
+                  CreateMapping<EntityTypeClient, Facts.Client>(),
+                  CreateMapping<EntityTypeContact, Facts.Contact>(),
+                  CreateMapping<EntityTypeFirm, Facts.Firm>(),
+                  CreateMapping<EntityTypeFirmAddress, Facts.FirmAddress>(),
+                  CreateMapping<EntityTypeFirmContact, Facts.FirmContact>(),
+                  CreateMapping<EntityTypeLegalPerson, Facts.LegalPerson>(),
+                  CreateMapping<EntityTypeOrder, Facts.Order>(),
+              }.ToDictionary(pair => pair.Key, pair => pair.Value);
+
         private static readonly Dictionary<IEntityType, Type> CustomerIntelligenceTypeMap
             = new[]
               {
@@ -48,6 +64,9 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
 
             EntityTypeMappingRegistry.Initialize<CustomerIntelligenceContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
             EntityTypeMappingRegistry.AddMappings<CustomerIntelligenceContext>(CustomerIntelligenceTypeMap);
+
+            EntityTypeMappingRegistry.Initialize<FactsContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
+            EntityTypeMappingRegistry.AddMappings<FactsContext>(FactsTypeMap);
         }
 
         private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()

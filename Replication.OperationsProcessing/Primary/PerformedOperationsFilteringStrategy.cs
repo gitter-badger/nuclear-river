@@ -54,7 +54,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                     continue;
                 }
 
-                var entityType = EntityTypeMap<ErmContext>.AsEntityType(change.EntityType);
+                // COMMENT {a.rechkalov, 05.05.2015}: Тут происходит неявное и пока автоматическое преобразование Erm типа (представленного IEntityType) в тип из контекста фактов
+                // Возможно, позднее потребуется выделить это преобразование в явный шаг.
+                var entityType = EntityTypeMap<FactsContext>.AsEntityType(change.EntityType);
                 switch (change.Change)
                 {
                     case ChangesType.Added:
