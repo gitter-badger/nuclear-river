@@ -76,7 +76,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureOperations()
-                     .ConfigureTransformation();
+                     .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
 
