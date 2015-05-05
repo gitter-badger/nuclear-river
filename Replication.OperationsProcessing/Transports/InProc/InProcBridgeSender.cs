@@ -6,6 +6,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.InProc
 {
@@ -17,14 +18,16 @@ namespace NuClear.Replication.OperationsProcessing.Transports.InProc
             InProcBridgeReceiver.MessageQueue.AddRange(transportMessages);
         }
 
-        private PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
+        private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
         {
+            var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
             return new PerformedOperationFinalProcessing
                    {
                        CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,
-                       EntityTypeId = 0, // FIXME {a.rechkalov, 29.04.2015}: Типам CI:: нужны идентификаторы или нужно использовать IEntityType
+                       EntityTypeId = entityType.Id,
+                       Context = AggregateOperationSerialization.ToXml(operation).ToString()
                    };
         }
     }

@@ -114,6 +114,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Final\ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ErmToFactReplicationHandler.cs" />
     <Compile Include="Final\EmptyStrategy.cs" />
+    <Compile Include="Transports\AggregateOperationSerialization.cs" />
     <Compile Include="Transports\InProc\InProcBridgeReceiver.cs" />
     <Compile Include="Transports\InProc\InProcBridgeSender.cs" />
     <Compile Include="Transports\InProc\ServiceBusImitationReceiver.cs" />

@@ -34,13 +34,20 @@ namespace NuClear.Replication.OperationsProcessing.Transports.InProc
                               EntityId = operationsGroupKey.EntityId,
                               EntityName = EntityType.Instance.Parse(operationsGroupKey.EntityTypeId),
                               MaxAttemptCount = maxAttempt,
-                              FinalProcessings = operationsGroup
+                              FinalProcessings = operationsGroup,
                           };
         }
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
         {
-            throw new NotImplementedException();
+            var messages = successfullyProcessedMessages.Concat(failedProcessedMessages)
+                                                        .Cast<PerformedOperationsFinalProcessingMessage>()
+                                                        .SelectMany(x => x.FinalProcessings);
+
+            foreach (var message in messages)
+            {
+                MessageQueue.Remove(message);
+            }
         }
     }
 }
