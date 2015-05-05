@@ -1,4 +1,4 @@
-﻿param($LibDir=$null, $ErmConString=$null, $FactsConString=$null)
+﻿param($LibDir, $ConnectionStrings)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -15,12 +15,12 @@ function Load-Assemblies ($LibDir) {
 Load-Assemblies $LibDir
 
 $ermSchema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Erm
-$ermConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($ErmConString).AddMappingSchema($ermSchema)
+$ermConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($ConnectionStrings.Erm).AddMappingSchema($ermSchema)
 $ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
 $factTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
 
 $factsSchema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts
-$factsConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($FactsConString).AddMappingSchema($factsSchema)
+$factsConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($factsSchema)
 
 $bulkCopyOptions = new-Object LinqToDB.Data.BulkCopyOptions
 $bulkCopyOptions.BulkCopyTimeout = 0

@@ -93,8 +93,7 @@ Task Replicate-AllTables -Depends Build-ReplicationLib {
 
 	& $scriptFilePath `
 	-LibDir $libDir `
-	-ErmConString $connectionStrings.Erm `
-	-FactsConString $connectionStrings.Facts
+	-ConnectionStrings $connectionStrings
 }
 
 function Get-ConnectionStrings {
