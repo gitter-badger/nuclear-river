@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         {
             return container
                 .RegisterType<IDataContext, DataConnection>("Erm", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("Erm").AddMappingSchema(Schema.Erm)))
-                .RegisterType<IDataContext, DataConnection>("Facts", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("Facts").AddMappingSchema(Schema.Facts)))
+                .RegisterType<IDataContext, DataConnection>("Facts", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("CustomerIntelligence").AddMappingSchema(Schema.Facts)))
                 .RegisterType<IDataContext, DataConnection>("CustomerIntelligence", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("CustomerIntelligence").AddMappingSchema(Schema.CustomerIntelligence)))
 
                 .RegisterType<IDataMapper, DataMapper>("Facts", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Facts")))
