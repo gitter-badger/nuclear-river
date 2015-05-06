@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestData", "TestData", "{3E
 	ProjectSection(SolutionItems) = preProject
 		TestData\CustomerIntelligence Schema.sql = TestData\CustomerIntelligence Schema.sql
 		TestData\ERM Facts Schema.sql = TestData\ERM Facts Schema.sql
+		TestData\Transport Schema.sql = TestData\Transport Schema.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication", "Replication\Replication.csproj", "{D3CF7E9E-4A8E-4583-A951-50CA940BD353}"

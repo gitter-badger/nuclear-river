@@ -4,12 +4,12 @@ if not exists (select * from sys.schemas where name = 'Transport')
 go
 
 -- drop tables
-if object_id('Transport.PerformedOperationFinalProcessings') is not null drop table Transport.PerformedOperationFinalProcessings;
+if object_id('Transport.PerformedOperationFinalProcessing') is not null drop table Transport.PerformedOperationFinalProcessing;
 go
 
 
 -- PerformedOperationFinalProcessings
-create table Transport.PerformedOperationFinalProcessings(
+create table Transport.PerformedOperationFinalProcessing(
 	Id bigint identity(1,1) not null,
 	MessageFlowId uniqueidentifier not null,
 	EntityTypeId int not null,

@@ -15,11 +15,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-                config.HasAttribute<PerformedOperationFinalProcessing>(new TableAttribute { Schema = TransportSchema, Name = "PerformedOperationFinalProcessings", IsColumnAttributeRequired = false });
-
                 config.Entity<PerformedOperationFinalProcessing>()
                       .HasSchemaName(TransportSchema)
-                      .HasTableName("PerformedOperationFinalProcessings")
                       .Property(x => x.Id)
                       .IsPrimaryKey()
                       .IsIdentity();
