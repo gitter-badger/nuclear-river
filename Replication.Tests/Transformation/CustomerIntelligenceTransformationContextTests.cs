@@ -18,6 +18,30 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class CustomerIntelligenceTransformationContextTests : BaseTransformationFixture
     {
         [Test]
+        public void ShouldTransformCategory()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Categories).Returns(Inquire(
+                new Facts::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }
+                ));
+
+            Transformation.Create(context.Object)
+                          .VerifyTransform(x => x.Categories.ById(2), Inquire(new CI::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }));
+        }
+
+        [Test]
+        public void ShouldTransformCategoryGroup()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.CategoryGroups).Returns(Inquire(
+                new Facts::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }
+                ));
+
+            Transformation.Create(context.Object)
+                          .VerifyTransform(x => x.CategoryGroups.ById(123), Inquire(new CI::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }));
+        }
+
+        [Test]
         public void ShouldTransformClient()
         {
             var context = new Mock<IFactsContext>();
@@ -54,6 +78,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var monthAgo = now.AddMonths(-1);
 
             var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects).Returns(Inquire(
+                new Facts::Project { Id = 1, OrganizationUnitId = 1},
+                new Facts::Project { Id = 2, OrganizationUnitId = 2}
+                ));
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
                 new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2}
@@ -89,15 +117,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Firm { AddressCount = 0 }
                     ), x => new { x.AddressCount }, "The address count should be processed.")
                 .VerifyTransform(x => x.Firms.ById(1,2), Inquire(
-                    new CI::Firm { Id = 1, ClientId = null, OrganizationUnitId = 1, TerritoryId = 1 },
-                    new CI::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2 }
-                    ), x => new { x.Id, x.ClientId, x.OrganizationUnitId, x.TerritoryId }, "The references should be processed.");
+                    new CI::Firm { Id = 1, ClientId = null, ProjectId = 1, TerritoryId = 1 },
+                    new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2, TerritoryId = 2 }
+                    ), x => new { x.Id, x.ClientId, x.ProjectId, x.TerritoryId }, "The references should be processed.");
         }
 
         [Test]
         public void ShouldTransformFirmContactInfoFromClient()
         {
             var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects).Returns(Inquire(
+                new Facts::Project { Id = 1, OrganizationUnitId = 0 }
+                ));
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, },
                 new Facts::Firm { Id = 2, ClientId = 1 },
@@ -126,6 +157,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirmContactInfoFromFirm()
         {
             var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects).Returns(Inquire(
+                new Facts::Project { Id = 1, OrganizationUnitId = 0 }
+                ));
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, Name = "has no addresses" },
                 new Facts::Firm { Id = 2, Name = "has addresses, but no contacts" },
@@ -220,10 +254,51 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     ), "The firm categories should be processed.");
         }
 
-        [Test, Ignore("FirmCategoryGroup not implemented.")]
-        public void ShouldTransformFirmCategoryGroup()
+        [Test]
+        public void ShouldTransformProject()
         {
-            Assert.Fail("FirmCategoryGroup not implemented.");
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects)
+                   .Returns(Inquire(
+                        new Facts::Project { Id = 123, Name = "p1"},
+                        new Facts::Project { Id = 456, Name = "p2", OrganizationUnitId = 1}));
+
+            Transformation.Create(context.Object)
+                .VerifyTransform(x => x.Projects, Inquire(
+                    new CI::Project { Id = 123, Name = "p1"},
+                    new CI::Project { Id = 456, Name = "p2"}
+                    ), "The projects should be processed.");
+        }
+
+        [Test]
+        public void ShouldTransformProjectCategory()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 }));
+
+            Transformation.Create(context.Object)
+                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 }));
+        }
+
+        [Test]
+        public void ShouldTransformTerritories()
+        {
+            var context = new Mock<IFactsContext>();
+            context.SetupGet(x => x.Projects)
+                   .Returns(Inquire(
+                        new Facts::Project { Id = 1, OrganizationUnitId = 1 },
+                        new Facts::Project { Id = 2, OrganizationUnitId = 2 }));
+            context.SetupGet(x => x.Territories)
+                   .Returns(Inquire(
+                        new Facts::Territory { Id = 1, Name = "name1", OrganizationUnitId = 1 },
+                        new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 }));
+
+            Transformation.Create(context.Object)
+                .VerifyTransform(x => x.Territories, Inquire(
+                    new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
+                    new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }
+                    ));
         }
 
         #region Transformation

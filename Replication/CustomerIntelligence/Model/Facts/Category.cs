@@ -6,6 +6,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
     {
         public long Id { get; set; }
 
+        public string Name { get; set; }
+
         public int Level { get; set; }
 
         public long? ParentId { get; set; }

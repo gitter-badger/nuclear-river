@@ -229,6 +229,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Building
                                                                new EdmNavigationPropertyInfo
                                                                {
                                                                    Name = propertyName,
+                                                                   ContainsTarget = true,
                                                                    Target = relatedEntityType,
                                                                    TargetMultiplicity = Convert(relationElement.Cardinality)
                                                                });

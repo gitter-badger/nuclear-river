@@ -47,6 +47,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldTransformCategoryGroup()
+        {
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.CategoryGroups == Inquire(new Erm::CategoryGroup { Id = 1, Name = "name", Rate = 1 })))
+                          .VerifyTransform(x => x.CategoryGroups.ById(1), Inquire(new Facts::CategoryGroup { Id = 1, Name = "name", Rate = 1 }));
+        }
+
+        [Test]
         public void ShouldTransformCategoryOrganizationUnit()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Erm::CategoryOrganizationUnit { Id = 1, CategoryId = 2, CategoryGroupId = 3, OrganizationUnitId = 4 })))
@@ -150,6 +157,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 )))
                 .VerifyTransform(x => x.Orders.ById(1), Inquire<Facts::Order>())
                 .VerifyTransform(x => x.Orders.ById(2), Inquire(new Facts::Order { Id = 2, EndDistributionDateFact = Date, FirmId = 2}));
+        }
+
+        [Test]
+        public void ShouldTransformProject()
+        {
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Projects == Inquire(new Erm::Project { Id = 1, Name = "name", OrganizationUnitId = 2 })))
+                          .VerifyTransform(x => x.Projects.ById(1), Inquire(new Facts::Project { Id = 1, Name = "name", OrganizationUnitId = 2 }));
+        }
+
+        [Test]
+        public void ShouldTransformTerritory()
+        {
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Territories == Inquire(new Erm::Territory { Id = 1, Name = "name", OrganizationUnitId = 2 })))
+                          .VerifyTransform(x => x.Territories.ById(1), Inquire(new Facts::Territory { Id = 1, Name = "name", OrganizationUnitId = 2 }));
         }
 
         #region Transformation

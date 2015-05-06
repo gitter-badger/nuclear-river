@@ -16,6 +16,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public DateTimeOffset? LastDistributedOn { get; set; }
 
+        public DateTimeOffset? LastActivityOn { get; set; }
+
         public bool HasPhone { get; set; }
 
         public bool HasWebsite { get; set; }
@@ -26,8 +28,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public long? ClientId { get; set; }
 
-        public long OrganizationUnitId { get; set; }
-
+        public long ProjectId { get; set; }
+        
         public long OwnerId { get; set; }
 
         public long TerritoryId { get; set; }

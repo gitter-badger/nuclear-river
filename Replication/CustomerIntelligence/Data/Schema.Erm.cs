@@ -26,6 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.HasAttribute<Account>(new TableAttribute { Schema = BillingSchema, Name = "Accounts", IsColumnAttributeRequired = false });
                 config.HasAttribute<BranchOfficeOrganizationUnit>(new TableAttribute { Schema = BillingSchema, Name = "BranchOfficeOrganizationUnits", IsColumnAttributeRequired = false });
                 config.HasAttribute<Category>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "Categories", IsColumnAttributeRequired = false });
+                config.HasAttribute<CategoryGroup>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "CategoryGroups", IsColumnAttributeRequired = false });
                 config.HasAttribute<CategoryFirmAddress>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "CategoryFirmAddresses", IsColumnAttributeRequired = false });
                 config.HasAttribute<CategoryOrganizationUnit>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "CategoryOrganizationUnits", IsColumnAttributeRequired = false });
                 config.HasAttribute<Client>(new TableAttribute { Schema = BillingSchema, Name = "Clients", IsColumnAttributeRequired = false });
@@ -35,10 +36,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.HasAttribute<FirmContact>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "FirmContacts", IsColumnAttributeRequired = false });
                 config.HasAttribute<LegalPerson>(new TableAttribute { Schema = BillingSchema, Name = "LegalPersons", IsColumnAttributeRequired = false });
                 config.HasAttribute<Order>(new TableAttribute { Schema = BillingSchema, Name = "Orders", IsColumnAttributeRequired = false });
+                config.HasAttribute<Project>(new TableAttribute { Schema = BillingSchema, Name = "Projects", IsColumnAttributeRequired = false });
+                config.HasAttribute<Territory>(new TableAttribute { Schema = BusinessDirectorySchema, Name = "Territories", IsColumnAttributeRequired = false });
 
                 config.Entity<Account>().HasSchemaName(BillingSchema).HasTableName("Accounts").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<BranchOfficeOrganizationUnit>().HasSchemaName(BillingSchema).HasTableName("BranchOfficeOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Category>().HasSchemaName(BusinessDirectorySchema).HasTableName("Categories").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<CategoryGroup>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryGroup")
+                    .Property(x => x.Id).IsPrimaryKey()
+                    .Property(x => x.Name).HasColumnName("CategoryGroupName")
+                    .Property(x => x.Rate).HasColumnName("GroupRate");
                 config.Entity<CategoryFirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryOrganizationUnit>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Client>().HasSchemaName(BillingSchema).HasTableName("Clients").Property(x => x.Id).IsPrimaryKey();
@@ -57,6 +64,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<FirmContact>().HasSchemaName(BusinessDirectorySchema).HasTableName("FirmContacts").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<LegalPerson>().HasSchemaName(BillingSchema).HasTableName("LegalPersons").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Order>().HasSchemaName(BillingSchema).HasTableName("Orders").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Project>().HasSchemaName(BillingSchema).HasTableName("Projects")
+                    .Property(x => x.Id).IsPrimaryKey()
+                    .Property(x => x.Name).HasColumnName("DisplayName");
+                config.Entity<Territory>().HasSchemaName(BusinessDirectorySchema).HasTableName("Territories").Property(x => x.Id).IsPrimaryKey();
 
                 return schema;
             }

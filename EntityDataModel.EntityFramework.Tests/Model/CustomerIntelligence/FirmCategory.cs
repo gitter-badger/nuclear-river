@@ -4,5 +4,7 @@
     {
         public long CategoryId { get; set; }
         public long FirmId { get; set; }
+
+        public Category Category { get; set; }
     }
 }

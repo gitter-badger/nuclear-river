@@ -204,6 +204,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return FilterById(context.Orders, ids);
             }
 
+            public static IQueryable<Project> ProjectsById(IFactsContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Projects, ids);
+            }
+
+            public static IQueryable<Territory> TerritoriesById(IFactsContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Territories, ids);
+            }
+
             private static IQueryable<TFact> FilterById<TFact>(IQueryable<TFact> facts, IEnumerable<long> ids) where TFact : IIdentifiableObject
             {
                 // TODO {all, 08.04.2015}: только для удаления все надо тянуть в память
