@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IFactsContext, FactsContext>("Facts", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Facts")))
                 .RegisterType<IFactsContext, FactsTransformationContext>("FactsTransform", Lifetime.PerScope)
 
-                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceContext>("CustomerIntelligence", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Facts")))
+                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceContext>("CustomerIntelligence", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("CustomerIntelligence")))
                 .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceTransformationContext>("CustomerIntelligenceTransform", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IFactsContext>("Facts")))
 
 
