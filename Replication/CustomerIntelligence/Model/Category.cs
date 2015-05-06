@@ -1,14 +1,9 @@
 ﻿using NuClear.AdvancedSearch.Replication.Model;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
+namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
     public sealed class Category : IIdentifiableObject
     {
-        public Category()
-        {
-            IsActive = true;
-        }
-
         public long Id { get; set; }
 
         public string Name { get; set; }
@@ -16,10 +11,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         public int Level { get; set; }
 
         public long? ParentId { get; set; }
-
-        public bool IsActive { get; set; }
-
-        public bool IsDeleted { get; set; }
 
         public override bool Equals(object obj)
         {

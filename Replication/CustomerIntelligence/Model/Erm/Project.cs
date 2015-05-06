@@ -2,9 +2,9 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class Category : IIdentifiableObject
+    public sealed class Project : IIdentifiableObject
     {
-        public Category()
+        public Project()
         {
             IsActive = true;
         }
@@ -13,22 +13,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public string Name { get; set; }
 
-        public int Level { get; set; }
-
-        public long? ParentId { get; set; }
+        public long OrganizationUnitId { get; set; }
 
         public bool IsActive { get; set; }
 
-        public bool IsDeleted { get; set; }
-
         public override bool Equals(object obj)
         {
-            return obj is Category && IdentifiableObjectEqualityComparer<Category>.Default.Equals(this, (Category)obj);
+            return obj is Project && IdentifiableObjectEqualityComparer<Project>.Default.Equals(this, (Project)obj);
         }
 
         public override int GetHashCode()
         {
-            return IdentifiableObjectEqualityComparer<Category>.Default.GetHashCode(this);
+            return IdentifiableObjectEqualityComparer<Project>.Default.GetHashCode(this);
         }
     }
 }

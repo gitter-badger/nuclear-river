@@ -60,11 +60,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
-            var slices = from operation in operations
-                         group operation by new { Operation = operation, operation.FactType }
-                         into slice
-                         orderby slice.Key.Operation.Priority descending, GetPriority(FactPriorities, slice.Key.FactType) descending
-                         select slice;
+            var slices = operations.GroupBy(operation => new { Operation = operation, operation.FactType })
+                                   .OrderByDescending(slice => slice.Key.Operation, new FactOperationPriorityComparer())
+                                   .ThenByDescending(slice => GetPriority(FactPriorities, slice.Key.FactType));
 
             foreach (var slice in slices)
             {
@@ -204,6 +202,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             public static IQueryable<Order> OrdersById(IFactsContext context, IEnumerable<long> ids)
             {
                 return FilterById(context.Orders, ids);
+            }
+
+            public static IQueryable<Project> ProjectsById(IFactsContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Projects, ids);
+            }
+
+            public static IQueryable<Territory> TerritoriesById(IFactsContext context, IEnumerable<long> ids)
+            {
+                return FilterById(context.Territories, ids);
             }
 
             private static IQueryable<TFact> FilterById<TFact>(IQueryable<TFact> facts, IEnumerable<long> ids) where TFact : IIdentifiableObject

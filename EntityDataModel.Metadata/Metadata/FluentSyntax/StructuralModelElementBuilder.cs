@@ -72,6 +72,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                           {
                               relationConfig.DirectTo(LookupOrCreateElement(typesById, relationConfig.TargetEntityReference, () => (EntityElement)relationConfig.TargetEntityElementConfig));
                           }
+                          LookupOrCreateElement(typesById, entityConfig.EntityId, () => (EntityElement)entityConfig);
                       });
 
                 var rootId = rootElement.EntityId;

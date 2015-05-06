@@ -15,7 +15,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         {
             _metadata = new Dictionary<Uri, IMetadataElement>
                         {
-                            { BusinessDirectory.Context.Identity.Id, BusinessDirectory.Context },
                             { CustomerIntelligence.Context.Identity.Id, CustomerIntelligence.Context },
                         };
         }

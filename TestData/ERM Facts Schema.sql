@@ -7,6 +7,7 @@ go
 if object_id('ERM.Account') is not null drop table ERM.Account;
 if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
 if object_id('ERM.Category') is not null drop table ERM.Category;
+if object_id('ERM.CategoryGroup') is not null drop table ERM.CategoryGroup;
 if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
 if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
 if object_id('ERM.Client') is not null drop table ERM.Client;
@@ -16,6 +17,8 @@ if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
 if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
 if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
 if object_id('ERM.Order') is not null drop table ERM.[Order];
+if object_id('ERM.Project') is not null drop table ERM.Project;
+if object_id('ERM.Territory') is not null drop table ERM.Territory;
 go
 
 
@@ -40,9 +43,19 @@ go
 -- Category
 create table ERM.Category(
 	Id bigint not null
+    , Name nvarchar(256) not null
     , [Level] int not null
     , ParentId bigint null
     , constraint PK_Categories primary key (Id)
+)
+go
+
+-- CategoryGroup
+create table ERM.CategoryGroup(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , Rate float not null
+    , constraint PK_CategoryGroups primary key (Id)
 )
 go
 
@@ -68,7 +81,7 @@ go
 -- Client
 create table ERM.Client(
 	Id bigint not null
-    , Name nvarchar(250) not null
+    , Name nvarchar(256) not null
     , LastDisqualifiedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Clients_HasPhone default 0
     , HasWebsite bit not null constraint DF_Clients_HasWebsite default 0
@@ -94,13 +107,9 @@ go
 -- Firm
 create table ERM.Firm(
 	Id bigint not null
-    , Name nvarchar(250) not null
+    , Name nvarchar(256) not null
     , CreatedOn datetimeoffset(2) not null
     , LastDisqualifiedOn datetimeoffset(2) null
-    , LastDistributedOn datetimeoffset(2) null
-    , HasPhone bit not null constraint DF_Firms_HasPhone default 0
-    , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
-    , AddressCount int not null constraint DF_Firms_AddressCount default 0
     , ClientId bigint null
     , OrganizationUnitId bigint not null
     , OwnerId bigint not null
@@ -147,5 +156,23 @@ create table ERM.[Order](
     , EndDistributionDateFact datetimeoffset(2) not null
     , FirmId bigint null
     , constraint PK_Orders primary key (Id)
+)
+go
+
+-- Project
+create table ERM.Project(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , OrganizationUnitId bigint null
+    , constraint PK_Projects primary key (Id)
+)
+go
+
+-- Territory
+create table ERM.Territory(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_Territories primary key (Id)
 )
 go

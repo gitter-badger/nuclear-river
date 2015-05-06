@@ -8,6 +8,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public long CategoryId { get; set; }
 
+        public long Hits { get; set; }
+        
+        public long Shows { get; set; }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))

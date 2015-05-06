@@ -18,6 +18,35 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
+        public IQueryable<Category> Categories
+        {
+            get
+            {
+                return from category in _context.Categories
+                       select new Category
+                       {
+                           Id = category.Id,
+                           Name = category.Name,
+                           Level = category.Level,
+                           ParentId = category.ParentId
+                       };
+            }
+        }
+
+        public IQueryable<CategoryGroup> CategoryGroups
+        {
+            get
+            {
+                return from categoryGroup in _context.CategoryGroups
+                       select new CategoryGroup
+                       {
+                           Id = categoryGroup.Id,
+                           Name = categoryGroup.Name,
+                           Rate = categoryGroup.Rate
+                       };
+            }
+        }
+
         public IQueryable<Client> Clients
         {
             get
@@ -70,6 +99,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from firm in _context.Firms
+                       join project in _context.Projects on firm.OrganizationUnitId equals project.OrganizationUnitId
                        join client in _context.Clients on firm.ClientId equals client.Id into firmClients
                        from firmClient in firmClients.DefaultIfEmpty()
                        select new Firm
@@ -84,7 +114,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   AddressCount = _context.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
                                   //CategoryGroupId = null,
                                   ClientId = firm.ClientId,
-                                  OrganizationUnitId = firm.OrganizationUnitId,
+                                  ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
                                   TerritoryId = firm.TerritoryId
                               };
@@ -136,20 +166,45 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmCategoryGroup> FirmCategoryGroups
+        public IQueryable<Project> Projects
         {
             get
             {
-                return (from firm in _context.Firms
-                        join firmAddress in _context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                        join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                        join categoryOrganizationUnit in _context.CategoryOrganizationUnits on categoryFirmAddress.CategoryId equals categoryOrganizationUnit.CategoryId
-                        where firm.OrganizationUnitId == categoryOrganizationUnit.OrganizationUnitId
-                        select new FirmCategoryGroup
-                               {
-                                   FirmId = firmAddress.FirmId,
-                                   CategoryGroupId = categoryOrganizationUnit.CategoryGroupId
-                               }).Distinct();
+                return from project in _context.Projects
+                       select new Project
+                       {
+                           Id = project.Id,
+                           Name = project.Name
+                       };
+            }
+        }
+
+        public IQueryable<ProjectCategory> ProjectCategories
+        {
+            get
+            {
+                return from project in _context.Projects
+                       join categoryOrganizationUnit in _context.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       select new ProjectCategory
+                       {
+                           ProjectId = project.Id,
+                           CategoryId = categoryOrganizationUnit.CategoryId,
+                       };
+            }
+        }
+
+        public IQueryable<Territory> Territories
+        {
+            get
+            {
+                return from territory in _context.Territories
+                       join project in _context.Projects on territory.OrganizationUnitId equals project.OrganizationUnitId
+                       select new Territory
+                       {
+                           Id = territory.Id,
+                           Name = territory.Name,
+                           ProjectId = project.Id
+                       };
             }
         }
     }

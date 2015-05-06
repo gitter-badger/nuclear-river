@@ -21,9 +21,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadAccount()
         {
             ErmDb.Has(new Account { Id = 1, Balance = 123.45m, LegalPersonId = 1 })
-                         .Has(new Account { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new Account { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new Account { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new Account { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new Account { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new Account { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
                 .VerifyRead(x => x.Accounts.ById(1), Inquire(new Account { Id = 1, Balance = 123.45m, LegalPersonId = 1 }))
@@ -36,9 +36,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadBranchOfficeOrganizationUnit()
         {
             ErmDb.Has(new BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 123 })
-                         .Has(new BranchOfficeOrganizationUnit { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new BranchOfficeOrganizationUnit { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new BranchOfficeOrganizationUnit { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new BranchOfficeOrganizationUnit { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new BranchOfficeOrganizationUnit { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new BranchOfficeOrganizationUnit { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.BranchOfficeOrganizationUnits.ById(1), Inquire(new BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 123 }))
@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
-        public void ShouldReadCategories()
+        public void ShouldReadCategory()
         {
             ErmDb.Has(new Category { Id = 1, Level = 1, ParentId = 123 })
                  .Has(new Category { Id = 2, IsActive = false, IsDeleted = false })
@@ -66,9 +66,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadCategoryFirmAddress()
         {
             ErmDb.Has(new CategoryFirmAddress { Id = 1, CategoryId = 123, FirmAddressId = 456 })
-                         .Has(new CategoryFirmAddress { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new CategoryFirmAddress { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new CategoryFirmAddress { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new CategoryFirmAddress { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new CategoryFirmAddress { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new CategoryFirmAddress { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.CategoryFirmAddresses.ById(1), Inquire(new CategoryFirmAddress { Id = 1, CategoryId = 123, FirmAddressId = 456 }))
@@ -78,12 +78,27 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldReadCategoryGroup()
+        {
+            ErmDb.Has(new CategoryGroup { Id = 1, Name = "name", Rate = 1 })
+                 .Has(new CategoryGroup { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new CategoryGroup { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new CategoryGroup { Id = 4, IsActive = true, IsDeleted = true });
+
+            Reader.Create(ErmDb)
+                  .VerifyRead(x => x.CategoryGroups.ById(1), Inquire(new CategoryGroup { Id = 1, Name = "name", Rate = 1 }))
+                  .VerifyRead(x => x.CategoryGroups.ById(2), Inquire<CategoryGroup>())
+                  .VerifyRead(x => x.CategoryGroups.ById(3), Inquire<CategoryGroup>())
+                  .VerifyRead(x => x.CategoryGroups.ById(4), Inquire<CategoryGroup>());
+        }
+
+        [Test]
         public void ShouldReadCategoryOrganizationUnit()
         {
             ErmDb.Has(new CategoryOrganizationUnit { Id = 1, CategoryId = 123, CategoryGroupId = 456, OrganizationUnitId = 789 })
-                         .Has(new CategoryOrganizationUnit { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new CategoryOrganizationUnit { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new CategoryOrganizationUnit { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new CategoryOrganizationUnit { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new CategoryOrganizationUnit { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new CategoryOrganizationUnit { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(
@@ -108,9 +123,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     Website = "site",
                     LastDisqualifyTime = Date
                 })
-                         .Has(new Client { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new Client { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new Client { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new Client { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new Client { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new Client { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(
@@ -147,26 +162,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     Website = "site",
                     ClientId = 1
                 })
-                         .Has(new Contact { Id = 2, IsActive = false, IsDeleted = false })
-                         .Has(new Contact { Id = 3, IsActive = false, IsDeleted = true })
-                         .Has(new Contact { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new Contact { Id = 2, IsActive = false, IsDeleted = false })
+                 .Has(new Contact { Id = 3, IsActive = false, IsDeleted = true })
+                 .Has(new Contact { Id = 4, IsActive = true, IsDeleted = true });
 
             Reader.Create(ErmDb)
-                  .VerifyRead(
-                      x => x.Contacts.ById(1),
-                      Inquire(
-                          new Contact
-                          {
-                              Id = 1,
-                              Role = 1,
-                              IsFired = true,
-                              MainPhoneNumber = "phone1",
-                              HomePhoneNumber = "phone2",
-                              MobilePhoneNumber = "phone3",
-                              AdditionalPhoneNumber = "phone4",
-                              Website = "site",
-                              ClientId = 1
-                          }))
+                  .VerifyRead(x => x.Contacts.ById(1), Inquire(new Contact { Id = 1, Role = 1, IsFired = true, MainPhoneNumber = "phone1", HomePhoneNumber = "phone2", MobilePhoneNumber = "phone3", AdditionalPhoneNumber = "phone4", Website = "site", ClientId = 1 }))
                   .VerifyRead(x => x.Contacts.ById(2), Inquire<Contact>())
                   .VerifyRead(x => x.Contacts.ById(3), Inquire<Contact>())
                   .VerifyRead(x => x.Contacts.ById(4), Inquire<Contact>());
@@ -176,10 +177,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadFirm()
         {
             ErmDb.Has(new Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddHours(1), ClientId = 1, OrganizationUnitId = 2, TerritoryId = 3 })
-                         .Has(new Firm { Id = 2, IsActive = false })
-                         .Has(new Firm { Id = 3, IsDeleted = true })
-                         .Has(new Firm { Id = 4, IsActive = false, IsDeleted = true })
-                         .Has(new Firm { Id = 5, ClosedForAscertainment = true });
+                 .Has(new Firm { Id = 2, IsActive = false })
+                 .Has(new Firm { Id = 3, IsDeleted = true })
+                 .Has(new Firm { Id = 4, IsActive = false, IsDeleted = true })
+                 .Has(new Firm { Id = 5, ClosedForAscertainment = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(
@@ -195,10 +196,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadFirmAddress()
         {
             ErmDb.Has(new FirmAddress { Id = 1, FirmId = 1 })
-                         .Has(new FirmAddress { Id = 2, IsActive = false })
-                         .Has(new FirmAddress { Id = 3, IsDeleted = true })
-                         .Has(new FirmAddress { Id = 4, IsActive = false, IsDeleted = true })
-                         .Has(new FirmAddress { Id = 5, ClosedForAscertainment = true });
+                 .Has(new FirmAddress { Id = 2, IsActive = false })
+                 .Has(new FirmAddress { Id = 3, IsDeleted = true })
+                 .Has(new FirmAddress { Id = 4, IsActive = false, IsDeleted = true })
+                 .Has(new FirmAddress { Id = 5, ClosedForAscertainment = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.FirmAddresses.ById(1), Inquire(new FirmAddress { Id = 1, FirmId = 1 }))
@@ -212,8 +213,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadFirmContact()
         {
             ErmDb.Has(new FirmContact { Id = 1, ContactType = 1, FirmAddressId = 1 })
-                         .Has(new FirmContact { Id = 2, ContactType = 2, FirmAddressId = 1 })
-                         .Has(new FirmContact { Id = 3, ContactType = 4, FirmAddressId = 2 });
+                 .Has(new FirmContact { Id = 2, ContactType = 2, FirmAddressId = 1 })
+                 .Has(new FirmContact { Id = 3, ContactType = 4, FirmAddressId = 2 });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.FirmContacts.ById(1), Inquire(new FirmContact { Id = 1, ContactType = 1, FirmAddressId = 1 }))
@@ -225,9 +226,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadLegalPerson()
         {
             ErmDb.Has(new LegalPerson { Id = 1, ClientId = 1 })
-                         .Has(new LegalPerson { Id = 2, IsActive = false })
-                         .Has(new LegalPerson { Id = 3, IsDeleted = true })
-                         .Has(new LegalPerson { Id = 4, IsActive = false, IsDeleted = true });
+                 .Has(new LegalPerson { Id = 2, IsActive = false })
+                 .Has(new LegalPerson { Id = 3, IsDeleted = true })
+                 .Has(new LegalPerson { Id = 4, IsActive = false, IsDeleted = true });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.LegalPersons.ById(1), Inquire(new LegalPerson { Id = 1, ClientId = 1 }))
@@ -240,10 +241,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldReadOrder()
         {
             ErmDb.Has(new Order { Id = 1, EndDistributionDateFact = Date, WorkflowStepId = 4, FirmId = 3 })
-                         .Has(new Order { Id = 2, IsActive = false })
-                         .Has(new Order { Id = 3, IsDeleted = true })
-                         .Has(new Order { Id = 4, IsActive = false, IsDeleted = true })
-                         .Has(new Order { Id = 5, WorkflowStepId = 1 });
+                 .Has(new Order { Id = 2, IsActive = false })
+                 .Has(new Order { Id = 3, IsDeleted = true })
+                 .Has(new Order { Id = 4, IsActive = false, IsDeleted = true })
+                 .Has(new Order { Id = 5, WorkflowStepId = 1 });
 
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.Orders.ById(1), Inquire(new Order { Id = 1, EndDistributionDateFact = Date, WorkflowStepId = 4, FirmId = 3 }))
@@ -251,6 +252,28 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                   .VerifyRead(x => x.Orders.ById(3), Inquire<Order>())
                   .VerifyRead(x => x.Orders.ById(4), Inquire<Order>())
                   .VerifyRead(x => x.Orders.ById(5), Inquire(new Order { Id = 5, WorkflowStepId = 1 }));
+        }
+
+        [Test]
+        public void ShouldReadProject()
+        {
+            ErmDb.Has(new Project { Id = 1, Name = "name", OrganizationUnitId = 2 })
+                 .Has(new Project { Id = 2, IsActive = false });
+
+            Reader.Create(ErmDb)
+                  .VerifyRead(x => x.Projects.ById(1), Inquire(new Project { Id = 1, Name = "name", OrganizationUnitId = 2 }))
+                  .VerifyRead(x => x.Projects.ById(2), Inquire<Project>());
+        }
+
+        [Test]
+        public void ShouldReadTerritory()
+        {
+            ErmDb.Has(new Territory { Id = 1, Name = "name", OrganizationUnitId = 2 })
+                 .Has(new Territory { Id = 2, IsActive = false });
+
+            Reader.Create(ErmDb)
+                  .VerifyRead(x => x.Territories.ById(1), Inquire(new Territory { Id = 1, Name = "name", OrganizationUnitId = 2 }))
+                  .VerifyRead(x => x.Territories.ById(2), Inquire<Territory>());
         }
 
         #region Reader
