@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
-function Load-Assemblies ($LibDir) {
+function Load-Assemblies {
 	$files =  Get-ChildItem $LibDir -Filter '*.dll'
 	foreach($file in $files) {
 		$bytes = [System.IO.File]::ReadAllBytes($file.FullName)
@@ -12,7 +12,7 @@ function Load-Assemblies ($LibDir) {
 	}
 }
 
-Load-Assemblies $LibDir
+Load-Assemblies
 
 # aliases
 $sqlServerTools = [LinqToDB.DataProvider.SqlServer.SqlServerTools]
@@ -23,22 +23,13 @@ $ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence
 $factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
 
 $factsConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($schema::Facts)
+$GetAttributeMethod = $factsConnection.MappingSchema.GetType().GetMethod('GetAttribute', [Type[]]@([Type], [bool])).MakeGenericMethod([LinqToDB.Mapping.TableAttribute])
 
-$bulkCopyOptions = new-Object LinqToDB.Data.BulkCopyOptions
-$bulkCopyOptions.BulkCopyTimeout = 0
+$dtos = $factsTransformationContext.GetType().GetProperties() |
+Where { [System.Linq.IQueryable].IsAssignableFrom($_.PropertyType) } |
+ForEach {
 
-$properties = $factsTransformationContext.GetType().GetProperties()
-foreach ($property in $properties){
-
-	$queryable = $property.GetValue($factsTransformationContext) -as [System.Linq.IQueryable]
-	if ($queryable -eq $null){
-		continue
-	}
-
-	Write-Host "$($property.Name)..."
-
-	$pocoType = $property.PropertyType.GetGenericArguments()[0]
-	$GetAttributeMethod = $factsConnection.MappingSchema.GetType().GetMethod('GetAttribute', [Type[]]@([Type], [bool])).MakeGenericMethod([LinqToDB.Mapping.TableAttribute])
+	$pocoType = $_.PropertyType.GetGenericArguments()[0]
 	$tableAttribute = $GetAttributeMethod.Invoke($factsConnection.MappingSchema, [object[]]@($pocoType, $false))
 
 	$tableName = $tableAttribute.Name
@@ -46,10 +37,27 @@ foreach ($property in $properties){
 		$tableName = $pocoType.Name
 	}
 
-	$commandInfo = New-Object LinqToDB.Data.CommandInfo($factsConnection, "truncate table [$($tableAttribute.Schema)].[$tableName]")
+	$query = $_.GetValue($factsTransformationContext)
+
+	return @{
+		'SchemaName' = $tableAttribute.Schema
+		'TableName' = $tableName
+		'Query' = $query
+	}
+}
+
+$bulkCopyOptions = New-Object LinqToDB.Data.BulkCopyOptions
+$bulkCopyOptions.BulkCopyTimeout = 0
+
+foreach($dto in $dtos){
+
+	$fullTableName = "[$($dto.SchemaName)].[$($dto.TableName)]"
+	Write-Host "$fullTableName..."
+
+	$commandInfo = New-Object LinqToDB.Data.CommandInfo($factsConnection, "truncate table $fullTableName")
 	[void]$commandInfo.Execute()
 
-	[void][LinqToDB.Data.DataConnectionExtensions]::BulkCopy($factsConnection, $bulkCopyOptions, $queryable)
+	[void][LinqToDB.Data.DataConnectionExtensions]::BulkCopy($factsConnection, $bulkCopyOptions, $dto.Query)
 }
 
 "Done"
