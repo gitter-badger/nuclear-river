@@ -21,37 +21,51 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
             return container
-                .RegisterType<IDataContext, DataConnection>("Erm", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("Erm").AddMappingSchema(Schema.Erm)))
-                .RegisterType<IDataContext, DataConnection>("Facts", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("CustomerIntelligence").AddMappingSchema(Schema.Facts)))
-                .RegisterType<IDataContext, DataConnection>("CustomerIntelligence", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("CustomerIntelligence").AddMappingSchema(Schema.CustomerIntelligence)))
-                .RegisterType<IDataContext, DataConnection>("Transport", Lifetime.PerScope, new InjectionFactory(c => new DataConnection("CustomerIntelligence").AddMappingSchema(TransportSchema.Transport)))
+                .RegisterType<IDataContext, DataConnection>(Scope.Erm, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.Erm).AddMappingSchema(Schema.Erm)))
+                .RegisterType<IDataContext, DataConnection>(Scope.Facts, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(Schema.Facts)))
+                .RegisterType<IDataContext, DataConnection>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(Schema.CustomerIntelligence)))
+                .RegisterType<IDataContext, DataConnection>(Scope.Transport, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(TransportSchema.Transport)))
 
-                .RegisterType<IDataMapper, DataMapper>("Facts", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Facts")))
-                .RegisterType<IDataMapper, DataMapper>("CustomerIntelligence", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("CustomerIntelligence")))
+                .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
+                .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
 
-                .RegisterType<IErmContext, ErmContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Erm")))
+                .RegisterType<IErmContext, ErmContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Erm)))
 
-                .RegisterType<IFactsContext, FactsContext>("Facts", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Facts")))
+                .RegisterType<IFactsContext, FactsContext>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IFactsContext, FactsTransformationContext>("FactsTransform", Lifetime.PerScope)
 
-                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceContext>("CustomerIntelligence", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("CustomerIntelligence")))
-                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceTransformationContext>("CustomerIntelligenceTransform", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IFactsContext>("Facts")))
+                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceContext>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
+                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceTransformationContext>("CustomerIntelligenceTransform", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IFactsContext>(Scope.Facts)))
 
 
                 .RegisterType<FactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<IFactsContext>("FactsTransform"),
-                                                       new ResolvedParameter<IFactsContext>("Facts"),
-                                                       new ResolvedParameter<IDataMapper>("Facts")))
+                                                       new ResolvedParameter<IFactsContext>(Scope.Facts),
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<ICustomerIntelligenceContext>("CustomerIntelligenceTransform"),
-                                                       new ResolvedParameter<ICustomerIntelligenceContext>("CustomerIntelligence"),
-                                                       new ResolvedParameter<IDataMapper>("CustomerIntelligence")))
+                                                       new ResolvedParameter<ICustomerIntelligenceContext>(Scope.CustomerIntelligence),
+                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
 
-                .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Transport")))
-                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>("Transport")));
+                .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
+                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)));
+        }
+
+        private static class Scope
+        {
+            public const string Erm = "Erm";
+            public const string Facts = "Facts";
+            public const string CustomerIntelligence = "CustomerIntelligence";
+            public const string Transport = "Transport";
+        }
+
+        private static class Connection
+        {
+            public const string Erm = "Erm";
+            public const string CustomerIntelligence = "CustomerIntelligence";
         }
     }
 }
