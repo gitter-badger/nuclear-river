@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
@@ -31,7 +25,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports
         {
             var operationType = GetOperationType(operation);
             var entityType = EntityType.Instance.Parse(int.Parse(operation.Attribute("entitytype").Value));
-            var entity = int.Parse(operation.Attribute("entity").Value);
+            var entity = long.Parse(operation.Attribute("entity").Value);
 
             return (AggregateOperation)Activator.CreateInstance(operationType,
                                                                 EntityTypeMap<CustomerIntelligenceContext>.AsEntityType(entityType),
