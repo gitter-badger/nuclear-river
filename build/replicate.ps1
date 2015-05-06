@@ -17,21 +17,19 @@ Load-Assemblies $LibDir
 # aliases
 $sqlServerTools = [LinqToDB.DataProvider.SqlServer.SqlServerTools]
 $schema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]
-$ermContext = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext]
-$factsTransformationContext = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext]
 
 $ermConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Erm).AddMappingSchema($schema::Erm)
-$ermContext = New-Object $ermContext($ermConnection)
-$factTransformationContext = New-Object $factsTransformationContext($ermContext)
+$ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
+$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
 
 $factsConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($schema::Facts)
 
 $bulkCopyOptions = new-Object LinqToDB.Data.BulkCopyOptions
 $bulkCopyOptions.BulkCopyTimeout = 0
 
-$properties = $factsTransformationContext.GetProperties()
+$properties = $factsTransformationContext.GetType().GetProperties()
 foreach ($property in $properties){
-	$queryable = $property.GetValue($factTransformationContext) -as [System.Linq.IQueryable]
+	$queryable = $property.GetValue($factsTransformationContext) -as [System.Linq.IQueryable]
 	if ($queryable -eq $null){
 		continue
 	}
