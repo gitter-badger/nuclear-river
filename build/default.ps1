@@ -45,21 +45,15 @@ Task Run-UnitTests -depends Set-BuildNumber, Update-AssemblyInfo{
 
 Task Build-OData -depends Update-AssemblyInfo {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-Metadata 'Web.OData'
-	
-	Build-WebPackage $projectFileName $entryPointMetadata
+	Build-WebPackage $projectFileName 'Web.OData'
 }
 
 Task Deploy-OData {
-	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-Metadata 'Web.OData'
-	
-	Deploy-WebPackage $projectFileName $entryPointMetadata
-	Validate-WebSite $entryPointMetadata 'CustomerIntelligence/$metadata'
+	Deploy-WebPackage 'Web.OData'
+	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
 }
 
 Task Build-TaskService -Depends Update-AssemblyInfo {
-
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
