@@ -14,20 +14,22 @@ function Load-Assemblies ($LibDir) {
 
 Load-Assemblies $LibDir
 
-$ermSchema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Erm
-$ermConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($ConnectionStrings.Erm).AddMappingSchema($ermSchema)
-$ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
-$factTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
+# aliases
+$sqlServerTools = [LinqToDB.DataProvider.SqlServer.SqlServerTools]
+$schema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]
+$ermContext = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext]
+$factsTransformationContext = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext]
 
-$factsSchema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts
-$factsConnection = [LinqToDB.DataProvider.SqlServer.SqlServerTools]::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($factsSchema)
+$ermConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Erm).AddMappingSchema($schema::Erm)
+$ermContext = New-Object $ermContext($ermConnection)
+$factTransformationContext = New-Object $factsTransformationContext($ermContext)
+
+$factsConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($schema::Facts)
 
 $bulkCopyOptions = new-Object LinqToDB.Data.BulkCopyOptions
 $bulkCopyOptions.BulkCopyTimeout = 0
 
-$type = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext]
-$properties = $type.GetProperties()
-
+$properties = $factsTransformationContext.GetProperties()
 foreach ($property in $properties){
 	$queryable = $property.GetValue($factTransformationContext) -as [System.Linq.IQueryable]
 	if ($queryable -eq $null){
