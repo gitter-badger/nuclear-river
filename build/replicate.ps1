@@ -29,12 +29,25 @@ $bulkCopyOptions.BulkCopyTimeout = 0
 
 $properties = $factsTransformationContext.GetType().GetProperties()
 foreach ($property in $properties){
+
 	$queryable = $property.GetValue($factsTransformationContext) -as [System.Linq.IQueryable]
 	if ($queryable -eq $null){
 		continue
 	}
 
 	Write-Host "$($property.Name)..."
+
+	$pocoType = $property.PropertyType.GetGenericArguments()[0]
+	$GetAttributeMethod = $factsConnection.MappingSchema.GetType().GetMethod('GetAttribute', [Type[]]@([Type], [bool])).MakeGenericMethod([LinqToDB.Mapping.TableAttribute])
+	$tableAttribute = $GetAttributeMethod.Invoke($factsConnection.MappingSchema, [object[]]@($pocoType, $false))
+
+	$tableName = $tableAttribute.Name
+	if ($tableName -eq $null){
+		$tableName = $pocoType.Name
+	}
+
+	$commandInfo = New-Object LinqToDB.Data.CommandInfo($factsConnection, "truncate table [$($tableAttribute.Schema)].[$tableName]")
+	[void]$commandInfo.Execute()
 
 	[void][LinqToDB.Data.DataConnectionExtensions]::BulkCopy($factsConnection, $bulkCopyOptions, $queryable)
 }
