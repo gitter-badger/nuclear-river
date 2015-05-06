@@ -1,5 +1,6 @@
 ﻿using LinqToDB;
 using LinqToDB.Data;
+using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
@@ -21,10 +22,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
             return container
-                .RegisterType<IDataContext, DataConnection>(Scope.Erm, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.Erm).AddMappingSchema(Schema.Erm)))
-                .RegisterType<IDataContext, DataConnection>(Scope.Facts, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(Schema.Facts)))
-                .RegisterType<IDataContext, DataConnection>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(Schema.CustomerIntelligence)))
-                .RegisterType<IDataContext, DataConnection>(Scope.Transport, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(Connection.CustomerIntelligence).AddMappingSchema(TransportSchema.Transport)))
+                .RegisterDataContext(Scope.Erm, Connection.Erm, Schema.Erm)
+                .RegisterDataContext(Scope.Facts, Connection.CustomerIntelligence, Schema.Facts)
+                .RegisterDataContext(Scope.CustomerIntelligence, Connection.CustomerIntelligence, Schema.CustomerIntelligence)
+                .RegisterDataContext(Scope.Transport, Connection.CustomerIntelligence, TransportSchema.Transport)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
@@ -52,6 +53,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)));
+        }
+
+        private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, string connection, MappingSchema schema)
+        {
+            return container.RegisterType<IDataContext, DataConnection>(scope, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(connection).AddMappingSchema(schema)));
         }
 
         private static class Scope
