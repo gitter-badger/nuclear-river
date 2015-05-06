@@ -31,23 +31,23 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
                 .RegisterType<IErmContext, ErmContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Erm)))
 
-                .RegisterType<IFactsContext, FactsContext>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
-                .RegisterType<IFactsContext, FactsTransformationContext>("FactsTransform", Lifetime.PerScope)
+                .RegisterType<FactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
+                .RegisterType<FactsTransformationContext>(Lifetime.PerScope)
 
-                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceContext>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<ICustomerIntelligenceContext, CustomerIntelligenceTransformationContext>("CustomerIntelligenceTransform", Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IFactsContext>(Scope.Facts)))
+                .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
+                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<FactsContext>()))
 
 
                 .RegisterType<FactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<IFactsContext>("FactsTransform"),
-                                                       new ResolvedParameter<IFactsContext>(Scope.Facts),
+                                                       new ResolvedParameter<FactsTransformationContext>(),
+                                                       new ResolvedParameter<FactsContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts)))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<ICustomerIntelligenceContext>("CustomerIntelligenceTransform"),
-                                                       new ResolvedParameter<ICustomerIntelligenceContext>(Scope.CustomerIntelligence),
+                                                       new ResolvedParameter<CustomerIntelligenceTransformationContext>(),
+                                                       new ResolvedParameter<CustomerIntelligenceContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
