@@ -39,10 +39,10 @@ using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
-using NuClear.Replication.OperationsProcessing.Final.Transports;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
@@ -140,7 +140,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
-            container.RegisterTypeWithDependencies(typeof(FinalProcessingQueueReceiver), Lifetime.PerScope, null)
+            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler), Lifetime.PerResolve, null);
 
 

@@ -123,7 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Final\ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
-    <Compile Include="Final\Transports\FinalProcessingQueueReceiver.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\FakeFlow.cs" />
     <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />

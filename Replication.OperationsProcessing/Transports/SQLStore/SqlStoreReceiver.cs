@@ -15,6 +15,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
     {
         private readonly IDataContext _context;
 
+        // TODO {a.rechkalov, 06.05.2015}: MessageFlowMetadata sourceFlowMetadata - фильтрация, выборка только записей для текущего потока
         public SqlStoreReceiver(IDataContext context)
         {
             _context = context;
