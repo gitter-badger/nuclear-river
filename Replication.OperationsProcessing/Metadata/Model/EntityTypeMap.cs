@@ -18,44 +18,58 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
     {
         private static readonly Dictionary<IEntityType, Type> ErmTypeMap
             = new[]
-              {
-                  CreateMapping<EntityTypeAccount, Erm.Account>(),
-                  CreateMapping<EntityTypeCategoryFirmAddress, Erm.CategoryFirmAddress>(),
-                  CreateMapping<EntityTypeCategoryOrganizationUnit, Erm.CategoryOrganizationUnit>(),
-                  CreateMapping<EntityTypeClient, Erm.Client>(),
-                  CreateMapping<EntityTypeContact, Erm.Contact>(),
-                  CreateMapping<EntityTypeFirm, Erm.Firm>(),
-                  CreateMapping<EntityTypeFirmAddress, Erm.FirmAddress>(),
-                  CreateMapping<EntityTypeFirmContact, Erm.FirmContact>(),
-                  CreateMapping<EntityTypeLegalPerson, Erm.LegalPerson>(),
-                  CreateMapping<EntityTypeOrder, Erm.Order>(),
-              }.ToDictionary(pair => pair.Key, pair => pair.Value);
+                {
+                    CreateMapping<EntityTypeAccount, Erm.Account>(),
+                    CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Erm.BranchOfficeOrganizationUnit>(),
+                    CreateMapping<EntityTypeCategory, Erm.Category>(),
+                    CreateMapping<EntityTypeCategoryFirmAddress, Erm.CategoryFirmAddress>(),
+                    CreateMapping<EntityTypeCategoryGroup, Erm.CategoryGroup>(),
+                    CreateMapping<EntityTypeCategoryOrganizationUnit, Erm.CategoryOrganizationUnit>(),
+                    CreateMapping<EntityTypeClient, Erm.Client>(),
+                    CreateMapping<EntityTypeContact, Erm.Contact>(),
+                    CreateMapping<EntityTypeFirm, Erm.Firm>(),
+                    CreateMapping<EntityTypeFirmAddress, Erm.FirmAddress>(),
+                    CreateMapping<EntityTypeFirmContact, Erm.FirmContact>(),
+                    CreateMapping<EntityTypeLegalPerson, Erm.LegalPerson>(),
+                    CreateMapping<EntityTypeOrder, Erm.Order>(),
+                    CreateMapping<EntityTypeProject, Erm.Project>(),
+                    CreateMapping<EntityTypeTerritory, Erm.Territory>(),
+                }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
         private static readonly Dictionary<IEntityType, Type> FactsTypeMap
             = new[]
-              {
-                  CreateMapping<EntityTypeAccount, Facts.Account>(),
-                  CreateMapping<EntityTypeCategoryFirmAddress, Facts.CategoryFirmAddress>(),
-                  CreateMapping<EntityTypeCategoryOrganizationUnit, Facts.CategoryOrganizationUnit>(),
-                  CreateMapping<EntityTypeClient, Facts.Client>(),
-                  CreateMapping<EntityTypeContact, Facts.Contact>(),
-                  CreateMapping<EntityTypeFirm, Facts.Firm>(),
-                  CreateMapping<EntityTypeFirmAddress, Facts.FirmAddress>(),
-                  CreateMapping<EntityTypeFirmContact, Facts.FirmContact>(),
-                  CreateMapping<EntityTypeLegalPerson, Facts.LegalPerson>(),
-                  CreateMapping<EntityTypeOrder, Facts.Order>(),
-              }.ToDictionary(pair => pair.Key, pair => pair.Value);
+                {
+                    CreateMapping<EntityTypeAccount, Facts.Account>(),
+                    CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Facts.BranchOfficeOrganizationUnit>(),
+                    CreateMapping<EntityTypeCategory, Facts.Category>(),
+                    CreateMapping<EntityTypeCategoryFirmAddress, Facts.CategoryFirmAddress>(),
+                    CreateMapping<EntityTypeCategoryGroup, Facts.CategoryGroup>(),
+                    CreateMapping<EntityTypeCategoryOrganizationUnit, Facts.CategoryOrganizationUnit>(),
+                    CreateMapping<EntityTypeClient, Facts.Client>(),
+                    CreateMapping<EntityTypeContact, Facts.Contact>(),
+                    CreateMapping<EntityTypeFirm, Facts.Firm>(),
+                    CreateMapping<EntityTypeFirmAddress, Facts.FirmAddress>(),
+                    CreateMapping<EntityTypeFirmContact, Facts.FirmContact>(),
+                    CreateMapping<EntityTypeLegalPerson, Facts.LegalPerson>(),
+                    CreateMapping<EntityTypeOrder, Facts.Order>(),
+                    CreateMapping<EntityTypeProject, Facts.Project>(),
+                    CreateMapping<EntityTypeTerritory, Facts.Territory>(),
+                }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
         private static readonly Dictionary<IEntityType, Type> CustomerIntelligenceTypeMap
             = new[]
-              {
-                  CreateMapping<EntityTypeClient, CI.Client>(),
-                  CreateMapping<EntityTypeContact, CI.Contact>(),
-                  CreateMapping<EntityTypeFirm, CI.Firm>(),
-                  CreateMapping<EntityTypeFirmBalance, CI.FirmBalance>(),
-                  CreateMapping<EntityTypeFirmCategory, CI.FirmCategory>(),
-                  CreateMapping<EntityTypeFirmCategoryGroup, CI.FirmCategoryGroup>(),
-              }.ToDictionary(pair => pair.Key, pair => pair.Value);
+                {
+                    CreateMapping<EntityTypeCategory, CI.Category>(),
+                    CreateMapping<EntityTypeCategoryGroup, CI.CategoryGroup>(),
+                    CreateMapping<EntityTypeClient, CI.Client>(),
+                    CreateMapping<EntityTypeContact, CI.Contact>(),
+                    CreateMapping<EntityTypeFirm, CI.Firm>(),
+                    CreateMapping<EntityTypeFirmBalance, CI.FirmBalance>(),
+                    CreateMapping<EntityTypeFirmCategory, CI.FirmCategory>(),
+                    CreateMapping<EntityTypeProject, CI.Project>(),
+                    CreateMapping<EntityTypeProjectCategory, CI.ProjectCategory>(),
+                    CreateMapping<EntityTypeTerritory, CI.Territory>(),
+                }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
         public static void Initialize()
         {

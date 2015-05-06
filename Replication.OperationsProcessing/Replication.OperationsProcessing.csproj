@@ -131,7 +131,10 @@
     <Compile Include="Metadata\Model\EntityTypeIds.cs" />
     <Compile Include="Metadata\Model\EntityTypeMap.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeAccount.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeBranchOfficeOrganizationUnit.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeCategory.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeCategoryFirmAddress.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeCategoryGroup.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeCategoryOrganizationUnit.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeClient.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeContact.cs" />
@@ -145,6 +148,9 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeOrder.cs" />
     <Compile Include="Metadata\Model\Context\ErmContext.cs" />
     <Compile Include="Metadata\Model\Context\FactsContext.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeProject.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeProjectCategory.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
