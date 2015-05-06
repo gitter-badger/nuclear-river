@@ -44,7 +44,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<Category>().HasSchemaName(BusinessDirectorySchema).HasTableName("Categories").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryGroup>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryGroup")
                     .Property(x => x.Id).IsPrimaryKey()
-                    .Property(x => x.Name).HasColumnName("CategoryGroupName")
                     .Property(x => x.Rate).HasColumnName("GroupRate");
                 config.Entity<CategoryFirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryOrganizationUnit>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
@@ -53,8 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                     .HasSchemaName(BillingSchema)
                     .HasTableName("Contacts")
                     .Property(x => x.Id).IsPrimaryKey()
-                    .Property(x => x.Role).HasColumnName("AccountRole")
-                    ;
+                    .Property(x => x.Role).HasColumnName("AccountRole");
                 config.Entity<Firm>()
                     .HasSchemaName(BusinessDirectorySchema)
                     .HasTableName("Firms")
