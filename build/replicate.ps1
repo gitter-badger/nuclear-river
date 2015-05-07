@@ -121,8 +121,14 @@ function Exec-Command ($connection, [string]$command){
 	$commands = $command.Split([string[]]@("`r`nGO", "`r`ngo"), 'RemoveEmptyEntries')
 
 	foreach($command in $commands){
-		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, $command)
-		[void]$commandInfo.Execute()
+
+		try{
+			$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, $command)
+			[void]$commandInfo.Execute()
+		}
+		catch {
+			throw "Error executing command $command"
+		}
 	}
 }
 
