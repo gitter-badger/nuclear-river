@@ -1,4 +1,4 @@
-﻿param($LibDir, $ConnectionStrings)
+﻿param($LibDir, $ConnectionStrings, $SqlScriptsDir)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -12,9 +12,12 @@ function Load-Assemblies {
 	}
 }
 
+Load-Assemblies
+
+# aliases
+$sqlServerTools = [LinqToDB.DataProvider.SqlServer.SqlServerTools]
+
 function Replicate-ErmToFacts (){
-	# aliases
-	$sqlServerTools = [LinqToDB.DataProvider.SqlServer.SqlServerTools]
 	$schema = [NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]
 
 	$ermConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Erm).AddMappingSchema($schema::Erm)
@@ -60,7 +63,44 @@ function Replicate-ErmToFacts (){
 	}
 }
 
-Load-Assemblies
-Replicate-ErmToFacts
+function Create-Database {
+	$builder = New-Object System.Data.Common.DbConnectionStringBuilder
+	$builder.set_ConnectionString($ConnectionStrings.CustomerIntelligence)
+
+	$initialCatalog = $builder['Initial Catalog']
+	$builder['Initial Catalog'] = $null
+
+	$connectionString = $builder.ConnectionString
+	$connection = $sqlServerTools::CreateDataConnection($connectionString)
+
+	$command = @"
+if (not exists(select * from sys.databases where name = '$initialCatalog'))
+	exec ('create database $initialCatalog')
+"@
+
+	Exec-Command $connection $command
+}
+
+function Create-Tables {
+	$connection = $sqlServerTools::CreateDataConnection($ConnectionStrings.CustomerIntelligence)
+	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql'
+	foreach($sqlScript in $sqlScripts){
+		$command = Get-Content $sqlScript.FullName -Raw
+		Exec-Command $connection $command
+	}
+}
+
+function Exec-Command ($connection, [string]$command){
+	$commands = $command.Split([string[]]@("`r`nGO", "`r`ngo"), 'RemoveEmptyEntries')
+
+	foreach($command in $commands){
+		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, $command)
+		[void]$commandInfo.Execute()
+	}
+}
+
+Create-Database
+Create-Tables
+#Replicate-ErmToFacts
 
 "Done"

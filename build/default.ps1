@@ -86,9 +86,12 @@ Task Replicate-AllTables -Depends Build-ReplicationLib {
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
 	$connectionStrings = Get-ConnectionStrings
 
+	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'TestData'
+
 	& $scriptFilePath `
 	-LibDir $libDir `
-	-ConnectionStrings $connectionStrings
+	-ConnectionStrings $connectionStrings `
+	-SqlScriptsDir $sqlScriptsDir
 }
 
 function Get-ConnectionStrings {
