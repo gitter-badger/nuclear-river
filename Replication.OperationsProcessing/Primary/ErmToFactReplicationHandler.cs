@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -39,6 +40,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             }
             catch (Exception ex)
             {
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+
                 return MessageProcessingStage.Handle.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
