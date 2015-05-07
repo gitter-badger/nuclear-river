@@ -118,7 +118,7 @@ function Create-SqlServerConnection ($ConnectionString){
 }
 
 function Exec-Command ($connection, [string]$command){
-	$commands = $command.Split([string[]]@("`r`nGO", "`r`ngo"), 'RemoveEmptyEntries')
+	$commands = $command.Split([string[]]@("`nGO", "`ngo"), 'RemoveEmptyEntries')
 
 	foreach($command in $commands){
 
