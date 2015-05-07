@@ -100,7 +100,6 @@ function Get-ConnectionStrings {
 
 	return @{
 		'Erm' = Get-ConnectionString $config 'Erm'
-		'Facts' = Get-ConnectionString $config 'Facts'
 		'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
 	}
 }

@@ -22,7 +22,7 @@ $ermConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Erm).A
 $ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
 $factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
 
-$factsConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.Facts).AddMappingSchema($schema::Facts)
+$factsConnection = $sqlServerTools::CreateDataConnection($ConnectionStrings.CustomerIntelligence).AddMappingSchema($schema::Facts)
 $GetAttributeMethod = $factsConnection.MappingSchema.GetType().GetMethod('GetAttribute', [Type[]]@([Type], [bool])).MakeGenericMethod([LinqToDB.Mapping.TableAttribute])
 
 $dtos = $factsTransformationContext.GetType().GetProperties() |

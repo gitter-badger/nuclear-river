@@ -32,6 +32,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
+        public void ReloadCategoryGroups()
+        {
+            Reload(ctx => ctx.CategoryGroups);
+        }
+
+        [Test]
         public void ReloadCategoryFirmAddresses()
         {
             Reload(ctx => ctx.CategoryFirmAddresses);
@@ -83,6 +89,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         public void ReloadOrders()
         {
             Reload(ctx => ctx.Orders);
+        }
+
+        [Test]
+        public void ReloadProjects()
+        {
+            Reload(ctx => ctx.Projects);
+        }
+
+        [Test]
+        public void ReloadTerritories()
+        {
+            Reload(ctx => ctx.Territories);
         }
 
         private void Reload<T>(Func<IFactsContext, IEnumerable<T>> loader)
