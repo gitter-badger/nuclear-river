@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 cls
 
-$Properties.SemanticVersion = '0.0.0'
+$Properties.SemanticVersion = '0.0.1'
 $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 $Properties.SolutionDir = Join-Path $PSScriptRoot '..'
 
