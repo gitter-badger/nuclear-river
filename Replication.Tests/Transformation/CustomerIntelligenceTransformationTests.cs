@@ -157,19 +157,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
         
         [Test]
-        public void ShouldInitializeFirmHavingCategoryGroup()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
-                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
-                ctx.FirmCategoryGroups == Inquire(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }));
-
-            Transformation.Create(source)
-                .Transform(Aggregate.Initialize<CI::Firm>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))));
-        }
-        
-        [Test]
         public void ShouldInitializeFirmHavingClient()
         {
             var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
@@ -226,8 +213,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 123 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
         }
 
@@ -267,44 +253,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }))));
-        }
-
-        [Test]
-        public void ShouldRecalculateFirmHavingCategoryGroup()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
-                ctx.Firms == Inquire(
-                    new CI::Firm { Id = 1 },
-                    new CI::Firm { Id = 2 },
-                    new CI::Firm { Id = 3 }
-                    ) &&
-                ctx.FirmCategoryGroups == Inquire(
-                    new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 },
-                    new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }
-                    ));
-            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
-                ctx.Firms == Inquire(
-                    new CI::Firm { Id = 1 },
-                    new CI::Firm { Id = 2 },
-                    new CI::Firm { Id = 3 }
-                    ) &&
-                ctx.FirmCategoryGroups == Inquire(
-                    new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 1 },
-                    new CI::FirmCategoryGroup { FirmId = 3, CategoryGroupId = 1 }
-                    ));
-
-            Transformation.Create(source, target)
-                .Transform(
-                    Aggregate.Recalculate<CI::Firm>(1),
-                    Aggregate.Recalculate<CI::Firm>(2),
-                    Aggregate.Recalculate<CI::Firm>(3))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 2 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 2, CategoryGroupId = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 3, CategoryGroupId = 1 }))));
         }
 
         [Test]
@@ -361,20 +309,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Transform(Aggregate.Destroy<CI::Firm>(1))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
-        }
-
-        [Test]
-        public void ShouldDestroyFirmHavingCategoryGroup()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>();
-            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
-                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
-                ctx.FirmCategoryGroups == Inquire(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }));
-
-            Transformation.Create(source, target)
-                .Transform(Aggregate.Destroy<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryGroup { FirmId = 1, CategoryGroupId = 1 }))));
         }
 
         [Test]

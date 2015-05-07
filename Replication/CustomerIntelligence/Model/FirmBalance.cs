@@ -4,9 +4,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
     public sealed class FirmBalance : IObject
     {
-        public long AccountId { get; set; }
-
         public long FirmId { get; set; }
+
+        public long AccountId { get; set; }
 
         public decimal Balance { get; set; }
 
@@ -29,14 +29,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             {
                 var hashCode = AccountId.GetHashCode();
                 hashCode = (hashCode * 397) ^ FirmId.GetHashCode();
-                hashCode = (hashCode * 397) ^ Balance.GetHashCode();
                 return hashCode;
             }
         }
 
         private bool Equals(FirmBalance other)
         {
-            return AccountId == other.AccountId && FirmId == other.FirmId && Balance == other.Balance;
+            return AccountId == other.AccountId && FirmId == other.FirmId;
         }
     }
 }

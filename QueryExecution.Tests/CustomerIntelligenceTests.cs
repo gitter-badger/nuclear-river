@@ -27,38 +27,36 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
     {
         private readonly IDictionary<Uri, IEdmModel> Models = BuildModels(MetadataProvider, BusinessDirectoryId, CustomerIntelligenceId);
 
-        [TestCase(BusinessDirectory, "Category", null, Result = "Category[]")]
-        [TestCase(BusinessDirectory, "CategoryGroup", null, Result = "CategoryGroup[]")]
-        [TestCase(BusinessDirectory, "OrganizationUnit", null, Result = "OrganizationUnit[]")]
-        [TestCase(BusinessDirectory, "Territory", null, Result = "Territory[]")]
-        public string ShouldBuildQuery(string modelName, string type, string filter)
+        [TestCase("Category", null, Result = "Category[]")]
+        [TestCase("CategoryGroup", null, Result = "CategoryGroup[]")]
+        [TestCase("Project", null, Result = "Project[]")]
+        [TestCase("Territory", null, Result = "Territory[]")]
+        public string ShouldBuildQuery(string type, string filter)
         {
-            return BuildQuery(modelName, type, filter);
+            return BuildQuery(CustomerIntelligence, type, filter);
         }
 
         /// <summary>
         /// Критерии взяты из https://confluence.2gis.ru/pages/viewpage.action?pageId=143462711.
         /// </summary>
-        [TestCase("$filter=CreatedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.CreatedOn < 01/01/2015 00:00:00 +00:00))", Description = "Поиск по дате создания.")]
-        [TestCase("$filter=LastDisqualifiedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDisqualifiedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего возвращения в резерв.")]
-        [TestCase("$filter=LastDistributedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDistributedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего размещения.")]
-        [TestCase("$filter=HasPhone eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasPhone == True))", Description = "Поиск по наличию телефона.")]
-        [TestCase("$filter=HasWebsite eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasWebsite == True))", Description = "Поиск по наличию сайта.")]
-        [TestCase("$filter=AddressCount gt @amount&@amount=10", Result = "Firm[].Where($it => ($it.AddressCount > 10))", Description = "Поиск по количеству активных адресов.")]
-        [TestCase("$filter=CategoryGroupId eq @id&@id=12345", Result = "Firm[].Where($it => ($it.CategoryGroupId == Convert(12345)))", Description = "Поиск по ценовой категории фирмы.")]
-        [TestCase("$filter=OrganizationUnitId eq @id&@id=12345", Result = "Firm[].Where($it => ($it.OrganizationUnitId == Convert(12345)))", Description = "Поиск по организации.")]
-        [TestCase("$filter=TerritoryId eq  @id&@id=12345", Result = "Firm[].Where($it => ($it.TerritoryId == Convert(12345)))", Description = "Поиск по территории.")]
-        [TestCase("$filter=Categories/any(x:x/CategoryId eq @id1)&@id1=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 1-го уровня.")]
-        [TestCase("$filter=Categories/any(x:x/CategoryId eq @id2)&@id2=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 2-го уровня.")]
-        [TestCase("$filter=Categories/any(x:x/CategoryId eq @id3)&@id3=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 3-го уровня.")]
-        [TestCase("$filter=CategoryGroups/any(x:x/CategoryGroupId eq @id)&@id=12345", Result = "Firm[].Where($it => $it.CategoryGroups.Any(x => (x.CategoryGroupId == Convert(12345))))", Description = "Поиск по ценовой категории рубрики.")]
-        [TestCase("$filter=Client/CategoryGroupId eq @id&@id=12345", Result = "Firm[].Where($it => ($it.Client.CategoryGroupId == Convert(12345)))", Description = "Поиск по ценовой категории клиента.")]
-        [TestCase("$filter=Client/Contacts/any(x:x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
-        [TestCase("$filter=Client/Contacts/any(x:x/IsFired ne true)", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (x.IsFired != True)))", Description = "Поиск по наличию рабочего контакта.")]
-        [TestCase("$filter=Balances/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Balances.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
-        public string ShouldAcceptMainCriteria(string filter)
+        [TestCase("Firm", "$filter=CreatedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.CreatedOn < 01/01/2015 00:00:00 +00:00))", Description = "Поиск по дате создания.")]
+        [TestCase("Firm", "$filter=LastDisqualifiedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDisqualifiedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего возвращения в резерв.")]
+        [TestCase("Firm", "$filter=LastDistributedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDistributedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего размещения.")]
+        [TestCase("Firm", "$filter=HasPhone eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasPhone == True))", Description = "Поиск по наличию телефона.")]
+        [TestCase("Firm", "$filter=HasWebsite eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasWebsite == True))", Description = "Поиск по наличию сайта.")]
+        [TestCase("Firm", "$filter=AddressCount gt @amount&@amount=10", Result = "Firm[].Where($it => ($it.AddressCount > 10))", Description = "Поиск по количеству активных адресов.")]
+        [TestCase("Firm", "$filter=CategoryGroup/Id eq @id&@id=12345", Result = "Firm[].Where($it => ($it.CategoryGroup.Id == Convert(12345)))", Description = "Поиск по ценовой категории фирмы.")]
+        [TestCase("Firm", "$filter=Territory/Id eq  @id&@id=12345", Result = "Firm[].Where($it => ($it.Territory.Id == Convert(12345)))", Description = "Поиск по территории.")]
+        [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id1)&@id1=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 1-го уровня.")]
+        [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id2)&@id2=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 2-го уровня.")]
+        [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id3)&@id3=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 3-го уровня.")]
+        [TestCase("Firm", "$filter=Client/CategoryGroup/Id eq @id&@id=12345", Result = "Firm[].Where($it => ($it.Client.CategoryGroup.Id == Convert(12345)))", Description = "Поиск по ценовой категории клиента.")]
+        [TestCase("Firm", "$filter=Client/Contacts/any(x:x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
+        [TestCase("Firm", "$filter=Client/Contacts/any(x:x/IsFired ne true)", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (x.IsFired != True)))", Description = "Поиск по наличию рабочего контакта.")]
+        [TestCase("Firm", "$filter=Balances/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Balances.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
+        public string ShouldAcceptMainCriteria(string type, string filter)
         {
-            return BuildQuery(CustomerIntelligence, "Firm", filter);
+            return BuildQuery(CustomerIntelligence, type, filter);
         }
 
         private string BuildQuery(string modelName, string type, string filter)

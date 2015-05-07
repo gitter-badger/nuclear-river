@@ -1,8 +1,14 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing.Actors.Strategies;
+using NuClear.Model.Common.Entities;
+using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
@@ -14,12 +20,10 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, FactOperationAggregatableMessage>
     {
         private readonly ITracer _tracer;
-        private readonly ErmOperationAdapter _adapter;
 
         public PerformedOperationsFilteringStrategy(ITracer tracer)
         {
             _tracer = tracer;
-            _adapter = new ErmOperationAdapter();
         }
 
         protected override FactOperationAggregatableMessage Process(TrackedUseCase message)
@@ -31,14 +35,55 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                        .SelectMany(
                            x => x.Value.SelectMany(
                                y => y.Value.Details.Select(
-                                   z => new ErmOperationAdapter.ErmOperation(x.Key, y.Key, z.ChangesType))));
+                                   z => new ErmOperation(x.Key, y.Key, z.ChangesType))));
 
             return new FactOperationAggregatableMessage
                    {
                        Id = message.Id,
                        TargetFlow = MessageFlow,
-                       Operations = _adapter.Convert(plainChanges),
+                       Operations = Convert(plainChanges),
                    };
+        }
+
+        private IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> changes)
+        {
+            foreach (var change in changes)
+            {
+                if (change.EntityType is UnknownEntityType)
+                {
+                    continue;
+                }
+
+                // COMMENT {a.rechkalov, 05.05.2015}: Тут происходит неявное и пока автоматическое преобразование Erm типа (представленного IEntityType) в тип из контекста фактов
+                // Возможно, позднее потребуется выделить это преобразование в явный шаг.
+                var entityType = EntityTypeMap<FactsContext>.AsEntityType(change.EntityType);
+                switch (change.Change)
+                {
+                    case ChangesType.Added:
+                        yield return new CreateFact(entityType, change.EntityId);
+                        break;
+                    case ChangesType.Updated:
+                        yield return new UpdateFact(entityType, change.EntityId);
+                        break;
+                    case ChangesType.Deleted:
+                        yield return new DeleteFact(entityType, change.EntityId);
+                        break;
+                }
+            }
+        }
+
+        private class ErmOperation
+        {
+            public ErmOperation(IEntityType entityType, long entityId, ChangesType change)
+            {
+                EntityType = entityType;
+                EntityId = entityId;
+                Change = change;
+            }
+
+            public IEntityType EntityType { get; private set; }
+            public long EntityId { get; private set; }
+            public ChangesType Change { get; private set; }
         }
     }
 }

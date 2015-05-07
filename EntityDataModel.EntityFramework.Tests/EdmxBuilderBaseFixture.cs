@@ -12,7 +12,6 @@ using Effort.Provider;
 using Moq;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
-using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.BusinessDirectory;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.CustomerIntelligence;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.Metamodeling.Elements;
@@ -36,7 +35,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
 
         protected enum AdvancedSearchModel
         {
-            BusinessDirectory,
             CustomerIntelligence,
         }
 
@@ -69,16 +67,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             get
             {
                 return MockTypeProvider(
-                    typeof(OrganizationUnit),
-                    typeof(Territory),
                     typeof(Category),
                     typeof(CategoryGroup),
+                    typeof(Client),
+                    typeof(Contact),
                     typeof(Firm),
                     typeof(FirmBalance),
                     typeof(FirmCategory),
-                    typeof(FirmCategoryGroup),
-                    typeof(Client),
-                    typeof(Contact));
+                    typeof(Project),
+                    typeof(ProjectCategory),
+                    typeof(Territory));
             }
         }
 

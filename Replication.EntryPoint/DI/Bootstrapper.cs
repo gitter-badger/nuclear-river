@@ -41,6 +41,7 @@ using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Final.Transports;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Security;
 using NuClear.Security.API;
@@ -58,6 +59,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
+            EntityTypeMap.Initialize();
+
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
                                  {
@@ -73,7 +76,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureOperations()
-                     .ConfigureTransformation();
+                     .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
 

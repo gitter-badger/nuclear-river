@@ -40,6 +40,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<CategoryGroup> CategoryGroups
+        {
+            get
+            {
+                return from categoryGroup in _context.GetTable<CategoryGroup>()
+                       where categoryGroup.IsActive && !categoryGroup.IsDeleted
+                       select categoryGroup;
+            }
+        }
+
         public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
         {
             get
@@ -136,6 +146,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 return from order in _context.GetTable<Order>()
                        where order.IsActive && !order.IsDeleted
                        select order;
+            }
+        }
+
+        public IQueryable<Project> Projects
+        {
+            get
+            {
+                return from project in _context.GetTable<Project>()
+                       where project.IsActive
+                       select project;
+            }
+        }
+
+        public IQueryable<Territory> Territories
+        {
+            get
+            {
+                return from territory in _context.GetTable<Territory>()
+                       where territory.IsActive
+                       select territory;
             }
         }
     }

@@ -1,6 +1,6 @@
-﻿Id,Name
-"1","CategoryGroup 1"
-"2","CategoryGroup 2"
-"3","CategoryGroup 3"
-"4","CategoryGroup 4"
-"5","CategoryGroup 5"
+﻿Id,Name,Rate
+"1","CategoryGroup 1",0.5
+"2","CategoryGroup 2",0.9
+"3","CategoryGroup 3",1
+"4","CategoryGroup 4",1.1
+"5","CategoryGroup 5",1.2
