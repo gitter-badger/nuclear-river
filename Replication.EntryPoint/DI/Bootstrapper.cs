@@ -75,7 +75,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureSecurityAspects()
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
-                     .ConfigureOperations()
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -165,12 +164,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, FinalMessageTransformerResolveStrategy>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope);
-        }
-
-        private static IUnityContainer ConfigureOperations(this IUnityContainer container)
-        {
-            return container
-                .RegisterType<IOperationIdentityRegistry, UnknownOperationIdentityRegistry>(Lifetime.Singleton);
         }
     }
 }
