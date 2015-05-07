@@ -216,8 +216,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             private static IQueryable<TFact> FilterById<TFact>(IQueryable<TFact> facts, IEnumerable<long> ids) where TFact : IIdentifiableObject
             {
-                // TODO {all, 08.04.2015}: только для удаления все надо тянуть в память
-                return facts.Where(fact => ids.Contains(fact.Id)).ToArray().AsQueryable();
+                return facts.Where(fact => ids.Contains(fact.Id));
             }
         }
 

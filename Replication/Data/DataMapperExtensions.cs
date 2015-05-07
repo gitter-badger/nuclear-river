@@ -38,7 +38,8 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable query)
         {
-            foreach (var item in query)
+            var items = query.Cast<IObject>().ToArray();
+            foreach (var item in items)
             {
                 method.Invoke(mapper, new[] { item });
             }
