@@ -162,6 +162,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.PerScope)
 
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, PrimaryMessageTransformerResolveStrategy>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, FinalMessageTransformerResolveStrategy>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope);
         }

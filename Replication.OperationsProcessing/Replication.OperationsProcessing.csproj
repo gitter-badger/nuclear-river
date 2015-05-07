@@ -122,6 +122,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Final\AggregateOperationDeserializationMessageTransformer.cs" />
     <Compile Include="Final\ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\FakeFlow.cs" />

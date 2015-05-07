@@ -231,6 +231,7 @@
     <Compile Include="Factories\Messaging\Processor\FinalProcessorResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Receiver\FinalReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Receiver\PrimaryReceiverResolveStrategy.cs" />
+    <Compile Include="Factories\Messaging\Transformer\FinalMessageTransformerResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Jobs\DebugTestJob.cs" />
