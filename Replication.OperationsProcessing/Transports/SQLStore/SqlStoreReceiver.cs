@@ -34,17 +34,9 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 scope.Complete();
             }
 
-            return new[]
-                   {
-                       new PerformedOperationsFinalProcessingMessage
-                       {
-                           EntityId = 0,
-                           MaxAttemptCount = 0,
-                           EntityName = EntityType.Instance.None(),
-                           // Flow = ???
-                           FinalProcessings = flowRecords,
-                       }
-                   };
+            return flowRecords.Any()
+                       ? new[] { CreateMessage(flowRecords) }
+                       : new PerformedOperationsFinalProcessingMessage[0];
         }
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
@@ -56,6 +48,18 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
                 scope.Complete();
             }
+        }
+
+        private PerformedOperationsFinalProcessingMessage CreateMessage(IEnumerable<PerformedOperationFinalProcessing> flowRecords)
+        {
+            return new PerformedOperationsFinalProcessingMessage
+            {
+                EntityId = 0,
+                MaxAttemptCount = 0,
+                EntityName = EntityType.Instance.None(),
+                // Flow = ???
+                FinalProcessings = flowRecords,
+            };
         }
 
         private void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages,
