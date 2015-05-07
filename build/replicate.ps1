@@ -4,15 +4,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
-function Load-Assemblies {
-	$files =  Get-ChildItem $LibDir -Filter '*.dll'
-	foreach($file in $files) {
-		$bytes = [System.IO.File]::ReadAllBytes($file.FullName)
-		[void][System.Reflection.Assembly]::Load($bytes)
-	}
-}
-
-Load-Assemblies
+# load libraries
+Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($_.FullName)) }
 
 function Replicate-ErmToFacts {
 
