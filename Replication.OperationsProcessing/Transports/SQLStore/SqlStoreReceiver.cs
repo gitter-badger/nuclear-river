@@ -70,13 +70,9 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 _context.Delete(message);
             }
 
-            // FIXME {all, 05.05.2015}: Что делать при ошибках во время обработки?
-            // Считаю, что нельзя повторно вызывать обработку сообщений - будет нарушен порядок.
-            // С другой стороны, если пропустить сообщение - тоже порядок нарушается. Стоит полностью останавливать репликацию?
-            foreach (var message in failedProcessedMessages.SelectMany(message => message.FinalProcessings))
-            {
-                _context.Delete(message);
-            }
+            // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
+            // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
+            // Или пока админ не удалит его из очереди.
         }
     }
 }
