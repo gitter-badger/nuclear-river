@@ -12,6 +12,7 @@ Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 
 Task Default -depends Hello
 Task Hello { "Билдскрипт запущен без цели, укажите цель" }
@@ -91,11 +92,16 @@ Task Replicate-AllTables -Depends Build-ReplicationLib {
 }
 
 function Get-ConnectionStrings {
-	#$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+
+	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	$projectDir = Split-Path $projectFileName
+	$configFileName = Join-Path $projectDir 'app.config'
+	[xml]$config = Get-TransformedConfig $configFileName
+
 	return @{
-		'Erm' = 'Data Source=uk-sql01;Initial Catalog=Erm21;Integrated Security=True'
-		'Facts' = 'Data Source=uk-sql01;Initial Catalog=CustomerIntelligence21;Integrated Security=True'
-		'CustomerIntelligence' = 'Data Source=uk-sql01;Initial Catalog=CustomerIntelligence21;Integrated Security=True'
+		'Erm' = Get-ConnectionString $config 'Erm'
+		'Facts' = Get-ConnectionString $config 'Facts'
+		'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
 	}
 }
 
