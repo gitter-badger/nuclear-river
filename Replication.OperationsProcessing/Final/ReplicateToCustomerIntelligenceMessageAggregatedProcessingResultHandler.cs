@@ -36,12 +36,6 @@ namespace NuClear.Replication.OperationsProcessing.Final
             }
             catch (Exception ex)
             {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-
-
                 return MessageProcessingStage.Handle.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
