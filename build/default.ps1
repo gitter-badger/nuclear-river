@@ -71,18 +71,23 @@ Task Import-WinServiceModule {
 	Load-WinServiceModule 'Replication.EntryPoint'
 }
 
-Task Build-ReplicationLib {
+Task Build-ReplicationLibs {
 	$projectFileName = Get-ProjectFileName '.' 'Replication'
 	$buildFile = Create-BuildFile $projectFileName
 	Invoke-MSBuild $buildFile
-
 	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
 	Publish-Artifacts $conventionalArtifactFileName 'Replication'
+
+	$projectFileName = Get-ProjectFileName '.' 'Replication.OperationsProcessing'
+	$buildFile = Create-BuildFile $projectFileName
+	Invoke-MSBuild $buildFile
+	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
+	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 }
 
-Task Replicate-AllTables -Depends Build-ReplicationLib {
+Task Replicate-AllTables -Depends Build-ReplicationLibs {
 
-	$libDir = Get-Artifacts 'Replication'
+	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
 	$connectionStrings = Get-ConnectionStrings
 
@@ -104,6 +109,7 @@ function Get-ConnectionStrings {
 	return @{
 		'Erm' = Get-ConnectionString $config 'Erm'
 		'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
+		'ServiceBus' = Get-ConnectionString $config 'ServiceBus'
 	}
 }
 

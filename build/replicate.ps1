@@ -101,8 +101,6 @@ if (not exists(select * from sys.databases where name = '$initialCatalog'))
 
 function Create-Tables {
 
-	Create-Database
-
 	$connection = Create-SqlServerConnection $ConnectionStrings.CustomerIntelligence
 
 	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql'
@@ -128,8 +126,23 @@ function Exec-Command ($connection, [string]$command){
 	}
 }
 
+function Clear-ServiceBus () {
+	
+	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.Replicate2CustomerIntelligenceFlow
+
+	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($ConnectionStrings.ServiceBus)
+	$messageReceiver = $messageFactory.CreateSubscriptionClient('topic.performedoperations', $messageFlow.Id, 'ReceiveAndDelete')
+
+	do {
+		$messages = $messageReceiver.ReceiveBatch(1000, [TimeSpan]::Zero)
+	}
+	while ($messages.Count > 0)
+}
+
+Create-Database
 Create-Tables
 Replicate-ErmToFacts
 Replicate-FactsToCI
+Clear-ServiceBus
 
 "Done"
