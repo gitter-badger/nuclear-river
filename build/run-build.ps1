@@ -1,4 +1,4 @@
-param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
+﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
 	$TaskList = @('Build-Packages')
