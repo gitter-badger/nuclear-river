@@ -105,7 +105,7 @@ function Create-Tables {
 
 	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql'
 	foreach($sqlScript in $sqlScripts){
-		$command = Get-Content $sqlScript.FullName -Raw
+		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
 	}
 }
