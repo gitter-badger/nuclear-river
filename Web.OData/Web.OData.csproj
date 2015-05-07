@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.DI.Unity">
+      <HintPath>..\packages\2GIS.NuClear.DI.Unity.1.1.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.DI.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
@@ -142,7 +145,6 @@
     <Compile Include="DynamicControllers\DynamicControllersRegistrator.cs" />
     <Compile Include="Controllers\GenericODataController.cs" />
     <Compile Include="DI\Bootstrapper.cs" />
-    <Compile Include="DI\Lifetime.cs" />
     <Compile Include="DI\UnityResolver.cs" />
     <Compile Include="DynamicControllers\DynamicControllerTypeResolver.cs" />
     <Compile Include="EdmModelWithClrTypesBuilder.cs" />

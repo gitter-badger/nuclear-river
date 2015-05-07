@@ -2,8 +2,6 @@
 using System.Web.Http.Dispatcher;
 using System.Web.OData.Extensions;
 
-using DoubleGis.Erm.Platform.DI.Common.Config;
-
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
@@ -11,6 +9,7 @@ using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
+using NuClear.DI.Unity.Config;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
