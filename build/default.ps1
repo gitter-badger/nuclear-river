@@ -12,6 +12,7 @@ Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 
 Task Default -depends Hello
 Task Hello { "Билдскрипт запущен без цели, укажите цель" }
@@ -45,21 +46,15 @@ Task Run-UnitTests -depends Set-BuildNumber, Update-AssemblyInfo{
 
 Task Build-OData -depends Update-AssemblyInfo {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-Metadata 'Web.OData'
-	
-	Build-WebPackage $projectFileName $entryPointMetadata
+	Build-WebPackage $projectFileName 'Web.OData'
 }
 
 Task Deploy-OData {
-	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	$entryPointMetadata = Get-Metadata 'Web.OData'
-	
-	Deploy-WebPackage $projectFileName $entryPointMetadata
-	Validate-WebSite $entryPointMetadata 'CustomerIntelligence/$metadata'
+	Deploy-WebPackage 'Web.OData'
+	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
 }
 
 Task Build-TaskService -Depends Update-AssemblyInfo {
-
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
@@ -74,6 +69,48 @@ Task Take-TaskServiceOffline -Depends Import-WinServiceModule {
 
 Task Import-WinServiceModule {
 	Load-WinServiceModule 'Replication.EntryPoint'
+}
+
+Task Build-ReplicationLibs {
+	$projectFileName = Get-ProjectFileName '.' 'Replication'
+	$buildFile = Create-BuildFile $projectFileName
+	Invoke-MSBuild $buildFile
+	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
+	Publish-Artifacts $conventionalArtifactFileName 'Replication'
+
+	$projectFileName = Get-ProjectFileName '.' 'Replication.OperationsProcessing'
+	$buildFile = Create-BuildFile $projectFileName
+	Invoke-MSBuild $buildFile
+	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
+	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
+}
+
+Task Replicate-AllTables -Depends Build-ReplicationLibs {
+
+	$libDir = Get-Artifacts 'ReplicationLibs'
+	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
+	$connectionStrings = Get-ConnectionStrings
+
+	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'TestData'
+
+	& $scriptFilePath `
+	-LibDir $libDir `
+	-ConnectionStrings $connectionStrings `
+	-SqlScriptsDir $sqlScriptsDir
+}
+
+function Get-ConnectionStrings {
+
+	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	$projectDir = Split-Path $projectFileName
+	$configFileName = Join-Path $projectDir 'app.config'
+	[xml]$config = Get-TransformedConfig $configFileName
+
+	return @{
+		'Erm' = Get-ConnectionString $config 'Erm'
+		'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
+		'ServiceBus' = Get-ConnectionString $config 'ServiceBus'
+	}
 }
 
 Task Build-Packages -depends `

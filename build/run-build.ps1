@@ -1,12 +1,12 @@
 param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-TaskService')
+	$TaskList = @('Build-Packages')
 }
 
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
-	}
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -27,12 +27,14 @@ $Properties.EnvironmentMetadata = @{
 			'ValidateWebsite' = $true
 			'IisAppPath' = 'search21.api.test.erm.2gis.ru'
 			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Web'
 		}
 		'Replication.EntryPoint' = @{
 			'ServiceName' = 'AdvSearch'
 			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
 			'QuartzConfigs' = @()
 			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Desktop'
 		}
 	}
 }
@@ -50,5 +52,5 @@ $Properties.EnvironmentMetadata = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.38\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.40-Transfor-6d04a1-72\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties
