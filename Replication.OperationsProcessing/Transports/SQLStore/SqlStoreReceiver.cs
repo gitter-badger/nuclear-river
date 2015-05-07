@@ -5,6 +5,7 @@ using System.Transactions;
 using LinqToDB;
 
 using NuClear.Messaging.API;
+using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Receivers;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
@@ -13,24 +14,37 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public class SqlStoreReceiver : IMessageReceiver
     {
+        private readonly MessageFlowMetadata _sourceFlowMetadata;
         private readonly IDataContext _context;
 
-        // TODO {a.rechkalov, 06.05.2015}: MessageFlowMetadata sourceFlowMetadata - фильтрация, выборка только записей для текущего потока
-        public SqlStoreReceiver(IDataContext context)
+        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IDataContext context)
         {
+            _sourceFlowMetadata = sourceFlowMetadata;
             _context = context;
         }
 
         public IReadOnlyList<IMessage> Peek()
         {
-            PerformedOperationsFinalProcessingMessage[] result;
+            IEnumerable<PerformedOperationFinalProcessing> flowRecords;
             using (var scope = new TransactionScope(TransactionScopeOption.Required))
             {
-                result = Query(_context.GetTable<PerformedOperationFinalProcessing>()).ToArray();
+                flowRecords = _context.GetTable<PerformedOperationFinalProcessing>()
+                    .Where(processing => processing.MessageFlowId == _sourceFlowMetadata.MessageFlow.Id)
+                    .ToArray();
                 scope.Complete();
             }
 
-            return result;
+            return new[]
+                   {
+                       new PerformedOperationsFinalProcessingMessage
+                       {
+                           EntityId = 0,
+                           MaxAttemptCount = 0,
+                           EntityName = EntityType.Instance.None(),
+                           // Flow = ???
+                           FinalProcessings = flowRecords,
+                       }
+                   };
         }
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
@@ -59,23 +73,6 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             {
                 _context.Delete(message);
             }
-        }
-
-        private static IEnumerable<PerformedOperationsFinalProcessingMessage> Query(IQueryable<PerformedOperationFinalProcessing> messages)
-        {
-            return from operation in messages
-                   group operation by new { operation.EntityId, operation.EntityTypeId }
-                       into operationsGroup
-                       let operationsGroupKey = operationsGroup.Key
-                       let maxAttempt = operationsGroup.Max(processing => processing.AttemptCount)
-                       orderby maxAttempt
-                       select new PerformedOperationsFinalProcessingMessage
-                       {
-                           EntityId = operationsGroupKey.EntityId,
-                           EntityName = EntityType.Instance.Parse(operationsGroupKey.EntityTypeId),
-                           MaxAttemptCount = maxAttempt,
-                           FinalProcessings = operationsGroup,
-                       };
         }
     }
 }
