@@ -49,9 +49,13 @@ Task Build-OData -depends Update-AssemblyInfo {
 	Build-WebPackage $projectFileName 'Web.OData'
 }
 
-Task Deploy-OData {
+Task Deploy-OData -Depends Take-ODataOffline {
 	Deploy-WebPackage 'Web.OData'
 	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
+}
+
+Task Take-ODataOffline {
+	Take-WebsiteOffline 'Web.OData'
 }
 
 Task Build-TaskService -Depends Update-AssemblyInfo {
@@ -85,7 +89,8 @@ Task Build-ReplicationLibs {
 	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 }
 
-Task Replicate-AllTables -Depends Build-ReplicationLibs {
+Properties { $OptionCreateEnvironment = $false }
+Task Create-Environment -Depends Build-ReplicationLibs -Precondition { $OptionCreateEnvironment } {
 
 	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
@@ -119,5 +124,8 @@ Build-OData, `
 Build-TaskService
 
 Task Deploy-Packages -depends `
+Take-ODataOffline, `
+Take-TaskServiceOffline, `
+Create-Environment, `
 Deploy-OData, `
 Deploy-TaskService
