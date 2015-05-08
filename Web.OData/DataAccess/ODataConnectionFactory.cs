@@ -9,7 +9,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DataAccess
 {
     public sealed class ODataConnectionFactory
     {
-        private const string CommonConnectionStringName = "ODATA";
+        private const string CommonConnectionStringName = "CustomerIntelligence";
 
         private readonly IMetadataProvider _metadataProvider;
 
