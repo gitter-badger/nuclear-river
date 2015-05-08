@@ -8,6 +8,7 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.EntryPoint.DI;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
+using NuClear.AdvancedSearch.Settings;
 using NuClear.Jobs.Schedulers;
 using NuClear.Settings.API;
 using NuClear.Tracing.API;

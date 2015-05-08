@@ -1,4 +1,4 @@
-﻿namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+﻿namespace NuClear.AdvancedSearch.Settings
 {
     public enum ConnectionStringName
     {

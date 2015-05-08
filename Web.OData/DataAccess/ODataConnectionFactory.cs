@@ -3,19 +3,20 @@ using System.Configuration;
 using System.Data.Common;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.Settings;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.Web.OData.DataAccess
 {
     public sealed class ODataConnectionFactory
     {
-        private const string CommonConnectionStringName = "CustomerIntelligence";
-
         private readonly IMetadataProvider _metadataProvider;
+        private readonly IConnectionStringSettings _connectionStringSettings;
 
-        public ODataConnectionFactory(IMetadataProvider metadataProvider)
+        public ODataConnectionFactory(IMetadataProvider metadataProvider, IConnectionStringSettings connectionStringSettings)
         {
             _metadataProvider = metadataProvider;
+            _connectionStringSettings = connectionStringSettings;
         }
 
         public DbConnection CreateConnection(Uri contextId)
@@ -27,7 +28,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DataAccess
             }
 
             // далее можно кастомизовать DbConnection используя contextId, но пока это не нужно
-            var commonConnectionString = ConfigurationManager.ConnectionStrings[CommonConnectionStringName];
+            var commonConnectionString = _connectionStringSettings.GetConnectionStringSettings(ConnectionStringName.CustomerIntelligence);
             return CreateConnection(commonConnectionString);
         }
 

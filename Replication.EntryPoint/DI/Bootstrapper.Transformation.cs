@@ -8,7 +8,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
+using NuClear.AdvancedSearch.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;

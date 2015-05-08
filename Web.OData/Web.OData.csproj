@@ -53,6 +53,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
     </Reference>
+    <Reference Include="2GIS.NuClear.Settings.Unity">
+      <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
@@ -168,9 +171,7 @@
     <Compile Include="DataAccess\DataAccessExtensions.cs" />
     <Compile Include="DataAccess\ODataDbConfiguration.cs" />
     <Compile Include="DI\ConfigureHttpRequest.cs" />
-    <Compile Include="Settings\ApplicationSettings.cs" />
-    <Compile Include="Settings\ITracerSettings.cs" />
-    <Compile Include="Settings\TracerSettingsAspect.cs" />
+    <Compile Include="Settings\WebApplicationSettings.cs" />
     <Compile Include="DynamicControllers\EntityElementIdAttribute.cs" />
     <Compile Include="Controllers\EnableQueryAttributeProvider.cs" />
     <Compile Include="DataAccess\ODataFinder.cs" />
@@ -203,6 +204,10 @@
     <ProjectReference Include="..\QueryExecution\QueryExecution.csproj">
       <Project>{135ef4b2-e97c-44b5-a6ac-6e97b103de55}</Project>
       <Name>QueryExecution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Settings\Settings.csproj">
+      <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
+      <Name>Settings</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -5,7 +5,7 @@ using System.Linq;
 
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.AdvancedSearch.Settings
 {
     public sealed class ConnectionStringsSettingsAspect : ISettingsAspect, IConnectionStringSettings
     {

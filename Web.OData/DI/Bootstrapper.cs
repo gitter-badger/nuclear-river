@@ -8,14 +8,15 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.Settings;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
-using NuClear.AdvancedSearch.Web.OData.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Settings.API;
+using NuClear.Settings.Unity;
 using NuClear.Tracing.API;
 using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;
@@ -28,21 +29,25 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer)
         {
             var container = new UnityContainer()
+                .ConfigureSettingsAspects(settingsContainer)
                 .ConfigureMetadata()
                 .ConfigureStoreModel()
                 .ConfigureWebApiOData()
-                .ConfigureTracer(settingsContainer.AsSettings<ITracerSettings>());
+                .ConfigureTracer(settingsContainer.AsSettings<IEnvironmentSettings>(), settingsContainer.AsSettings<IConnectionStringSettings>());
 
             return container;
         }
 
-        public static IUnityContainer ConfigureTracer(this IUnityContainer container, ITracerSettings settings)
+        public static IUnityContainer ConfigureTracer(
+            this IUnityContainer container, 
+            IEnvironmentSettings environmentSettings, 
+            IConnectionStringSettings connectionStringSettings)
         {
             var tracerContextEntryProviders =
                     new ITracerContextEntryProvider[] 
                     {
-                        new TracerContextConstEntryProvider(TracerContextKeys.Required.Environment, settings.EnvironmentName),
-                        new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPoint, settings.EntryPointName),
+                        new TracerContextConstEntryProvider(TracerContextKeys.Required.Environment, environmentSettings.EnvironmentName),
+                        new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPoint, environmentSettings.EntryPointName),
                         new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPointHost, NetworkInfo.ComputerFQDN),
                         new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPointInstanceId, Guid.NewGuid().ToString()),
                         new TracerContextSelfHostedEntryProvider(TracerContextKeys.Required.UserAccount)
@@ -52,7 +57,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var tracer = Log4NetTracerBuilder.Use
                                              .DefaultXmlConfig
                                              .EventLog
-                                             .DB(settings.ConnectionString)
+                                             .DB(connectionStringSettings.GetConnectionString(ConnectionStringName.Logging))
                                              .Build;
 
             return container.RegisterInstance(tracer)

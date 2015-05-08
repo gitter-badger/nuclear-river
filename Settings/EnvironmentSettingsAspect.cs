@@ -1,9 +1,9 @@
 ﻿using NuClear.Settings;
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.AdvancedSearch.Settings
 {
-    public sealed class EnvironmentsAspect : ISettingsAspect, IEnvironmentSettings
+    public sealed class EnvironmentSettingsAspect : ISettingsAspect, IEnvironmentSettings
     {
         private readonly StringSetting _targetEnvironmentName = ConfigFileSetting.String.Required("TargetEnvironmentName");
         private readonly StringSetting _entryPointName = ConfigFileSetting.String.Required("EntryPointName");

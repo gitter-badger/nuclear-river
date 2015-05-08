@@ -2,7 +2,7 @@
 
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.AdvancedSearch.Settings
 {
     public interface IConnectionStringSettings : ISettings
     {

@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Web.OData
         {
             var httpServer = new HttpServer(new HttpConfiguration());
 
-            var settingsContainer = new ApplicationSettings();
+            var settingsContainer = new WebApplicationSettings();
 
             // DI
             var container = Bootstrapper.ConfigureUnity(settingsContainer);
