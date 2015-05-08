@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.Web.OData;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DI;
+using NuClear.AdvancedSearch.Web.OData.Settings;
 
 using Owin;
 
@@ -20,8 +21,10 @@ namespace NuClear.AdvancedSearch.Web.OData
         {
             var httpServer = new HttpServer(new HttpConfiguration());
 
+            var settingsContainer = new ApplicationSettings();
+
             // DI
-            var container = Bootstrapper.ConfigureUnity();
+            var container = Bootstrapper.ConfigureUnity(settingsContainer);
             httpServer.Configuration.DependencyResolver = new UnityResolver(container);
 
             // default web api
