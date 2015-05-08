@@ -50,7 +50,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                         new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPoint, environmentSettings.EntryPointName),
                         new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPointHost, NetworkInfo.ComputerFQDN),
                         new TracerContextConstEntryProvider(TracerContextKeys.Required.EntryPointInstanceId, Guid.NewGuid().ToString()),
-                        new TracerContextSelfHostedEntryProvider(TracerContextKeys.Required.UserAccount)
+                        new TracerContextSelfHostedEntryProvider(TracerContextKeys.Required.UserAccount) // TODO {all, 08.05.2015}: Если появится авторизация, надо будет доработать логирование
                     };
 
             var tracerContextManager = new TracerContextManager(tracerContextEntryProviders);
