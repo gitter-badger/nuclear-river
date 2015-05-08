@@ -154,11 +154,6 @@
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ErmToFactReplicationHandler.cs" />
     <Compile Include="Final\EmptyStrategy.cs" />
@@ -177,15 +172,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\ComplexUseCase.bin" />
-    <None Include="Resources\EmptyUseCase.bin" />
-    <None Include="Resources\UpdateFirm.bin" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Replication\Replication.csproj">
