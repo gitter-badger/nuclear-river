@@ -3,7 +3,6 @@
     public enum ConnectionStringName
     {
         Erm,
-        Facts,
         CustomerIntelligence,
         ServiceBus,
         QuartzJobStore,

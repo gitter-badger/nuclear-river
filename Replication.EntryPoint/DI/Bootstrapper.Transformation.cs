@@ -8,6 +8,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -23,10 +24,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
             return container
-                .RegisterDataContext(Scope.Erm, Connection.Erm, Schema.Erm)
-                .RegisterDataContext(Scope.Facts, Connection.CustomerIntelligence, Schema.Facts)
-                .RegisterDataContext(Scope.CustomerIntelligence, Connection.CustomerIntelligence, Schema.CustomerIntelligence)
-                .RegisterDataContext(Scope.Transport, Connection.CustomerIntelligence, TransportSchema.Transport)
+                .RegisterDataContext(Scope.Erm, ConnectionStringName.Erm, Schema.Erm)
+                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts)
+                .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence)
+                .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
@@ -56,9 +57,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
         }
 
-        private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, string connection, MappingSchema schema)
+        private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema)
         {
-            return container.RegisterType<IDataContext, DataConnection>(scope, Lifetime.PerScope, new InjectionFactory(c => new DataConnection(connection).AddMappingSchema(schema)));
+            return container.RegisterType<IDataContext, DataConnection>(scope, 
+                Lifetime.PerScope,
+                new InjectionFactory(c => new DataConnection(connectionStringName.ToString()).AddMappingSchema(schema)));
         }
 
         private static class Scope
@@ -67,12 +70,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             public const string Facts = "Facts";
             public const string CustomerIntelligence = "CustomerIntelligence";
             public const string Transport = "Transport";
-        }
-
-        private static class Connection
-        {
-            public const string Erm = "Erm";
-            public const string CustomerIntelligence = "CustomerIntelligence";
         }
     }
 }
