@@ -34,7 +34,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             Assert.That(metadataSet, Is.Not.Null);
         }
 
-        [TestCase("BusinessDirectory")]
         [TestCase("CustomerIntelligence")]
         public void ShouldReturnMetadataByContextId(string name)
         {
@@ -45,27 +44,27 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             Assert.That(contextElement, Is.Not.Null);
         }
 
-        [TestCase("BusinessDirectory", MetadataKind.Identity | MetadataKind.Elements | MetadataKind.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
-        [TestCase("BusinessDirectory/ConceptualModel/Category", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/Category'},'Features':[{'EntitySetName':'Categories'}]}")]
-        [TestCase("BusinessDirectory/ConceptualModel/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}")]
-        [TestCase("BusinessDirectory/ConceptualModel/OrganizationUnit", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/OrganizationUnit'},'Features':[{'EntitySetName':'OrganizationUnits'}]}")]
-        [TestCase("BusinessDirectory/ConceptualModel/Territory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/Territory'},'Features':[{'EntitySetName':'Territories'}]}")]
-        [TestCase("BusinessDirectory/ConceptualModel/Territory/OrganizationUnit", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/Territory/OrganizationUnit'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/BusinessDirectory/ConceptualModel/OrganizationUnit'},'Features':[{'EntitySetName':'OrganizationUnits'}]}}]}")]
         [TestCase("CustomerIntelligence", MetadataKind.Identity | MetadataKind.Elements | MetadataKind.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Client", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client'},'Features':[]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Contact", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Contact'},'Features':[]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Category", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Category'},'Features':[{'EntitySetName':'Categories'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Project", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Project'},'Features':[{'EntitySetName':'Projects'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Project/Categories", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Project/Categories'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory'},'Features':[{'EntitySetName':'ProjectCategories'}]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory'},'Features':[{'EntitySetName':'ProjectCategories'}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory/Category", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory/Category'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Category'},'Features':[{'EntitySetName':'Categories'}]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Territory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Territory'},'Features':[]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'},'Features':[{'EntitySetName':'Firms'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/FirmAccount", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmAccount'},'Features':[]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/FirmCategory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategory'},'Features':[]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/FirmCategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategoryGroup'},'Features':[]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Accounts", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Accounts'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmAccount'},'Features':[]}}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client'},'Features':[{'Cardinality':'OptionalOne','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client'},'Features':[]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Balances", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Balances'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmBalance'},'Features':[]}}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm/Categories", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Categories'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategory'},'Features':[]}}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/CategoryGroupId", MetadataKind.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/CategoryGroupId'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/CategoryGroups", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/CategoryGroups'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategoryGroup'},'Features':[]}}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/OrganizationUnitId", MetadataKind.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/OrganizationUnitId'}}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Firm/TerritoryId", MetadataKind.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/TerritoryId'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/CategoryGroup'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Client", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Client'},'Features':[{'Cardinality':'OptionalOne','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client'},'Features':[]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/OwnerId", MetadataKind.Identity, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/OwnerId'}}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Firm/Territory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Territory'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Territory'},'Features':[]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/FirmBalance", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmBalance'},'Features':[]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/FirmCategory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategory'},'Features':[]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Client", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client'},'Features':[]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Client/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client/CategoryGroup'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client/Contacts", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client/Contacts'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Contact'},'Features':[]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Contact", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Contact'},'Features':[]}")]
         public string ShouldReturnMetadata(string path, MetadataKind properties)
         {
             IMetadataElement element;
@@ -81,32 +80,29 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             return element.Serialize(properties, ignoredFeatures);
         }
 
-        [TestCase("BusinessDirectory")]
-        [TestCase("BusinessDirectory/ConceptualModel")]
-        [TestCase("BusinessDirectory/ConceptualModel/Category")]
-        [TestCase("BusinessDirectory/ConceptualModel/CategoryGroup")]
-        [TestCase("BusinessDirectory/ConceptualModel/OrganizationUnit")]
-        [TestCase("BusinessDirectory/ConceptualModel/Territory")]
-        [TestCase("BusinessDirectory/StoreModel")]
-        [TestCase("BusinessDirectory/StoreModel/BusinessDirectory.Category")]
-        [TestCase("BusinessDirectory/StoreModel/BusinessDirectory.CategoryGroup")]
-        [TestCase("BusinessDirectory/StoreModel/BusinessDirectory.OrganizationUnit")]
-        [TestCase("BusinessDirectory/StoreModel/BusinessDirectory.Territory")]
         [TestCase("CustomerIntelligence")]
         [TestCase("CustomerIntelligence/ConceptualModel")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Category")]
+        [TestCase("CustomerIntelligence/ConceptualModel/CategoryGroup")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client")]
         [TestCase("CustomerIntelligence/ConceptualModel/Contact")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm")]
-        [TestCase("CustomerIntelligence/ConceptualModel/FirmAccount")]
+        [TestCase("CustomerIntelligence/ConceptualModel/FirmBalance")]
         [TestCase("CustomerIntelligence/ConceptualModel/FirmCategory")]
-        [TestCase("CustomerIntelligence/ConceptualModel/FirmCategoryGroup")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Project")]
+        [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Territory")]
         [TestCase("CustomerIntelligence/StoreModel")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Category")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.CategoryGroup")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Client")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Contact")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Firm")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmAccount")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmCategories")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmCategoryGroups")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmBalance")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmCategory")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Project")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.ProjectCategory")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Territory")]
         public void ShouldBeDeclared(string path)
         {
             IMetadataElement element;

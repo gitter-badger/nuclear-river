@@ -4,20 +4,85 @@ if not exists (select * from sys.schemas where name = 'ERM')
 go
 
 -- drop tables
-if object_id('ERM.FirmCategoryGroups') is not null drop table ERM.FirmCategoryGroups;
-if object_id('ERM.FirmCategories') is not null drop table ERM.FirmCategories;
-if object_id('ERM.FirmAccount') is not null drop table ERM.FirmAccount;
-if object_id('ERM.Firm') is not null drop table ERM.Firm;
-
-if object_id('ERM.Contact') is not null drop table ERM.Contact;
+if object_id('ERM.Account') is not null drop table ERM.Account;
+if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
+if object_id('ERM.Category') is not null drop table ERM.Category;
+if object_id('ERM.CategoryGroup') is not null drop table ERM.CategoryGroup;
+if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
+if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
 if object_id('ERM.Client') is not null drop table ERM.Client;
+if object_id('ERM.Contact') is not null drop table ERM.Contact;
+if object_id('ERM.Firm') is not null drop table ERM.Firm;
+if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
+if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
+if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
+if object_id('ERM.Order') is not null drop table ERM.[Order];
+if object_id('ERM.Project') is not null drop table ERM.Project;
+if object_id('ERM.Territory') is not null drop table ERM.Territory;
 go
 
+
+-- Account
+create table ERM.Account(
+	Id bigint not null
+    , Balance decimal(19,4) not null
+    , BranchOfficeOrganizationUnitId bigint not null
+    , LegalPersonId bigint not null
+    , constraint PK_Accounts primary key (Id)
+)
+go
+
+-- BranchOfficeOrganizationUnit
+create table ERM.BranchOfficeOrganizationUnit(
+	Id bigint not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_BranchOfficeOrganizationUnits primary key (Id)
+)
+go
+
+-- Category
+create table ERM.Category(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , [Level] int not null
+    , ParentId bigint null
+    , constraint PK_Categories primary key (Id)
+)
+go
+
+-- CategoryGroup
+create table ERM.CategoryGroup(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , Rate float not null
+    , constraint PK_CategoryGroups primary key (Id)
+)
+go
+
+-- CategoryFirmAddress
+create table ERM.CategoryFirmAddress(
+	Id bigint not null
+    , CategoryId bigint not null
+    , FirmAddressId bigint not null
+    , constraint PK_CategoryFirmAddresses primary key (Id)
+)
+go
+
+-- CategoryOrganizationUnit
+create table ERM.CategoryOrganizationUnit(
+	Id bigint not null
+	, CategoryId bigint not null
+    , CategoryGroupId bigint not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_CategoryOrganizationUnits primary key (Id)
+)
+go
 
 -- Client
 create table ERM.Client(
 	Id bigint not null
-    , Name nvarchar(250) not null
+    , Name nvarchar(256) not null
+    , LastDisqualifiedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Clients_HasPhone default 0
     , HasWebsite bit not null constraint DF_Clients_HasWebsite default 0
     , constraint PK_Clients primary key (Id)
@@ -33,51 +98,81 @@ create table ERM.Contact(
     , HasWebsite bit not null constraint DF_Contacts_HasWebsite default 0
     , ClientId bigint not null
     , constraint PK_Contacts primary key (Id)
-    --, constraint FK_Contacts_Clients foreign key (ClientId) references ERM.Clients (Id)
 )
+go
+create nonclustered index IX_Contact_HasPhone_HasWebsite
+on ERM.Contact (HasPhone, HasWebsite)
 go
 
 -- Firm
 create table ERM.Firm(
 	Id bigint not null
-    , Name nvarchar(250) not null
-    , CreatedOn datetime2(2) not null
-    , LastDisqualifiedOn datetime2(2) not null
-    , LastDistributedOn datetime2(2) not null
-    , HasPhone bit not null constraint DF_Firms_HasPhone default 0
-    , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
-    , AddressCount int not null constraint DF_Firms_AddressCount default 0
+    , Name nvarchar(256) not null
+    , CreatedOn datetimeoffset(2) not null
+    , LastDisqualifiedOn datetimeoffset(2) null
     , ClientId bigint null
     , OrganizationUnitId bigint not null
+    , OwnerId bigint not null
     , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
-    --, constraint FK_Firms_Clients foreign key (ClientId) references ERM.Clients (Id)
 )
 go
 
--- FirmAccount
-create table ERM.FirmAccount(
-	AccountId bigint not null
+-- FirmAddress
+create table ERM.FirmAddress(
+	Id bigint not null
     , FirmId bigint not null
-    , Balance decimal(19,4) not null
-    , constraint PK_FirmAccounts primary key (AccountId, FirmId)
+    , constraint PK_FirmAddresses primary key (Id)
 )
 go
 
--- FirmCategories
-create table ERM.FirmCategories(
-	FirmId bigint not null
-    , CategoryId bigint not null
-    , constraint PK_FirmCategories primary key (FirmId, CategoryId)
-    --, constraint FK_FirmCategories_Firms foreign key (FirmId) references ERM.Firms (Id)
+-- FirmContact
+create table ERM.FirmContact(
+	Id bigint not null
+    , HasPhone bit not null constraint DF_FirmContacts_HasPhone default 0
+    , HasWebsite bit not null constraint DF_FirmContacts_HasWebsite default 0
+    , FirmAddressId bigint not null
+    , constraint PK_FirmContacts primary key (Id)
+)
+go
+create nonclustered index IX_FirmContact_HasPhone_FirmAddressId
+on ERM.FirmContact (HasPhone, FirmAddressId)
+go
+create nonclustered index IX_FirmContact_HasWebsite_FirmAddressId
+on ERM.FirmContact (HasWebsite,FirmAddressId)
+go
+
+-- LegalPerson
+create table ERM.LegalPerson(
+	Id bigint not null
+    , ClientId bigint not null
+    , constraint PK_LegalPersons primary key (Id)
 )
 go
 
--- FirmCategoryGroups
-create table ERM.FirmCategoryGroups(
-	FirmId bigint not null
-    , CategoryGroupId bigint not null
-    , constraint PK_FirmCategoryGroups primary key (FirmId, CategoryGroupId)
-    --, constraint FK_FirmCategoryGroups_Firms foreign key (FirmId) references ERM.Firms (Id)
+-- Order
+create table ERM.[Order](
+	Id bigint not null
+    , EndDistributionDateFact datetimeoffset(2) not null
+    , FirmId bigint null
+    , constraint PK_Orders primary key (Id)
+)
+go
+
+-- Project
+create table ERM.Project(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , OrganizationUnitId bigint null
+    , constraint PK_Projects primary key (Id)
+)
+go
+
+-- Territory
+create table ERM.Territory(
+	Id bigint not null
+    , Name nvarchar(256) not null
+    , OrganizationUnitId bigint not null
+    , constraint PK_Territories primary key (Id)
 )
 go

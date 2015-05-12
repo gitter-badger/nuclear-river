@@ -14,69 +14,129 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                         .Member("MakingDecisions", 3)
                 )
                 .Elements(
-                    EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
+                    EntityElement.Config.Name(EntityName.Category).EntitySetName("Categories")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                        .Property(EntityPropertyElement.Config.Name("CreatedOn").OfType(ElementaryTypeKind.DateTimeOffset))
-                        .Property(EntityPropertyElement.Config.Name("LastDisqualifiedOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
-                        .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
-                        .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(ElementaryTypeKind.Boolean))
-                        .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(ElementaryTypeKind.Boolean))
-                        .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
-                        .Relation(EntityRelationElement.Config.Name("Accounts")
+                        .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
+                        .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable()),
+                    EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
+                        .HasKey("Id")
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
+                    EntityElement.Config.Name(EntityName.Project).EntitySetName("Projects")
+                        .HasKey("Id")
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                        .Relation(EntityRelationElement.Config.Name("Categories")
                             .DirectTo(
-                                EntityElement.Config.Name(EntityName.FirmAccount)
-                                    .HasKey("AccountId", "FirmId")
-                                    .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
-                            ).AsMany())
-                        .Relation(EntityRelationElement.Config.Name("Client")
+                                EntityElement.Config.Name(EntityName.ProjectCategory).EntitySetName("ProjectCategories")
+                                    .HasKey("ProjectId", "CategoryId")
+                                    .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
+                                    .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
+                                    .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
+                            ).AsMany()
+                        )
+                        .Relation(EntityRelationElement.Config.Name("Territories")
                             .DirectTo(
-                                EntityElement.Config.Name(EntityName.Client)
+                                EntityElement.Config.Name(EntityName.ProjectTerritory)
                                     .HasKey("Id")
                                     .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                                    .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
-                                    .Relation(
-                                        EntityRelationElement.Config.Name("Contacts")
-                                            .DirectTo(
-                                                EntityElement.Config.Name(EntityName.Contact)
-                                                    .HasKey("Id")
-                                                    .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
-                                                    .Property(EntityPropertyElement.Config.Name("Role").OfType<EnumTypeElement>(EnumTypeElement.Config.Name(EnumName.ContactRole)))
-                                                    .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
-                                            )
-                                            .AsMany()
-                                    )
+                            ).AsMany()
+                        )
+                        .Relation(EntityRelationElement.Config.Name("Firms")
+                            .DirectTo(
+                                EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
+                                    .HasKey("Id")
+                                    .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                    .Property(EntityPropertyElement.Config.Name("CreatedOn").OfType(ElementaryTypeKind.DateTimeOffset))
+                                    .Property(EntityPropertyElement.Config.Name("LastDisqualifiedOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
+                                    .Property(EntityPropertyElement.Config.Name("LastDistributedOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
+                                    .Property(EntityPropertyElement.Config.Name("LastActivityOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
+                                    .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(ElementaryTypeKind.Boolean))
+                                    .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(ElementaryTypeKind.Boolean))
+                                    .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
+                                    .Relation(EntityRelationElement.Config.Name("Balances")
+                                        .DirectTo(
+                                            EntityElement.Config.Name(EntityName.FirmBalance)
+                                                .HasKey("AccountId", "FirmId")
+                                                .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
+                                        ).AsMany())
+                                    .Relation(EntityRelationElement.Config.Name("Categories")
+                                        .DirectTo(
+                                            EntityElement.Config.Name(EntityName.FirmCategory)
+                                                .HasKey("CategoryId", "FirmId")
+                                                .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
+                                                .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
+                                        ).AsMany())
+                                    .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
+                                    .Relation(EntityRelationElement.Config.Name("Client")
+                                        .DirectTo(
+                                            EntityElement.Config.Name(EntityName.Client)
+                                                .HasKey("Id")
+                                                .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                                .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
+                                                .Relation(
+                                                    EntityRelationElement.Config.Name("Contacts")
+                                                        .DirectTo(
+                                                            EntityElement.Config.Name(EntityName.Contact)
+                                                                .HasKey("Id")
+                                                                .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                                                .Property(EntityPropertyElement.Config.Name("Role").OfType<EnumTypeElement>(EnumTypeElement.Config.Name(EnumName.ContactRole)))
+                                                                .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
+                                                        )
+                                                        .AsMany()
+                                                )
+                                        )
+                                        .AsOneOptionally())
+                                    .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
+                                    .Relation(EntityRelationElement.Config.Name("Territory").DirectTo(EntityElement.Config.Name(EntityName.ProjectTerritory)).AsOne())
                             )
-                            .AsOneOptionally())
-                        .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
-                        .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
-                        .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
-                        .Relation(EntityRelationElement.Config.Name("Categories")
-                            .DirectTo(
-                                EntityElement.Config.Name(EntityName.FirmCategory)
-                                    .HasKey("CategoryId", "FirmId")
-                                    .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
-                            ).AsMany())
-                        .Relation(EntityRelationElement.Config.Name("CategoryGroups")
-                            .DirectTo(
-                                EntityElement.Config.Name(EntityName.FirmCategoryGroup)
-                                    .HasKey("CategoryGroupId", "FirmId")
-                                    .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
-                            ).AsMany()));
+                            .AsMany()
+                        )
+            );
 
             private static readonly StructuralModelElementBuilder StoreModel =
                 StructuralModelElement.Config.Elements(
+                    EntityElement.Config.Name(TableName.Category)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                 .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
+                                 .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable()),
+                    EntityElement.Config.Name(TableName.CategoryGroup)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                 .Property(EntityPropertyElement.Config.Name("Rate").OfType(ElementaryTypeKind.Single)),
+                    EntityElement.Config.Name(TableName.Project)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
+                    EntityElement.Config.Name(TableName.ProjectCategory)
+                                 .HasKey("ProjectId", "CategoryId")
+                                 .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
+                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64)),
+                    EntityElement.Config.Name(TableName.ProjectTerritory)
+                                 .HasKey("Id")
+                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                 .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne()),
                     EntityElement.Config.Name(TableName.Client)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                                 .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64)),
+                                 .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOne()),
                     EntityElement.Config.Name(TableName.Contact)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
@@ -93,11 +153,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("HasPhone").OfType(ElementaryTypeKind.Boolean))
                                  .Property(EntityPropertyElement.Config.Name("HasWebsite").OfType(ElementaryTypeKind.Boolean))
                                  .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
-                                 .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("OrganizationUnitId").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
+                                 .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOne())
+                                 .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.ProjectTerritory)).AsOne())
+                                 .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne())
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
-                    EntityElement.Config.Name(TableName.FirmAccount)
+                    EntityElement.Config.Name(TableName.FirmBalance)
                                  .HasKey("FirmId", "AccountId")
                                  .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
@@ -105,22 +166,22 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     EntityElement.Config.Name(TableName.FirmCategory)
                                  .HasKey("FirmId", "CategoryId")
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
-                    EntityElement.Config.Name(TableName.FirmCategoryGroup)
-                                 .HasKey("FirmId", "CategoryGroupId")
-                                 .Property(EntityPropertyElement.Config.Name("CategoryGroupId").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =
                 BoundedContextElement.Config.Name("CustomerIntelligence")
                     .ConceptualModel(ConceptualModel)
                     .StoreModel(StoreModel)
+                    .Map(EntityName.Category, TableName.Category)
+                    .Map(EntityName.CategoryGroup, TableName.CategoryGroup)
+                    .Map(EntityName.Project, TableName.Project)
+                    .Map(EntityName.ProjectCategory, TableName.ProjectCategory)
+                    .Map(EntityName.ProjectTerritory, TableName.ProjectTerritory)
                     .Map(EntityName.Firm, TableName.Firm)
-                    .Map(EntityName.FirmAccount, TableName.FirmAccount)
-                    .Map(EntityName.Client, TableName.Client)
-                    .Map(EntityName.Contact, TableName.Contact)
+                    .Map(EntityName.FirmBalance, TableName.FirmBalance)
                     .Map(EntityName.FirmCategory, TableName.FirmCategory)
-                    .Map(EntityName.FirmCategoryGroup, TableName.FirmCategoryGroup);
+                    .Map(EntityName.Client, TableName.Client)
+                    .Map(EntityName.Contact, TableName.Contact);
 
             private static class EnumName
             {
@@ -129,22 +190,30 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
             private static class EntityName
             {
+                public const string Category = "Category";
+                public const string CategoryGroup = "CategoryGroup";
+                public const string Project = "Project";
+                public const string ProjectCategory = "ProjectCategory";
+                public const string ProjectTerritory = "Territory";
                 public const string Client = "Client";
                 public const string Contact = "Contact";
                 public const string Firm = "Firm";
-                public const string FirmAccount = "FirmAccount";
+                public const string FirmBalance = "FirmBalance";
                 public const string FirmCategory = "FirmCategory";
-                public const string FirmCategoryGroup = "FirmCategoryGroup";
             }
 
             private static class TableName
             {
+                public const string Category = TableSchema + "." + "Category";
+                public const string CategoryGroup = TableSchema + "." + "CategoryGroup";
+                public const string Project = TableSchema + "." + "Project";
+                public const string ProjectCategory = TableSchema + "." + "ProjectCategory";
+                public const string ProjectTerritory = TableSchema + "." + "Territory";
+                public const string Firm = TableSchema + "." + "Firm";
+                public const string FirmBalance = TableSchema + "." + "FirmBalance";
+                public const string FirmCategory = TableSchema + "." + "FirmCategory";
                 public const string Client = TableSchema + "." + "Client";
                 public const string Contact = TableSchema + "." + "Contact";
-                public const string Firm = TableSchema + "." + "Firm";
-                public const string FirmAccount = TableSchema + "." + "FirmAccount";
-                public const string FirmCategory = TableSchema + "." + "FirmCategories";
-                public const string FirmCategoryGroup = TableSchema + "." + "FirmCategoryGroups";
 
                 private const string TableSchema = "CustomerIntelligence";
             }
