@@ -237,12 +237,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static IEnumerable<long> ByBranchOfficeOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
             {
-                return from account in context.Accounts
-                       join legalPerson in context.LegalPersons on account.LegalPersonId equals legalPerson.Id
-                       join client in context.Clients on legalPerson.ClientId equals client.Id
-                       join branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits.Where(x => ids.Contains(x.Id)) on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
+                return from branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits.Where(x => ids.Contains(x.Id))
                        join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
-                       where firm.ClientId == client.Id
                        select firm.Id;
             }
 

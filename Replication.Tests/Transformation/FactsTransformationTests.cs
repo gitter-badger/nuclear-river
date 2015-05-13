@@ -198,6 +198,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitCreated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Create<Facts::BranchOfficeOrganizationUnit>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitUpdated()
         {
             var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
@@ -215,6 +227,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitUpdated()
+        {
+            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+                   .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::BranchOfficeOrganizationUnit>(1))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
+        }
+
+        [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitDeleted()
         {
             var source = Mock.Of<IFactsContext>();
@@ -224,6 +250,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
                    .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Delete<Facts::BranchOfficeOrganizationUnit>(3))
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+        }
+
+        [Test]
+        public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitDeleted()
+        {
+            var source = Mock.Of<IFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+                   .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 });
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::BranchOfficeOrganizationUnit>(3))
