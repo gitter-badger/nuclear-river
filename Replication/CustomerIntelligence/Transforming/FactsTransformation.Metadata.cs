@@ -71,6 +71,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
 
+                  FactInfo.OfType<Territory>()
+                          .HasSource(context => context.Territories, Filter.ById)
+                          .HasMatchedAggregate<CI.Territory>(),
+
               }.ToDictionary(x => x.FactType);
 
         private static class Filter
