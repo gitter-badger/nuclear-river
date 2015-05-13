@@ -31,6 +31,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(context => context.CategoryFirmAddresses, Filter.ById)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
 
+                  FactInfo.OfType<CategoryGroup>()
+                          .HasSource(context => context.CategoryGroups, Filter.ById)
+                          .HasMatchedAggregate<CI.CategoryGroup>(),
+
                   FactInfo.OfType<CategoryOrganizationUnit>()
                           .HasSource(context => context.CategoryOrganizationUnits, Filter.ById)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit),
