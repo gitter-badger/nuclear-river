@@ -30,12 +30,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             FactInfo.Create<Order>(Query.OrdersById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByOrder))
         }.ToDictionary(x => x.FactType);
 
-        private static readonly Dictionary<Type, int> FactPriorities = new Dictionary<Type, int>
-        {
-            { typeof(Firm), 2 },
-            { typeof(Client), 1 },
-        };
-
         private readonly IFactsContext _source;
         private readonly IFactsContext _target;
         private readonly IDataMapper _mapper;
@@ -62,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             var slices = operations.GroupBy(operation => new { Operation = operation, operation.FactType })
                                    .OrderByDescending(slice => slice.Key.Operation, new FactOperationPriorityComparer())
-                                   .ThenByDescending(slice => GetPriority(FactPriorities, slice.Key.FactType));
+                                   .ThenByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
 
             foreach (var slice in slices)
             {
@@ -93,12 +87,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             return result.Distinct();
-        }
-
-        private static int GetPriority(IReadOnlyDictionary<Type, int> priorities, Type operation)
-        {
-            int order;
-            return priorities.TryGetValue(operation, out order) ? order : 0;
         }
 
         private IEnumerable<AggregateOperation> CreateFact(FactInfo info, long[] ids)

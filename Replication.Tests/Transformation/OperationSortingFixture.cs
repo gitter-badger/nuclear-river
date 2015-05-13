@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 
@@ -44,6 +46,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Assert.That(sortedData[0], Is.InstanceOf<CreateFact>());
             Assert.That(sortedData[1], Is.InstanceOf<UpdateFact>());
             Assert.That(sortedData[2], Is.InstanceOf<DeleteFact>());
+        }
+
+        [Test]
+        public void ShouldSortFactTypesAccordingPriority()
+        {
+            var comparer = new FactTypePriorityComparer();
+            var data = new[] { typeof(Client), typeof(Firm), typeof(object) };
+
+            var sortedData = data.OrderByDescending(x => x, comparer).ToArray();
+
+            Assert.That(sortedData[0], Is.EqualTo(typeof(Firm)));
+            Assert.That(sortedData[1], Is.EqualTo(typeof(Client)));
+            Assert.That(sortedData[2], Is.EqualTo(typeof(object)));
         }
     }
 }
