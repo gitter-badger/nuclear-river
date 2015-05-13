@@ -65,6 +65,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(context => context.Orders, Filter.ById)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByOrder),
 
+                  FactInfo.OfType<Project>()
+                          .HasSource(context => context.Projects, Filter.ById)
+                          .HasMatchedAggregate<CI.Project>()
+                          .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
+
               }.ToDictionary(x => x.FactType);
 
         private static class Filter
@@ -202,6 +208,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from order in context.Orders
                            where ids.Contains(order.Id)
                            select order.FirmId;
+                }
+
+                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from project in context.Projects
+                           join firm in context.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
+                           where ids.Contains(project.Id)
+                           select firm.Id;
+                }
+            }
+
+            public static class Territory
+            {
+                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                {
+                    var x =  from project in context.Projects
+                           join territory in context.Territories on project.OrganizationUnitId equals territory.OrganizationUnitId
+                           where ids.Contains(project.Id)
+                           select territory.Id;
+                    var y = x.ToArray();
+                    return y;
                 }
             }
         }

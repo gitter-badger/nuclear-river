@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using CI = CustomerIntelligence.Model;
 
     [TestFixture]
-    internal class FactsTransformationTests : BaseTransformationFixture
+    internal partial class FactsTransformationTests : BaseTransformationFixture
     {
         [Test]
         public void ShouldInitializeClientIfClientCreated()
@@ -776,7 +776,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify(Inquire(Aggregate.Initialize<CI::Firm>(2), Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
-
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action test)
         {
@@ -950,6 +949,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     operations = operations.Where(predicate);
                 }
                 Assert.That(operations.ToArray(), Is.EqualTo(expected.ToArray()));
+                return this;
+            }
+
+            public Transformation VerifyUnordered(IEnumerable<AggregateOperation> expected, Func<AggregateOperation, bool> predicate = null)
+            {
+                var operations = _operations.AsEnumerable();
+                if (predicate != null)
+                {
+                    operations = operations.Where(predicate);
+                }
+                Assert.That(operations.ToArray(), Is.EquivalentTo(expected.ToArray()));
                 return this;
             }
         }
