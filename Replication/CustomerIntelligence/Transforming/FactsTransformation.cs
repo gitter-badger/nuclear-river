@@ -14,21 +14,60 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
     public sealed class FactsTransformation
     {
-        private static readonly Dictionary<Type, FactInfo> Facts = new []
-        {
-            FactInfo.Create<Account>(Query.AccountsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByAccount)),
-            FactInfo.Create<BranchOfficeOrganizationUnit>(Query.BranchOfficeOrganizationUnitsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByBranchOfficeOrganizationUnit)),
-            FactInfo.Create<Category>(Query.CategoriesById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategory)),
-            FactInfo.Create<CategoryFirmAddress>(Query.CategoryFirmAddressById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategoryFirmAddress)),
-            FactInfo.Create<CategoryOrganizationUnit>(Query.CategoryOrganizationUnitById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByCategoryOrganizationUnit)),
-            FactInfo.Create<Client>(Query.ClientsById, FactDependencyInfo.Create<CI::Client>(), FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByClient)),
-            FactInfo.Create<Contact>(Query.ContactsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByContacts)),
-            FactInfo.Create<Firm>(Query.FirmsById, FactDependencyInfo.Create<CI::Firm>(), FactDependencyInfo.Create<CI::Client>(ClientRelation.ByFirm)),
-            FactInfo.Create<FirmAddress>(Query.FirmAddressesById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByFirmAddress)),
-            FactInfo.Create<FirmContact>(Query.FirmContactsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByFirmContacts)),
-            FactInfo.Create<LegalPerson>(Query.LegalPersonsById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByLegalPerson)),
-            FactInfo.Create<Order>(Query.OrdersById, FactDependencyInfo.Create<CI::Firm>(FirmRelation.ByOrder))
-        }.ToDictionary(x => x.FactType);
+        private static readonly Dictionary<Type, FactInfo> Facts
+            = new FactInfo[]
+              {
+                  FactInfo.OfType<Account>()
+                          .HasSource(context => context.Accounts, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByAccount),
+
+                  FactInfo.OfType<BranchOfficeOrganizationUnit>()
+                          .HasSource(context => context.BranchOfficeOrganizationUnits, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByBranchOfficeOrganizationUnit),
+
+                  FactInfo.OfType<Category>()
+                          .HasSource(context => context.Categories, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByCategory),
+
+                  FactInfo.OfType<CategoryFirmAddress>()
+                          .HasSource(context => context.CategoryFirmAddresses, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByCategoryFirmAddress),
+
+                  FactInfo.OfType<CategoryOrganizationUnit>()
+                          .HasSource(context => context.CategoryOrganizationUnits, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByCategoryOrganizationUnit),
+
+                  FactInfo.OfType<Client>()
+                          .HasSource(context => context.Clients, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByClient)
+                          .HasMatchedAggregate<CI::Client>(),
+
+                  FactInfo.OfType<Contact>()
+                          .HasSource(context => context.Contacts, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByContacts),
+
+                  FactInfo.OfType<Firm>()
+                          .HasSource(context => context.Firms, Filter.ById)
+                          .HasMatchedAggregate<CI::Firm>()
+                          .HasDependentAggregate<CI::Client>(ClientRelation.ByFirm),
+
+                  FactInfo.OfType<FirmAddress>()
+                          .HasSource(context => context.FirmAddresses, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByFirmAddress),
+
+                  FactInfo.OfType<FirmContact>()
+                          .HasSource(context => context.FirmContacts, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByFirmContacts),
+
+                  FactInfo.OfType<LegalPerson>()
+                          .HasSource(context => context.LegalPersons, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByLegalPerson),
+
+                  FactInfo.OfType<Order>()
+                          .HasSource(context => context.Orders, Filter.ById)
+                          .HasDependentAggregate<CI::Firm>(FirmRelation.ByOrder),
+
+              }.ToDictionary(x => x.FactType);
 
         private readonly IFactsContext _source;
         private readonly IFactsContext _target;
@@ -130,79 +169,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         #region Queries
 
-        private static class Query
+        private static class Filter
         {
-            public static IQueryable<Account> AccountsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Accounts, ids);
-            }
-
-            public static IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnitsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.BranchOfficeOrganizationUnits, ids);
-            }
-
-            public static IQueryable<Category> CategoriesById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Categories, ids);
-            }
-
-            public static IQueryable<CategoryFirmAddress> CategoryFirmAddressById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.CategoryFirmAddresses, ids);
-            }
-
-            public static IQueryable<CategoryOrganizationUnit> CategoryOrganizationUnitById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.CategoryOrganizationUnits, ids);
-            }
-
-            public static IQueryable<Client> ClientsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Clients, ids);
-            }
-
-            public static IQueryable<Contact> ContactsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Contacts, ids);
-            }
-
-            public static IQueryable<Firm> FirmsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Firms, ids);
-            }
-
-            public static IQueryable<FirmAddress> FirmAddressesById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.FirmAddresses, ids);
-            }
-
-            public static IQueryable<FirmContact> FirmContactsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.FirmContacts, ids);
-            }
-
-            public static IQueryable<LegalPerson> LegalPersonsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.LegalPersons, ids);
-            }
-
-            public static IQueryable<Order> OrdersById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Orders, ids);
-            }
-
-            public static IQueryable<Project> ProjectsById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Projects, ids);
-            }
-
-            public static IQueryable<Territory> TerritoriesById(IFactsContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Territories, ids);
-            }
-
-            private static IQueryable<TFact> FilterById<TFact>(IQueryable<TFact> facts, IEnumerable<long> ids) where TFact : IIdentifiableObject
+            public static IQueryable<TFact> ById<TFact>(IQueryable<TFact> facts, IEnumerable<long> ids) where TFact : IIdentifiableObject
             {
                 return facts.Where(fact => ids.Contains(fact.Id));
             }
@@ -216,9 +185,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             public static IEnumerable<long> ByFirm(IFactsContext context, IEnumerable<long> ids)
             {
-                return from firm in context.Firms
+                var x = from firm in context.Firms
                        where ids.Contains(firm.Id) && firm.ClientId != null
                        select firm.ClientId.Value;
+                var y = x.ToArray();
+                return y;
             }            
         }
 
