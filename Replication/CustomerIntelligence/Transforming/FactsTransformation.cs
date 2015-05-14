@@ -67,7 +67,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 }
             }
 
-            return result.Distinct();
+            return result;
         }
 
         private IEnumerable<AggregateOperation> CreateFact(FactInfo info, long[] ids)

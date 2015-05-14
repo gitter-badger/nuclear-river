@@ -41,8 +41,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                   FactInfo.OfType<Client>()
                           .HasSource(context => context.Clients, Filter.ById)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient)
-                          .HasMatchedAggregate<CI.Client>(),
+                          .HasMatchedAggregate<CI.Client>()
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient),
 
                   FactInfo.OfType<Contact>()
                           .HasSource(context => context.Contacts, Filter.ById)
