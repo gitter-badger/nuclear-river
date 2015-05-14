@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     internal abstract class FactInfo
     {
-        public static Builder<T> OfType<T>(params object[] x)
+        public static Builder<TFact> OfType<TFact>(params object[] x)
+            where TFact : IFactObject
         {
-            return new Builder<T>();
+            return new Builder<TFact>();
         }
 
         public abstract Type FactType { get; }
@@ -20,6 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
         internal class Builder<TFact>
+            where TFact : IFactObject
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
             private Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
@@ -42,6 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
+                where TAggregate: ICustomerIntelligenceObject
             {
                 _collection.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
                 return this;
