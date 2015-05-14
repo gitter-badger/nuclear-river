@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class FirmContact : IIdentifiableObject
+    public sealed class FirmContact : IIdentifiableObject, IErmObject
     {
         public long Id { get; set; }
 

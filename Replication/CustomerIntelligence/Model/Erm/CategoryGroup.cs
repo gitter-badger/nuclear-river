@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class CategoryGroup : IIdentifiableObject
+    public sealed class CategoryGroup : IIdentifiableObject, IErmObject
     {
         public CategoryGroup()
         {

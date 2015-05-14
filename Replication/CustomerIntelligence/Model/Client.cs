@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class Client : IIdentifiableObject
+    public sealed class Client : IIdentifiableObject, ICustomerIntelligenceObject
     {
         public long Id { get; set; }
 

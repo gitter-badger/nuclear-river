@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public sealed class Category : IIdentifiableObject
+    public sealed class Category : IIdentifiableObject, IFactObject
     {
         public long Id { get; set; }
 

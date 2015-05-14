@@ -4,7 +4,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public sealed class Order : IIdentifiableObject
+    public sealed class Order : IIdentifiableObject, IFactObject
     {
         public long Id { get; set; }
 
