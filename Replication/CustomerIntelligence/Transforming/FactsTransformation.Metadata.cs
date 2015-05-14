@@ -48,6 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                   FactInfo.OfType<Contact>()
                           .HasSource(context => context.Contacts, Filter.ById)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
                   FactInfo.OfType<Firm>()
@@ -100,6 +101,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from firm in context.Firms
                            where ids.Contains(firm.Id) && firm.ClientId != null
                            select firm.ClientId.Value;
+                }
+
+                public static IEnumerable<long> ByContacts(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from client in context.Clients
+                           join contact in context.Contacts on client.Id equals contact.ClientId
+                           where ids.Contains(contact.Id)
+                           select client.Id;
                 }
             }
 

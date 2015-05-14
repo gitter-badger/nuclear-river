@@ -559,7 +559,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Contact>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -575,7 +575,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Update<Facts::Contact>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),Aggregate.Recalculate<CI::Firm>(2)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Client>(2),  Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -589,7 +589,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::Contact>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(2)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
