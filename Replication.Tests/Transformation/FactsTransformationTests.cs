@@ -951,17 +951,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 Assert.That(operations.ToArray(), Is.EqualTo(expected.ToArray()));
                 return this;
             }
-
-            public Transformation VerifyUnordered(IEnumerable<AggregateOperation> expected, Func<AggregateOperation, bool> predicate = null)
-            {
-                var operations = _operations.AsEnumerable();
-                if (predicate != null)
-                {
-                    operations = operations.Where(predicate);
-                }
-                Assert.That(operations.ToArray(), Is.EquivalentTo(expected.ToArray()));
-                return this;
-            }
         }
 
         #endregion

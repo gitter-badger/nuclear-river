@@ -50,11 +50,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Update<Facts::Project>(1))
-                          .VerifyUnordered(Inquire(Aggregate.Recalculate<CI::Territory>(1),
-                                                   Aggregate.Recalculate<CI::Territory>(2),
-                                                   Aggregate.Recalculate<CI::Firm>(1),
-                                                   Aggregate.Recalculate<CI::Firm>(2),
-                                                   Aggregate.Recalculate<CI::Project>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1),
+                                          Aggregate.Recalculate<CI::Firm>(1),
+                                          Aggregate.Recalculate<CI::Project>(1),
+                                          Aggregate.Recalculate<CI::Territory>(2),
+                                          Aggregate.Recalculate<CI::Firm>(2)));
         }
     }
 }
