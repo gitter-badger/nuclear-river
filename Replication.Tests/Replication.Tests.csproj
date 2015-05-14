@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Transformation\FactsTransformationTests.Category.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Project.cs" />

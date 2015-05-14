@@ -282,7 +282,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Category>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Initialize<CI::Category>(3), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -298,7 +298,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Category>(2))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Initialize<CI::Category>(2), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -314,7 +314,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Category>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Initialize<CI::Category>(1), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -331,7 +331,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Update<Facts::Category>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Category>(3), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -348,7 +348,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Update<Facts::Category>(2))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Category>(2), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -365,7 +365,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Update<Facts::Category>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Category>(1), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -382,7 +382,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::Category>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Destroy<CI::Category>(3), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -399,7 +399,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::Category>(2))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Destroy<CI::Category>(2), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -416,7 +416,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Delete<Facts::Category>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Destroy<CI::Category>(1), Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]

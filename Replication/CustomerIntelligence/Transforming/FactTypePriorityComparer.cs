@@ -10,6 +10,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private static readonly Dictionary<Type, int> Priority
             = new Dictionary<Type, int>
               {
+                  { typeof(Territory), 6 },
+                  { typeof(Category), 5 },
+                  { typeof(CategoryGroup), 4 },
+                  { typeof(Project), 3 },
                   { typeof(Firm), 2 },
                   { typeof(Client), 1 },
               };
