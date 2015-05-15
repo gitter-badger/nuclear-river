@@ -74,6 +74,7 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
