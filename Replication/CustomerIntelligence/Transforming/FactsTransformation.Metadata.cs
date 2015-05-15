@@ -4,7 +4,6 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
-using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -16,81 +15,73 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             = new FactInfo[]
               {
                   FactInfo.OfType<Account>()
-                          .HasSource(context => context.Accounts, Filter.ById)
+                          .HasSource(context => context.Accounts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByAccount),
 
                   FactInfo.OfType<BranchOfficeOrganizationUnit>()
-                          .HasSource(context => context.BranchOfficeOrganizationUnits, Filter.ById)
+                          .HasSource(context => context.BranchOfficeOrganizationUnits)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByBranchOfficeOrganizationUnit),
 
                   FactInfo.OfType<Category>()
-                          .HasSource(context => context.Categories, Filter.ById)
+                          .HasSource(context => context.Categories)
                           .HasMatchedAggregate<CI.Category>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategory),
 
                   FactInfo.OfType<CategoryFirmAddress>()
-                          .HasSource(context => context.CategoryFirmAddresses, Filter.ById)
+                          .HasSource(context => context.CategoryFirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
 
                   FactInfo.OfType<CategoryGroup>()
-                          .HasSource(context => context.CategoryGroups, Filter.ById)
+                          .HasSource(context => context.CategoryGroups)
                           .HasMatchedAggregate<CI.CategoryGroup>(),
 
                   FactInfo.OfType<CategoryOrganizationUnit>()
-                          .HasSource(context => context.CategoryOrganizationUnits, Filter.ById)
+                          .HasSource(context => context.CategoryOrganizationUnits)
                           .HasDependentAggregate<CI.Project>(Find.Project.ByCategoryOrganizationUnit)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit),
 
                   FactInfo.OfType<Client>()
-                          .HasSource(context => context.Clients, Filter.ById)
+                          .HasSource(context => context.Clients)
                           .HasMatchedAggregate<CI.Client>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient),
 
                   FactInfo.OfType<Contact>()
-                          .HasSource(context => context.Contacts, Filter.ById)
+                          .HasSource(context => context.Contacts)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
                   FactInfo.OfType<Firm>()
-                          .HasSource(context => context.Firms, Filter.ById)
+                          .HasSource(context => context.Firms)
                           .HasMatchedAggregate<CI.Firm>()
                           .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
 
                   FactInfo.OfType<FirmAddress>()
-                          .HasSource(context => context.FirmAddresses, Filter.ById)
+                          .HasSource(context => context.FirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress),
 
                   FactInfo.OfType<FirmContact>()
-                          .HasSource(context => context.FirmContacts, Filter.ById)
+                          .HasSource(context => context.FirmContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmContacts),
 
                   FactInfo.OfType<LegalPerson>()
-                          .HasSource(context => context.LegalPersons, Filter.ById)
+                          .HasSource(context => context.LegalPersons)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByLegalPerson),
 
                   FactInfo.OfType<Order>()
-                          .HasSource(context => context.Orders, Filter.ById)
+                          .HasSource(context => context.Orders)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByOrder),
 
                   FactInfo.OfType<Project>()
-                          .HasSource(context => context.Projects, Filter.ById)
+                          .HasSource(context => context.Projects)
                           .HasMatchedAggregate<CI.Project>()
                           .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
 
                   FactInfo.OfType<Territory>()
-                          .HasSource(context => context.Territories, Filter.ById)
+                          .HasSource(context => context.Territories)
                           .HasMatchedAggregate<CI.Territory>(),
 
               }.ToDictionary(x => x.FactType);
-
-        private static class Filter
-        {
-            public static IQueryable<TFact> ById<TFact>(IQueryable<TFact> queryable, IEnumerable<long> ids) where TFact : IIdentifiableObject
-            {
-                return queryable.Where(fact => ids.Contains(fact.Id));
-            }
-        }
 
         private static class Find
         {

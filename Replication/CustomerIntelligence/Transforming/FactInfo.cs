@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     internal abstract class FactInfo
     {
         public static Builder<TFact> OfType<TFact>(params object[] x)
-            where TFact : IFactObject
+            where TFact : IFactObject, IIdentifiableObject
         {
             return new Builder<TFact>();
         }
@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
         internal class Builder<TFact>
-            where TFact : IFactObject
+            where TFact : IFactObject, IIdentifiableObject
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
             private Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
@@ -33,12 +33,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return this;
             }
 
-            public Builder<TFact> HasSource(Func<IFactsContext, IQueryable<TFact>> factQueryableProvider, Func<IQueryable<TFact>, IEnumerable<long>, IQueryable<TFact>> factFilterApplier)
+            public Builder<TFact> HasSource(Func<IFactsContext, IQueryable<TFact>> factQueryableProvider)
             {
                 _factProvider = (context, ids) =>
                                 {
                                     var query = factQueryableProvider.Invoke(context);
-                                    var filteredQuery = factFilterApplier.Invoke(query, ids);
+                                    var filteredQuery = query.Where(fact => ids.Contains(fact.Id));
                                     return filteredQuery;
                                 };
                 return this;
