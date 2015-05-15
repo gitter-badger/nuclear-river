@@ -20,6 +20,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                .HasSource(context => context.Clients)
                                .HasEntity(context => context.Contacts, x => x.ClientId),
 
+                  AggregateInfo.OfType<Project>()
+                               .HasSource(context => context.Projects)
+                               .HasValueObject(context => context.ProjectCategories, x => x.ProjectId),
+
+                  AggregateInfo.OfType<Category>()
+                               .HasSource(context => context.Categories),
+
+                  AggregateInfo.OfType<Territory>()
+                               .HasSource(context => context.Territories),
+
+                  AggregateInfo.OfType<CategoryGroup>()
+                               .HasSource(context => context.CategoryGroups),
+
               }.ToDictionary(x => x.AggregateType);
     }
 }
