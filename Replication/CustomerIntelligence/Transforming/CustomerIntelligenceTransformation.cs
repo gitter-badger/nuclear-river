@@ -8,7 +8,6 @@ using System.Reflection;
 using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
@@ -27,6 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 throw new ArgumentNullException("source");
             }
+
             if (target == null)
             {
                 throw new ArgumentNullException("target");
