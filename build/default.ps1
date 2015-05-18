@@ -60,7 +60,7 @@ Task Build-ReplicationLibs {
 	$buildFile = Create-BuildFile $projectFileName
 	Invoke-MSBuild $buildFile
 	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
-	Publish-Artifacts $conventionalArtifactFileName 'Replication'
+	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 
 	$projectFileName = Get-ProjectFileName '.' 'Replication.OperationsProcessing'
 	$buildFile = Create-BuildFile $projectFileName
@@ -74,17 +74,17 @@ Task Create-Environment -Depends Build-ReplicationLibs -Precondition { $OptionCr
 
 	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
-	$connectionStrings = Get-ConnectionStrings
+	$config = Get-ReplicationConfig
 
 	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'TestData'
 
 	& $scriptFilePath `
 	-LibDir $libDir `
-	-ConnectionStrings $connectionStrings `
+	-Config $config `
 	-SqlScriptsDir $sqlScriptsDir
 }
 
-function Get-ConnectionStrings {
+function Get-ReplicationConfig {
 
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	$projectDir = Split-Path $projectFileName
@@ -92,9 +92,14 @@ function Get-ConnectionStrings {
 	[xml]$config = Get-TransformedConfig $configFileName
 
 	return @{
-		'Erm' = Get-ConnectionString $config 'Erm'
-		'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
-		'ServiceBus' = Get-ConnectionString $config 'ServiceBus'
+		'AppSettings' = @{
+			'TransportEntityPath' = Get-AppSetting $config 'TransportEntityPath'		
+		}
+		'ConnectionStrings' = @{
+			'Erm' = Get-ConnectionString $config 'Erm'
+			'CustomerIntelligence' = Get-ConnectionString $config 'CustomerIntelligence'
+			'ServiceBus' = Get-ConnectionString $config 'ServiceBus'
+		}
 	}
 }
 

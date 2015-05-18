@@ -1,4 +1,4 @@
-﻿param($LibDir, $ConnectionStrings, $SqlScriptsDir)
+﻿param($LibDir, $Config, $SqlScriptsDir)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -9,13 +9,13 @@ Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assem
 
 function Replicate-ErmToFacts {
 
-	$ermConnection = Create-SqlServerConnection $ConnectionStrings.Erm
+	$ermConnection = Create-SqlServerConnection $Config.ConnectionStrings.Erm
 	[void]$ermConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Erm)
 
 	$ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
 	$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
 
-	$factsConnection = Create-SqlServerConnection $ConnectionStrings.CustomerIntelligence
+	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
 
 	$queryDtos = Get-QueryDtos $factsTransformationContext $factsConnection.MappingSchema
@@ -24,13 +24,13 @@ function Replicate-ErmToFacts {
 
 function Replicate-FactsToCI {
 
-	$factsConnection = Create-SqlServerConnection $ConnectionStrings.CustomerIntelligence
+	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
 
 	$factsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsContext($factsConnection)
 	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($factsContext)
 
-	$ciConnection = Create-SqlServerConnection $ConnectionStrings.CustomerIntelligence
+	$ciConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$ciConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::CustomerIntelligence)
 
 	$queryDtos = Get-QueryDtos $ciTransformationContext $ciConnection.MappingSchema
@@ -85,7 +85,7 @@ function Replicate-QueryDtoToConnection ($connection, $queryDtos){
 function Create-Database {
 
 	$builder = New-Object System.Data.Common.DbConnectionStringBuilder
-	$builder.set_ConnectionString($ConnectionStrings.CustomerIntelligence)
+	$builder.set_ConnectionString($Config.ConnectionStrings.CustomerIntelligence)
 	$initialCatalog = $builder['Initial Catalog']
 	$builder['Initial Catalog'] = $null
 
@@ -101,7 +101,7 @@ if (not exists(select * from sys.databases where name = '$initialCatalog'))
 
 function Create-Tables {
 
-	$connection = Create-SqlServerConnection $ConnectionStrings.CustomerIntelligence
+	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
 	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql'
 	foreach($sqlScript in $sqlScripts){
@@ -136,8 +136,8 @@ function Clear-ServiceBus () {
 	
 	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.Replicate2CustomerIntelligenceFlow
 
-	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($ConnectionStrings.ServiceBus)
-	$messageReceiver = $messageFactory.CreateSubscriptionClient('topic.performedoperations', $messageFlow.Id, 'ReceiveAndDelete')
+	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($Config.ConnectionStrings.ServiceBus)
+	$messageReceiver = $messageFactory.CreateSubscriptionClient($Config.AppSettings.TransportEntityPath, $messageFlow.Id, 'ReceiveAndDelete')
 
 	do {
 		$messages = $messageReceiver.ReceiveBatch(1000, [TimeSpan]::Zero)
