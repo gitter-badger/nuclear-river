@@ -5,7 +5,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class FactTypePriorityComparer : IComparer<Type>
+    internal sealed class FactTypePriorityComparer : IComparer<Type>
     {
         private static readonly Dictionary<Type, int> Priority
             = new Dictionary<Type, int>

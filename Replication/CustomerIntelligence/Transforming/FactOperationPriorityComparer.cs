@@ -5,7 +5,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class FactOperationPriorityComparer : IComparer<FactOperation>
+    internal sealed class FactOperationPriorityComparer : IComparer<FactOperation>
     {
         private static readonly IReadOnlyDictionary<Type, int> Priority
             = new Dictionary<Type, int>
