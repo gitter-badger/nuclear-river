@@ -11,6 +11,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
     public sealed partial class FactsTransformation
     {
+        // Правило по определению зависимых агрегатов: смотрим сборку CI сущностей из фактов (CustomerIntelligenceTransformationContext)
+        // если видим join - считаем, что агрегат зависит от факта, если join'а нет - то нет (даже при наличии связи по Id)
         private static readonly Dictionary<Type, FactInfo> Facts
             = new FactInfo[]
               {
