@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     internal abstract class AggregateInfo
     {
         public static Builder<TAggregate> OfType<TAggregate>()
-            where TAggregate : ICustomerIntelligenceObject, IIdentifiableObject
+            where TAggregate : ICustomerIntelligenceObject, IIdentifiable
         {
             return new Builder<TAggregate>();
         }
@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public abstract IEnumerable<ValueObjectInfo> ValueObjects { get; }
 
         public class Builder<TAggregate>
-            where TAggregate : ICustomerIntelligenceObject, IIdentifiableObject
+            where TAggregate : ICustomerIntelligenceObject, IIdentifiable
         {
             private Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable> _aggregateProvider;
             private readonly List<EntityInfo> _entities;
@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             public Builder<TAggregate> HasEntity<TEntity>(Func<ICustomerIntelligenceContext, IQueryable<TEntity>> queryProvider, Expression<Func<TEntity, long>> idSelector)
-                where TEntity : IIdentifiableObject
+                where TEntity : IIdentifiable
             {
                 var filteredQueryProvider = CreateFilteredQueryProvider(queryProvider, idSelector);
                 _entities.Add(new EntityInfo(filteredQueryProvider));

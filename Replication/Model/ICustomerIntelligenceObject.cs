@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Model
 {
-    public interface ICustomerIntelligenceObject
+    public interface ICustomerIntelligenceObject : IObject
     {
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace NuClear.AdvancedSearch.Replication.Model
 {
     internal sealed class IdentifiableObjectEqualityComparer<T> : IEqualityComparer<T>
-        where T : IIdentifiableObject
+        where T : IIdentifiable
     {
         private static volatile IdentifiableObjectEqualityComparer<T> defaultComparer;
 

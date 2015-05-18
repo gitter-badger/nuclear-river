@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class FirmBalance : IObject, ICustomerIntelligenceObject
+    public sealed class FirmBalance : ICustomerIntelligenceObject
     {
         public long FirmId { get; set; }
 

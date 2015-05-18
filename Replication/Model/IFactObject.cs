@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Model
 {
-    public interface IFactObject
+    public interface IFactObject : IObject, IIdentifiable
     {
     }
 }

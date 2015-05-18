@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
 {
     internal static class DataContextExtensions
     {
-        public static IDataContext Has<T>(this IDataContext context, long id) where T : IIdentifiableObject, new()
+        public static IDataContext Has<T>(this IDataContext context, long id) where T : IIdentifiable, new()
         {
             return context.Has(Create<T>(id));
         }
@@ -32,7 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
             return context.GetTable<T>().FirstOrDefault(predicate);
         }
 
-        private static T Create<T>(long id) where T : IIdentifiableObject, new()
+        private static T Create<T>(long id) where T : IIdentifiable, new()
         {
             var obj = new T();
             obj.GetType().GetProperty("Id").SetValue(obj, id);

@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class LegalPerson : IIdentifiableObject, IErmObject
+    public sealed class LegalPerson : IErmObject
     {
         public LegalPerson()
         {

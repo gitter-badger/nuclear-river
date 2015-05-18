@@ -841,28 +841,28 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             }
         }
 
-        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiableObject, new()
-            where TFactElement : IIdentifiableObject, new()
+        private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiable, new()
+            where TFactElement : IIdentifiable, new()
         {
             return Case(() => VerifyElementInsertion<TErmElement, TFactElement>(source))
                 .SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiableObject, new()
-            where TFactElement : IIdentifiableObject, new()
+        private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiable, new()
+            where TFactElement : IIdentifiable, new()
         {
             return Case(() => VerifyElementUpdate(source, target))
                 .SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiableObject, new()
+        private TestCaseData CaseToVerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiable, new()
         {
             return Case(() => VerifyElementDeletion(target))
                 .SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiableObject, new()
-            where TFactElement : IIdentifiableObject, new()
+        private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiable, new()
+            where TFactElement : IIdentifiable, new()
         {
             var entityId = source.Id;
             ErmDb.Has(source);
@@ -875,8 +875,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                               string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiableObject, new()
-            where TFactElement : IIdentifiableObject, new()
+        private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiable, new()
+            where TFactElement : IIdentifiable, new()
         {
             ErmDb.Has(source);
             FactsDb.Has(target);
@@ -889,7 +889,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                               string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiableObject, new()
+        private void VerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiable, new()
         {
             FactsDb.Has(target);
 
