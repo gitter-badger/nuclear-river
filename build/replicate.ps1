@@ -132,12 +132,12 @@ function Exec-Command ($connection, [string]$command){
 	}
 }
 
-function Clear-ServiceBus () {
+function Clear-ServiceBusTopic ($topicName) {
 	
 	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.Replicate2CustomerIntelligenceFlow
 
 	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($Config.ConnectionStrings.ServiceBus)
-	$messageReceiver = $messageFactory.CreateSubscriptionClient($Config.AppSettings.TransportEntityPath, $messageFlow.Id, 'ReceiveAndDelete')
+	$messageReceiver = $messageFactory.CreateSubscriptionClient($topicName, $messageFlow.Id, 'ReceiveAndDelete')
 
 	do {
 		$messages = $messageReceiver.ReceiveBatch(1000, [TimeSpan]::Zero)
@@ -149,6 +149,7 @@ Create-Database
 Create-Tables
 Replicate-ErmToFacts
 Replicate-FactsToCI
-Clear-ServiceBus
+Clear-ServiceBusTopic 'topic.performedoperations'
+Clear-ServiceBusTopic $Config.AppSettings.TransportEntityPath
 
 "Done"
