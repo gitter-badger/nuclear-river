@@ -33,6 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(context => context.CategoryFirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
 
+                  // TODO {all, 18.05.2015}: Сейчас не используются ценовые группы, но после их введения в стой нужно будет добавить зависимые от них объекты CI
                   FactInfo.OfType<CategoryGroup>()
                           .HasSource(context => context.CategoryGroups)
                           .HasMatchedAggregate<CI.CategoryGroup>(),
