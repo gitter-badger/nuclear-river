@@ -7,14 +7,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     internal sealed class FactTypePriorityComparer : IComparer<Type>
     {
+        // Приоритетом сейчас выделяем только корни агрегации
+        // Считаем, что в одном TUC они должны быть обработаны раньше, чем привязанные к ним сущности и valueobject'ы
         private static readonly Dictionary<Type, int> Priority
             = new Dictionary<Type, int>
               {
-                  { typeof(Territory), 6 },
-                  { typeof(Category), 5 },
-                  { typeof(CategoryGroup), 4 },
-                  { typeof(Project), 3 },
-                  { typeof(Firm), 2 },
+                  { typeof(Territory), 1 },
+                  { typeof(Category), 1 },
+                  { typeof(CategoryGroup), 1 },
+                  { typeof(Project), 1 },
+                  { typeof(Firm), 1 },
                   { typeof(Client), 1 },
               };
 
