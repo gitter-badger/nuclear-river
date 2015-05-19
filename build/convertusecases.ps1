@@ -49,12 +49,8 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 
 		Invoke-Command $session {
 			Write-Host "Start process $processPath"
-
-			$emptyPassword = New-Object System.Security.SecureString
-			$credential = New-Object System.Management.Automation.PSCredential('NT AUTHORITY\NETWORK SERVICE', $emptyPassword)
-
-			Start-Process -FilePath $processPath -Credential $credential
-		}
+			Start-Process -FilePath $processPath
+		} -AsJob | Out-Null
 	}
 }
 
