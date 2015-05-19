@@ -53,10 +53,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
+                  // TODO {all, 18.05.2015}: Ценовая группа клиента рассчитывается через фирму = не забыть дополнить связи после ввода ценовых групп
                   FactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
-                          .HasMatchedAggregate<CI.Firm>()
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
+                          .HasMatchedAggregate<CI.Firm>(),
 
                   FactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
