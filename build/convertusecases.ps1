@@ -48,10 +48,12 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 		-HostName $targetHost
 
 		Invoke-Command $session {
-			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
-
 			Write-Host "Start process $processPath"
-			Start-Process -FilePath $processPath -NoNewWindow
+
+			$emptyPassword = New-Object System.Security.SecureString
+			$credential = New-Object System.Management.Automation.PSCredential('NT AUTHORITY\NETWORK SERVICE', $emptyPassword)
+
+			Start-Process -FilePath $processPath -Credential $credential
 		}
 	}
 }
