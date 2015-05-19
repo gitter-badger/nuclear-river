@@ -30,8 +30,9 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 		Invoke-Command $session {
 			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
 		
-			$process = Get-Process | where { $_.MainModule.ModuleName -eq $processPath }
+			$process = Get-Process | where { $_.MainModule.FileName -eq $processPath }
 			if ($process -ne $null){
+				Write-Host "Killing process by pid $($process.Id)"
 				Stop-Process -Id $process.Id -Force
 			}
 		}
