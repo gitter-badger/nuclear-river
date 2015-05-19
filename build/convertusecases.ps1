@@ -53,6 +53,8 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 
 			Start-Process -FilePath $processPath -LoadUserProfile
 		}
+
+		Start-Sleep -Seconds 15
 	}
 }
 
