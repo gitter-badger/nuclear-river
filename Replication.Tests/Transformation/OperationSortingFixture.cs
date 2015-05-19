@@ -52,11 +52,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldSortFactTypesAccordingPriority()
         {
             var comparer = new FactTypePriorityComparer();
-            var data = new[] { typeof(Client), typeof(Firm), typeof(object) };
+            var data = new[] { typeof(Client), typeof(Project), typeof(object) };
 
             var sortedData = data.OrderByDescending(x => x, comparer).ToArray();
 
-            Assert.That(sortedData[0], Is.EqualTo(typeof(Firm)));
+            Assert.That(sortedData[0], Is.EqualTo(typeof(Project)));
             Assert.That(sortedData[1], Is.EqualTo(typeof(Client)));
             Assert.That(sortedData[2], Is.EqualTo(typeof(object)));
         }
