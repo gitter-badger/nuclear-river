@@ -14,6 +14,7 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 	
 	$commonMetadata = Get-Metadata 'Common'
 	$destDirName = "2GIS ERM AdvancedSearch ConvertUseCases Tool ($($commonMetadata.EnvironmentName))"
+	$destProcessPath = Join-Path $destDirName '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe'
 
 	$sourceDirPath = Join-Path $packageInfo.VersionedDir 'tools'
 	$configFileName = '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe.config'
@@ -25,6 +26,16 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
 	foreach($targetHost in $entryPointMetadata.TargetHosts){
 
+		$session = Get-CachedSession $targetHost
+		Invoke-Command $session {
+			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
+		
+			$process = Get-Process | where { $_.MainModule.ModuleName -eq $processPath }
+			if ($process -ne $null){
+				Stop-Process -Id $process.Id -Force
+			}
+		}
+
 		Invoke-MSDeploy `
 		-Source "dirPath=""$sourceDirPath""" `
 		-Dest "dirPath=""%ProgramFiles%\$destDirName""" `
@@ -35,15 +46,8 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 		-Dest "filePath=""%ProgramFiles%\$destDirName\$configFileName""" `
 		-HostName $targetHost
 
-		$session = Get-CachedSession $targetHost
 		Invoke-Command $session {
-			$processPath = "${Env:ProgramFiles}\$using:destDirName\2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe"
-		
-			$process = Get-Process | where { $_.MainModule.ModuleName -eq $processPath }
-			if ($process -ne $null){
-				Stop-Process -Id $process.Id -Force
-			}
-
+			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
 			Start-Process -FilePath $processPath
 		}
 	}
