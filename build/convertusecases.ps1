@@ -51,7 +51,7 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
 
 			Write-Host "Start process $processPath"
-			Start-Process -FilePath $processPath
+			Start-Process -FilePath $processPath -NoNewWindow
 		}
 	}
 }
