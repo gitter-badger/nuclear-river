@@ -10,6 +10,8 @@ Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 
+Include 'convertusecases.ps1'
+
 Task Default -depends Hello
 Task Hello { "Билдскрипт запущен без цели, укажите цель" }
 
@@ -85,19 +87,6 @@ Task Create-Environment -Depends Build-ReplicationLibs -Precondition { $OptionCr
 	-SqlScriptsDir $sqlScriptsDir
 }
 
-Properties { $OptionConvertUseCases = $false }
-Task Convert-UseCases -Precondition { $OptionConvertUseCases } {
-	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
-
-	$toolPath = Join-Path $packageInfo.VersionedDir 'tools\2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe'
-	$config = Get-ReplicationConfig
-
-	& $toolPath @($config.ConnectionStrings.ServiceBus)
-	if ($lastExitCode -ne 0) {
-		throw "Command failed with exit code $lastExitCode"
-	}
-}
-
 function Get-ReplicationConfig {
 
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
@@ -125,6 +114,6 @@ Task Deploy-Packages -depends `
 Take-ODataOffline, `
 Take-TaskServiceOffline, `
 Create-Environment, `
-Convert-UseCases, `
+Deploy-ConvertUseCasesTool, `
 Deploy-OData, `
 Deploy-TaskService

@@ -44,6 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProce
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}"
 	ProjectSection(SolutionItems) = preProject
+		build\convertusecases.ps1 = build\convertusecases.ps1
 		build\default.ps1 = build\default.ps1
 		build\replicate.ps1 = build\replicate.ps1
 		build\run-build.ps1 = build\run-build.ps1
