@@ -49,6 +49,8 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 
 		Invoke-Command $session {
 			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
+
+			Write-Host "Start process $processPath"
 			Start-Process -FilePath $processPath
 		}
 	}
