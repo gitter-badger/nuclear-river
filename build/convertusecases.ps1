@@ -3,66 +3,31 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\msdeploy.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\winrm.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 
-Properties { $OptionConvertUseCases = $false }
-Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
+Task Build-ConvertUseCasesService {
 	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
-	
-	$commonMetadata = Get-Metadata 'Common'
-	$destDirName = "2GIS ERM AdvancedSearch ConvertUseCases Tool ($($commonMetadata.EnvironmentName))"
-	$destProcessPath = Join-Path $destDirName '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe'
+	$toolsDir = Join-Path $packageInfo.VersionedDir 'tools'
 
-	$sourceDirPath = Join-Path $packageInfo.VersionedDir 'tools'
+	$commonMetadata = Get-Metadata 'Common'
+	$tempDir = Join-Path $commonMetadata.Dir.Temp 'ConvertUseCasesService'
+	Copy-Item $toolsDir $tempDir -Force -Recurse
+
 	$configFileName = '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe.config'
-	$configFilePath = Join-Path $sourceDirPath $configFileName
+	$configFilePath = Join-Path $toolsDir $configFileName
 	$transformedConfig = Get-TransformedConfig $configFilePath
-	$tempConfigFilePath = Join-Path $commonMetadata.Dir.Temp $configFileName
+	$tempConfigFilePath = Join-Path $tempDir $configFileName
 	$transformedConfig.Save($tempConfigFilePath)
 
-	$entryPointMetadata = Get-Metadata 'Replication.EntryPoint'
-	foreach($targetHost in $entryPointMetadata.TargetHosts){
-
-		$session = Get-CachedSession $targetHost
-		Invoke-Command $session {
-			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
-		
-			$process = Get-Process | where { $_.MainModule.FileName -eq $processPath }
-			if ($process -ne $null){
-				Write-Host "Killing process by pid $($process.Id)"
-				Stop-Process -Id $process.Id -Force
-			}
-		}
-
-		Invoke-MSDeploy `
-		-Source "dirPath=""$sourceDirPath""" `
-		-Dest "dirPath=""%ProgramFiles%\$destDirName""" `
-		-HostName $targetHost
-
-		Invoke-MSDeploy `
-		-Source "filePath=""$tempConfigFilePath""" `
-		-Dest "filePath=""%ProgramFiles%\$destDirName\$configFileName""" `
-		-HostName $targetHost
-
-		Invoke-Command $session {
-			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
-
-			$jobName = $using:destDirName
-
-			$job = Get-ScheduledJob | where { $_.Name -eq $jobName }
-			if ($job -ne $null){
-				[void]$job.Run()
-				return
-			}
-			
-			$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
-			$trigger = New-JobTrigger -AtStartup
-			$option = New-ScheduledJobOption -RunElevated
-			Register-ScheduledJob -Name $jobName -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option -RunNow | Out-Null
-		}
-	}
+	Publish-Artifacts $tempDir 'ConvertUseCasesService'
 }
 
+Properties { $OptionConvertUseCases = $false }
+Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService -Precondition { $OptionConvertUseCases } {
+	
+	Load-WinServiceModule 'ConvertUseCasesService'
+	Take-WinServiceOffline 'ConvertUseCasesService'
+	Deploy-WinService 'ConvertUseCasesService'
+}
