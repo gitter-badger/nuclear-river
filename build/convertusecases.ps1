@@ -53,14 +53,15 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 			$jobName = $using:destDirName
 
 			$job = Get-ScheduledJob | where { $_.Name -eq $jobName }
-			if ($job -eq $null){
-				$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
-				$trigger = New-JobTrigger -AtStartup
-				$option = New-ScheduledJobOption -RunElevated
-				$job = Register-ScheduledJob -Name $jobName -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option
+			if ($job -ne $null){
+				[void]$job.Run()
+				return
 			}
-
-			[void]$job.Run()
+			
+			$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
+			$trigger = New-JobTrigger -AtStartup
+			$option = New-ScheduledJobOption -RunElevated
+			Register-ScheduledJob -Name $jobName -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option -RunNow | Out-Null
 		}
 	}
 }
