@@ -52,7 +52,7 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 
 			$jobName = $using:destDirName
 
-			$job = Get-ScheduledJob $jobName
+			$job = Get-ScheduledJob | where { $_.Name -eq $jobName }
 			if ($job -eq $null){
 				$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
 				$trigger = New-JobTrigger -AtStartup
