@@ -47,10 +47,10 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 		-Dest "filePath=""%ProgramFiles%\$destDirName\$configFileName""" `
 		-HostName $targetHost
 
-		Invoke-Command -ComputerName $targetHost {
+		Invoke-Command $session {
 			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
-			Start-Process -FilePath $processPath
-		} -InDisconnectedSession | Out-Null
+			Start-Process -FilePath $processPath -ArgumentList @('infiniteloop')
+		}
 	}
 }
 
