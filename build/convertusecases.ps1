@@ -57,7 +57,7 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 				$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
 				$trigger = New-JobTrigger -AtStartup
 				$option = New-ScheduledJobOption -RunElevated
-				Register-ScheduledJob -Name $jobName -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option | Out-Null
+				$job = Register-ScheduledJob -Name $jobName -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option
 			}
 
 			[void]$job.Run()
