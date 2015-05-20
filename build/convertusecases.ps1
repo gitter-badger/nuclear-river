@@ -50,6 +50,18 @@ Task Deploy-ConvertUseCasesTool -Precondition { $OptionConvertUseCases } {
 		Invoke-Command $session {
 			$processPath = "${Env:ProgramFiles}\$using:destProcessPath"
 			Start-Process -FilePath $processPath -ArgumentList @('infiniteloop')
+
+			$jobName = $using:destDirName
+
+			$job = Get-ScheduledJob $jobName
+			if ($job -eq $null){
+				$scriptBlock = { Start-Process -FilePath $processPath -ArgumentList @('infiniteloop') }
+				$trigger = New-JobTrigger -AtStartup
+				$option = New-ScheduledJobOption -RunElevated
+				Register-ScheduledJob -Name "Tool1" -ScriptBlock $scriptBlock -Trigger $trigger -ScheduledJobOption $option
+			}
+
+			$job.Run()
 		}
 	}
 }
