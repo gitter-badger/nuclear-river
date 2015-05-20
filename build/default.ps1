@@ -114,6 +114,6 @@ Task Deploy-Packages -depends `
 Take-ODataOffline, `
 Take-TaskServiceOffline, `
 Create-Environment, `
-Deploy-ConvertUseCasesTool, `
+Deploy-ConvertUseCasesService, `
 Deploy-OData, `
 Deploy-TaskService
