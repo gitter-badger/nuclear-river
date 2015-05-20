@@ -1,11 +1,12 @@
 ﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-Packages')
+	$TaskList = @('Build-Packages', 'Deploy-Packages')
 }
 
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
+	$Properties.OptionConvertUseCases = $true
 }
 
 Set-StrictMode -Version Latest
@@ -32,6 +33,13 @@ $Properties.EnvironmentMetadata = @{
 		'Replication.EntryPoint' = @{
 			'ServiceName' = 'AdvSearch'
 			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
+			'QuartzConfigs' = @()
+			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Desktop'
+		}
+		'ConvertUseCasesService' = @{
+			'ServiceName' = 'ConvertUseCases'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Convert UseCases Service'
 			'QuartzConfigs' = @()
 			'TargetHosts' = @('uk-erm-test01')
 			'EntrypointType' = 'Desktop'
