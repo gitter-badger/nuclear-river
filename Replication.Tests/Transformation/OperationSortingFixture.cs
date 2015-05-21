@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                            new UpdateFact(typeof(object), 0), 
                        };
 
-            var sortedData = data.OrderByDescending(x => x, comparer).ToArray();
+            var sortedData = data.OrderByDescending(x => x.GetType(), comparer).ToArray();
 
             Assert.That(sortedData[0], Is.InstanceOf<CreateFact>());
             Assert.That(sortedData[1], Is.InstanceOf<UpdateFact>());

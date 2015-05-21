@@ -54,7 +54,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
-            var slices = operations.GroupBy(operation => new { Operation = operation, operation.FactType })
+            var slices = operations.GroupBy(operation => new { Operation = operation.GetType(), operation.FactType })
                                    .OrderByDescending(slice => slice.Key.Operation, new FactOperationPriorityComparer())
                                    .ThenByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
 
@@ -70,17 +70,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                if (operation is CreateFact)
+                if (operation == typeof(CreateFact))
                 {
                     result = result.Concat(CreateFact(factInfo, factIds));
                 }
                 
-                if (operation is UpdateFact)
+                if (operation == typeof(UpdateFact))
                 {
                     result = result.Concat(UpdateFact(factInfo, factIds));
                 }
 
-                if (operation is DeleteFact)
+                if (operation == typeof(DeleteFact))
                 {
                     result = result.Concat(DeleteFact(factInfo, factIds));
                 }
