@@ -1,11 +1,12 @@
 ﻿param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-Packages')
+	$TaskList = @('Build-Packages', 'Deploy-Packages')
 }
 
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
+	$Properties.OptionConvertUseCases = $true
 }
 
 Set-StrictMode -Version Latest
@@ -36,6 +37,13 @@ $Properties.EnvironmentMetadata = @{
 			'TargetHosts' = @('uk-erm-test01')
 			'EntrypointType' = 'Desktop'
 		}
+		'ConvertUseCasesService' = @{
+			'ServiceName' = 'ConvertUseCases'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Convert UseCases Service'
+			'QuartzConfigs' = @()
+			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Desktop'
+		}
 	}
 }
 
@@ -52,5 +60,5 @@ $Properties.EnvironmentMetadata = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.40-Transfor-6d04a1-72\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.42\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties
