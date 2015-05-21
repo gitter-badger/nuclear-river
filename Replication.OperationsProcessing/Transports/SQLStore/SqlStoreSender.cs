@@ -45,8 +45,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,
                        EntityTypeId = entityType.Id,
-                       Context = AggregateOperationSerialization.ToXml(operation).ToString()
-                   };
+                       OperationId = operation.GetIdentity(),
+            };
         }
     }
 }

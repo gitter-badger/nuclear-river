@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Xml.Linq;
 
 using NuClear.Messaging.API.Processing.Actors.Transformers;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
@@ -13,7 +12,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
     {
         protected override AggregateOperationAggregatableMessage Transform(PerformedOperationsFinalProcessingMessage message)
         {
-            var operations = message.FinalProcessings.Select(x => AggregateOperationSerialization.FromXml(XElement.Parse(x.Context)));
+            var operations = message.FinalProcessings.Select(x => x.OperationId.CreateOperation(x.EntityTypeId, x.EntityId));
 
             return new AggregateOperationAggregatableMessage
             {

@@ -128,6 +128,7 @@
     <Compile Include="Metadata\Flows\FakeFlow.cs" />
     <Compile Include="Metadata\Flows\Replicate2CustomerIntelligenceFlow.cs" />
     <Compile Include="Metadata\Model\Context\CustomerIntelligenceContext.cs" />
+    <Compile Include="Metadata\Operations\DestroyAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Model\EntityTypeIds.cs" />
     <Compile Include="Metadata\Model\EntityTypeMap.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeAccount.cs" />
@@ -151,13 +152,15 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeProject.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeProjectCategory.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
+    <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
+    <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ErmToFactReplicationHandler.cs" />
     <Compile Include="Final\EmptyStrategy.cs" />
-    <Compile Include="Transports\AggregateOperationSerialization.cs" />
+    <Compile Include="Transports\AggregateOperationExtensions.cs" />
     <Compile Include="Transports\ReplicationMessage.cs" />
     <Compile Include="Transports\ServiceBus\TrackedUseCaseConfigurator.cs" />
     <Compile Include="Transports\ServiceBus\UnknownEntityType.cs" />
