@@ -23,7 +23,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                            new RecalculateAggregate(typeof(object), 0),
                        };
 
-            var sortedData = data.OrderByDescending(x => x, comparer).ToArray();
+            var sortedData = data.OrderByDescending(x => x.GetType(), comparer).ToArray();
             
             Assert.That(sortedData[0], Is.InstanceOf<InitializeAggregate>());
             Assert.That(sortedData[1], Is.InstanceOf<RecalculateAggregate>());

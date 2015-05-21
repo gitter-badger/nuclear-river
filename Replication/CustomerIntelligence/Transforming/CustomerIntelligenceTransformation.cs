@@ -50,7 +50,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            foreach (var slice in operations.GroupBy(x => new { Operation = x, x.AggregateType }).OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer()))
+            var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
+                                   .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
+
+            foreach (var slice in slices)
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
@@ -62,17 +65,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                 }
 
-                if (operation is InitializeAggregate)
+                if (operation == typeof(InitializeAggregate))
                 {
                     InitializeAggregate(aggregateInfo, aggregateIds);
                 }
                 
-                if (operation is RecalculateAggregate)
+                if (operation == typeof(RecalculateAggregate))
                 {
                     RecalculateAggregate(aggregateInfo, aggregateIds);
                 }
 
-                if (operation is DestroyAggregate)
+                if (operation == typeof(DestroyAggregate))
                 {
                     DestroyAggregate(aggregateInfo, aggregateIds);
                 }

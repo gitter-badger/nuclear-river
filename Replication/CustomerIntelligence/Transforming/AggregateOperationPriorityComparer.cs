@@ -5,7 +5,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class AggregateOperationPriorityComparer : IComparer<AggregateOperation>
+    public sealed class AggregateOperationPriorityComparer : IComparer<Type>
     {
         private static readonly IReadOnlyDictionary<Type, int> Priority
             = new Dictionary<Type, int>
@@ -15,9 +15,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   { typeof(DestroyAggregate), 1 },
               };
 
-        public int Compare(AggregateOperation x, AggregateOperation y)
+        public int Compare(Type x, Type y)
         {
-            return Priority[x.GetType()] - Priority[y.GetType()];
+            return Priority[x] - Priority[y];
         }
     }
 }
