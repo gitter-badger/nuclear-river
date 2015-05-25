@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class Territory : IIdentifiableObject
+    public sealed class Territory : IErmObject
     {
         public Territory()
         {

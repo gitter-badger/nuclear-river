@@ -8,26 +8,14 @@ using System.Reflection;
 using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class CustomerIntelligenceTransformation
+    public sealed partial class CustomerIntelligenceTransformation
     {
-        private static readonly Dictionary<Type, AggregateInfo> Aggregates = new []
-        {
-            AggregateInfo.Create<Firm>(Query.FirmsById, valueObjects:
-                new[]
-                {
-                    new ValueObjectInfo(FirmChildren.FirmBalances),
-                    new ValueObjectInfo(FirmChildren.FirmCategories),
-                }),
-            AggregateInfo.Create<Client>(Query.ClientsById, new[] { new EntityInfo(ClientChildren.Contacts) })
-        }.ToDictionary(x => x.AggregateType);
-
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
         private readonly IDataMapper _mapper;
@@ -38,6 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 throw new ArgumentNullException("source");
             }
+
             if (target == null)
             {
                 throw new ArgumentNullException("target");
@@ -140,54 +129,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _mapper.DeleteAll(aggregateInfo.Query(_target, ids));
         }
 
-        #region Query
-
-        private static class Query
-        {
-            public static IQueryable<Client> ClientsById(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Clients, ids);
-            }
-
-            public static IQueryable<Firm> FirmsById(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return FilterById(context.Firms, ids);
-            }
-
-            private static IQueryable<TEntity> FilterById<TEntity>(IQueryable<TEntity> facts, IEnumerable<long> ids) where TEntity : IIdentifiableObject
-            {
-                return facts.Where(fact => ids.Contains(fact.Id));
-            }
-        }
-
-        private static class FirmChildren
-        {
-            public static IQueryable<FirmBalance> FirmBalances(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return context.FirmBalances.Where(x => ids.Contains(x.FirmId));
-            }
-
-            public static IQueryable<FirmCategory> FirmCategories(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return context.FirmCategories.Where(x => ids.Contains(x.FirmId));
-            }
-        }
-
-        private static class ClientChildren
-        {
-            public static IQueryable<Contact> Contacts(ICustomerIntelligenceContext context, IEnumerable<long> ids)
-            {
-                return context.Contacts.Where(x => ids.Contains(x.ClientId));
-            }
-        }
-
-        #endregion
-
-        #region MergeTool
-
         private static class MergeTool
         {
-            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiableObject>(null, null)).GetGenericMethodDefinition();
+            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiable>(null, null)).GetGenericMethodDefinition();
 
             private static readonly ConcurrentDictionary<Type, MethodInfo> Methods = new ConcurrentDictionary<Type, MethodInfo>();
 
@@ -224,7 +168,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 public IEnumerable Complement { get; set; }
             }
         }
-
-        #endregion
     }
 }
+

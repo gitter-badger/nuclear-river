@@ -74,9 +74,11 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
@@ -85,10 +87,12 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />
+    <Compile Include="Model\ICustomerIntelligenceObject.cs" />
     <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
-    <Compile Include="Model\IObject.cs" />
-    <Compile Include="Model\IIdentifiableObject.cs" />
+    <Compile Include="Model\IErmObject.cs" />
+    <Compile Include="Model\IFactObject.cs" />
+    <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
     <Compile Include="CustomerIntelligence\Model\Client.cs" />
@@ -107,6 +111,7 @@
     <Compile Include="CustomerIntelligence\Model\Facts\Client.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\Contact.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\Firm.cs" />
+    <Compile Include="Model\IObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />

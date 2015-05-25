@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public sealed class BranchOfficeOrganizationUnit : IIdentifiableObject
+    public sealed class BranchOfficeOrganizationUnit : IFactObject
     {
         public long Id { get; set; }
 

@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         protected static class Predicate
         {
-            public static Expression<Func<T, bool>> ById<T>(long id) where T : IIdentifiableObject
+            public static Expression<Func<T, bool>> ById<T>(long id) where T : IIdentifiable
             {
                 return item => item.Id == id;
             }

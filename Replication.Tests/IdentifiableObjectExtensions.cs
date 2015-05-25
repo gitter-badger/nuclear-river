@@ -7,7 +7,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 {
     internal static class IdentifiableObjectExtensions
     {
-        public static IEnumerable<T> ById<T>(this IEnumerable<T> objects, params long[] ids) where T : IIdentifiableObject
+        public static IEnumerable<T> ById<T>(this IEnumerable<T> objects, params long[] ids) where T : IIdentifiable
         {
             return objects.Where(x => ids.Contains(x.Id));
         }

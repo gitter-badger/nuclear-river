@@ -325,6 +325,138 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
         }
 
+        [Test]
+        public void ShouldInitializeProject()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Projects == Inquire(new CI::Project { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>();
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Initialize<CI::Project>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Project { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateProject()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Projects == Inquire(new CI::Project { Id = 1, Name = "new name" }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Projects == Inquire(new CI::Project { Id = 1, Name = "old name" }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Project>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Project { Id = 1, Name = "new name" }))));
+        }
+
+        [Test]
+        public void ShouldDestroyProject()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Projects == Inquire(new CI::Project { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Project>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Project { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldInitializeCategory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>();
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Initialize<CI::Category>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Category { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateCategory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1, Name = "new name" }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1, Name = "old name" }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Category>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Category { Id = 1, Name = "new name" }))));
+        }
+
+        [Test]
+        public void ShouldDestroyCategory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Category>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Category { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldInitializeTerritory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Territories == Inquire(new CI::Territory { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>();
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Initialize<CI::Territory>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Territory { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateTerritory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Territories == Inquire(new CI::Territory { Id = 1, Name = "new name" }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Territories == Inquire(new CI::Territory { Id = 1, Name = "old name" }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Territory>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Territory { Id = 1, Name = "new name" }))));
+        }
+
+        [Test]
+        public void ShouldDestroyTerritory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Territories == Inquire(new CI::Territory { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::Territory>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Territory { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldInitializeCategoryGroup()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.CategoryGroups == Inquire(new CI::CategoryGroup { Id = 1 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>();
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Initialize<CI::CategoryGroup>(1))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1 }))));
+        }
+
+        [Test]
+        public void ShouldRecalculateCategoryGroup()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.CategoryGroups == Inquire(new CI::CategoryGroup { Id = 1, Name = "new name" }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.CategoryGroups == Inquire(new CI::CategoryGroup { Id = 1, Name = "old name" }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::CategoryGroup>(1))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1, Name = "new name" }))));
+        }
+
+        [Test]
+        public void ShouldDestroyCategoryGroup()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>();
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.CategoryGroups == Inquire(new CI::CategoryGroup { Id = 1 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Destroy<CI::CategoryGroup>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1 }))));
+        }
+
         #region Transformation
 
         private class Transformation
