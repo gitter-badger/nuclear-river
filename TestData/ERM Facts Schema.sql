@@ -125,6 +125,10 @@ create table ERM.Firm(
     , constraint PK_Firms primary key (Id)
 )
 go
+create nonclustered index IX_Firm_ClientId_OrganizationUnitId
+on ERM.Firm (ClientId, OrganizationUnitId)
+include (Id)
+go
 
 -- FirmAddress
 create table ERM.FirmAddress(
