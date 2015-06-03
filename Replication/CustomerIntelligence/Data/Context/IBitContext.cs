@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Bit;
 
