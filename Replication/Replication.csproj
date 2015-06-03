@@ -74,12 +74,15 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Model\Bit\CategoryStatististics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
+    <Compile Include="CustomerIntelligence\Model\Bit\FirmStatistics.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\IBitContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactInfo.cs" />
