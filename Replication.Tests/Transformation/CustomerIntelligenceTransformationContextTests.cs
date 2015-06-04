@@ -309,7 +309,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             private Transformation(IErmFactsContext source)
             {
-                _transformation = new CustomerIntelligenceTransformationContext(source);
+                _transformation = new CustomerIntelligenceTransformationContext(source, Mock.Of<IBitFactsContext>());
             }
 
             public static Transformation Create(IErmFactsContext source = null)
