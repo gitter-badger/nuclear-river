@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="linq2db">
-      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
@@ -54,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Transformation\FactsTransformationTests.Category.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryOrganizationUnit.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />

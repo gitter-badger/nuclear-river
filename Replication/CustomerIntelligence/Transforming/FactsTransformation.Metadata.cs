@@ -31,17 +31,20 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                   FactInfo.OfType<CategoryFirmAddress>()
                           .HasSource(context => context.CategoryFirmAddresses)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryFirmAddress),
 
-                  // TODO {all, 18.05.2015}: Сейчас не используются ценовые группы, но после их введения в стой нужно будет добавить зависимые от них объекты CI
                   FactInfo.OfType<CategoryGroup>()
                           .HasSource(context => context.CategoryGroups)
-                          .HasMatchedAggregate<CI.CategoryGroup>(),
+                          .HasMatchedAggregate<CI.CategoryGroup>()
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryGroup)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryGroup),
 
                   FactInfo.OfType<CategoryOrganizationUnit>()
                           .HasSource(context => context.CategoryOrganizationUnits)
                           .HasDependentAggregate<CI.Project>(Find.Project.ByCategoryOrganizationUnit)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit),
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryOrganizationUnit),
 
                   FactInfo.OfType<Client>()
                           .HasSource(context => context.Clients)
@@ -53,14 +56,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
-                  // TODO {all, 18.05.2015}: Ценовая группа клиента рассчитывается через фирму = не забыть дополнить связи после ввода ценовых групп
                   FactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
-                          .HasMatchedAggregate<CI.Firm>(),
+                          .HasMatchedAggregate<CI.Firm>()
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
 
                   FactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress),
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByFirmAddress),
 
                   FactInfo.OfType<FirmContact>()
                           .HasSource(context => context.FirmContacts)
@@ -103,6 +107,46 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            join contact in context.Contacts on client.Id equals contact.ClientId
                            where ids.Contains(contact.Id)
                            select client.Id;
+                }
+
+                public static IEnumerable<long> ByCategoryFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from categoryFirmAddress in context.CategoryFirmAddresses
+                           join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                           join firm in context.Firms on firmAddress.FirmId equals firm.Id
+                           where ids.Contains(categoryFirmAddress.Id) && firm.ClientId.HasValue
+                           select firm.ClientId.Value;
+                }
+
+                public static IEnumerable<long> ByFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from firmAddress in context.FirmAddresses
+                           join firm in context.Firms on firmAddress.FirmId equals firm.Id
+                           where ids.Contains(firmAddress.Id) && firm.ClientId.HasValue
+                           select firm.ClientId.Value;
+                }
+
+                public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from categoryOrganizationUnit in context.CategoryOrganizationUnits
+                           join categoryFirmAddress in context.CategoryFirmAddresses on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
+                           join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                           join firm in context.Firms on new { categoryOrganizationUnit.OrganizationUnitId, firmAddress.FirmId } equals
+                               new { firm.OrganizationUnitId, FirmId = firm.Id }
+                           where ids.Contains(categoryOrganizationUnit.Id) && firm.ClientId.HasValue
+                           select firm.ClientId.Value;
+                }
+
+                public static IEnumerable<long> ByCategoryGroup(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return (from categoryGroup in context.CategoryGroups
+                            join categoryOrganizationUnit in context.CategoryOrganizationUnits on categoryGroup.Id equals categoryOrganizationUnit.CategoryId
+                            join categoryFirmAddress in context.CategoryFirmAddresses on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
+                            join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                            join firm in context.Firms on new { categoryOrganizationUnit.OrganizationUnitId, firmAddress.FirmId } equals
+                                new { firm.OrganizationUnitId, FirmId = firm.Id }
+                            where ids.Contains(categoryGroup.Id) && firm.ClientId.HasValue
+                            select firm.ClientId.Value).Distinct();
                 }
             }
 
@@ -229,6 +273,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            join firm in context.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
                            where ids.Contains(project.Id)
                            select firm.Id;
+                }
+
+                public static IEnumerable<long> ByCategoryGroup(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return (from categoryGroup in context.CategoryGroups
+                            join categoryOrganizationUnit in context.CategoryOrganizationUnits on categoryGroup.Id equals categoryOrganizationUnit.CategoryId
+                            join categoryFirmAddress in context.CategoryFirmAddresses on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
+                            join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                            where ids.Contains(categoryGroup.Id)
+                            select firmAddress.FirmId).Distinct();
                 }
             }
 
