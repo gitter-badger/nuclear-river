@@ -41,6 +41,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         public string Flow { get; set; }
         public int? TimeSafetyOffsetHours { get; set; }
 
+        public int? BaseDelay { get; set; }
+        public int? DelayAfterFailure { get; set; }
+        public int? DelayIncrement { get; set; }
+        public int? MaxDelay { get; set; }
+        public int? SufficientBatchUtilizationThreshold { get; set; }
+
         private IAsyncMessageFlowProcessor MessageFlowProcessor
         {
             get
@@ -99,7 +105,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                                                      MessageProcessingStage.Handle
                                                                  },
                                             FirstFaultTolerantStage = MessageProcessingStage.None,
-                                            TimeSafetyOffsetHours = TimeSafetyOffsetHours
+                                            TimeSafetyOffsetHours = TimeSafetyOffsetHours,
                                         };
 
                 MessageFlowProcessor = _messageFlowProcessorFactory.CreateAsync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
@@ -110,10 +116,19 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw;
             }
 
+            var settings = new ThrottlingSettings
+                           {
+                               BaseDelay = BaseDelay ?? ThrottlingSettings.Default.BaseDelay,
+                               DelayAfterFailure = DelayAfterFailure ?? ThrottlingSettings.Default.DelayAfterFailure,
+                               DelayIncrement = DelayIncrement ?? ThrottlingSettings.Default.DelayIncrement,
+                               MaxDelay = MaxDelay ?? ThrottlingSettings.Default.MaxDelay,
+                               SufficientBatchUtilizationThreshold = SufficientBatchUtilizationThreshold ?? ThrottlingSettings.Default.SufficientBatchUtilizationThreshold,
+                           };
+
             try
             {
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
-                MessageFlowProcessor.Start();
+                MessageFlowProcessor.Start(settings);
 
                 Tracer.Debug("Message flow processor started, waiting for finish ... Target message flow: " + messageFlowMetadata);
                 MessageFlowProcessor.Wait();
