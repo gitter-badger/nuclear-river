@@ -12,12 +12,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
     {
-        private readonly FactsTransformation _factsTransformation;
+        private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly SqlStoreSender _sender;
 
-        public ErmToFactReplicationHandler(FactsTransformation factsTransformation, SqlStoreSender sender)
+        public ErmToFactReplicationHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender)
         {
-            _factsTransformation = factsTransformation;
+            _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
         }
 
@@ -31,7 +31,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             try
             {
                 var message = messages.OfType<FactOperationAggregatableMessage>().Single();
-                var aggregateOperations = _factsTransformation.Transform(message.Operations);
+                var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
 
                 _sender.Push(aggregateOperations, message.TargetFlow);
 

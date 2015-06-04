@@ -905,14 +905,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         private class Transformation
         {
-            private readonly FactsTransformation _transformation;
+            private readonly ErmFactsTransformation _transformation;
             private readonly IDataMapper _mapper;
             private readonly List<AggregateOperation> _operations;
 
             private Transformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
             {
                 _mapper = mapper ?? Mock.Of<IDataMapper>();
-                _transformation = new FactsTransformation(source, target, _mapper);
+                _transformation = new ErmFactsTransformation(source, target, _mapper);
                 _operations = new List<AggregateOperation>();
             }
 

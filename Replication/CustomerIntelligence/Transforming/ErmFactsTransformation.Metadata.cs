@@ -9,7 +9,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 
-    public sealed partial class FactsTransformation
+    public sealed partial class ErmFactsTransformation
     {
         // Правило по определению зависимых агрегатов: смотрим сборку CI сущностей из фактов (CustomerIntelligenceTransformationContext)
         // если видим join - считаем, что агрегат зависит от факта, если join'а нет - то нет (даже при наличии связи по Id)

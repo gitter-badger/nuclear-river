@@ -8,13 +8,13 @@ using NuClear.AdvancedSearch.Replication.Data;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class FactsTransformation
+    public sealed partial class ErmFactsTransformation
     {
         private readonly IErmFactsContext _source;
         private readonly IErmFactsContext _target;
         private readonly IDataMapper _mapper;
 
-        public FactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
+        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
         {
             if (source == null)
             {

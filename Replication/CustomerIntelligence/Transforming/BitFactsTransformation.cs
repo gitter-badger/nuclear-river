@@ -10,12 +10,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     using CI = CustomerIntelligence.Model;
 
-    public sealed class BitTransformation
+    public sealed class BitFactsTransformation
     {
         private readonly IDataMapper _mapper;
         private readonly IBitFactsContext _bitFactsContext;
 
-        public BitTransformation(IBitFactsContext bitFactsContext, IDataMapper mapper)
+        public BitFactsTransformation(IBitFactsContext bitFactsContext, IDataMapper mapper)
         {
             _mapper = mapper;
             _bitFactsContext = bitFactsContext;

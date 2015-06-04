@@ -77,13 +77,13 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\BitTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\CategoryStatististics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmStatistics.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\UpdateFact.cs" />
   </ItemGroup>
   <ItemGroup>
