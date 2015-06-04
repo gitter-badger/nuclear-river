@@ -7,8 +7,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 {
     public interface IBitFactsContext
     {
-        IQueryable<FirmStatistics> FirmStatistics { get; }
+        IQueryable<FirmCategoryStatistics> FirmStatistics { get; }
 
-        IQueryable<CategoryStatistics> CategoryStatistics { get; }
+        IQueryable<ProjectCategoryStatistics> CategoryStatistics { get; }
     }
 }

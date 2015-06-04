@@ -32,12 +32,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<Project>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Territory>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
 
-                config.Entity<FirmStatistics>().HasSchemaName(BitSchema)
-                      .Property(x => x.ProjectId).IsPrimaryKey()
+                config.Entity<FirmCategoryStatistics>().HasSchemaName(BitSchema)
                       .Property(x => x.FirmId).IsPrimaryKey()
                       .Property(x => x.CategoryId).IsPrimaryKey();
 
-                config.Entity<CategoryStatistics>().HasSchemaName(BitSchema)
+                config.Entity<ProjectCategoryStatistics>().HasSchemaName(BitSchema)
                       .Property(x => x.ProjectId).IsPrimaryKey()
                       .Property(x => x.CategoryId).IsPrimaryKey();
 

@@ -22,15 +22,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _firmStatisticsDto = null;
         }
 
-        public IQueryable<FirmStatistics> FirmStatistics
+        public IQueryable<FirmCategoryStatistics> FirmStatistics
         {
             get
             {
                 return _firmStatisticsDto == null
-                           ? Enumerable.Empty<FirmStatistics>().AsQueryable()
+                           ? Enumerable.Empty<FirmCategoryStatistics>().AsQueryable()
                            : _firmStatisticsDto.Firms
-                                               .Select(dto => new FirmStatistics
-                                                              {
+                                               .Select(dto => new FirmCategoryStatistics
+                                               {
                                                                   ProjectId = _firmStatisticsDto.ProjectId,
                                                                   FirmId = dto.FirmId,
                                                                   CategoryId = dto.CategoryId,
@@ -41,15 +41,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<CategoryStatistics> CategoryStatistics
+        public IQueryable<ProjectCategoryStatistics> CategoryStatistics
         {
             get
             {
                 return _categoryStatisticsDto == null
-                           ? Enumerable.Empty<CategoryStatistics>().AsQueryable()
+                           ? Enumerable.Empty<ProjectCategoryStatistics>().AsQueryable()
                            : _categoryStatisticsDto.Categories
-                                                      .Select(dto => new CategoryStatistics
-                                                                     {
+                                                      .Select(dto => new ProjectCategoryStatistics
+                                                      {
                                                                          ProjectId = _categoryStatisticsDto.ProjectId,
                                                                          CategoryId = dto.CategoryId,
                                                                          AdvertisersCount = dto.AdvertisersCount,
