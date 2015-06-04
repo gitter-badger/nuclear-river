@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsTransformationContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\DtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\ErmFactsContext.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />

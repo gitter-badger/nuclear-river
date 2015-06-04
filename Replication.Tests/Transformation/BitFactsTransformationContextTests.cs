@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 
 using NUnit.Framework;
@@ -28,9 +27,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                       }
                                   }
                       };
-            var context = new BitFactsTransformationContext(dto);
 
-            var entities = context.FirmStatistics;
+            var entities = dto.ToFirmCategoryStatistics();
+
             Assert.AreEqual(entities.Count(), 1);
             Assert.AreEqual(entities.Single().ProjectId, dto.ProjectId);
             Assert.AreEqual(entities.Single().CategoryId, dto.Firms.Single().CategoryId);
@@ -54,9 +53,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                       }
                                   }
             };
-            var context = new BitFactsTransformationContext(dto);
 
-            var entities = context.CategoryStatistics;
+            var entities = dto.ToProjectCategoryStatistics();
 
             Assert.AreEqual(entities.Count(), 1);
             Assert.AreEqual(entities.Single().ProjectId, dto.ProjectId);
