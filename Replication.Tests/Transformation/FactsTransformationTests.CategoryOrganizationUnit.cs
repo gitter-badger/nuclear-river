@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateProjectIfCategoryOrganizationUnitCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });
 
@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateProjectIfCategoryOrganizationUnitDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateProjectIfCategoryOrganizationUnitUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });

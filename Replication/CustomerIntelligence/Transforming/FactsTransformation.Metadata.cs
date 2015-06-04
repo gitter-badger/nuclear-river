@@ -90,14 +90,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             public static class Client
             {
-                public static IEnumerable<long> ByFirm(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirm(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firm in context.Firms
                            where ids.Contains(firm.Id) && firm.ClientId != null
                            select firm.ClientId.Value;
                 }
 
-                public static IEnumerable<long> ByContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByContacts(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from client in context.Clients
                            join contact in context.Contacts on client.Id equals contact.ClientId
@@ -108,7 +108,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Firm
             {
-                public static IEnumerable<long> ByAccount(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByAccount(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from account in context.Accounts.Where(x => ids.Contains(x.Id))
                            join legalPerson in context.LegalPersons on account.LegalPersonId equals legalPerson.Id
@@ -119,14 +119,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByBranchOfficeOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByBranchOfficeOrganizationUnit(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits.Where(x => ids.Contains(x.Id))
                            join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByCategory(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategory(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     var categories1 = context.Categories.Where(x => x.Level == 1);
                     var categories2 = context.Categories.Where(x => x.Level == 2);
@@ -156,7 +156,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return level3.Union(level2).Union(level1);
                 }
 
-                public static IEnumerable<long> ByCategoryFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryFirmAddress(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from categoryFirmAddress in context.CategoryFirmAddresses
                            join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
@@ -164,7 +164,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryOrganizationUnit(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return (from firm in context.Firms
                             join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
@@ -174,14 +174,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                             select firmAddress.FirmId).Distinct();
                 }
 
-                public static IEnumerable<long> ByClient(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByClient(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firm in context.Firms
                            where firm.ClientId != null && ids.Contains(firm.ClientId.Value)
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByContacts(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firm in context.Firms
                            join client in context.Clients on firm.ClientId equals client.Id
@@ -190,14 +190,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirmAddress(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firmAddress in context.FirmAddresses
                            where ids.Contains(firmAddress.Id)
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByFirmContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirmContacts(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firmAddress in context.FirmAddresses
                            join firmContact in context.FirmContacts on firmAddress.Id equals firmContact.FirmAddressId
@@ -205,7 +205,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByLegalPerson(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByLegalPerson(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from account in context.Accounts
                            join legalPerson in context.LegalPersons.Where(x => ids.Contains(x.Id)) on account.LegalPersonId equals legalPerson.Id
@@ -216,14 +216,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByOrder(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByOrder(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from order in context.Orders
                            where ids.Contains(order.Id)
                            select order.FirmId;
                 }
 
-                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByProject(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from project in context.Projects
                            join firm in context.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
@@ -234,7 +234,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Territory
             {
-                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByProject(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from project in context.Projects
                            join territory in context.Territories on project.OrganizationUnitId equals territory.OrganizationUnitId
@@ -245,7 +245,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Project
             {
-                public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryOrganizationUnit(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from categoryOrganizationUnit in context.CategoryOrganizationUnits
                            join project in context.Projects on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId

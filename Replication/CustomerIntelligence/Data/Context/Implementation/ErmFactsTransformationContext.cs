@@ -6,11 +6,11 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    public sealed class FactsTransformationContext : IFactsContext
+    public sealed class ErmFactsTransformationContext : IErmFactsContext
     {
         private readonly IErmContext _context;
 
-        public FactsTransformationContext(IErmContext context)
+        public ErmFactsTransformationContext(IErmContext context)
         {
             if (context == null)
             {

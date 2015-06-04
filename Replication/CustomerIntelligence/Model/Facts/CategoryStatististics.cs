@@ -1,4 +1,4 @@
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Bit
+namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
     public class CategoryStatististics
     {

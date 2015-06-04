@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Project>(1))
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyProjectIfProjectDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDependentAggregatesIfProjectUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 })

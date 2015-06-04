@@ -75,10 +75,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
         {
-            using (var factsDb = CreateConnection("FactsSqlServer", Schema.FactsErm))
+            using (var factsDb = CreateConnection("FactsSqlServer", Schema.ErmFacts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var context = new CustomerIntelligenceTransformationContext(new FactsContext(factsDb));
+                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb));
                 ciDb.Reload(loader(context));
             }
         }

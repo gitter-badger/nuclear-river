@@ -10,11 +10,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class FactsTransformation
     {
-        private readonly IFactsContext _source;
-        private readonly IFactsContext _target;
+        private readonly IErmFactsContext _source;
+        private readonly IErmFactsContext _target;
         private readonly IDataMapper _mapper;
 
-        public FactsTransformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
+        public FactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
         {
             if (source == null)
             {

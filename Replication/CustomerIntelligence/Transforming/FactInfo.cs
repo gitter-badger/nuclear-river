@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public abstract Type FactType { get; }
 
-        public abstract Func<IFactsContext, IEnumerable<long>, IQueryable> Query { get; }
+        public abstract Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query { get; }
 
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
@@ -25,15 +25,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             where TFact : IFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
-            private Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
+            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
 
-            public Builder<TFact> HasSource(Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
             {
                 _factProvider = factQueryProvider;
                 return this;
             }
 
-            public Builder<TFact> HasSource(Func<IFactsContext, IQueryable<TFact>> factQueryableProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IQueryable<TFact>> factQueryableProvider)
             {
                 _factProvider = (context, ids) =>
                                 {
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return this;
             }
 
-            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
+            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
                 where TAggregate: ICustomerIntelligenceObject
             {
                 _collection.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
@@ -65,10 +65,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private class FactInfoImpl<T> : FactInfo
         {
-            private readonly Func<IFactsContext, IEnumerable<long>, IQueryable> _query;
+            private readonly Func<IErmFactsContext, IEnumerable<long>, IQueryable> _query;
             private readonly IEnumerable<FactDependencyInfo> _aggregates;
 
-            public FactInfoImpl(Func<IFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
+            public FactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
             {
                 _query = query;
                 _aggregates = aggregates ?? Enumerable.Empty<FactDependencyInfo>();
@@ -79,7 +79,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return typeof(T); }
             }
 
-            public override Func<IFactsContext, IEnumerable<long>, IQueryable> Query
+            public override Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query
             {
                 get { return _query; }
             }

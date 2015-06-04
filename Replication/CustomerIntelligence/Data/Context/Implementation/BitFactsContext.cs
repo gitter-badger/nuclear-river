@@ -2,15 +2,15 @@ using System.Linq;
 
 using LinqToDB;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Bit;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    public class BitContext : IBitContext
+    public class BitFactsContext : IBitFactsContext
     {
         private readonly IDataContext _context;
 
-        public BitContext(IDataContext context)
+        public BitFactsContext(IDataContext context)
         {
             _context = context;
         }

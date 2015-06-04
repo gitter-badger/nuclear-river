@@ -177,11 +177,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         private class Transformation
         {
-            private readonly IFactsContext _transformation;
+            private readonly IErmFactsContext _transformation;
 
             private Transformation(IErmContext source)
             {
-                _transformation = new FactsTransformationContext(source);
+                _transformation = new ErmFactsTransformationContext(source);
             }
 
             public static Transformation Create(IErmContext source)
@@ -189,13 +189,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return new Transformation(source);
             }
 
-            public Transformation VerifyTransform<T>(Func<IFactsContext, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)
+            public Transformation VerifyTransform<T>(Func<IErmFactsContext, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)
             {
                 VerifyTransform(reader, expected, x => x, message);
                 return this;
             }
 
-            public Transformation VerifyTransform<T, TProjection>(Func<IFactsContext, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
+            public Transformation VerifyTransform<T, TProjection>(Func<IErmFactsContext, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
             {
                 // TODO: convert to a custom NUnit constraint, at least for fail logging
                 Assert.That(reader(_transformation), Is.EqualTo(expected).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);

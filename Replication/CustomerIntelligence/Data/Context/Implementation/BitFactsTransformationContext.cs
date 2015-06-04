@@ -1,22 +1,22 @@
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Bit;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    public class BitTransformationContext : IBitContext
+    public class BitFactsTransformationContext : IBitFactsContext
     {
         private readonly CategoryStatististicsDto _categoryStatististicsDto;
         private readonly FirmStatisticsDto _firmStatisticsDto;
 
-        public BitTransformationContext(FirmStatisticsDto firmStatisticsDto)
+        public BitFactsTransformationContext(FirmStatisticsDto firmStatisticsDto)
         {
             _firmStatisticsDto = firmStatisticsDto;
             _categoryStatististicsDto = null;
         }
 
-        public BitTransformationContext(CategoryStatististicsDto categoryStatististicsDto)
+        public BitFactsTransformationContext(CategoryStatististicsDto categoryStatististicsDto)
         {
             _categoryStatististicsDto = categoryStatististicsDto;
             _firmStatisticsDto = null;

@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
     {
         private const string ErmSchema = "ERM";
         
-        public static MappingSchema FactsErm
+        public static MappingSchema ErmFacts
         {
             get
             {

@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeClientIfClientCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Client>(1))
@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientIfClientUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
             FactsDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyClientIfClientDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Client { Id = 1 });
 
@@ -64,7 +64,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
         public void ShouldRecalculateClientIfFirmCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 });
 
@@ -76,7 +76,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
         public void ShouldRecalculateClientIfFirmUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 3 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 3 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
@@ -89,7 +89,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
         public void ShouldRecalculateClientIfFirmDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
@@ -102,7 +102,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeFirmIfFirmCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Firm>(1))
@@ -112,7 +112,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 1 }));
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
             Transformation.Create(source, FactsDb)
@@ -123,7 +123,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyFirmIfFirmDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
@@ -135,7 +135,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
@@ -150,7 +150,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Accounts == Inquire(new Facts::Account { Id = 1, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
@@ -169,7 +169,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -185,7 +185,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
@@ -200,7 +200,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
@@ -212,7 +212,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
@@ -229,7 +229,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.BranchOfficeOrganizationUnits == Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
@@ -243,7 +243,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -259,7 +259,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 });
@@ -272,7 +272,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Created()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -288,7 +288,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Created()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -304,7 +304,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Created()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -320,7 +320,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Updated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 3, Level = 3, ParentId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -337,7 +337,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Updated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 2, Level = 2, ParentId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -354,7 +354,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Updated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1, Level = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -371,7 +371,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Deleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -388,7 +388,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Deleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -405,7 +405,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Deleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -422,7 +422,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
@@ -435,7 +435,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
@@ -451,7 +451,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
@@ -466,7 +466,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitCreated()
         {
             var source =
-                Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 }));
+                Mock.Of<IErmFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
@@ -481,7 +481,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitUpdated()
         {
             var source =
-                Mock.Of<IFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 1 }));
+                Mock.Of<IErmFactsContext>(ctx => ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 })
@@ -499,7 +499,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
@@ -514,7 +514,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
@@ -526,7 +526,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1 });
@@ -539,7 +539,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
@@ -552,7 +552,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 3, ClientId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 3, ClientId = 1 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
@@ -565,7 +565,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 2 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -581,7 +581,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 })
@@ -595,7 +595,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 2, FirmId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 2, FirmId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
@@ -607,7 +607,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
@@ -621,7 +621,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
@@ -634,7 +634,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
@@ -647,7 +647,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 1, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 1, FirmAddressId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
@@ -663,7 +663,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactDeleted()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
@@ -677,7 +677,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 1 }));
 
             FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
@@ -692,7 +692,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.LegalPersons == Inquire(new Facts::LegalPerson { Id = 1, ClientId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
@@ -710,7 +710,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -726,7 +726,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 2, FirmId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 2, FirmId = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
@@ -738,7 +738,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 1, FirmId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Orders == Inquire(new Facts::Order { Id = 1, FirmId = 2 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
@@ -752,7 +752,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Order { Id = 2, FirmId = 1 });
@@ -765,7 +765,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldEnqueueOperationsInOrderForFirmIfFirmAddressCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => 
+            var source = Mock.Of<IErmFactsContext>(ctx => 
                 ctx.Firms == Inquire(new Facts::Firm { Id = 2 }) && 
                 ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 1 }, new Facts::FirmAddress { Id = 2, FirmId = 2 }));
 
@@ -909,7 +909,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private readonly IDataMapper _mapper;
             private readonly List<AggregateOperation> _operations;
 
-            private Transformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
+            private Transformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
             {
                 _mapper = mapper ?? Mock.Of<IDataMapper>();
                 _transformation = new FactsTransformation(source, target, _mapper);
@@ -918,22 +918,22 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public static Transformation Create(IDataContext source = null, IDataContext target = null, IDataMapper mapper = null)
             {
-                return Create(new ErmContext(source ?? new Mock<IDataContext>().Object), new FactsContext(target ?? new Mock<IDataContext>().Object), mapper);
+                return Create(new ErmContext(source ?? new Mock<IDataContext>().Object), new ErmFactsContext(target ?? new Mock<IDataContext>().Object), mapper);
             }
 
-            public static Transformation Create(IErmContext source = null, IFactsContext target = null, IDataMapper mapper = null)
+            public static Transformation Create(IErmContext source = null, IErmFactsContext target = null, IDataMapper mapper = null)
             {
-                return Create(new FactsTransformationContext(source ?? new Mock<IErmContext>().Object), target, mapper);
+                return Create(new ErmFactsTransformationContext(source ?? new Mock<IErmContext>().Object), target, mapper);
             }
 
-            public static Transformation Create(IFactsContext source = null, IFactsContext target = null, IDataMapper mapper = null)
+            public static Transformation Create(IErmFactsContext source = null, IErmFactsContext target = null, IDataMapper mapper = null)
             {
-                return new Transformation(source ?? new Mock<IFactsContext>().Object, target ?? new Mock<IFactsContext>().Object, mapper);
+                return new Transformation(source ?? new Mock<IErmFactsContext>().Object, target ?? new Mock<IErmFactsContext>().Object, mapper);
             }
 
-            public static Transformation Create(IFactsContext source, IDataContext target)
+            public static Transformation Create(IErmFactsContext source, IDataContext target)
             {
-                return new Transformation(source, new FactsContext(target), new DataMapper(target));
+                return new Transformation(source, new ErmFactsContext(target), new DataMapper(target));
             }
 
             public Transformation Transform(params FactOperation[] operations)

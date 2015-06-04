@@ -1,6 +1,6 @@
 using LinqToDB.Mapping;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Bit;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
 {
@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
     {
         private const string FactsBitSchema = "BIT";
         
-        public static MappingSchema FactsBit
+        public static MappingSchema BitFacts
         {
             get
             {

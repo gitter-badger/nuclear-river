@@ -13,29 +13,29 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     public sealed class BitTransformation
     {
         private readonly IDataMapper _mapper;
-        private readonly IBitContext _bitContext;
+        private readonly IBitFactsContext _bitFactsContext;
 
-        public BitTransformation(IBitContext bitContext, IDataMapper mapper)
+        public BitTransformation(IBitFactsContext bitFactsContext, IDataMapper mapper)
         {
             _mapper = mapper;
-            _bitContext = bitContext;
+            _bitFactsContext = bitFactsContext;
         }
 
         public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
         {
-            var firmsBefore = _bitContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            var firmsBefore = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
-            var transformationContext = new BitTransformationContext(dto);
+            var transformationContext = new BitFactsTransformationContext(dto);
             _mapper.InsertAll(transformationContext.FirmStatistics);
 
-            var firmsAfter = _bitContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            var firmsAfter = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
             return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
         }
 
         public IEnumerable<AggregateOperation> Transform(CategoryStatististicsDto dto)
         {
-            var transformationContext = new BitTransformationContext(dto);
+            var transformationContext = new BitFactsTransformationContext(dto);
             _mapper.InsertAll(transformationContext.CategoryStatististics);
 
             return new [] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };

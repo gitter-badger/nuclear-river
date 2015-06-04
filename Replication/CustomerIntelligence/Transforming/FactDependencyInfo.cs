@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return new DirectAggregateDependencyInfo<T>();
         }
 
-        public static FactDependencyInfo Create<T>(Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> query)
+        public static FactDependencyInfo Create<T>(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> query)
         {
             return new AggregateDependencyInfo<T>(query);
         }
@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public abstract bool IsDirectDependency { get; }
 
-        public abstract Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> Query { get; }
+        public abstract Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> Query { get; }
 
         private class DirectAggregateDependencyInfo<T> : FactDependencyInfo
         {
@@ -35,7 +35,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return true; }
             }
 
-            public override Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> Query
+            public override Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> Query
             {
                 get { return (ctx, ids) => ids; }
             }
@@ -43,9 +43,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private class AggregateDependencyInfo<T> : FactDependencyInfo
         {
-            private readonly Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> _query;
+            private readonly Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> _query;
 
-            public AggregateDependencyInfo(Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> query)
+            public AggregateDependencyInfo(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> query)
             {
                 _query = query;
             }
@@ -60,7 +60,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return false; }
             }
 
-            public override Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> Query
+            public override Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> Query
             {
                 get { return _query; }
             }

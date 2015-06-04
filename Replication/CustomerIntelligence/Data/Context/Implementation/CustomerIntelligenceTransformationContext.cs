@@ -7,9 +7,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 {
     public sealed class CustomerIntelligenceTransformationContext : ICustomerIntelligenceContext
     {
-        private readonly IFactsContext _context;
+        private readonly IErmFactsContext _context;
 
-        public CustomerIntelligenceTransformationContext(IFactsContext context)
+        public CustomerIntelligenceTransformationContext(IErmFactsContext context)
         {
             if (context == null)
             {
