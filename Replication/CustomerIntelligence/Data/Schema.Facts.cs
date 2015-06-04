@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                       .Property(x => x.FirmId).IsPrimaryKey()
                       .Property(x => x.CategoryId).IsPrimaryKey();
 
-                config.Entity<CategoryStatististics>().HasSchemaName(BitSchema)
+                config.Entity<CategoryStatistics>().HasSchemaName(BitSchema)
                       .Property(x => x.ProjectId).IsPrimaryKey()
                       .Property(x => x.CategoryId).IsPrimaryKey();
 

@@ -65,7 +65,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                   }
             };
             var context = new Mock<IBitFactsContext>();
-            context.SetupGet(x => x.CategoryStatististics).Returns(new[] { new Facts.CategoryStatististics { ProjectId = 1, CategoryId = 7 }, new Facts.CategoryStatististics { ProjectId = 2, CategoryId = 7 } }.AsQueryable());
+            context.SetupGet(x => x.CategoryStatistics).Returns(new[] { new Facts.CategoryStatistics { ProjectId = 1, CategoryId = 7 }, new Facts.CategoryStatistics { ProjectId = 2, CategoryId = 7 } }.AsQueryable());
             var transformation = new BitFactsTransformation(context.Object, Mock.Of<IDataMapper>());
 
             var operations = transformation.Transform(dto).ToArray();

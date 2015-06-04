@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             };
             var context = new BitFactsTransformationContext(dto);
 
-            var entities = context.CategoryStatististics;
+            var entities = context.CategoryStatistics;
 
             Assert.AreEqual(entities.Count(), 1);
             Assert.AreEqual(entities.Single().ProjectId, dto.ProjectId);
