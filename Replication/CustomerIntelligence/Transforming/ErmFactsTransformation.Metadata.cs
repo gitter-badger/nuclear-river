@@ -13,74 +13,74 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         // Правило по определению зависимых агрегатов: смотрим сборку CI сущностей из фактов (CustomerIntelligenceTransformationContext)
         // если видим join - считаем, что агрегат зависит от факта, если join'а нет - то нет (даже при наличии связи по Id)
-        private static readonly Dictionary<Type, FactInfo> Facts
-            = new FactInfo[]
+        private static readonly Dictionary<Type, ErmFactInfo> Facts
+            = new ErmFactInfo[]
               {
-                  FactInfo.OfType<Account>()
+                  ErmFactInfo.OfType<Account>()
                           .HasSource(context => context.Accounts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByAccount),
 
-                  FactInfo.OfType<BranchOfficeOrganizationUnit>()
+                  ErmFactInfo.OfType<BranchOfficeOrganizationUnit>()
                           .HasSource(context => context.BranchOfficeOrganizationUnits)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByBranchOfficeOrganizationUnit),
 
-                  FactInfo.OfType<Category>()
+                  ErmFactInfo.OfType<Category>()
                           .HasSource(context => context.Categories)
                           .HasMatchedAggregate<CI.Category>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategory),
 
-                  FactInfo.OfType<CategoryFirmAddress>()
+                  ErmFactInfo.OfType<CategoryFirmAddress>()
                           .HasSource(context => context.CategoryFirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
 
                   // TODO {all, 18.05.2015}: Сейчас не используются ценовые группы, но после их введения в стой нужно будет добавить зависимые от них объекты CI
-                  FactInfo.OfType<CategoryGroup>()
+                  ErmFactInfo.OfType<CategoryGroup>()
                           .HasSource(context => context.CategoryGroups)
                           .HasMatchedAggregate<CI.CategoryGroup>(),
 
-                  FactInfo.OfType<CategoryOrganizationUnit>()
+                  ErmFactInfo.OfType<CategoryOrganizationUnit>()
                           .HasSource(context => context.CategoryOrganizationUnits)
                           .HasDependentAggregate<CI.Project>(Find.Project.ByCategoryOrganizationUnit)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit),
 
-                  FactInfo.OfType<Client>()
+                  ErmFactInfo.OfType<Client>()
                           .HasSource(context => context.Clients)
                           .HasMatchedAggregate<CI.Client>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient),
 
-                  FactInfo.OfType<Contact>()
+                  ErmFactInfo.OfType<Contact>()
                           .HasSource(context => context.Contacts)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
                   // TODO {all, 18.05.2015}: Ценовая группа клиента рассчитывается через фирму = не забыть дополнить связи после ввода ценовых групп
-                  FactInfo.OfType<Firm>()
+                  ErmFactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
                           .HasMatchedAggregate<CI.Firm>(),
 
-                  FactInfo.OfType<FirmAddress>()
+                  ErmFactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress),
 
-                  FactInfo.OfType<FirmContact>()
+                  ErmFactInfo.OfType<FirmContact>()
                           .HasSource(context => context.FirmContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmContacts),
 
-                  FactInfo.OfType<LegalPerson>()
+                  ErmFactInfo.OfType<LegalPerson>()
                           .HasSource(context => context.LegalPersons)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByLegalPerson),
 
-                  FactInfo.OfType<Order>()
+                  ErmFactInfo.OfType<Order>()
                           .HasSource(context => context.Orders)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByOrder),
 
-                  FactInfo.OfType<Project>()
+                  ErmFactInfo.OfType<Project>()
                           .HasSource(context => context.Projects)
                           .HasMatchedAggregate<CI.Project>()
                           .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
 
-                  FactInfo.OfType<Territory>()
+                  ErmFactInfo.OfType<Territory>()
                           .HasSource(context => context.Territories)
                           .HasMatchedAggregate<CI.Territory>(),
 

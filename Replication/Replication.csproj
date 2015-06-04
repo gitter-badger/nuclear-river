@@ -88,7 +88,7 @@
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\DestroyAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
