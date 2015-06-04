@@ -1,6 +1,8 @@
+using NuClear.AdvancedSearch.Replication.Model;
+
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public class CategoryStatististics
+    public class CategoryStatististics : IObject
     {
         public long ProjectId { get; set; }
 
