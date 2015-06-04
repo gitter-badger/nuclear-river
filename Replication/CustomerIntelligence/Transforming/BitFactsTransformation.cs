@@ -39,8 +39,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             var transformationContext = new BitFactsTransformationContext(dto);
 
-            _mapper.DeleteAll(_bitFactsContext.CategoryStatististics);
-            _mapper.InsertAll(transformationContext.CategoryStatististics);
+            _mapper.DeleteAll(_bitFactsContext.CategoryStatistics);
+            _mapper.InsertAll(transformationContext.CategoryStatistics);
 
             return new [] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };
         }

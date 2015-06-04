@@ -198,7 +198,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
                 return from project in _ermContext.Projects
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
-                       join сategoryStatistics in _bitContext.CategoryStatististics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
+                       join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
                            new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
                        select new ProjectCategory
                               {

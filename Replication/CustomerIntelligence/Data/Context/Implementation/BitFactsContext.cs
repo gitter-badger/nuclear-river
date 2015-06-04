@@ -20,9 +20,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get { return _context.GetTable<FirmStatistics>(); }
         }
 
-        public IQueryable<CategoryStatististics> CategoryStatististics
+        public IQueryable<CategoryStatistics> CategoryStatistics
         {
-            get { return _context.GetTable<CategoryStatististics>(); }
+            get { return _context.GetTable<CategoryStatistics>(); }
         }
     }
 }

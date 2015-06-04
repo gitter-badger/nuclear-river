@@ -41,14 +41,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<CategoryStatististics> CategoryStatististics
+        public IQueryable<CategoryStatistics> CategoryStatistics
         {
             get
             {
                 return _categoryStatisticsDto == null
-                           ? Enumerable.Empty<CategoryStatististics>().AsQueryable()
+                           ? Enumerable.Empty<CategoryStatistics>().AsQueryable()
                            : _categoryStatisticsDto.Categories
-                                                      .Select(dto => new CategoryStatististics
+                                                      .Select(dto => new CategoryStatistics
                                                                      {
                                                                          ProjectId = _categoryStatisticsDto.ProjectId,
                                                                          CategoryId = dto.CategoryId,
