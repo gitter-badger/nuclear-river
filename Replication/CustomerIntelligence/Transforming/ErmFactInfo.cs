@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     internal abstract class ErmFactInfo
     {
         public static Builder<TFact> OfType<TFact>(params object[] x)
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             return new Builder<TFact>();
         }
@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
         internal class Builder<TFact>
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
             private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;

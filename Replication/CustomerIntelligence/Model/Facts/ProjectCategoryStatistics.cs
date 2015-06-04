@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public class ProjectCategoryStatistics : IObject
+    public class ProjectCategoryStatistics : IBitFactObject
     {
         public long ProjectId { get; set; }
 
