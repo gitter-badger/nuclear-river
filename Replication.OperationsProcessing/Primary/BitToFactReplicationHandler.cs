@@ -32,16 +32,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 foreach (var message in messages)
                 {
-                    object dto = null; // todo
-                    if (dto is FirmStatisticsDto)
+                    FirmStatisticsDto firmStatisticsDto = null; // todo
+                    if (firmStatisticsDto != null)
                     {
-                        var aggregateOperations = _bitFactsTransformation.Transform((FirmStatisticsDto)dto);
+                        var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
                         _sender.Push(aggregateOperations, message.TargetFlow);
                     }
 
-                    if (dto is CategoryStatisticsDto)
+                    CategoryStatisticsDto categoryStatisticsDto = null;
+                    if (categoryStatisticsDto != null)
                     {
-                        var aggregateOperations = _bitFactsTransformation.Transform((CategoryStatisticsDto)dto);
+                        var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
                         _sender.Push(aggregateOperations, message.TargetFlow);
                     }
                 }
