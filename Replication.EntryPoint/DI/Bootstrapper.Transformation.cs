@@ -25,8 +25,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         {
             return container
                 .RegisterDataContext(Scope.Erm, ConnectionStringName.Erm, Schema.Erm)
-                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.ErmFacts)
-                .RegisterDataContext(Scope.Bit, ConnectionStringName.CustomerIntelligence, Schema.BitFacts)
+                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts)
                 .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence)
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport)
 
@@ -38,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<ErmFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<ErmFactsTransformationContext>(Lifetime.PerScope)
 
-                .RegisterType<BitFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Bit)))
+                .RegisterType<BitFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 // No BitTransformationContext registration, it depends on dto
 
                 .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
@@ -60,7 +59,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<BitFactsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Bit)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
@@ -79,7 +78,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             public const string Facts = "Facts";
             public const string CustomerIntelligence = "CustomerIntelligence";
             public const string Transport = "Transport";
-            public const string Bit = "Bit";
         }
     }
 }
