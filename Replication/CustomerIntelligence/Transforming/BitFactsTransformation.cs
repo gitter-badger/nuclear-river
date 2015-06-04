@@ -23,12 +23,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
         {
-            var firmsBefore = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
-
             var transformationContext = new BitFactsTransformationContext(dto);
+
+            var firmsBefore = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            
+            _mapper.DeleteAll(_bitFactsContext.FirmStatistics);
             _mapper.InsertAll(transformationContext.FirmStatistics);
 
-            var firmsAfter = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            var firmsAfter = transformationContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
             return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
         }
@@ -36,6 +38,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
         {
             var transformationContext = new BitFactsTransformationContext(dto);
+
+            _mapper.DeleteAll(_bitFactsContext.CategoryStatististics);
             _mapper.InsertAll(transformationContext.CategoryStatististics);
 
             return new [] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };
