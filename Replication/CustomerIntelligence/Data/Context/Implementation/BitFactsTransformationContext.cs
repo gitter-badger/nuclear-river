@@ -7,18 +7,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 {
     public class BitFactsTransformationContext : IBitFactsContext
     {
-        private readonly CategoryStatististicsDto _categoryStatististicsDto;
+        private readonly CategoryStatisticsDto _categoryStatisticsDto;
         private readonly FirmStatisticsDto _firmStatisticsDto;
 
         public BitFactsTransformationContext(FirmStatisticsDto firmStatisticsDto)
         {
             _firmStatisticsDto = firmStatisticsDto;
-            _categoryStatististicsDto = null;
+            _categoryStatisticsDto = null;
         }
 
-        public BitFactsTransformationContext(CategoryStatististicsDto categoryStatististicsDto)
+        public BitFactsTransformationContext(CategoryStatisticsDto categoryStatisticsDto)
         {
-            _categoryStatististicsDto = categoryStatististicsDto;
+            _categoryStatisticsDto = categoryStatisticsDto;
             _firmStatisticsDto = null;
         }
 
@@ -45,12 +45,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return _categoryStatististicsDto == null
+                return _categoryStatisticsDto == null
                            ? Enumerable.Empty<CategoryStatististics>().AsQueryable()
-                           : _categoryStatististicsDto.Categories
+                           : _categoryStatisticsDto.Categories
                                                       .Select(dto => new CategoryStatististics
                                                                      {
-                                                                         ProjectId = _categoryStatististicsDto.ProjectId,
+                                                                         ProjectId = _categoryStatisticsDto.ProjectId,
                                                                          CategoryId = dto.CategoryId,
                                                                          AdvertisersCount = dto.AdvertisersCount,
                                                                      })

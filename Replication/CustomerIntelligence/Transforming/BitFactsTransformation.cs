@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
         }
 
-        public IEnumerable<AggregateOperation> Transform(CategoryStatististicsDto dto)
+        public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
         {
             var transformationContext = new BitFactsTransformationContext(dto);
             _mapper.InsertAll(transformationContext.CategoryStatististics);
@@ -57,7 +57,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         }
     }
 
-    public class CategoryStatististicsDto
+    public class CategoryStatisticsDto
     {
         public long ProjectId { get; set; }
         public IEnumerable<CategoryDto> Categories { get; set; }

@@ -156,6 +156,7 @@
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
+    <Compile Include="Primary\BitToFactReplicationHandler.cs" />
     <Compile Include="Primary\PerformedOperationsFilteringStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
