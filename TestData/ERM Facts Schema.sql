@@ -67,6 +67,10 @@ create table ERM.CategoryFirmAddress(
     , constraint PK_CategoryFirmAddresses primary key (Id)
 )
 go
+create nonclustered index IX_CategoryFirmAddress_FirmAddressId
+on ERM.CategoryFirmAddress (FirmAddressId)
+include (CategoryId)
+go
 
 -- CategoryOrganizationUnit
 create table ERM.CategoryOrganizationUnit(
@@ -76,6 +80,10 @@ create table ERM.CategoryOrganizationUnit(
     , OrganizationUnitId bigint not null
     , constraint PK_CategoryOrganizationUnits primary key (Id)
 )
+go
+create nonclustered index IX_CategoryOrganizationUnit_CategoryId_OrganizationUnitId
+on ERM.CategoryOrganizationUnit (CategoryId, OrganizationUnitId)
+include (CategoryGroupId)
 go
 
 -- Client
@@ -117,6 +125,10 @@ create table ERM.Firm(
     , constraint PK_Firms primary key (Id)
 )
 go
+create nonclustered index IX_Firm_ClientId_OrganizationUnitId
+on ERM.Firm (ClientId, OrganizationUnitId)
+include (Id)
+go
 
 -- FirmAddress
 create table ERM.FirmAddress(
@@ -124,6 +136,10 @@ create table ERM.FirmAddress(
     , FirmId bigint not null
     , constraint PK_FirmAddresses primary key (Id)
 )
+go
+create nonclustered index IX_FirmAddress_FirmId
+on ERM.FirmAddress (FirmId)
+include (Id)
 go
 
 -- FirmContact

@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify(Inquire(Aggregate.Destroy<CI::Client>(1)));
         }
 
-        [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
+        [Test]
         public void ShouldRecalculateClientIfFirmCreated()
         {
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 1 }));
@@ -73,7 +73,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)), op => op is RecalculateAggregate);
         }
 
-        [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
+        [Test]
         public void ShouldRecalculateClientIfFirmUpdated()
         {
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.Firms == Inquire(new Facts::Firm { Id = 2, ClientId = 3 }));
@@ -86,7 +86,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(2), Aggregate.Recalculate<CI::Client>(3)));
         }
 
-        [Test, Ignore("пока нет ценовых групп - пересчёт клиента при изменении в фирме не требуется")]
+        [Test]
         public void ShouldRecalculateClientIfFirmDeleted()
         {
             var source = Mock.Of<IErmFactsContext>();

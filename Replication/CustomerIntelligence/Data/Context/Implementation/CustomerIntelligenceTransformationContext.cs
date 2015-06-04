@@ -51,13 +51,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from client in _context.Clients
+                       let rates = from firm in _context.Firms
+                                   join firmAddress in _context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                   join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _context.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
+                                       equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _context.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   where client.Id == firm.ClientId
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Client
                               {
                                   Id = client.Id,
                                   Name = client.Name,
-                                  //CategoryGroupId = null
+                                  CategoryGroupId = rates.FirstOrDefault()
                               };
             }
         }
@@ -100,8 +108,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from firm in _context.Firms
                        join project in _context.Projects on firm.OrganizationUnitId equals project.OrganizationUnitId
-                       join client in _context.Clients on firm.ClientId equals client.Id into firmClients
-                       from firmClient in firmClients.DefaultIfEmpty()
+                       let firmClient = _context.Clients.SingleOrDefault(client => client.Id == firm.ClientId)
+                       let rates = from firmAddress in _context.FirmAddresses.Where(firmAddress => firmAddress.FirmId == firm.Id)
+                                   join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _context.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
+                                       new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _context.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Firm
                               {
                                   Id = firm.Id,
@@ -112,7 +126,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _context.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
-                                  //CategoryGroupId = null,
+                                  CategoryGroupId = rates.FirstOrDefault(),
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
