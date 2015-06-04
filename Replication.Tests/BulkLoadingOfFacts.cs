@@ -106,7 +106,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         private void Reload<T>(Func<IFactsContext, IEnumerable<T>> loader)
         {
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
-            using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
+            using (var factDb = CreateConnection("FactsSqlServer", Schema.FactsErm))
             {
                 var context = new FactsTransformationContext(new ErmContext(ermDb));
                 factDb.Reload(loader(context));

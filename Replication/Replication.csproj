@@ -51,6 +51,7 @@
     <Compile Include="CustomerIntelligence\Data\Context\IFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\ErmContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
+    <Compile Include="CustomerIntelligence\Data\Schema.Facts.Bit.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Category.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryGroup.cs" />
@@ -99,7 +100,7 @@
     <Compile Include="Model\IErmObject.cs" />
     <Compile Include="Model\IFactObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
-    <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
+    <Compile Include="CustomerIntelligence\Data\Schema.Facts.Erm.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
     <Compile Include="CustomerIntelligence\Model\Client.cs" />
     <Compile Include="CustomerIntelligence\Model\Contact.cs" />

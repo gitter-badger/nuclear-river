@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly IDataMapper _mapper;
         private readonly IBitContext _bitContext;
 
-        public BitTransformation(IDataMapper mapper, IBitContext bitContext)
+        public BitTransformation(IBitContext bitContext, IDataMapper mapper)
         {
             _mapper = mapper;
             _bitContext = bitContext;

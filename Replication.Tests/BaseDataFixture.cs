@@ -54,7 +54,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         protected DataConnection FactsDb
         {
-            get { return CreateConnection("Facts", Schema.Facts); }
+            get { return CreateConnection("Facts", Schema.FactsErm); }
         }
 
         protected DataConnection CustomerIntelligenceDb
