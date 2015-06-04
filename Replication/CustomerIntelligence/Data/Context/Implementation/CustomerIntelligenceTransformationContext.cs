@@ -183,12 +183,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
+                var firmCategories = from firm in _context.Firms
+                                     join firmAddress in _context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                     select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
+
                 return from project in _context.Projects
                        join categoryOrganizationUnit in _context.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,
                            CategoryId = categoryOrganizationUnit.CategoryId,
+                           FirmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        };
             }
         }
