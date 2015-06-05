@@ -30,12 +30,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var entities = dto.ToFirmCategoryStatistics();
 
-            Assert.AreEqual(entities.Count(), 1);
-            Assert.AreEqual(entities.Single().ProjectId, dto.ProjectId);
-            Assert.AreEqual(entities.Single().CategoryId, dto.Firms.Single().CategoryId);
-            Assert.AreEqual(entities.Single().FirmId, dto.Firms.Single().FirmId);
-            Assert.AreEqual(entities.Single().Hits, dto.Firms.Single().Hits);
-            Assert.AreEqual(entities.Single().Shows, dto.Firms.Single().Shows);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            Assert.That(entities.Single().ProjectId, Is.EqualTo(1));
+            Assert.That(entities.Single().CategoryId, Is.EqualTo(3));
+            Assert.That(entities.Single().FirmId, Is.EqualTo(2));
+            Assert.That(entities.Single().Hits, Is.EqualTo(4));
+            Assert.That(entities.Single().Shows, Is.EqualTo(5));
         }
 
         [Test]
@@ -56,10 +56,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var entities = dto.ToProjectCategoryStatistics();
 
-            Assert.AreEqual(entities.Count(), 1);
-            Assert.AreEqual(entities.Single().ProjectId, dto.ProjectId);
-            Assert.AreEqual(entities.Single().CategoryId, dto.Categories.Single().CategoryId);
-            Assert.AreEqual(entities.Single().AdvertisersCount, dto.Categories.Single().AdvertisersCount);
+            Assert.That(entities.Count(), Is.EqualTo(1));
+            Assert.That(entities.Single().ProjectId, Is.EqualTo(1));
+            Assert.That(entities.Single().CategoryId, Is.EqualTo(2));
+            Assert.That(entities.Single().AdvertisersCount, Is.EqualTo(3));
         }
     }
 }

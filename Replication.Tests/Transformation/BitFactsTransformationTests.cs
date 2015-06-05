@@ -42,11 +42,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var operations = transformation.Transform(dto).ToArray();
 
-            Assert.AreEqual(2, operations.Count());
-            Assert.AreEqual(2, operations.OfType<RecalculateAggregate>().Count());
-            Assert.AreEqual(2, operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Firm)));
-            Assert.AreEqual(1, operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 2));
-            Assert.AreEqual(1, operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 7));
+            Assert.That(operations.Count(), Is.EqualTo(2));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(), Is.EqualTo(2));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Firm)), Is.EqualTo(2));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 2), Is.EqualTo(1));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 7), Is.EqualTo(1));
         }
 
         [Test]
@@ -70,10 +70,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var operations = transformation.Transform(dto).ToArray();
 
-            Assert.AreEqual(1, operations.Count());
-            Assert.AreEqual(1, operations.OfType<RecalculateAggregate>().Count());
-            Assert.AreEqual(1, operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Project)));
-            Assert.AreEqual(1, operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 1));
+            Assert.That(operations.Count(), Is.EqualTo(1));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(), Is.EqualTo(1));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Project)), Is.EqualTo(1));
+            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 1), Is.EqualTo(1));
         }
     }
 }
