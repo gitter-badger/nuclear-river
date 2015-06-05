@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryIfCategoryCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 }));
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::Category>(1))
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryIfCategoryUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 }));
 
             FactsDb.Has(new Facts::Category { Id = 1 });
 
@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryIfCategoryDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Category { Id = 1 });
 

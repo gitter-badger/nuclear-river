@@ -10,14 +10,14 @@ using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
+    public sealed class BitToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
     {
-        private readonly ErmFactsTransformation _ermFactsTransformation;
+        private readonly BitFactsTransformation _bitFactsTransformation;
         private readonly SqlStoreSender _sender;
 
-        public ErmToFactReplicationHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender)
+        public BitToFactReplicationHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender)
         {
-            _ermFactsTransformation = ermFactsTransformation;
+            _bitFactsTransformation = bitFactsTransformation;
             _sender = sender;
         }
 
@@ -30,10 +30,22 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                var message = messages.OfType<FactOperationAggregatableMessage>().Single();
-                var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
+                foreach (var message in messages)
+                {
+                    FirmStatisticsDto firmStatisticsDto = null; // todo
+                    if (firmStatisticsDto != null)
+                    {
+                        var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
+                        _sender.Push(aggregateOperations, message.TargetFlow);
+                    }
 
-                _sender.Push(aggregateOperations, message.TargetFlow);
+                    CategoryStatisticsDto categoryStatisticsDto = null;
+                    if (categoryStatisticsDto != null)
+                    {
+                        var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
+                        _sender.Push(aggregateOperations, message.TargetFlow);
+                    }
+                }
 
                 return MessageProcessingStage.Handle.ResultFor(bucketId).AsSucceeded();
             }

@@ -8,13 +8,13 @@ using NuClear.AdvancedSearch.Replication.Data;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class FactsTransformation
+    public sealed partial class ErmFactsTransformation
     {
-        private readonly IFactsContext _source;
-        private readonly IFactsContext _target;
+        private readonly IErmFactsContext _source;
+        private readonly IErmFactsContext _target;
         private readonly IDataMapper _mapper;
 
-        public FactsTransformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
+        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
         {
             if (source == null)
             {
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var factType = slice.Key.FactType;
                 var factIds = slice.Select(x => x.FactId).ToArray();
 
-                FactInfo factInfo;
+                ErmFactInfo factInfo;
                 if (!Facts.TryGetValue(factType, out factInfo))
                 {
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
@@ -70,7 +70,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return result;
         }
 
-        private IEnumerable<AggregateOperation> CreateFact(FactInfo info, long[] ids)
+        private IEnumerable<AggregateOperation> CreateFact(ErmFactInfo info, long[] ids)
         {
             _mapper.InsertAll(info.Query(_source, ids));
 
@@ -80,7 +80,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id)).ToArray();
         }
 
-        private IEnumerable<AggregateOperation> UpdateFact(FactInfo info, long[] ids)
+        private IEnumerable<AggregateOperation> UpdateFact(ErmFactInfo info, long[] ids)
         {
             IEnumerable<AggregateOperation> result = ProcessDependencies(info.Aggregates.Where(x => !x.IsDirectDependency), ids, 
                                                      (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id)).ToArray();
@@ -92,7 +92,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return result;
         }
 
-        private IEnumerable<AggregateOperation> DeleteFact(FactInfo info, long[] ids)
+        private IEnumerable<AggregateOperation> DeleteFact(ErmFactInfo info, long[] ids)
         {
             var result = ProcessDependencies(info.Aggregates, ids, (dependency, id) =>
                 dependency.IsDirectDependency

@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientAndFirmIfCategoryFirmAddressUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx =>
+            var source = Mock.Of<IErmFactsContext>(ctx =>
                 ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 }) &&
                 ctx.FirmAddresses == Inquire(new Facts::FirmAddress { Id = 1, FirmId = 1 }) &&
                 ctx.Firms == Inquire(new Facts::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 }) &&

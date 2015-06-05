@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryGroupIfCategoryGroupCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1}));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1}));
 
             Transformation.Create(source, FactsDb)
                           .Transform(Fact.Create<Facts::CategoryGroup>(1))
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryGroupIfCategoryGroupDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryGroupIfCategoryGroupUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 }));
 
             FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientAndFirmIfCategoryGroupUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => 
+            var source = Mock.Of<IErmFactsContext>(ctx => 
                 ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 }) && 
                 ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1}) && 
                 ctx.CategoryFirmAddresses == Inquire(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 }) && 
