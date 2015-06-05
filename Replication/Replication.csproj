@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DtoExtensions.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\ErmFactsContext.cs" />

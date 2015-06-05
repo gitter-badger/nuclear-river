@@ -5,7 +5,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal static class DtoExtensions
+    internal static class BitDtoExtensions
     {
         public static IReadOnlyCollection<FirmCategoryStatistics> ToFirmCategoryStatistics(this FirmStatisticsDto dto)
         {
