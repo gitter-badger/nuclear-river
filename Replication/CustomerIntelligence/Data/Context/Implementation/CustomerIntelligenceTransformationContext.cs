@@ -154,23 +154,44 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var level3 = from firmAddress in _ermContext.FirmAddresses
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category3.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category3.Id
+                             };
 
                 var level2 = from firmAddress in _ermContext.FirmAddresses
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category2.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category2.Id
+                             };
 
                 var level1 = from firmAddress in _ermContext.FirmAddresses
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category1.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category1.Id
+                             };
 
                 // perform union using distinct
-                return level3.Union(level2).Union(level1);
+                // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
+                return from firmCategory in level3.Union(level2).Union(level1)
+                       from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
+                       select new FirmCategory
+                       {
+                           FirmId = firmCategory.FirmId,
+                           CategoryId = firmCategory.CategoryId,
+                           Hits = statistics.Hits,
+                           Shows = statistics.Shows,
+                       };
             }
         }
 
