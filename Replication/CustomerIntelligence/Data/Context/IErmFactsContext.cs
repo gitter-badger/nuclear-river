@@ -4,7 +4,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 {
-    public interface IFactsContext
+    public interface IErmFactsContext
     {
         IQueryable<Account> Accounts { get; }
 
@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
         IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits { get; }
 
         IQueryable<CategoryFirmAddress> CategoryFirmAddresses { get; }
-
+        
         IQueryable<CategoryOrganizationUnit> CategoryOrganizationUnits { get; }
 
         IQueryable<Client> Clients { get; }

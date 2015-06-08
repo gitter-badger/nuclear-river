@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryIfCategoryCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 })
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 })
                 && ctx.Projects == Inquire(new Facts::Project { Id = 2, OrganizationUnitId = 3 })
                 && ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit{ CategoryId = 1, OrganizationUnitId = 3, Id = 4}));
 
@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryIfCategoryUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 })
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 })
                 && ctx.Projects == Inquire(new Facts::Project { Id = 2, OrganizationUnitId = 3 })
                 && ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { CategoryId = 1, OrganizationUnitId = 3, Id = 4 }));
 
@@ -51,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryIfCategoryDeleted()
         {
-            var source = Mock.Of<IFactsContext>(ctx => 
+            var source = Mock.Of<IErmFactsContext>(ctx => 
                 ctx.Projects == Inquire(new Facts::Project { Id = 2, OrganizationUnitId = 3 })
                 && ctx.CategoryOrganizationUnits == Inquire(new Facts::CategoryOrganizationUnit { CategoryId = 1, OrganizationUnitId = 3, Id = 4 }));
 

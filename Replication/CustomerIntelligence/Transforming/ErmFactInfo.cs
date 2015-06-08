@@ -7,33 +7,33 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal abstract class FactInfo
+    internal abstract class ErmFactInfo
     {
         public static Builder<TFact> OfType<TFact>(params object[] x)
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             return new Builder<TFact>();
         }
 
         public abstract Type FactType { get; }
 
-        public abstract Func<IFactsContext, IEnumerable<long>, IQueryable> Query { get; }
+        public abstract Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query { get; }
 
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
         internal class Builder<TFact>
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
-            private Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
+            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
 
-            public Builder<TFact> HasSource(Func<IFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
             {
                 _factProvider = factQueryProvider;
                 return this;
             }
 
-            public Builder<TFact> HasSource(Func<IFactsContext, IQueryable<TFact>> factQueryableProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IQueryable<TFact>> factQueryableProvider)
             {
                 _factProvider = (context, ids) =>
                                 {
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return this;
             }
 
-            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
+            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
                 where TAggregate: ICustomerIntelligenceObject
             {
                 _collection.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
@@ -57,18 +57,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return this;
             }
 
-            public static implicit operator FactInfo(Builder<TFact> fact)
+            public static implicit operator ErmFactInfo(Builder<TFact> fact)
             {
-                return new FactInfoImpl<TFact>(fact._factProvider, fact._collection);
+                return new ErmFactInfoImpl<TFact>(fact._factProvider, fact._collection);
             }
         }
 
-        private class FactInfoImpl<T> : FactInfo
+        private class ErmFactInfoImpl<T> : ErmFactInfo
         {
-            private readonly Func<IFactsContext, IEnumerable<long>, IQueryable> _query;
+            private readonly Func<IErmFactsContext, IEnumerable<long>, IQueryable> _query;
             private readonly IEnumerable<FactDependencyInfo> _aggregates;
 
-            public FactInfoImpl(Func<IFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
+            public ErmFactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
             {
                 _query = query;
                 _aggregates = aggregates ?? Enumerable.Empty<FactDependencyInfo>();
@@ -79,7 +79,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return typeof(T); }
             }
 
-            public override Func<IFactsContext, IEnumerable<long>, IQueryable> Query
+            public override Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query
             {
                 get { return _query; }
             }
