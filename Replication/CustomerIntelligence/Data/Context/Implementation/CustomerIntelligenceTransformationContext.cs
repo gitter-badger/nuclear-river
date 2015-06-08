@@ -189,8 +189,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        {
                            FirmId = firmCategory.FirmId,
                            CategoryId = firmCategory.CategoryId,
-                           Hits = statistics.Hits,
-                           Shows = statistics.Shows,
+                           Hits = statistics != null ? statistics.Hits : 0,
+                           Shows = statistics != null ? statistics.Shows : 0,
                        };
             }
         }
