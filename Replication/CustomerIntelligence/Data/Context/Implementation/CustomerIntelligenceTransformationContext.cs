@@ -221,13 +221,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                        join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
                            new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
+                       let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new ProjectCategory
                               {
                                   ProjectId = project.Id,
                                   CategoryId = categoryOrganizationUnit.CategoryId,
-                                  FirmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count(),
-                                  AdvertisersShare = projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault()
-                              };
+                                  FirmCount = firmCount,
+                                  AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
+                       };
             }
         }
 
