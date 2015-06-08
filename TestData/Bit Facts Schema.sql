@@ -13,7 +13,7 @@ go
 create table BIT.ProjectCategoryStatististics(
 	ProjectId bigint not null,
 	CategoryId bigint not null,
-    AdvertisersCount int not null, 
+    AdvertisersCount bigint not null, 
 	constraint PK_CategoryStatististics primary key (ProjectId, CategoryId)
 )
 go
@@ -23,8 +23,8 @@ create table BIT.FirmCategoryStatistics(
 	ProjectId bigint not null,
 	FirmId bigint not null,
 	CategoryId bigint not null,
-	Hits int not null,
-	Shows int not null,
+	Hits bigint not null,
+	Shows bigint not null,
 	constraint PK_FirmStatistics primary key (FirmId, CategoryId)
 )
 go
