@@ -8,6 +8,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 
         public long CategoryId { get; set; }
 
-        public int AdvertisersCount { get; set; }
+        public long AdvertisersCount { get; set; }
     }
 }

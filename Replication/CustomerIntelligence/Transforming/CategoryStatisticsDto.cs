@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             public long CategoryId { get; set; }
 
-            public int AdvertisersCount { get; set; }
+            public long AdvertisersCount { get; set; }
         }
     }
 }
