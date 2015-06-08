@@ -217,6 +217,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                      join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                      select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
 
+                // Со статистикой по рубрикам выполняется left join, это допустимо при условии, что (ProjectId, CategoryId) - primary key, иначе можно получить дублирование записей.
                 return from project in _ermContext.Projects
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                        join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
