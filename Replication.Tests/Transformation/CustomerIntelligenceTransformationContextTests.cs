@@ -18,18 +18,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class CustomerIntelligenceTransformationContextTests : BaseTransformationFixture
     {
         [Test]
-        public void ShouldTransformCategory()
-        {
-            var context = new Mock<IFactsContext>();
-            context.SetupGet(x => x.Categories).Returns(Inquire(
-                new Facts::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }
-                ));
-
-            Transformation.Create(context.Object)
-                          .VerifyTransform(x => x.Categories.ById(2), Inquire(new CI::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }));
-        }
-
-        [Test]
         public void ShouldTransformCategoryGroup()
         {
             var context = new Mock<IFactsContext>();
@@ -276,6 +264,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var context = new Mock<IFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
             context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 }));
+            context.SetupGet(x => x.Categories).Returns(Inquire(new Facts::Category { Id  = 3 }));
 
             Transformation.Create(context.Object)
                           .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 }));

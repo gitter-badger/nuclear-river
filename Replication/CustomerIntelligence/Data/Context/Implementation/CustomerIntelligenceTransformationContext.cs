@@ -18,21 +18,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
-        public IQueryable<Category> Categories
-        {
-            get
-            {
-                return from category in _context.Categories
-                       select new Category
-                       {
-                           Id = category.Id,
-                           Name = category.Name,
-                           Level = category.Level,
-                           ParentId = category.ParentId
-                       };
-            }
-        }
-
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get
@@ -199,10 +184,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 return from project in _context.Projects
                        join categoryOrganizationUnit in _context.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       join category in _context.Categories on categoryOrganizationUnit.CategoryId equals category.Id
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,
                            CategoryId = categoryOrganizationUnit.CategoryId,
+                           Name = category.Name,
+                           Level = category.Level,
+                           ParentId = category.ParentId
                        };
             }
         }

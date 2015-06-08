@@ -359,39 +359,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
-        public void ShouldInitializeCategory()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1 }));
-            var target = Mock.Of<ICustomerIntelligenceContext>();
-
-            Transformation.Create(source, target)
-                .Transform(Aggregate.Initialize<CI::Category>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Category { Id = 1 }))));
-        }
-
-        [Test]
-        public void ShouldRecalculateCategory()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1, Name = "new name" }));
-            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1, Name = "old name" }));
-
-            Transformation.Create(source, target)
-                .Transform(Aggregate.Recalculate<CI::Category>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Category { Id = 1, Name = "new name" }))));
-        }
-
-        [Test]
-        public void ShouldDestroyCategory()
-        {
-            var source = Mock.Of<ICustomerIntelligenceContext>();
-            var target = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Categories == Inquire(new CI::Category { Id = 1 }));
-
-            Transformation.Create(source, target)
-                .Transform(Aggregate.Destroy<CI::Category>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Category { Id = 1 }))));
-        }
-
-        [Test]
         public void ShouldInitializeTerritory()
         {
             var source = Mock.Of<ICustomerIntelligenceContext>(ctx => ctx.Territories == Inquire(new CI::Territory { Id = 1 }));

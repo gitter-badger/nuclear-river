@@ -15,7 +15,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-                config.Entity<Category>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryGroup>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Client>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Contact>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();

@@ -3,8 +3,10 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
+-- drop views
+if object_id('CustomerIntelligence.FirmCategoryView') is not null drop view CustomerIntelligence.FirmCategoryView;
+
 -- drop tables
-if object_id('CustomerIntelligence.Category') is not null drop table CustomerIntelligence.Category;
 if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
 if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
 if object_id('CustomerIntelligence.ProjectCategory') is not null drop table CustomerIntelligence.ProjectCategory;
@@ -14,18 +16,9 @@ if object_id('CustomerIntelligence.FirmBalance') is not null drop table Customer
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
+if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
 go
 
-
--- Category
-create table CustomerIntelligence.Category(
-	Id bigint not null
-    , Name nvarchar(256) not null
-    , [Level] int not null
-    , ParentId bigint null
-    , constraint PK_Categories primary key (Id)
-)
-go
 
 -- CategoryGroup
 create table CustomerIntelligence.CategoryGroup(
@@ -47,9 +40,12 @@ go
 -- ProjectCategory
 create table CustomerIntelligence.ProjectCategory(
 	ProjectId bigint not null
+    , CategoryId bigint not null
+    , Name nvarchar(256) not null
+    , [Level] int not null
     , AdvertisersShare float not null constraint DF_ProjectCategories_AdvertisersShare default 0
     , FirmCount bigint not null constraint DF_ProjectCategories_FirmCount default 0
-    , CategoryId bigint not null
+    , ParentId bigint null
     , constraint PK_ProjectCategories primary key (ProjectId, CategoryId)
 )
 go
@@ -120,3 +116,19 @@ create table CustomerIntelligence.Contact(
     , constraint PK_Contacts primary key (Id)
 )
 go
+
+-- FirmCategoryView
+create view CustomerIntelligence.FirmCategoryView
+as
+select 
+    firmCategory.CategoryId
+    , firmCategory.FirmId
+    , firmCategory.Shows
+    , firmCategory.Hits
+    , projectCategory.AdvertisersShare
+    , projectCategory.FirmCount
+from CustomerIntelligence.FirmCategory firmCategory
+join CustomerIntelligence.Firm firm 
+  on firm.Id = firmCategory.FirmId
+left join CustomerIntelligence.ProjectCategory projectCategory 
+  on projectCategory.ProjectId = firm.ProjectId and projectCategory.CategoryId = firmCategory.CategoryId

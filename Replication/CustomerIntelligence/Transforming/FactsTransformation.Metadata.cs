@@ -18,75 +18,75 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
               {
                   FactInfo.OfType<Account>()
                           .HasSource(context => context.Accounts)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByAccount),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByAccount),
 
                   FactInfo.OfType<BranchOfficeOrganizationUnit>()
                           .HasSource(context => context.BranchOfficeOrganizationUnits)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByBranchOfficeOrganizationUnit),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByBranchOfficeOrganizationUnit),
 
                   FactInfo.OfType<Category>()
                           .HasSource(context => context.Categories)
-                          .HasMatchedAggregate<CI.Category>()
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategory),
+                          .HasDependentAggregate<CI::Project>(Find.Project.ByCategory)
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByCategory),
 
                   FactInfo.OfType<CategoryFirmAddress>()
                           .HasSource(context => context.CategoryFirmAddresses)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryFirmAddress),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByCategoryFirmAddress)
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByCategoryFirmAddress),
 
                   FactInfo.OfType<CategoryGroup>()
                           .HasSource(context => context.CategoryGroups)
-                          .HasMatchedAggregate<CI.CategoryGroup>()
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryGroup)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryGroup),
+                          .HasMatchedAggregate<CI::CategoryGroup>()
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByCategoryGroup)
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByCategoryGroup),
 
                   FactInfo.OfType<CategoryOrganizationUnit>()
                           .HasSource(context => context.CategoryOrganizationUnits)
-                          .HasDependentAggregate<CI.Project>(Find.Project.ByCategoryOrganizationUnit)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryOrganizationUnit),
+                          .HasDependentAggregate<CI::Project>(Find.Project.ByCategoryOrganizationUnit)
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByCategoryOrganizationUnit)
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByCategoryOrganizationUnit),
 
                   FactInfo.OfType<Client>()
                           .HasSource(context => context.Clients)
-                          .HasMatchedAggregate<CI.Client>()
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient),
+                          .HasMatchedAggregate<CI::Client>()
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByClient),
 
                   FactInfo.OfType<Contact>()
                           .HasSource(context => context.Contacts)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByContacts)
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByContacts),
 
                   FactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
-                          .HasMatchedAggregate<CI.Firm>()
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
+                          .HasMatchedAggregate<CI::Firm>()
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByFirm),
 
                   FactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByFirmAddress),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByFirmAddress)
+                          .HasDependentAggregate<CI::Client>(Find.Client.ByFirmAddress),
 
                   FactInfo.OfType<FirmContact>()
                           .HasSource(context => context.FirmContacts)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmContacts),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByFirmContacts),
 
                   FactInfo.OfType<LegalPerson>()
                           .HasSource(context => context.LegalPersons)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByLegalPerson),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByLegalPerson),
 
                   FactInfo.OfType<Order>()
                           .HasSource(context => context.Orders)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByOrder),
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByOrder),
 
                   FactInfo.OfType<Project>()
                           .HasSource(context => context.Projects)
-                          .HasMatchedAggregate<CI.Project>()
-                          .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
+                          .HasMatchedAggregate<CI::Project>()
+                          .HasDependentAggregate<CI::Territory>(Find.Territory.ByProject)
+                          .HasDependentAggregate<CI::Firm>(Find.Firm.ByProject),
 
                   FactInfo.OfType<Territory>()
                           .HasSource(context => context.Territories)
-                          .HasMatchedAggregate<CI.Territory>(),
+                          .HasMatchedAggregate<CI::Territory>(),
 
               }.ToDictionary(x => x.FactType);
 
@@ -299,6 +299,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Project
             {
+                public static IEnumerable<long> ByCategory(IFactsContext context, IEnumerable<long> ids)
+                {
+                    return from categoryOrganizationUnit in context.CategoryOrganizationUnits
+                           join project in context.Projects on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
+                           where ids.Contains(categoryOrganizationUnit.CategoryId)
+                           select project.Id;
+                }
+
                 public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
                 {
                     return from categoryOrganizationUnit in context.CategoryOrganizationUnits

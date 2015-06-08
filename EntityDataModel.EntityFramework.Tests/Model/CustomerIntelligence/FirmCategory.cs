@@ -3,8 +3,15 @@
     public class FirmCategory
     {
         public long CategoryId { get; set; }
+        
         public long FirmId { get; set; }
 
-        public Category Category { get; set; }
+        public long Hits { get; set; }
+
+        public long Shows { get; set; }
+        
+        public double AdvertisersShare { get; set; }
+
+        public long FirmCount { get; set; }
     }
 }

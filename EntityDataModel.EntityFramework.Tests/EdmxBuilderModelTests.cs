@@ -23,7 +23,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             {
                 Assert.That(context.Set<Project>().ToArray(), Has.Length.EqualTo(6));
                 Assert.That(context.Set<Territory>().ToArray(), Has.Length.EqualTo(5));
-                Assert.That(context.Set<Category>().ToArray(), Has.Length.EqualTo(5));
                 Assert.That(context.Set<CategoryGroup>().ToArray(), Has.Length.EqualTo(5));
             }
         }
