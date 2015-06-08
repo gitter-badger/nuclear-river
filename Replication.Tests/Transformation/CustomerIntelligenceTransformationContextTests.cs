@@ -245,11 +245,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 }
                 ));
 
-            Transformation.Create(context.Object)
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.FirmStatistics).Returns(Inquire(
+                new Facts::FirmStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                new Facts::FirmStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                new Facts::FirmStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }
+                ));
+
+            Transformation.Create(context.Object, bitContext.Object)
                 .VerifyTransform(x => x.FirmCategories, Inquire(
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2, Hits = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3, Shows = 2 },
                     new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
@@ -307,14 +314,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly ICustomerIntelligenceContext _transformation;
 
-            private Transformation(IErmFactsContext source)
+            private Transformation(IErmFactsContext source, IBitFactsContext bitFactsContext)
             {
-                _transformation = new CustomerIntelligenceTransformationContext(source, Mock.Of<IBitFactsContext>());
+                _transformation = new CustomerIntelligenceTransformationContext(source, bitFactsContext);
             }
 
-            public static Transformation Create(IErmFactsContext source = null)
+            public static Transformation Create(IErmFactsContext source = null, IBitFactsContext bitFactsContext = null)
             {
-                return new Transformation(source ?? new Mock<IErmFactsContext>().Object);
+                return new Transformation(source ?? new Mock<IErmFactsContext>().Object, bitFactsContext ?? Mock.Of<IBitFactsContext>());
             }
 
             public Transformation VerifyTransform<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)
