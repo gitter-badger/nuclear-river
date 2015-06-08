@@ -282,10 +282,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
-            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 }));
+            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
+                                                                               new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+            
+            // Десять фирм в проекте, каждая с рубрикой #3
+            context.SetupGet(x => x.Firms).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }).ToArray()));
+            context.SetupGet(x => x.FirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::FirmAddress { Id = i, FirmId = i }).ToArray()));
+            context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }).ToArray()));
 
-            Transformation.Create(context.Object)
-                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 }));
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.CategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
+
+            Transformation.Create(context.Object, bitContext.Object)
+                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, AdvertisersShare = 0.1f, FirmCount = 10 },
+                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4, AdvertisersShare = 0, FirmCount = 0 }));
         }
 
         [Test]
