@@ -24,18 +24,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         internal class Builder<TFact>
             where TFact : IErmFactObject, IIdentifiable
         {
-            private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
-            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
+            private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
+            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _query;
 
-            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> query)
             {
-                _factProvider = factQueryProvider;
+                _query = query;
                 return this;
             }
 
             public Builder<TFact> HasSource(Func<IErmFactsContext, IQueryable<TFact>> factQueryableProvider)
             {
-                _factProvider = (context, ids) =>
+                _query = (context, ids) =>
                                 {
                                     var query = factQueryableProvider.Invoke(context);
                                     var filteredQuery = query.Where(fact => ids.Contains(fact.Id));
@@ -45,21 +45,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
-                where TAggregate: ICustomerIntelligenceObject
+                where TAggregate : ICustomerIntelligenceObject
             {
-                _collection.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
+                _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
                 return this;
             }
 
             public Builder<TFact> HasMatchedAggregate<TAggregate>()
             {
-                _collection.Add(FactDependencyInfo.Create<TAggregate>());
+                _dependencies.Add(FactDependencyInfo.Create<TAggregate>());
                 return this;
             }
 
-            public static implicit operator ErmFactInfo(Builder<TFact> fact)
+            public static implicit operator ErmFactInfo(Builder<TFact> builder)
             {
-                return new ErmFactInfoImpl<TFact>(fact._factProvider, fact._collection);
+                return new ErmFactInfoImpl<TFact>(builder._query, builder._dependencies);
             }
         }
 
