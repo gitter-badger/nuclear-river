@@ -29,6 +29,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal partial class FactsTransformationTests : BaseTransformationFixture
     {
         [Test]
+        public void ShouldProduceDestroyAggregateIfReceivedUpdateForDeletedFact()
+        {
+            var source = Mock.Of<IErmFactsContext>();
+
+            FactsDb.Has(new Facts::Firm { Id = 1 });
+
+            Transformation.Create(source, FactsDb)
+                          .Transform(Fact.Update<Facts::Firm>(1))
+                          .Verify(Inquire(Aggregate.Destroy<CI::Firm>(1)));
+        }
+
+        [Test]
         public void ShouldInitializeClientIfClientCreated()
         {
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.Clients == Inquire(new Facts::Client { Id = 1 }));
