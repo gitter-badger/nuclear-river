@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             if (bitContext == null)
             {
                 throw new ArgumentNullException("bitContext");
-            }
+        }
 
             _ermContext = ermContext;
             _bitContext = bitContext;
@@ -59,13 +59,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from client in _ermContext.Clients
+                       let rates = from firm in _ermContext.Firms
+                                   join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                   join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
+                                       equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   where client.Id == firm.ClientId
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Client
                               {
                                   Id = client.Id,
                                   Name = client.Name,
-                                  //CategoryGroupId = null
+                                  CategoryGroupId = rates.FirstOrDefault()
                               };
             }
         }
@@ -108,8 +116,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from firm in _ermContext.Firms
                        join project in _ermContext.Projects on firm.OrganizationUnitId equals project.OrganizationUnitId
-                       join client in _ermContext.Clients on firm.ClientId equals client.Id into firmClients
-                       from firmClient in firmClients.DefaultIfEmpty()
+                       let firmClient = _ermContext.Clients.SingleOrDefault(client => client.Id == firm.ClientId)
+                       let rates = from firmAddress in _ermContext.FirmAddresses.Where(firmAddress => firmAddress.FirmId == firm.Id)
+                                   join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
+                                       new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Firm
                               {
                                   Id = firm.Id,
@@ -120,7 +134,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _ermContext.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
-                                  //CategoryGroupId = null,
+                                  CategoryGroupId = rates.FirstOrDefault(),
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
@@ -224,9 +238,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                            new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
                        let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new ProjectCategory
-                              {
-                                  ProjectId = project.Id,
-                                  CategoryId = categoryOrganizationUnit.CategoryId,
+                       {
+                           ProjectId = project.Id,
+                           CategoryId = categoryOrganizationUnit.CategoryId,
                                   FirmCount = firmCount,
                                   AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
                        };

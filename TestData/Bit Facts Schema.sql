@@ -4,27 +4,27 @@ if not exists (select * from sys.schemas where name = 'BIT')
 go
 
 -- drop tables
-if object_id('BIT.CategoryStatistics') is not null drop table BIT.CategoryStatistics;
-if object_id('BIT.FirmStatistics') is not null drop table BIT.FirmStatistics;
+if object_id('BIT.ProjectCategoryStatistics') is not null drop table BIT.ProjectCategoryStatistics;
+if object_id('BIT.FirmCategoryStatistics') is not null drop table BIT.FirmCategoryStatistics;
 go
 
 
--- CategoryStatistics
-create table BIT.CategoryStatistics(
+-- ProjectCategoryStatistics
+create table BIT.ProjectCategoryStatistics(
 	ProjectId bigint not null,
 	CategoryId bigint not null,
-    AdvertisersCount int not null, 
-	constraint PK_CategoryStatistics primary key (ProjectId, CategoryId)
+    AdvertisersCount bigint not null, 
+	constraint PK_ProjectCategoryStatistics primary key (ProjectId, CategoryId)
 )
 go
 
--- FirmStatistics
-create table BIT.FirmStatistics(
+-- FirmCategoryStatistics
+create table BIT.FirmCategoryStatistics(
 	ProjectId bigint not null,
 	FirmId bigint not null,
 	CategoryId bigint not null,
-	Hits int not null,
-	Shows int not null,
-	constraint PK_FirmStatistics primary key (ProjectId, FirmId, CategoryId)
+	Hits bigint not null,
+	Shows bigint not null,
+	constraint PK_FirmCategoryStatistics primary key (FirmId, CategoryId)
 )
 go

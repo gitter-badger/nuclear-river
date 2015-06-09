@@ -7,10 +7,10 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal abstract class FactInfo
+    internal abstract class ErmFactInfo
     {
         public static Builder<TFact> OfType<TFact>(params object[] x)
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             return new Builder<TFact>();
         }
@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
 
         internal class Builder<TFact>
-            where TFact : IFactObject, IIdentifiable
+            where TFact : IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
             private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
@@ -57,18 +57,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return this;
             }
 
-            public static implicit operator FactInfo(Builder<TFact> fact)
+            public static implicit operator ErmFactInfo(Builder<TFact> fact)
             {
-                return new FactInfoImpl<TFact>(fact._factProvider, fact._collection);
+                return new ErmFactInfoImpl<TFact>(fact._factProvider, fact._collection);
             }
         }
 
-        private class FactInfoImpl<T> : FactInfo
+        private class ErmFactInfoImpl<T> : ErmFactInfo
         {
             private readonly Func<IErmFactsContext, IEnumerable<long>, IQueryable> _query;
             private readonly IEnumerable<FactDependencyInfo> _aggregates;
 
-            public FactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
+            public ErmFactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
             {
                 _query = query;
                 _aggregates = aggregates ?? Enumerable.Empty<FactDependencyInfo>();

@@ -23,55 +23,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
         {
-            var transformationContext = new BitFactsTransformationContext(dto);
+            var firmCategoryStatistics = dto.ToFirmCategoryStatistics();
 
             var firmsBefore = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
             
             _mapper.DeleteAll(_bitFactsContext.FirmStatistics);
-            _mapper.InsertAll(transformationContext.FirmStatistics);
+            _mapper.InsertAll(firmCategoryStatistics.AsQueryable());
 
-            var firmsAfter = transformationContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            var firmsAfter = firmCategoryStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
             return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
         }
 
         public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
         {
-            var transformationContext = new BitFactsTransformationContext(dto);
+            var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
 
             _mapper.DeleteAll(_bitFactsContext.CategoryStatistics);
-            _mapper.InsertAll(transformationContext.CategoryStatistics);
+            _mapper.InsertAll(projectCategoryStatistics.AsQueryable());
 
             return new [] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };
         }
     }
-
-    public class FirmStatisticsDto
-    {
-        public long ProjectId { get; set; }
-
-        public IEnumerable<FirmDto> Firms { get; set; }
-
-        public class FirmDto
-        {
-            public long FirmId { get; set; }
-            public long CategoryId { get; set; }
-            public int Hits { get; set; }
-            public int Shows { get; set; }
-        }
-    }
-
-    public class CategoryStatisticsDto
-    {
-        public long ProjectId { get; set; }
-        public IEnumerable<CategoryDto> Categories { get; set; }
-
-        public class CategoryDto
-        {
-            public long CategoryId { get; set; }
-
-            public int AdvertisersCount { get; set; }
-        }
-    }
-
 }

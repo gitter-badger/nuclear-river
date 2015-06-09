@@ -247,9 +247,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var bitContext = new Mock<IBitFactsContext>();
             bitContext.SetupGet(x => x.FirmStatistics).Returns(Inquire(
-                new Facts::FirmStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                new Facts::FirmStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
-                new Facts::FirmStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }
                 ));
 
             Transformation.Create(context.Object, bitContext.Object)
@@ -291,7 +291,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }).ToArray()));
 
             var bitContext = new Mock<IBitFactsContext>();
-            bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.CategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
+            bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
 
             Transformation.Create(context.Object, bitContext.Object)
                           .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, AdvertisersShare = 0.1f, FirmCount = 10 },

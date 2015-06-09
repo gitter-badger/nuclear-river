@@ -15,14 +15,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
-        public IQueryable<FirmStatistics> FirmStatistics
+        public IQueryable<FirmCategoryStatistics> FirmStatistics
         {
-            get { return _context.GetTable<FirmStatistics>(); }
+            get { return _context.GetTable<FirmCategoryStatistics>(); }
         }
 
-        public IQueryable<CategoryStatistics> CategoryStatistics
+        public IQueryable<ProjectCategoryStatistics> CategoryStatistics
         {
-            get { return _context.GetTable<CategoryStatistics>(); }
+            get { return _context.GetTable<ProjectCategoryStatistics>(); }
         }
     }
 }

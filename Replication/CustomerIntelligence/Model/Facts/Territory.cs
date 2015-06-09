@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 {
-    public sealed class Territory : IFactObject
+    public sealed class Territory : IErmFactObject
     {
         public long Id { get; set; }
 
