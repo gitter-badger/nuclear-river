@@ -29,7 +29,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation.CustomCase
 
             var transformation = new ErmFactsTransformation(source.Object, target.Object, dataMapper.Object);
 
-            transformation.Transform(new[] { new CreateFact(typeof(Facts.Firm), 1), });
+            transformation.Transform(new[] { new FactOperation(typeof(Facts.Firm), 1), });
 
             dataMapper.Verify(x => x.Update(new Facts.Firm { Id = 1 }), Times.AtLeastOnce());
             dataMapper.Verify(x => x.Insert(It.IsAny<Facts.Firm>()), Times.Never());

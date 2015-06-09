@@ -675,7 +675,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactDeleted()
         {
-            var source = Mock.Of<IErmFactsContext>(ctx => ctx.FirmContacts == Inquire(new Facts::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })

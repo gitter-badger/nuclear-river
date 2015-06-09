@@ -31,24 +31,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
-        public void ShouldSortFactOperationsAccordingPriority()
-        {
-            var comparer = new FactOperationPriorityComparer();
-            var data = new FactOperation[]
-                       {
-                           new CreateFact(typeof(object), 0), 
-                           new DeleteFact(typeof(object), 0), 
-                           new UpdateFact(typeof(object), 0), 
-                       };
-
-            var sortedData = data.OrderByDescending(x => x.GetType(), comparer).ToArray();
-
-            Assert.That(sortedData[0], Is.InstanceOf<CreateFact>());
-            Assert.That(sortedData[1], Is.InstanceOf<UpdateFact>());
-            Assert.That(sortedData[2], Is.InstanceOf<DeleteFact>());
-        }
-
-        [Test]
         public void ShouldSortFactTypesAccordingPriority()
         {
             var comparer = new FactTypePriorityComparer();

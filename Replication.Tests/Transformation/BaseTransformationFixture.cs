@@ -10,17 +10,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             public static FactOperation Create<T>(long entityId)
             {
-                return new CreateFact(typeof(T), entityId);
+                return new FactOperation(typeof(T), entityId);
             }
 
             public static FactOperation Update<T>(long entityId)
             {
-                return new UpdateFact(typeof(T), entityId);
+                return new FactOperation(typeof(T), entityId);
             }
 
             public static FactOperation Delete<T>(long entityId)
             {
-                return new DeleteFact(typeof(T), entityId);
+                return new FactOperation(typeof(T), entityId);
             }
         }
 
