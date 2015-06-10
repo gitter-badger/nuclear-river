@@ -8,17 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         protected static class Fact
         {
-            public static FactOperation Create<T>(long entityId)
-            {
-                return new FactOperation(typeof(T), entityId);
-            }
-
-            public static FactOperation Update<T>(long entityId)
-            {
-                return new FactOperation(typeof(T), entityId);
-            }
-
-            public static FactOperation Delete<T>(long entityId)
+            public static FactOperation Operation<T>(long entityId)
             {
                 return new FactOperation(typeof(T), entityId);
             }

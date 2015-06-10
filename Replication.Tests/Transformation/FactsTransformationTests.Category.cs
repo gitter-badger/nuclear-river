@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.Categories == Inquire(new Facts::Category { Id = 1 }));
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::Category>(1))
+                          .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Category>(1)));
         }
 
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Category { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::Category>(1))
+                          .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Category>(1)));
         }
 
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Category { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::Category>(1))
+                          .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Category>(1)));
         }
     }

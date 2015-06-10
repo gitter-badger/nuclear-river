@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.Territories == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 2 }));
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Territory>(1)));
         }
 
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 2 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Territory>(1)));
         }
 
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1)));
         }
     }
