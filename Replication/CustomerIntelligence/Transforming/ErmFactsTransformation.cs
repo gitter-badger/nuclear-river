@@ -68,9 +68,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var idsToUpdate = result.Intersection.ToArray();
             var idsToDelete = result.Complement.ToArray();
             
-            var createResult = idsToCreate.Any() ? CreateFact(idsToCreate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
-            var updateResult = idsToUpdate.Any() ? UpdateFact(idsToUpdate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
-            var deleteResult = idsToDelete.Any() ? DeleteFact(idsToDelete, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
+            var createResult = CreateFact(idsToCreate, query, dependentAggregates);
+            var updateResult = UpdateFact(idsToUpdate, query, dependentAggregates);
+            var deleteResult = DeleteFact(idsToDelete, query, dependentAggregates);
 
             return createResult.Concat(updateResult).Concat(deleteResult);
         }
