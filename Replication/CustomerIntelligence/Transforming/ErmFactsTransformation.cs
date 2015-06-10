@@ -62,13 +62,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             IReadOnlyCollection<long> factIds)
             where T : IErmFactObject
         {
-            var sourceData = new HashSet<long>(query.Invoke(_source, factIds).Select(fact => fact.Id));
-            var targetData = new HashSet<long>(query.Invoke(_target, factIds).Select(fact => fact.Id));
+            var result = MergeTool.Merge<long>(query.Invoke(_source, factIds).Select(fact => fact.Id), query.Invoke(_target, factIds).Select(fact => fact.Id));
 
-            var idsToCreate = sourceData.Where(x => !targetData.Contains(x)).ToArray();
-            var idsToUpdate = sourceData.Where(x => targetData.Contains(x)).ToArray();
-            var idsToDelete = targetData.Where(x => !sourceData.Contains(x)).ToArray();
-
+            var idsToCreate = result.Difference.ToArray();
+            var idsToUpdate = result.Intersection.ToArray();
+            var idsToDelete = result.Complement.ToArray();
+            
             var createResult = idsToCreate.Any() ? CreateFact(idsToCreate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
             var updateResult = idsToUpdate.Any() ? UpdateFact(idsToUpdate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
             var deleteResult = idsToDelete.Any() ? DeleteFact(idsToDelete, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();

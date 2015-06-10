@@ -87,6 +87,7 @@
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
