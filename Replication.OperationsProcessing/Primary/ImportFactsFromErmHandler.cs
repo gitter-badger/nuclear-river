@@ -10,20 +10,20 @@ using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public sealed class ErmToFactReplicationHandler : IMessageAggregatedProcessingResultsHandler
+    public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly SqlStoreSender _sender;
 
-        public ErmToFactReplicationHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
         }
 
-        public IEnumerable<StageResult> Handle(IEnumerable<KeyValuePair<Guid, List<IAggregatableMessage>>> processingResultBuckets)
+        public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultBuckets.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
         }
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
@@ -35,11 +35,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
                 _sender.Push(aggregateOperations, message.TargetFlow);
 
-                return MessageProcessingStage.Handle.ResultFor(bucketId).AsSucceeded();
+                return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)
             {
-                return MessageProcessingStage.Handle.ResultFor(bucketId).AsFailed().WithExceptions(ex);
+                return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
     }

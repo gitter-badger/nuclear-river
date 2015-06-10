@@ -9,8 +9,8 @@ using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
 using NuClear.Jobs.Schedulers;
 using NuClear.Jobs.Unity;
+using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
-using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.Messaging.API.Processing.Actors.Transformers;
 using NuClear.Messaging.API.Processing.Actors.Validators;
 using NuClear.Messaging.API.Processing.Processors;
@@ -27,6 +27,8 @@ using NuClear.Messaging.DI.Factories.Unity.Stages;
 using NuClear.Messaging.DI.Factories.Unity.Transformers;
 using NuClear.Messaging.DI.Factories.Unity.Transformers.Resolvers;
 using NuClear.Messaging.DI.Factories.Unity.Validators;
+using NuClear.Messaging.Transports.CorporateBus;
+using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.ServiceBus;
 using NuClear.Messaging.Transports.ServiceBus.API;
 using NuClear.Metamodeling.Domain.Processors.Concrete;
@@ -36,10 +38,12 @@ using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Metamodeling.Validators;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
+using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf.Surrogates;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model;
+using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Security;
@@ -49,6 +53,8 @@ using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
 using NuClear.Tracing.API;
+using NuClear.WCF.Client;
+using NuClear.WCF.Client.Config;
 
 using Quartz.Spi;
 
@@ -74,6 +80,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureSecurityAspects()
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
+                     .ConfigureWcf()
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -125,6 +132,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<ISchedulerManager, SchedulerManager>(Lifetime.Singleton);
         }
 
+        private static IUnityContainer ConfigureWcf(this IUnityContainer container)
+        {
+            return container
+                .RegisterType<IServiceClientSettingsProvider, ServiceClientSettingsProvider>(Lifetime.Singleton)
+                .RegisterType<IClientProxyFactory, ClientProxyFactory>(Lifetime.Singleton);
+        }
+
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
@@ -132,6 +146,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // primary
             container
+                     .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
@@ -139,11 +154,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // final
             container.RegisterTypeWithDependencies(typeof(SqlStoreReceiver), Lifetime.PerScope, null)
-                     .RegisterTypeWithDependencies(typeof(ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler), Lifetime.PerResolve, null);
+                     .RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
 
 
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)
-                            .RegisterType(typeof(ServiceBusMessageFlowReceiver<>), Lifetime.Singleton)
+                            .RegisterType(typeof(ServiceBusMessageFlowReceiver), Lifetime.Singleton)
+                            .RegisterType(typeof(CorporateBusMessageFlowReceiver), Lifetime.PerResolve)
+                            .RegisterType<ICorporateBusMessageFlowReceiverFactory, UnityCorporateBusMessageFlowReceiverFactory>(Lifetime.Singleton)
                             .RegisterType<IServiceBusMessageFlowReceiverFactory, UnityServiceBusMessageFlowReceiverFactory>(Lifetime.Singleton)
                             .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.Singleton)
                             .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.PerScope)
@@ -152,17 +169,16 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, PrimaryProcessorResolveStrategy>(Lifetime.Singleton)
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowProcessorResolveStrategy, FinalProcessorResolveStrategy>(Lifetime.PerScope)
 
-                            // TODO: Insert *ReceiverResolveStrategy implemented in AS that uses ServiceBusOperationsReceiver
-                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, PrimaryReceiverResolveStrategy>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, CorporateBusReceiverResolveStrategy>(Lifetime.PerScope)
+                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, ServiceBusReceiverResolveStrategy>(Lifetime.PerScope)
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageFlowReceiverResolveStrategy, FinalReceiverResolveStrategy>(Lifetime.PerScope)
 
                             .RegisterType<IMessageValidatorFactory, UnityMessageValidatorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.PerScope)
 
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, PrimaryMessageTransformerResolveStrategy>(Lifetime.PerScope)
-                            .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, FinalMessageTransformerResolveStrategy>(Lifetime.PerScope)
-                            .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope)
-                            .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope);
+                            .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
+                            .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
     }
 }

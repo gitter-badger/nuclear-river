@@ -39,7 +39,7 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
             });
 
             var container = new UnityContainer().ConfigureUnity(receiver);
-            var flowId = typeof(Replicate2CustomerIntelligenceFlow).Name.AsPrimaryProcessingFlowId();
+            var flowId = typeof(ImportFactsFromErmFlow).Name.AsPrimaryProcessingFlowId();
 
             var processor = GetProcessor(container, flowId);
             processor.Process();

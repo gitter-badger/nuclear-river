@@ -29,10 +29,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                   {
                                       new FirmStatisticsDto.FirmDto
                                       {
-                                          FirmId = 2,
-                                          CategoryId = 3,
-                                          Hits = 4,
-                                          Shows = 5
+                                            FirmId = 2,
+                                            Categories = new[]
+                                            {
+                                                new FirmStatisticsDto.FirmDto.CategoryDto
+                                                {
+                                                    CategoryId = 3,
+                                                    Hits = 4,
+                                                    Shows = 5
+                                                }
+                                            }
                                       }
                                   }
                       };

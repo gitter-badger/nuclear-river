@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
             // assert
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));
 
-            var store = trackedUseCase.Operations.First().ChangesContext.UntypedChanges;
+            var store = trackedUseCase.Operations.First().AffectedEntities.Changes;
             Assert.That(store.Count, Is.EqualTo(1));
 
             var change = store.First();
@@ -45,13 +45,11 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
 
             Assert.That(change.Value.Count, Is.EqualTo(1));
 
-            var changesDescriptor = change.Value.First().Value;
+            var changesDetails = change.Value.First().Value;
+            Assert.That(changesDetails.Count, Is.EqualTo(1));
 
-            Assert.That(changesDescriptor.Id, Is.EqualTo(13));
-            Assert.That(changesDescriptor.Details.Count, Is.EqualTo(1));
-
-            var changesType = changesDescriptor.Details.First().ChangesType;
-            Assert.That(changesType, Is.EqualTo(ChangesType.Updated));
+            var changesType = changesDetails.First().ChangeKind;
+            Assert.That(changesType, Is.EqualTo(ChangeKind.Updated));
         }
 
         [Test]
@@ -65,18 +63,18 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
 
             // assert
             Assert.That(trackedUseCase.Operations.Count, Is.EqualTo(1));
-            var store = trackedUseCase.Operations.First().ChangesContext.UntypedChanges;
+            var store = trackedUseCase.Operations.First().AffectedEntities.Changes;
             Assert.That(store.Count, Is.EqualTo(3));
 
             var firmChanges = store.Where(x => x.Key.Id == 146).Select(x => x.Value).Single();
             Assert.That(firmChanges.Count, Is.EqualTo(3));
 
             var firm13Changes = firmChanges.Where(x => x.Key == 13).Select(x => x.Value).Single();
-            var firm13ChangesTypes = firm13Changes.Details.Select(x => x.ChangesType);
+            var firm13ChangesTypes = firm13Changes.Select(x => x.ChangeKind);
 
-            Assert.That(firm13ChangesTypes, Contains.Item(ChangesType.Added));
-            Assert.That(firm13ChangesTypes, Contains.Item(ChangesType.Updated));
-            Assert.That(firm13ChangesTypes, Contains.Item(ChangesType.Deleted));
+            Assert.That(firm13ChangesTypes, Contains.Item(ChangeKind.Added));
+            Assert.That(firm13ChangesTypes, Contains.Item(ChangeKind.Updated));
+            Assert.That(firm13ChangesTypes, Contains.Item(ChangeKind.Deleted));
         }
     }
 }

@@ -56,7 +56,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             {
                 EntityId = 0,
                 MaxAttemptCount = 0,
-                EntityName = EntityType.Instance.None(),
+                EntityType = EntityType.Instance.None(),
                 Flow = _sourceFlowMetadata.MessageFlow,
                 FinalProcessings = flowRecords,
             };

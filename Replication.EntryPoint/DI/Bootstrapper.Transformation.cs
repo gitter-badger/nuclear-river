@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 // No BitTransformationContext registration, it depends on dto
 
                 .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>()))
+                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>(), new ResolvedParameter<BitFactsContext>()))
 
 
                 .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,

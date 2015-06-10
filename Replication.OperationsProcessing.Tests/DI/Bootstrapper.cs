@@ -3,8 +3,8 @@
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks;
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
+using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
-using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.Messaging.API.Processing.Actors.Transformers;
 using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Messaging.API.Processing.Stages;
@@ -37,9 +37,9 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
             {
                 AppropriatedStages = new[]
                 {
-                    MessageProcessingStage.Transforming,
-                    MessageProcessingStage.Processing,
-                    MessageProcessingStage.Handle
+                    MessageProcessingStage.Transformation,
+                    MessageProcessingStage.Accumulation,
+                    MessageProcessingStage.Handling
                 }
             };
 
@@ -66,8 +66,8 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
                         .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.Singleton)
                         .RegisterType<IParentContainerUsedRegistrationsContainer, ParentContainerUsedRegistrationsContainer>(Lifetime.Singleton)
-                        .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope)
-                        .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope);
+                        .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
+                        .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
     }
 }

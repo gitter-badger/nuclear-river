@@ -10,14 +10,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public static IReadOnlyCollection<FirmCategoryStatistics> ToFirmCategoryStatistics(this FirmStatisticsDto dto)
         {
             return dto.Firms
-                      .Select(x => new FirmCategoryStatistics
+                      .SelectMany(x => x.Categories.Select(y => new FirmCategoryStatistics
                                    {
                                        ProjectId = dto.ProjectId,
                                        FirmId = x.FirmId,
-                                       CategoryId = x.CategoryId,
-                                       Hits = x.Hits,
-                                       Shows = x.Shows,
-                                   })
+                                       CategoryId = y.CategoryId,
+                                       Hits = y.Hits,
+                                       Shows = y.Shows,
+                                   }))
                       .ToArray();
         }
 

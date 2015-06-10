@@ -15,16 +15,35 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
     {
         private static readonly HierarchyMetadata MetadataRoot =
             PerformedOperations.Flows
-                               .Primary(MessageFlowMetadata.Config.For<Replicate2CustomerIntelligenceFlow>()
-                                                           .To.Final().Flow<Replicate2CustomerIntelligenceFlow>().Connect)
-                               .Final(MessageFlowMetadata.Config.For<Replicate2CustomerIntelligenceFlow>()
-                                                         .Strategy<PerformedOperationsFilteringStrategy>()
-                                                         .Handler<ErmToFactReplicationHandler>()
-                                                         .To.Final().Flow<FakeFlow>().Connect)
-                               .Final(MessageFlowMetadata.Config.For<FakeFlow>()
-                                                         .Strategy<EmptyStrategy>()
-                                                         .Handler<ReplicateToCustomerIntelligenceMessageAggregatedProcessingResultHandler>());
-        
+                               .Primary(
+
+                                    MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
+                                    .Strategy<ImportFactsFromErmAccumulator>()
+                                    .Handler<ImportFactsFromErmHandler>()
+                                    .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
+                                    .To.Final().Flow<ImportFactsFromErmFlow>().Connect(),
+
+                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
+                                    .Strategy<ImportFactsFromBitAccumulator>()
+                                    .Handler<ImportFactsFromBitHandler>()
+                                    .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
+                                    .To.Final().Flow<ImportFactsFromBitFlow>().Connect()
+
+                                    )
+                               .Final(
+
+                                    MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
+                                    .Strategy<AggregateOperationAccumulator<ImportFactsFromErmFlow>>()
+                                    .Handler<AggregateOperationAggregatableMessageHandler>()
+                                    .To.Final().Flow<ImportFactsFromErmFlow>().Connect(),
+
+                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
+                                    .Strategy<AggregateOperationAccumulator<ImportFactsFromBitFlow>>()
+                                    .Handler<AggregateOperationAggregatableMessageHandler>()
+                                    .To.Final().Flow<ImportFactsFromBitFlow>().Connect()
+
+                                    );
+
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
 
         public PerformedOperationsMessageFlowsMetadataSource()

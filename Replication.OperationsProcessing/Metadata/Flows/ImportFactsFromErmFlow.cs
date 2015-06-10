@@ -4,7 +4,7 @@ using NuClear.Messaging.API.Flows;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
 {
-    public sealed class Replicate2CustomerIntelligenceFlow : MessageFlowBase<Replicate2CustomerIntelligenceFlow>
+    public sealed class ImportFactsFromErmFlow : MessageFlowBase<ImportFactsFromErmFlow>
     {
         public override Guid Id
         {

@@ -5,12 +5,12 @@ using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Metamodeling.Provider;
-using NuClear.Metamodeling.Utils;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Security.API;
 using NuClear.Tracing.API;
+using NuClear.Utils;
 
 using Quartz;
 
@@ -100,9 +100,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                             MessageBatchSize = BatchSize,
                                             AppropriatedStages = new[]
                                                                  {
-                                                                     MessageProcessingStage.Transforming,
-                                                                     MessageProcessingStage.Processing,
-                                                                     MessageProcessingStage.Handle
+                                                                     MessageProcessingStage.Transformation,
+                                                                     MessageProcessingStage.Accumulation,
+                                                                     MessageProcessingStage.Handling
                                                                  },
                                             FirstFaultTolerantStage = MessageProcessingStage.None,
                                             TimeSafetyOffsetHours = TimeSafetyOffsetHours,

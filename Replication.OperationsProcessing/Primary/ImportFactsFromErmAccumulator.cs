@@ -2,7 +2,7 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.Messaging.API.Processing.Actors.Strategies;
+using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
@@ -16,12 +16,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     /// <summary>
     /// Стратегия выполняет фильтрацию операций, приехавших в TUC, и преобразование этих операций в операции над фактами.
     /// </summary>
-    public sealed class PerformedOperationsFilteringStrategy :
-        MessageProcessingStrategyBase<Replicate2CustomerIntelligenceFlow, TrackedUseCase, FactOperationAggregatableMessage>
+    public sealed class ImportFactsFromErmAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromErmFlow, TrackedUseCase, FactOperationAggregatableMessage>
     {
         private readonly ITracer _tracer;
 
-        public PerformedOperationsFilteringStrategy(ITracer tracer)
+        public ImportFactsFromErmAccumulator(ITracer tracer)
         {
             _tracer = tracer;
         }
@@ -31,11 +30,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _tracer.DebugFormat("Processing TUC {0}", message.Id);
 
             var plainChanges =
-                message.Operations.SelectMany(scope => scope.ChangesContext.UntypedChanges)
+                message.Operations.SelectMany(scope => scope.AffectedEntities.Changes)
                        .SelectMany(
                            x => x.Value.SelectMany(
-                               y => y.Value.Details.Select(
-                                   z => new ErmOperation(x.Key, y.Key, z.ChangesType))));
+                               y => y.Value.Select(
+                                   z => new ErmOperation(x.Key, y.Key, z.ChangeKind))));
 
             return new FactOperationAggregatableMessage
                    {
@@ -59,13 +58,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                 var entityType = EntityTypeMap<FactsContext>.AsEntityType(operation.EntityType);
                 switch (operation.Change)
                 {
-                    case ChangesType.Added:
+                    case ChangeKind.Added:
                         yield return new CreateFact(entityType, operation.EntityId);
                         break;
-                    case ChangesType.Updated:
+                    case ChangeKind.Updated:
                         yield return new UpdateFact(entityType, operation.EntityId);
                         break;
-                    case ChangesType.Deleted:
+                    case ChangeKind.Deleted:
                         yield return new DeleteFact(entityType, operation.EntityId);
                         break;
                 }
@@ -74,7 +73,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private class ErmOperation
         {
-            public ErmOperation(IEntityType entityType, long entityId, ChangesType change)
+            public ErmOperation(IEntityType entityType, long entityId, ChangeKind change)
             {
                 EntityType = entityType;
                 EntityId = entityId;
@@ -83,7 +82,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
             public IEntityType EntityType { get; private set; }
             public long EntityId { get; private set; }
-            public ChangesType Change { get; private set; }
+            public ChangeKind Change { get; private set; }
         }
     }
 }
