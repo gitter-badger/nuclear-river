@@ -69,18 +69,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var idsToUpdate = sourceData.Where(x => targetData.Contains(x)).ToArray();
             var idsToDelete = targetData.Where(x => !sourceData.Contains(x)).ToArray();
 
-            return CreateFact(idsToCreate, query, dependentAggregates)
-                .Concat(UpdateFact(idsToUpdate, query, dependentAggregates))
-                .Concat(DeleteFact(idsToDelete, query, dependentAggregates));
+            var createResult = idsToCreate.Any() ? CreateFact(idsToCreate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
+            var updateResult = idsToUpdate.Any() ? UpdateFact(idsToUpdate, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
+            var deleteResult = idsToDelete.Any() ? DeleteFact(idsToDelete, query, dependentAggregates) : Enumerable.Empty<AggregateOperation>();
+
+            return createResult.Concat(updateResult).Concat(deleteResult);
         }
 
         private IEnumerable<AggregateOperation> CreateFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!factIds.Any())
-            {
-                return Enumerable.Empty<AggregateOperation>();
-            }
-
             _mapper.InsertAll(query.Invoke(_source, factIds));
 
             return ProcessDependencies(dependentAggregates,
@@ -93,11 +90,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<AggregateOperation> UpdateFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!factIds.Any())
-            {
-                return Enumerable.Empty<AggregateOperation>();
-            }
-
             var before = ProcessDependencies(dependentAggregates.Where(x => !x.IsDirectDependency),
                                              factIds,
                                              (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id));
@@ -113,11 +105,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<AggregateOperation> DeleteFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!factIds.Any())
-            {
-                return Enumerable.Empty<AggregateOperation>();
-            }
-
             var result = ProcessDependencies(dependentAggregates,
                                              factIds,
                                              (dependency, id) =>
