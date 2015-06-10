@@ -33,12 +33,12 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         public static void DeleteAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, query);
+            var items = query.Cast<IObject>().ToArray();
+            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
         }
 
-        private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable query)
+        private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable items)
         {
-            var items = query.Cast<IObject>().ToArray();
             foreach (var item in items)
             {
                 method.Invoke(mapper, new[] { item });

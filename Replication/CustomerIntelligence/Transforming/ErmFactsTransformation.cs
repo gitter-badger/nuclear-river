@@ -62,79 +62,70 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             IReadOnlyCollection<long> factIds)
             where T : IErmFactObject
         {
-            var sourceData = query.Invoke(_source, factIds).ToDictionary(fact => fact.Id);
-            var targetData = query.Invoke(_target, factIds).ToDictionary(fact => fact.Id);
+            var sourceData = new HashSet<long>(query.Invoke(_source, factIds).Select(fact => fact.Id));
+            var targetData = new HashSet<long>(query.Invoke(_target, factIds).Select(fact => fact.Id));
 
-            var dataToCreate = sourceData.Where(x => !targetData.ContainsKey(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-            var dataToUpdate = sourceData.Where(x => targetData.ContainsKey(x.Key)).ToDictionary(x => x.Key, x => x.Value);
-            var dataToDelete = targetData.Where(x => !sourceData.ContainsKey(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+            var idsToCreate = sourceData.Where(x => !targetData.Contains(x)).ToArray();
+            var idsToUpdate = sourceData.Where(x => targetData.Contains(x)).ToArray();
+            var idsToDelete = targetData.Where(x => !sourceData.Contains(x)).ToArray();
 
-            return CreateFact(dataToCreate, dependentAggregates)
-                .Concat(UpdateFact(dataToUpdate, dependentAggregates))
-                .Concat(DeleteFact(dataToDelete, dependentAggregates));
+            return CreateFact(idsToCreate, query, dependentAggregates)
+                .Concat(UpdateFact(idsToUpdate, query, dependentAggregates))
+                .Concat(DeleteFact(idsToDelete, query, dependentAggregates));
         }
 
-        private IEnumerable<AggregateOperation> CreateFact<T>(IDictionary<long, T> data, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
+        private IEnumerable<AggregateOperation> CreateFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!data.Any())
+            if (!factIds.Any())
             {
                 return Enumerable.Empty<AggregateOperation>();
             }
 
-            foreach (var record in data.Values)
-            {
-                _mapper.Insert(record);
-            }
+            _mapper.InsertAll(query.Invoke(_source, factIds));
 
             return ProcessDependencies(dependentAggregates,
-                                       data.Keys,
+                                       factIds,
                                        (dependency, id) =>
                                        dependency.IsDirectDependency
                                            ? (AggregateOperation)new InitializeAggregate(dependency.AggregateType, id)
                                            : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id));
         }
 
-        private IEnumerable<AggregateOperation> UpdateFact<T>(IDictionary<long, T> data, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
+        private IEnumerable<AggregateOperation> UpdateFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!data.Any())
+            if (!factIds.Any())
             {
                 return Enumerable.Empty<AggregateOperation>();
             }
 
             var before = ProcessDependencies(dependentAggregates.Where(x => !x.IsDirectDependency),
-                                             data.Keys,
+                                             factIds,
                                              (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id));
 
-            foreach (var record in data.Values)
-            {
-                _mapper.Update(record);
-            }
+            _mapper.UpdateAll(query.Invoke(_source, factIds));
 
             var after = ProcessDependencies(dependentAggregates,
-                                            data.Keys,
+                                            factIds,
                                             (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id));
 
             return before.Concat(after);
         }
 
-        private IEnumerable<AggregateOperation> DeleteFact<T>(IDictionary<long, T> data, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
+        private IEnumerable<AggregateOperation> DeleteFact<T>(IReadOnlyCollection<long> factIds, Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            if (!data.Any())
+            if (!factIds.Any())
             {
                 return Enumerable.Empty<AggregateOperation>();
             }
 
             var result = ProcessDependencies(dependentAggregates,
-                                             data.Keys,
+                                             factIds,
                                              (dependency, id) =>
                                              dependency.IsDirectDependency
                                                  ? (AggregateOperation)new DestroyAggregate(dependency.AggregateType, id)
                                                  : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id));
 
-            foreach (var record in data.Values)
-            {
-                _mapper.Delete(record);
-            }
+            _mapper.DeleteAll(query.Invoke(_target, factIds));
 
             return result;
         }
