@@ -117,7 +117,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return result;
         }
 
-        private IEnumerable<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, IEnumerable<long> ids, Func<FactDependencyInfo, long, AggregateOperation> build)
+        private IReadOnlyCollection<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, IEnumerable<long> ids, Func<FactDependencyInfo, long, AggregateOperation> build)
         {
             return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id))).ToArray();
         }
