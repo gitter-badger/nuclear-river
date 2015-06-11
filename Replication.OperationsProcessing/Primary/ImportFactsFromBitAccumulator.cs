@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -15,7 +14,18 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         protected override CorporateBusDtoMessage Process(CorporateBusPerformedOperationsMessage message)
         {
             var xmls = message.Packages.SelectMany(x => x.ConvertToXElements());
-            var dtos = xmls.Select(ParseXml);
+
+            var dtos = xmls.Select(x =>
+            {
+                ICorporateBusDto dto;
+                return new
+                {
+                    Parsed = TryParseXml(x, out dto),
+                    Dto = dto,
+                };
+            })
+            .Where(x => x.Parsed)
+            .Select(x => x.Dto);
 
             return new CorporateBusDtoMessage
             {
@@ -25,65 +35,75 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             };
         }
 
-        private static object ParseXml(XElement xml)
+        private static bool TryParseXml(XElement xml, out ICorporateBusDto dto)
         {
             switch (xml.Name.LocalName.ToLowerInvariant())
             {
                 case "firmpopularity":
-                    return ParseFirmPopularity(xml);
+                    return TryParseFirmPopularity(xml, out dto);
                 case "rubricpopularity":
-                    return ParseRubricPopularity(xml);
+                    return TryParseRubricPopularity(xml, out dto);
                 default:
-                    throw new ArgumentOutOfRangeException(string.Format("Unsupported type of corporate bus message '{0}'", xml.Name.LocalName));
+                    dto = null;
+                    return false;
             }
         }
 
-        private static object ParseFirmPopularity(XElement xml)
+        private static bool TryParseFirmPopularity(XElement xml, out ICorporateBusDto dto)
         {
-            var dto = new FirmStatisticsDto();
-            dto.ProjectId = (long)xml.Attribute("BranchCode");
-            dto.Firms = xml.Descendants("Firm").Select(x =>
+            dto = new FirmStatisticsDto
             {
-                var firmDto = new FirmStatisticsDto.FirmDto();
-                firmDto.FirmId = (long)x.Attribute("Code");
-                firmDto.Categories = x.Descendants("Rubric").Select(y =>
+                ProjectId = (long)xml.Attribute("BranchCode"),
+                Firms = xml.Descendants("Firm").Select(x =>
                 {
-                    var rubricDto = new FirmStatisticsDto.FirmDto.CategoryDto();
-                    rubricDto.CategoryId = (long)y.Attribute("Code");
-                    rubricDto.Hits = (long)y.Attribute("ClickCount");
-                    rubricDto.Shows = (long)y.Attribute("ImpressionCount");
+                    var firmDto = new FirmStatisticsDto.FirmDto
+                    {
+                        FirmId = (long)x.Attribute("Code"),
+                        Categories = x.Descendants("Rubric").Select(y =>
+                        {
+                            var rubricDto = new FirmStatisticsDto.FirmDto.CategoryDto
+                            {
+                                CategoryId = (long)y.Attribute("Code"),
+                                Hits = (long)y.Attribute("ClickCount"),
+                                Shows = (long)y.Attribute("ImpressionCount")
+                            };
 
-                    return rubricDto;
-                }).ToList();
+                            return rubricDto;
+                        }).ToList()
+                    };
 
-                return firmDto;
-            }).ToList();
+                    return firmDto;
+                }).ToList(),
+            };
 
-            return dto;
+            return true;
         }
 
-        private static object ParseRubricPopularity(XElement xml)
+        private static bool TryParseRubricPopularity(XElement xml, out ICorporateBusDto dto)
         {
-            var dto = new CategoryStatisticsDto();
-
             var branchElement = xml.Element("Branch");
             if (branchElement == null)
             {
-                // FIXME {y.baranihin, 09.06.2015}: надо решить настраивать фильтрацию на шине или не настраивать и фильтровать самим здесь
-                throw new ArgumentException("Element 'Branch' is required");
+                dto = null;
+                return false;
             }
-            dto.ProjectId = (long)branchElement.Attribute("Code");
 
-            dto.Categories = xml.Descendants("Rubric").Select(x =>
+            dto = new CategoryStatisticsDto
             {
-                var rubricDto = new CategoryStatisticsDto.CategoryDto();
-                rubricDto.CategoryId = (long)x.Attribute("Code");
-                rubricDto.AdvertisersCount = (long)x.Attribute("AdvFirmCount");
+                ProjectId = (long)branchElement.Attribute("Code"),
+                Categories = xml.Descendants("Rubric").Select(x =>
+                {
+                    var rubricDto = new CategoryStatisticsDto.CategoryDto
+                    {
+                        CategoryId = (long)x.Attribute("Code"),
+                        AdvertisersCount = (long)x.Attribute("AdvFirmCount")
+                    };
 
-                return rubricDto;
-            }).ToList();
+                    return rubricDto;
+                }).ToList()
+            };
 
-            return dto;
+            return true;
         }
     }
 }

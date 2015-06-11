@@ -31,17 +31,9 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
 {
     public static class Bootstrapper
     {
-        public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver)
+        public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver, MessageProcessingStage[] stages)
         {
-            var settings = new PerformedOperationsPrimaryFlowProcessorSettings
-            {
-                AppropriatedStages = new[]
-                {
-                    MessageProcessingStage.Transformation,
-                    MessageProcessingStage.Accumulation,
-                    MessageProcessingStage.Handling
-                }
-            };
+            var settings = new PerformedOperationsPrimaryFlowProcessorSettings { AppropriatedStages = stages };
 
             var metadataProvider = new MetadataProvider(new IMetadataSource[]
             {
@@ -53,8 +45,6 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
             });
 
             return container
-                        .RegisterType<ITrackedUseCaseParser, TrackedUseCaseParser>(Lifetime.Singleton)
-
                         .RegisterType<ITracer, NullTracer>()
                         .RegisterInstance<IMetadataProvider>(metadataProvider)
                         .RegisterInstance<IPerformedOperationsFlowProcessorSettings>(settings)
