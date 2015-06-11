@@ -33,5 +33,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     () => { throw new InvalidOperationException("The cardinality was not specified."); });
             }
         }
+
+        public bool ContainsTarget
+        {
+            get { return ResolveFeature<EntityRelationContainmentFeature, bool>(_ => true, false); }
+        }
     }
 }
