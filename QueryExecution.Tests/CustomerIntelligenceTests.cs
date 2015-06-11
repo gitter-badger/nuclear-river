@@ -27,10 +27,8 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
     {
         private readonly IDictionary<Uri, IEdmModel> Models = BuildModels(MetadataProvider, BusinessDirectoryId, CustomerIntelligenceId);
 
-        [TestCase("Category", null, Result = "Category[]")]
         [TestCase("CategoryGroup", null, Result = "CategoryGroup[]")]
         [TestCase("Project", null, Result = "Project[]")]
-        [TestCase("Territory", null, Result = "Territory[]")]
         public string ShouldBuildQuery(string type, string filter)
         {
             return BuildQuery(CustomerIntelligence, type, filter);

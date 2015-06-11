@@ -200,7 +200,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string ProjectTerritory = TableSchema + "." + "Territory";
                 public const string Firm = TableSchema + "." + "Firm";
                 public const string FirmBalance = TableSchema + "." + "FirmBalance";
-                public const string FirmCategory = TableSchema + "." + "FirmCategoryView";
+                public const string FirmCategory = TableSchema + "." + "FirmCategory";
                 public const string Client = TableSchema + "." + "Client";
                 public const string Contact = TableSchema + "." + "Contact";
 
