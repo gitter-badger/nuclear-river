@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                     .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
                                     .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
                                     .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
-                            ).AsMany()
+                            ).AsMany().AsContainment()
                         )
                         .Relation(EntityRelationElement.Config.Name("Territories")
                             .DirectTo(
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                     .HasKey("Id")
                                     .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                            ).AsMany()
+                            ).AsMany().AsContainment()
                         )
                         .Relation(EntityRelationElement.Config.Name("Firms")
                             .DirectTo(
@@ -100,7 +100,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                     .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                                     .Relation(EntityRelationElement.Config.Name("Territory").DirectTo(EntityElement.Config.Name(EntityName.ProjectTerritory)).AsOne())
                             )
-                            .AsMany()
+                            .AsMany().AsContainment()
                         )
             );
 

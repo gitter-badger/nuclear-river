@@ -13,6 +13,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
         private EntityRelationCardinality? _cardinality;
         private EntityElement _targetEntityElement;
         private EntityElementBuilder _targetEntityElementConfig;
+        private bool _containsTarget;
 
         internal Uri TargetEntityReference
         {
@@ -76,6 +77,12 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             return this;
         }
 
+        public EntityRelationElementBuilder AsContainment()
+        {
+            _containsTarget = true;
+            return this;
+        }
+
         protected override EntityRelationElement Create()
         {
             if (string.IsNullOrEmpty(_name))
@@ -92,6 +99,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
             }
 
             AddFeatures(new EntityRelationCardinalityFeature(_cardinality.Value, _targetEntityElement ?? _targetEntityElementConfig));
+            
+            if (_containsTarget)
+            {
+                AddFeatures(new EntityRelationContainmentFeature());
+            }
 
             return new EntityRelationElement(_name.AsUri().AsIdentity(), Features);
         }
