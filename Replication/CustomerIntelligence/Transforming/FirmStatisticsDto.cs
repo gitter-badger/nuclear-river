@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public interface ICorporateBusDto { }
-
     public sealed class FirmStatisticsDto : ICorporateBusDto
     {
         public long ProjectId { get; set; }
