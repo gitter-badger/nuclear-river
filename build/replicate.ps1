@@ -13,7 +13,7 @@ function Replicate-ErmToFacts {
 	[void]$ermConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Erm)
 
 	$ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
-	$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
+	$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmFactsTransformationContext($ermContext)
 
 	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
@@ -27,7 +27,7 @@ function Replicate-FactsToCI {
 	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
 
-	$factsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsContext($factsConnection)
+	$factsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmFactsContext($factsConnection)
 	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($factsContext)
 
 	$ciConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
