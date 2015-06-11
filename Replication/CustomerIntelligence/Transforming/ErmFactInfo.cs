@@ -18,10 +18,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public abstract Type FactType { get; }
 
-        public abstract Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query { get; }
-
-        public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
-
         public abstract IEnumerable<AggregateOperation> ApplyTo(ErmFactsTransformation transformation, IReadOnlyCollection<long> ids);
 
         internal class Builder<TFact>
@@ -81,16 +77,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             public override Type FactType
             {
                 get { return typeof(T); }
-            }
-
-            public override Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query
-            {
-                get { return _query; }
-            }
-
-            public override IEnumerable<FactDependencyInfo> Aggregates
-            {
-                get { return _aggregates; }
             }
 
             public override IEnumerable<AggregateOperation> ApplyTo(ErmFactsTransformation transformation, IReadOnlyCollection<long> ids)
