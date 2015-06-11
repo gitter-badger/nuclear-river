@@ -8,6 +8,7 @@ using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
+using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
@@ -15,11 +16,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly SqlStoreSender _sender;
+        private readonly ITracer _tracer;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
+            _tracer = tracer;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -40,6 +43,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             }
             catch (Exception ex)
             {
+                _tracer.Error(ex, "Error then import facts for BIT");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
