@@ -7,22 +7,30 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 {
     public sealed class CustomerIntelligenceTransformationContext : ICustomerIntelligenceContext
     {
-        private readonly IErmFactsContext _context;
+        private readonly IErmFactsContext _ermContext;
+        private readonly IBitFactsContext _bitContext;
 
-        public CustomerIntelligenceTransformationContext(IErmFactsContext context)
+        public CustomerIntelligenceTransformationContext(IErmFactsContext ermContext, IBitFactsContext bitContext)
         {
-            if (context == null)
+            if (ermContext == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException("ermContext");
             }
-            _context = context;
+
+            if (bitContext == null)
+            {
+                throw new ArgumentNullException("bitContext");
+        }
+
+            _ermContext = ermContext;
+            _bitContext = bitContext;
         }
 
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get
             {
-                return from categoryGroup in _context.CategoryGroups
+                return from categoryGroup in _ermContext.CategoryGroups
                        select new CategoryGroup
                        {
                            Id = categoryGroup.Id,
@@ -36,13 +44,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from client in _context.Clients
-                       let rates = from firm in _context.Firms
-                                   join firmAddress in _context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                                   join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                   join categoryOrganizationUnit in _context.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
+                return from client in _ermContext.Clients
+                       let rates = from firm in _ermContext.Firms
+                                   join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                   join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
                                        equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
-                                   join categoryGroup in _context.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
                                    where client.Id == firm.ClientId
                                    orderby categoryGroup.Rate descending
                                    select categoryGroup.Id
@@ -59,7 +67,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from contact in _context.Contacts
+                return from contact in _ermContext.Contacts
                        select new Contact
                               {
                                   Id = contact.Id,
@@ -76,29 +84,29 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 // FIXME {all, 03.04.2015}: the obtained SQL is too complex and slow
 
-                var clientsHavingPhone = from contact in _context.Contacts
+                var clientsHavingPhone = from contact in _ermContext.Contacts
                                          where contact.HasPhone
                                          select contact.ClientId;
-                var clientsHavingWebsite = from contact in _context.Contacts
+                var clientsHavingWebsite = from contact in _ermContext.Contacts
                                            where contact.HasWebsite
                                            select contact.ClientId;
 
-                var firmsHavingPhone = from firmContact in _context.FirmContacts.Where(x => x.HasPhone)
-                                       join firmAddress in _context.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
+                var firmsHavingPhone = from firmContact in _ermContext.FirmContacts.Where(x => x.HasPhone)
+                                       join firmAddress in _ermContext.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
                                        select firmAddress.FirmId;
-                var firmsHavingWebsite = from firmContact in _context.FirmContacts.Where(x => x.HasWebsite)
-                                         join firmAddress in _context.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
+                var firmsHavingWebsite = from firmContact in _ermContext.FirmContacts.Where(x => x.HasWebsite)
+                                         join firmAddress in _ermContext.FirmAddresses on firmContact.FirmAddressId equals firmAddress.Id
                                          select firmAddress.FirmId;
 
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
-                return from firm in _context.Firms
-                       join project in _context.Projects on firm.OrganizationUnitId equals project.OrganizationUnitId
-                       let firmClient = _context.Clients.SingleOrDefault(client => client.Id == firm.ClientId)
-                       let rates = from firmAddress in _context.FirmAddresses.Where(firmAddress => firmAddress.FirmId == firm.Id)
-                                   join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                   join categoryOrganizationUnit in _context.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
+                return from firm in _ermContext.Firms
+                       join project in _ermContext.Projects on firm.OrganizationUnitId equals project.OrganizationUnitId
+                       let firmClient = _ermContext.Clients.SingleOrDefault(client => client.Id == firm.ClientId)
+                       let rates = from firmAddress in _ermContext.FirmAddresses.Where(firmAddress => firmAddress.FirmId == firm.Id)
+                                   join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
                                        new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
-                                   join categoryGroup in _context.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
                                    orderby categoryGroup.Rate descending
                                    select categoryGroup.Id
                        select new Firm
@@ -107,10 +115,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Name = firm.Name,
                                   CreatedOn = firm.CreatedOn,
                                   LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
-                                  LastDistributedOn = _context.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
+                                  LastDistributedOn = _ermContext.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
-                                  AddressCount = _context.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
+                                  AddressCount = _ermContext.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
                                   CategoryGroupId = rates.FirstOrDefault(),
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
@@ -124,11 +132,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from account in _context.Accounts
-                       join legalPerson in _context.LegalPersons on account.LegalPersonId equals legalPerson.Id
-                       join client in _context.Clients on legalPerson.ClientId equals client.Id
-                       join branchOfficeOrganizationUnit in _context.BranchOfficeOrganizationUnits on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
-                       join firm in _context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
+                return from account in _ermContext.Accounts
+                       join legalPerson in _ermContext.LegalPersons on account.LegalPersonId equals legalPerson.Id
+                       join client in _ermContext.Clients on legalPerson.ClientId equals client.Id
+                       join branchOfficeOrganizationUnit in _ermContext.BranchOfficeOrganizationUnits on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
+                       join firm in _ermContext.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                        where firm.ClientId == client.Id
                        select new FirmBalance { AccountId = account.Id, FirmId = firm.Id, Balance = account.Balance };
             }
@@ -138,30 +146,51 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var categories1 = _context.Categories.Where(x => x.Level == 1);
-                var categories2 = _context.Categories.Where(x => x.Level == 2);
-                var categories3 = _context.Categories.Where(x => x.Level == 3);
+                var categories1 = _ermContext.Categories.Where(x => x.Level == 1);
+                var categories2 = _ermContext.Categories.Where(x => x.Level == 2);
+                var categories3 = _ermContext.Categories.Where(x => x.Level == 3);
 
-                var level3 = from firmAddress in _context.FirmAddresses
-                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                var level3 = from firmAddress in _ermContext.FirmAddresses
+                             join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category3.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category3.Id
+                             };
 
-                var level2 = from firmAddress in _context.FirmAddresses
-                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                var level2 = from firmAddress in _ermContext.FirmAddresses
+                             join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category2.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category2.Id
+                             };
 
-                var level1 = from firmAddress in _context.FirmAddresses
-                             join categoryFirmAddress in _context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                var level1 = from firmAddress in _ermContext.FirmAddresses
+                             join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category1.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category1.Id
+                             };
 
                 // perform union using distinct
-                return level3.Union(level2).Union(level1);
+                // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
+                return from firmCategory in level3.Union(level2).Union(level1)
+                       from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
+                       select new FirmCategory
+                       {
+                           FirmId = firmCategory.FirmId,
+                           CategoryId = firmCategory.CategoryId,
+                           Hits = statistics != null ? statistics.Hits : 0,
+                           Shows = statistics != null ? statistics.Shows : 0,
+                       };
             }
         }
 
@@ -169,7 +198,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from project in _context.Projects
+                return from project in _ermContext.Projects
                        select new Project
                        {
                            Id = project.Id,
@@ -182,16 +211,23 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from project in _context.Projects
-                       join categoryOrganizationUnit in _context.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
-                       join category in _context.Categories on categoryOrganizationUnit.CategoryId equals category.Id
+                var firmCategories = from firm in _ermContext.Firms
+                                     join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                     select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
+
+                // Со статистикой по рубрикам выполняется left join, это допустимо при условии, что (ProjectId, CategoryId) - primary key, иначе можно получить дублирование записей.
+                return from project in _ermContext.Projects
+                       join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
+                           new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
+                       let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,
                            CategoryId = categoryOrganizationUnit.CategoryId,
-                           Name = category.Name,
-                           Level = category.Level,
-                           ParentId = category.ParentId
+                                  FirmCount = firmCount,
+                                  AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
                        };
             }
         }
@@ -200,8 +236,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                return from territory in _context.Territories
-                       join project in _context.Projects on territory.OrganizationUnitId equals project.OrganizationUnitId
+                return from territory in _ermContext.Territories
+                       join project in _ermContext.Projects on territory.OrganizationUnitId equals project.OrganizationUnitId
                        select new Territory
                        {
                            Id = territory.Id,

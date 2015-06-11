@@ -72,7 +72,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb));
+                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb), new BitFactsContext(factsDb));
                 ciDb.Reload(loader(context));
             }
         }

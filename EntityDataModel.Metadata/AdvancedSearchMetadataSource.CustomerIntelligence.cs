@@ -64,10 +64,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                             EntityElement.Config.Name(EntityName.FirmCategory)
                                                 .HasKey("CategoryId")
                                                 .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                                .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
-                                                .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                                 .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
                                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                         ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
                                     .Relation(EntityRelationElement.Config.Name("Client")
@@ -154,10 +154,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     EntityElement.Config.Name(TableName.FirmCategory)
                                  .HasKey("FirmId", "CategoryId")
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
                                  .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =

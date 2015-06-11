@@ -18,6 +18,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class CustomerIntelligenceTransformationContextTests : BaseTransformationFixture
     {
         [Test]
+        public void ShouldTransformCategory()
+        {
+            var context = new Mock<IErmFactsContext>();
+            context.SetupGet(x => x.Categories).Returns(Inquire(
+                new Facts::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }
+                ));
+
+            Transformation.Create(context.Object)
+                          .VerifyTransform(x => x.Categories.ById(2), Inquire(new CI::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }));
+        }
+
+        [Test]
         public void ShouldTransformCategoryGroup()
         {
             var context = new Mock<IErmFactsContext>();
@@ -233,11 +245,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 }
                 ));
 
-            Transformation.Create(context.Object)
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.FirmStatistics).Returns(Inquire(
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }
+                ));
+
+            Transformation.Create(context.Object, bitContext.Object)
                 .VerifyTransform(x => x.FirmCategories, Inquire(
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2, Hits = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3, Shows = 2 },
                     new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
@@ -263,11 +282,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
-            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 }));
-            context.SetupGet(x => x.Categories).Returns(Inquire(new Facts::Category { Id  = 3 }));
+            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
+                                                                               new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+            
+            // Десять фирм в проекте, каждая с рубрикой #3
+            context.SetupGet(x => x.Firms).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }).ToArray()));
+            context.SetupGet(x => x.FirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::FirmAddress { Id = i, FirmId = i }).ToArray()));
+            context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }).ToArray()));
 
-            Transformation.Create(context.Object)
-                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 }));
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
+
+            Transformation.Create(context.Object, bitContext.Object)
+                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, AdvertisersShare = 0.1f, FirmCount = 10 },
+                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4, AdvertisersShare = 0, FirmCount = 0 }));
         }
 
         [Test]
@@ -296,14 +324,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly ICustomerIntelligenceContext _transformation;
 
-            private Transformation(IErmFactsContext source)
+            private Transformation(IErmFactsContext source, IBitFactsContext bitFactsContext)
             {
-                _transformation = new CustomerIntelligenceTransformationContext(source);
+                _transformation = new CustomerIntelligenceTransformationContext(source, bitFactsContext);
             }
 
-            public static Transformation Create(IErmFactsContext source = null)
+            public static Transformation Create(IErmFactsContext source = null, IBitFactsContext bitFactsContext = null)
             {
-                return new Transformation(source ?? new Mock<IErmFactsContext>().Object);
+                return new Transformation(source ?? new Mock<IErmFactsContext>().Object, bitFactsContext ?? Mock.Of<IBitFactsContext>());
             }
 
             public Transformation VerifyTransform<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)

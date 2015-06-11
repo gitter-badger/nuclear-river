@@ -3,9 +3,6 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
--- drop views
-if object_id('CustomerIntelligence.FirmCategoryView') is not null drop view CustomerIntelligence.FirmCategoryView;
-
 -- drop tables
 if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
 if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
@@ -15,7 +12,6 @@ if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelli
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
-if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
 go
 
@@ -43,8 +39,6 @@ create table CustomerIntelligence.ProjectCategory(
     , CategoryId bigint not null
     , Name nvarchar(256) not null
     , [Level] int not null
-    , AdvertisersShare float not null constraint DF_ProjectCategories_AdvertisersShare default 0
-    , FirmCount bigint not null constraint DF_ProjectCategories_FirmCount default 0
     , ParentId bigint null
     , constraint PK_ProjectCategories primary key (ProjectId, CategoryId)
 )
@@ -91,6 +85,8 @@ go
 -- FirmCategory
 create table CustomerIntelligence.FirmCategory(
 	FirmId bigint not null
+    , AdvertisersShare float not null constraint DF_FirmCategories_AdvertisersShare default 0
+    , FirmCount bigint not null constraint DF_FirmCategories_FirmCount default 0
     , Hits bigint not null constraint DF_FirmCategories_Hits default 0
     , Shows bigint not null constraint DF_FirmCategories_Shows default 0
     , CategoryId bigint not null
@@ -116,19 +112,3 @@ create table CustomerIntelligence.Contact(
     , constraint PK_Contacts primary key (Id)
 )
 go
-
--- FirmCategoryView
-create view CustomerIntelligence.FirmCategoryView
-as
-select 
-    firmCategory.CategoryId
-    , firmCategory.FirmId
-    , firmCategory.Shows
-    , firmCategory.Hits
-    , projectCategory.AdvertisersShare
-    , projectCategory.FirmCount
-from CustomerIntelligence.FirmCategory firmCategory
-join CustomerIntelligence.Firm firm 
-  on firm.Id = firmCategory.FirmId
-left join CustomerIntelligence.ProjectCategory projectCategory 
-  on projectCategory.ProjectId = firm.ProjectId and projectCategory.CategoryId = firmCategory.CategoryId

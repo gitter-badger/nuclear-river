@@ -23,7 +23,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldProduceRecalulateOperationsBothForExistedAndNewFirmStatistics()
         {
             var dto = new FirmStatisticsDto
-            {
+                      {
                           ProjectId = 1,
                           Firms = new[]
                                   {
