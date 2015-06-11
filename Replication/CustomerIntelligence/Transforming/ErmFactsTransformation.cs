@@ -50,23 +50,33 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                result = result.Concat(factInfo.ApplyTo(this, factIds));
+                var changes = factInfo.DetectChangesWith(this, factIds);
+                var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
+                result = result.Concat(aggregateOperations);
             }
 
             return result;
         }
 
-        internal IEnumerable<AggregateOperation> Transform<T>(
-            Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query,
-            IReadOnlyCollection<FactDependencyInfo> dependentAggregates,
-            IReadOnlyCollection<long> factIds)
+        internal MergeTool.MergeResult<long> DetectChanges<T>(Func<IErmFactsContext, IQueryable<T>> query)
             where T : IErmFactObject
         {
-            var result = MergeTool.Merge<long>(query.Invoke(_source, factIds).Select(fact => fact.Id), query.Invoke(_target, factIds).Select(fact => fact.Id));
+            var result = MergeTool.Merge<long>(
+                query.Invoke(_source).Select(fact => fact.Id), 
+                query.Invoke(_target).Select(fact => fact.Id));
 
-            var idsToCreate = result.Difference.ToArray();
-            var idsToUpdate = result.Intersection.ToArray();
-            var idsToDelete = result.Complement.ToArray();
+            return result;
+        }
+
+        internal IEnumerable<AggregateOperation> ApplyChanges<T>(
+            Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query,
+            IReadOnlyCollection<FactDependencyInfo> dependentAggregates,
+            MergeTool.MergeResult<long> changes)
+            where T : IErmFactObject
+        {
+            var idsToCreate = changes.Difference.ToArray();
+            var idsToUpdate = changes.Intersection.ToArray();
+            var idsToDelete = changes.Complement.ToArray();
             
             var createResult = CreateFact(idsToCreate, query, dependentAggregates);
             var updateResult = UpdateFact(idsToUpdate, query, dependentAggregates);

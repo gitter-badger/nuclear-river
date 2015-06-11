@@ -18,7 +18,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public abstract Type FactType { get; }
 
-        public abstract IEnumerable<AggregateOperation> ApplyTo(ErmFactsTransformation transformation, IReadOnlyCollection<long> ids);
+        public abstract IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes);
+
+        public abstract MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds);
 
         internal class Builder<TFact>
             where TFact : IErmFactObject, IIdentifiable
@@ -79,9 +81,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return typeof(T); }
             }
 
-            public override IEnumerable<AggregateOperation> ApplyTo(ErmFactsTransformation transformation, IReadOnlyCollection<long> ids)
+            public override MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds)
             {
-                return transformation.Transform(_query, _aggregates, ids);
+                return transformation.DetectChanges(context => _query.Invoke(context, factIds));
+            }
+
+            public override IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes)
+            {
+                return transformation.ApplyChanges(_query, _aggregates, changes);
             }
         }
     }
