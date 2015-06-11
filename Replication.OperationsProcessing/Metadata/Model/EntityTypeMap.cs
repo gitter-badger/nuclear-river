@@ -59,6 +59,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
         private static readonly Dictionary<IEntityType, Type> CustomerIntelligenceTypeMap
             = new[]
                 {
+                    CreateMapping<EntityTypeCategory, CI.Category>(),
                     CreateMapping<EntityTypeCategoryGroup, CI.CategoryGroup>(),
                     CreateMapping<EntityTypeClient, CI.Client>(),
                     CreateMapping<EntityTypeContact, CI.Contact>(),

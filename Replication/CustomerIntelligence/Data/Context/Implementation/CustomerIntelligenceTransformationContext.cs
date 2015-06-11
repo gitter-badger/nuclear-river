@@ -26,6 +26,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _bitContext = bitContext;
         }
 
+        public IQueryable<Category> Categories
+        {
+            get
+            {
+                return from category in _ermContext.Categories
+                       select new Category
+                       {
+                           Id = category.Id,
+                           Name = category.Name,
+                           Level = category.Level,
+                           ParentId = category.ParentId
+                       };
+            }
+        }
+
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get

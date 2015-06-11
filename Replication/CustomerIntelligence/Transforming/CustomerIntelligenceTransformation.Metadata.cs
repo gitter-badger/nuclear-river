@@ -24,6 +24,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                .HasSource(context => context.Projects)
                                .HasValueObject(context => context.ProjectCategories, x => x.ProjectId),
 
+                  AggregateInfo.OfType<Category>()
+                               .HasSource(context => context.Categories),
+
                   AggregateInfo.OfType<Territory>()
                                .HasSource(context => context.Territories),
 

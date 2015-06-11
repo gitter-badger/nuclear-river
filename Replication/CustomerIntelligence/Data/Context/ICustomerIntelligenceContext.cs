@@ -6,6 +6,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 {
     public interface ICustomerIntelligenceContext
     {
+        IQueryable<Category> Categories { get; }
+
         IQueryable<CategoryGroup> CategoryGroups { get; }
 
         IQueryable<Client> Clients { get; }

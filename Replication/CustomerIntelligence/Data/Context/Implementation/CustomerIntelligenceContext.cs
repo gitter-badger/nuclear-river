@@ -20,6 +20,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
+        public IQueryable<Category> Categories
+        {
+            get { return _context.GetTable<Category>(); }
+        }
+
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get { return _context.GetTable<CategoryGroup>(); }
