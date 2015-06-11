@@ -6,6 +6,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
@@ -33,7 +34,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                 var message = messages.OfType<FactOperationAggregatableMessage>().Single();
                 var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
 
-                _sender.Push(aggregateOperations, message.TargetFlow);
+                _sender.Push(aggregateOperations, AggregatesFlow.Instance);
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

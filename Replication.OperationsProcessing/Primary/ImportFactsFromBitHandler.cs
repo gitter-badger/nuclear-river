@@ -6,6 +6,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
@@ -39,14 +40,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         if (firmStatisticsDto != null)
                     {
                         var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
-                        _sender.Push(aggregateOperations, message.TargetFlow);
+                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                     }
 
                         var categoryStatisticsDto = dto as CategoryStatisticsDto;
                         if (categoryStatisticsDto != null)
                     {
                         var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
-                        _sender.Push(aggregateOperations, message.TargetFlow);
+                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                     }
                 }
                 }

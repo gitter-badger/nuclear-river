@@ -21,26 +21,21 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                     .Strategy<ImportFactsFromErmAccumulator>()
                                     .Handler<ImportFactsFromErmHandler>()
                                     .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
-                                    .To.Final().Flow<ImportFactsFromErmFlow>().Connect(),
+                                    .To.Final().Flow<AggregatesFlow>().Connect(),
 
                                     MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
                                     .Strategy<ImportFactsFromBitAccumulator>()
                                     .Handler<ImportFactsFromBitHandler>()
                                     .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
-                                    .To.Final().Flow<ImportFactsFromBitFlow>().Connect()
+                                    .To.Final().Flow<AggregatesFlow>().Connect()
 
                                     )
                                .Final(
 
-                                    MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
-                                    .Strategy<AggregateOperationAccumulator<ImportFactsFromErmFlow>>()
+                                    MessageFlowMetadata.Config.For<AggregatesFlow>()
+                                    .Strategy<AggregateOperationAccumulator<AggregatesFlow>>()
                                     .Handler<AggregateOperationAggregatableMessageHandler>()
-                                    .To.Final().Flow<ImportFactsFromErmFlow>().Connect(),
-
-                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
-                                    .Strategy<AggregateOperationAccumulator<ImportFactsFromBitFlow>>()
-                                    .Handler<AggregateOperationAggregatableMessageHandler>()
-                                    .To.Final().Flow<ImportFactsFromBitFlow>().Connect()
+                                    .To.Final().Flow<AggregatesFlow>().Connect()
 
                                     );
 

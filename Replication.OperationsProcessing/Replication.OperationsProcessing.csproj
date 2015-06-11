@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
+    <Compile Include="Metadata\Flows\AggregatesFlow.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromBitFlow.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromErmFlow.cs" />
