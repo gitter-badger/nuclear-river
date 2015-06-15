@@ -45,6 +45,32 @@ $Properties.EnvironmentMetadata = @{
 			'EntrypointType' = 'Desktop'
 		}
 	}
+	'Test.09' = @{
+		'Transform' = @{
+			'Xdt' = @('Erm.Release.config', 'log4net.Release.config')
+			'Regex' = @{}
+		}
+		'Web.OData' = @{
+			'ValidateWebsite' = $true
+			'IisAppPath' = 'search09.api.test.erm.2gis.ru'
+			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Web'
+		}
+		'Replication.EntryPoint' = @{
+			'ServiceName' = 'AdvSearch'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
+			'QuartzConfigs' = @()
+			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Desktop'
+		}
+		'ConvertUseCasesService' = @{
+			'ServiceName' = 'ConvertUseCases'
+			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Convert UseCases Service'
+			'QuartzConfigs' = @()
+			'TargetHosts' = @('uk-erm-test01')
+			'EntrypointType' = 'Desktop'
+		}
+	}
 }
 
 # Restore-Packages
