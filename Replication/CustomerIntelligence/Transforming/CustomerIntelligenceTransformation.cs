@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-
-using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -127,46 +121,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             _mapper.DeleteAll(aggregateInfo.Query(_target, ids));
-        }
-
-        private static class MergeTool
-        {
-            private static readonly MethodInfo MergeMethodInfo = MemberHelper.MethodOf(() => Merge<IIdentifiable>(null, null)).GetGenericMethodDefinition();
-
-            private static readonly ConcurrentDictionary<Type, MethodInfo> Methods = new ConcurrentDictionary<Type, MethodInfo>();
-
-            public static MergeResult Merge(IQueryable newData, IQueryable oldData)
-            {
-                if (newData.ElementType != oldData.ElementType)
-                {
-                    throw new InvalidOperationException("The types are not matched.");
-                }
-
-                var type = newData.ElementType;
-                var method = Methods.GetOrAdd(type, t => MergeMethodInfo.MakeGenericMethod(t));
-
-                return (MergeResult)method.Invoke(null, new object[] { newData, oldData });
-            }
-
-            private static MergeResult Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
-            {
-                var set1 = new HashSet<T>(data1);
-                var set2 = new HashSet<T>(data2);
-
-                // NOTE: avoiding enumerable extensions to reuse hashset performance
-                var difference = set1.Where(x => !set2.Contains(x));
-                var intersection = set1.Where(x => set2.Contains(x));
-                var complement = set2.Where(x => !set1.Contains(x));
-
-                return new MergeResult { Difference = difference, Intersection = intersection, Complement = complement };
-            }
-
-            public class MergeResult
-            {
-                public IEnumerable Difference { get; set; }
-                public IEnumerable Intersection { get; set; }
-                public IEnumerable Complement { get; set; }
-            }
         }
     }
 }

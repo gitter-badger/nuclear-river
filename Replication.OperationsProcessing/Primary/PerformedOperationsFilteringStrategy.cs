@@ -47,29 +47,10 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> operations)
         {
-            foreach (var operation in operations)
-            {
-                if (operation.EntityType is UnknownEntityType)
-                {
-                    continue;
-                }
-
-                // COMMENT {a.rechkalov, 05.05.2015}: Тут происходит неявное и пока автоматическое преобразование Erm типа (представленного IEntityType) в тип из контекста фактов
-                // Возможно, позднее потребуется выделить это преобразование в явный шаг.
-                var entityType = EntityTypeMap<FactsContext>.AsEntityType(operation.EntityType);
-                switch (operation.Change)
-                {
-                    case ChangesType.Added:
-                        yield return new CreateFact(entityType, operation.EntityId);
-                        break;
-                    case ChangesType.Updated:
-                        yield return new UpdateFact(entityType, operation.EntityId);
-                        break;
-                    case ChangesType.Deleted:
-                        yield return new DeleteFact(entityType, operation.EntityId);
-                        break;
-                }
-            }
+            return from operation in operations
+                   where !(operation.EntityType is UnknownEntityType)
+                   let entityType = EntityTypeMap<FactsContext>.AsEntityType(operation.EntityType)
+                   select new FactOperation(entityType, operation.EntityId);
         }
 
         private class ErmOperation
