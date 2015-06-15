@@ -72,7 +72,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
             Assert.That(TryGetMetadata(path, out element), Is.True);
             Assert.That(element, Is.Not.Null);
 
-            var ignoredFeatures = new[] { typeof(EntityIdentityFeature), typeof(ElementMappingFeature) };
+            var ignoredFeatures = new[] { typeof(EntityIdentityFeature), typeof(ElementMappingFeature), typeof(EntityRelationContainmentFeature) };
             element.Dump(properties, ignoredFeatures);
 
             Debug.WriteLine(element.Serialize(properties, ignoredFeatures));

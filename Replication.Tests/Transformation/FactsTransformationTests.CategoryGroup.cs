@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var source = Mock.Of<IErmFactsContext>(ctx => ctx.CategoryGroups == Inquire(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1}));
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::CategoryGroup>(1))
+                          .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::CategoryGroup>(1)));
         }
 
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::CategoryGroup>(1))
+                          .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::CategoryGroup>(1)));
         }
 
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::CategoryGroup>(1))
+                          .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::CategoryGroup>(1)));
         }
 
@@ -68,7 +68,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::CategoryGroup>(1))
+                          .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1),
                                           Aggregate.Recalculate<CI::CategoryGroup>(1),

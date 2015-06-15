@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
@@ -17,25 +18,25 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public abstract Type FactType { get; }
 
-        public abstract Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query { get; }
+        public abstract IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes);
 
-        public abstract IEnumerable<FactDependencyInfo> Aggregates { get; }
+        public abstract MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds);
 
         internal class Builder<TFact>
             where TFact : IErmFactObject, IIdentifiable
         {
-            private readonly List<FactDependencyInfo> _collection = new List<FactDependencyInfo>();
-            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _factProvider;
+            private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
+            private Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> _query;
 
-            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> factQueryProvider)
+            public Builder<TFact> HasSource(Func<IErmFactsContext, IEnumerable<long>, IQueryable<TFact>> query)
             {
-                _factProvider = factQueryProvider;
+                _query = query;
                 return this;
             }
 
             public Builder<TFact> HasSource(Func<IErmFactsContext, IQueryable<TFact>> factQueryableProvider)
             {
-                _factProvider = (context, ids) =>
+                _query = (context, ids) =>
                                 {
                                     var query = factQueryableProvider.Invoke(context);
                                     var filteredQuery = query.Where(fact => ids.Contains(fact.Id));
@@ -45,33 +46,34 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
 
             public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IErmFactsContext, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
-                where TAggregate: ICustomerIntelligenceObject
+                where TAggregate : ICustomerIntelligenceObject
             {
-                _collection.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
+                _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
                 return this;
             }
 
             public Builder<TFact> HasMatchedAggregate<TAggregate>()
             {
-                _collection.Add(FactDependencyInfo.Create<TAggregate>());
+                _dependencies.Add(FactDependencyInfo.Create<TAggregate>());
                 return this;
             }
 
-            public static implicit operator ErmFactInfo(Builder<TFact> fact)
+            public static implicit operator ErmFactInfo(Builder<TFact> builder)
             {
-                return new ErmFactInfoImpl<TFact>(fact._factProvider, fact._collection);
+                return new ErmFactInfoImpl<TFact>(builder._query, builder._dependencies);
             }
         }
 
         private class ErmFactInfoImpl<T> : ErmFactInfo
+            where T : IErmFactObject
         {
-            private readonly Func<IErmFactsContext, IEnumerable<long>, IQueryable> _query;
-            private readonly IEnumerable<FactDependencyInfo> _aggregates;
+            private readonly Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> _query;
+            private readonly IReadOnlyCollection<FactDependencyInfo> _aggregates;
 
-            public ErmFactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable> query, IEnumerable<FactDependencyInfo> aggregates)
+            public ErmFactInfoImpl(Func<IErmFactsContext, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> aggregates)
             {
                 _query = query;
-                _aggregates = aggregates ?? Enumerable.Empty<FactDependencyInfo>();
+                _aggregates = aggregates ?? new FactDependencyInfo[0];
             }
 
             public override Type FactType
@@ -79,14 +81,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 get { return typeof(T); }
             }
 
-            public override Func<IErmFactsContext, IEnumerable<long>, IQueryable> Query
+            public override MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds)
             {
-                get { return _query; }
+                return transformation.DetectChanges(context => _query.Invoke(context, factIds));
             }
 
-            public override IEnumerable<FactDependencyInfo> Aggregates
+            public override IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes)
             {
-                get { return _aggregates; }
+                return transformation.ApplyChanges(_query, _aggregates, changes);
             }
         }
     }

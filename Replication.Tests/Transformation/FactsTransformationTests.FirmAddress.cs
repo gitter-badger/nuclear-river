@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::FirmAddress>(1))
+                          .Transform(Fact.Operation<Facts::FirmAddress>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1),
                                           Aggregate.Recalculate<CI::Firm>(1),

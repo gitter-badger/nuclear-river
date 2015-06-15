@@ -4,9 +4,9 @@ using NuClear.AdvancedSearch.Replication.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
 {
-    public abstract class FactOperation : IOperation
+    public sealed class FactOperation : IOperation
     {
-        protected FactOperation(Type factType, long factId)
+        public FactOperation(Type factType, long factId)
         {
             if (factType == null)
             {

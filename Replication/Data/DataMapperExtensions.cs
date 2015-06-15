@@ -33,12 +33,15 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         public static void DeleteAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, query);
+            // Перед удалением требуется полность вычитать результат запроса.
+            // Возможно, это баг в linq2db: он использует единственный SqlCommand для всех запросов в течении жизни DataContext
+            // Это является проблемой только при удалении, поскольку все остальные операции проводят чтение и запись через разные DataContext
+            var items = query.Cast<IObject>().ToArray();
+            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
         }
 
-        private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable query)
+        private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable items)
         {
-            var items = query.Cast<IObject>().ToArray();
             foreach (var item in items)
             {
                 method.Invoke(mapper, new[] { item });

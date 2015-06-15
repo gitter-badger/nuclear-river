@@ -39,6 +39,7 @@
     <Compile Include="AdvancedSearchIdentity.cs" />
     <Compile Include="Metadata\BaseMetadataElement.cs" />
     <Compile Include="Metadata\EnumTypeElement.cs" />
+    <Compile Include="Metadata\Features\EntityRelationContainmentFeature.cs" />
     <Compile Include="Metadata\FluentSyntax\EnumTypeElementBuilder.cs" />
     <Compile Include="Metadata\Features\ElementMappingFeature.cs" />
     <Compile Include="Metadata\IStructuralModelTypeElement.cs" />
