@@ -59,7 +59,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             }
             catch (Exception ex)
             {
-                _tracer.Error(ex, "Error then import facts for ERM");
+                _tracer.Error(ex, "Error then import facts for BIT");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
