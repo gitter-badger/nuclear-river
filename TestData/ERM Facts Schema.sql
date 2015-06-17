@@ -203,7 +203,6 @@ with schemabinding
 as
 select 
 	Firm.ClientId,
-	FirmAddress.FirmId,
 	CategoryFirmAddress.FirmAddressId,
 	CategoryOrganizationUnit.CategoryId,
 	CategoryOrganizationUnit.CategoryGroupId,
@@ -219,5 +218,7 @@ create unique clustered index PK_ViewClient
     on ERM.ViewClient (FirmAddressId, CategoryId);
 go
 create nonclustered index IX_ViewClient_ClientId_CategoryGroupId_Rate
-	on ERM.ViewClient (ClientId, CategoryGroupId, Rate)
+	on ERM.ViewClient (ClientId, Rate)
+	include (CategoryGroupId)
 go
+
