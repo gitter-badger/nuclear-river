@@ -185,6 +185,7 @@
     <Compile Include="Transports\ServiceBus\UnknownEntityTypeSurrogate.cs" />
     <Compile Include="Transports\ServiceBus\UnknownOperationIdentity.cs" />
     <Compile Include="Transports\ServiceBus\UnknownOperationIdentitySurrogate.cs" />
+    <Compile Include="Transports\SQLStore\DefaultTransactionOptions.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreReceiver.cs" />
     <Compile Include="Transports\SQLStore\Schema.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />

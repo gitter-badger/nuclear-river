@@ -26,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         public IReadOnlyList<IMessage> Peek()
         {
             IEnumerable<PerformedOperationFinalProcessing> flowRecords;
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
             {
                 flowRecords = _context.GetTable<PerformedOperationFinalProcessing>()
                     .Where(processing => processing.MessageFlowId == _sourceFlowMetadata.MessageFlow.Id)
@@ -41,7 +41,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
             {
                 Complete(successfullyProcessedMessages.Cast<PerformedOperationsFinalProcessingMessage>(),
                          failedProcessedMessages.Cast<PerformedOperationsFinalProcessingMessage>());
