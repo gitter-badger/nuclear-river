@@ -11,8 +11,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Data
     internal static class DataConnectionExtensions
     {
         public static void Reload<T>(this DataConnection db, IEnumerable<T> data)
+            where T : class
         {
-            db.Truncate<T>();
+            db.GetTable<T>().Delete();
             db.BulkCopy(new BulkCopyOptions { BulkCopyTimeout = Settings.SqlBulkCopyTimeout }, data);
         }
        

@@ -77,7 +77,7 @@ function Replicate-QueryDtoToConnection ($connection, $queryDtos){
 		$fullTableName = "[$($queryDto.SchemaName)].[$($queryDto.TableName)]"
 		Write-Host "$fullTableName..."
 
-		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, "truncate table $fullTableName")
+		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, "delete from $fullTableName")
 		[void]$commandInfo.Execute()
 
 		[void][LinqToDB.Data.DataConnectionExtensions]::BulkCopy($connection, $bulkCopyOptions, $queryDto.Query)
