@@ -11,6 +11,7 @@ using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
+using NuClear.OperationsProcessing.API.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
@@ -62,7 +63,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts)))
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
-                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
+                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
         }
 
         private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema)

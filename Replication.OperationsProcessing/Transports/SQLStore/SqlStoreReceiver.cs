@@ -4,75 +4,66 @@ using System.Transactions;
 
 using LinqToDB;
 
-using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Receivers;
 using NuClear.Model.Common.Entities;
+using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
-    public class SqlStoreReceiver : IMessageReceiver
+    public sealed class SqlStoreReceiver : MessageReceiverBase<PerformedOperationsFinalProcessingMessage, IFinalProcessingQueueReceiverSettings> 
     {
-        private readonly MessageFlowMetadata _sourceFlowMetadata;
         private readonly IDataContext _context;
 
-        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IDataContext context)
+        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context)
+            : base(sourceFlowMetadata, messageReceiverSettings)
         {
-            _sourceFlowMetadata = sourceFlowMetadata;
             _context = context;
         }
 
-        public IReadOnlyList<IMessage> Peek()
+        protected override IReadOnlyList<PerformedOperationsFinalProcessingMessage> Peek()
         {
-            IEnumerable<PerformedOperationFinalProcessing> flowRecords;
+            IReadOnlyList<PerformedOperationsFinalProcessingMessage> messages;
+
             using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
             {
-                flowRecords = _context.GetTable<PerformedOperationFinalProcessing>()
-                    .Where(processing => processing.MessageFlowId == _sourceFlowMetadata.MessageFlow.Id)
-                    .ToArray();
+                messages = _context.GetTable<PerformedOperationFinalProcessing>()
+                                      .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
+                                      .Take(MessageReceiverSettings.BatchSize)
+                                      .AsEnumerable()
+                                      // fake grouping
+                                      .GroupBy(x => 0)
+                                      .Select(x => new PerformedOperationsFinalProcessingMessage
+                                        {
+                                            EntityId = 0,
+                                            MaxAttemptCount = 0,
+                                            EntityType = EntityType.Instance.None(),
+                                            Flow = SourceFlowMetadata.MessageFlow,
+                                            FinalProcessings = x,
+                                        }).ToList();
+
                 scope.Complete();
             }
 
-            return flowRecords.Any()
-                       ? new[] { CreateMessage(flowRecords) }
-                       : new PerformedOperationsFinalProcessingMessage[0];
+            return messages;
         }
 
-        public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
+        protected override void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages, IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
-            {
-                Complete(successfullyProcessedMessages.Cast<PerformedOperationsFinalProcessingMessage>(),
-                         failedProcessedMessages.Cast<PerformedOperationsFinalProcessingMessage>());
-
-                scope.Complete();
-            }
-        }
-
-        private PerformedOperationsFinalProcessingMessage CreateMessage(IEnumerable<PerformedOperationFinalProcessing> flowRecords)
-        {
-            return new PerformedOperationsFinalProcessingMessage
-            {
-                EntityId = 0,
-                MaxAttemptCount = 0,
-                EntityType = EntityType.Instance.None(),
-                Flow = _sourceFlowMetadata.MessageFlow,
-                FinalProcessings = flowRecords,
-            };
-        }
-
-        private void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages,
-                              IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
-        {
-            foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
-            {
-                _context.Delete(message);
-            }
-
             // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
             // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
             // Или пока админ не удалит его из очереди.
+
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            {
+                foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
+                {
+                    _context.Delete(message);
+                }
+
+                scope.Complete();
+            }
         }
     }
 }

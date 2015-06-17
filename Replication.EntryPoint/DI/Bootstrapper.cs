@@ -153,8 +153,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
-            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiver), Lifetime.PerScope, null)
-                     .RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
+            container.RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
 
 
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)
