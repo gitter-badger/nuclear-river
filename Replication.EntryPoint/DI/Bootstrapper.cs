@@ -146,7 +146,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             container.RegisterType<IProfiler, AggregateProfiler>(Lifetime.Singleton,
                                                                  new InjectionConstructor(
                                                                      new ResolvedArrayParameter<IProfiler>(
-                                                                         new ResolvedParameter<FileProfiler>(),
+                                                                         new ResolvedParameter<DebugProfiler>(),
                                                                          new ResolvedParameter<PerformanceCounterProfiler>(),
                                                                          new ResolvedParameter<GraphiteProfiler>())));
 

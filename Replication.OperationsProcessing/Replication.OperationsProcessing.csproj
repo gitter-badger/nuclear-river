@@ -171,7 +171,7 @@
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
     <Compile Include="Performance\AggregateProfiler.cs" />
-    <Compile Include="Performance\FileProfiler.cs" />
+    <Compile Include="Performance\DebugProfiler.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
     <Compile Include="Performance\GraphiteProfiler.cs" />
     <Compile Include="Performance\IProfiler.cs" />
