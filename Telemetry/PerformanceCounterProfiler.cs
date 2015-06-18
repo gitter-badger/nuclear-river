@@ -19,8 +19,15 @@ namespace NuClear.Telemetry
         public void Report<T>(long value)
             where T : PerformanceIdentityBase<T>, new()
         {
-            var counter = GetCounter(_environmentSettings.EnvironmentName, IdentityBase<T>.Instance.Name);
-            counter.RawValue = value;
+            try
+            {
+                var counter = GetCounter(_environmentSettings.EnvironmentName, IdentityBase<T>.Instance.Name);
+                counter.RawValue = value;
+            }
+            catch
+            {
+                // FIXME {a.rechkalov, 18.06.2015}: пофиксить ecpetion
+            }
         }
 
         private static PerformanceCounter GetCounter(string environmentName, string counterName)
