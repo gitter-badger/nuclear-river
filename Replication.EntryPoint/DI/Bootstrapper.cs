@@ -144,10 +144,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
             container.RegisterType<IProfiler, AggregateProfiler>(Lifetime.Singleton,
-                                                                          new InjectionConstructor(
-                                                                              new ResolvedParameter<FileProfiler>(),
-                                                                              new ResolvedParameter<PerformanceCounterProfiler>(),
-                                                                              new ResolvedParameter<GraphiteProfiler>()));
+                                                                 new InjectionConstructor(
+                                                                     new ResolvedArrayParameter<IProfiler>(
+                                                                         new ResolvedParameter<FileProfiler>(),
+                                                                         new ResolvedParameter<PerformanceCounterProfiler>(),
+                                                                         new ResolvedParameter<GraphiteProfiler>())));
 
             // primary
             container

@@ -11,11 +11,6 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             _profilers = profilers;
         }
 
-        public AggregateProfiler(IProfiler p1, IProfiler p2, IProfiler p3)
-            : this(new[] { p1, p2, p3 })
-        {
-        }
-
         public void Report<T>(long value)
             where T : PerformanceIdentityBase<T>, new()
         {
