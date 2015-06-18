@@ -102,6 +102,9 @@
       <HintPath>..\packages\2GIS.NuClear.WCF.Client.1.0.5-local-000000-0\lib\net451\2GIS.NuClear.WCF.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Graphite">
+      <HintPath>..\packages\Graphite.1.1.0.0\lib\net40-Client\Graphite.dll</HintPath>
+    </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
@@ -167,6 +170,16 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
+    <Compile Include="Performance\AggregateProfiler.cs" />
+    <Compile Include="Performance\FileProfiler.cs" />
+    <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\GraphiteProfiler.cs" />
+    <Compile Include="Performance\IProfiler.cs" />
+    <Compile Include="Performance\PerformanceCounterProfiler.cs" />
+    <Compile Include="Performance\PerformanceIdentityBase.cs" />
+    <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\ServiceBusOperationsReceiverWrapper.cs" />
+    <Compile Include="Performance\SqlStoreReceiverWrapper.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
@@ -203,8 +216,11 @@
       <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
       <Name>Replication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Settings\Settings.csproj">
+      <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
+      <Name>Settings</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
