@@ -26,21 +26,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _bitContext = bitContext;
         }
 
-        public IQueryable<Category> Categories
-        {
-            get
-            {
-                return from category in _ermContext.Categories
-                       select new Category
-                       {
-                           Id = category.Id,
-                           Name = category.Name,
-                           Level = category.Level,
-                           ParentId = category.ParentId
-                       };
-            }
-        }
-
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get
@@ -199,12 +184,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
                 return from firmCategory in level3.Union(level2).Union(level1)
                        from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
+                       //let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new FirmCategory
                        {
                            FirmId = firmCategory.FirmId,
                            CategoryId = firmCategory.CategoryId,
                            Hits = statistics != null ? statistics.Hits : 0,
                            Shows = statistics != null ? statistics.Shows : 0,
+                           //FirmCount = firmCount,
+                           //AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
                        };
             }
         }
@@ -236,13 +224,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                        join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
                            new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
-                       let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,
                            CategoryId = categoryOrganizationUnit.CategoryId,
-                                  FirmCount = firmCount,
-                                  AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
                        };
             }
         }

@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.Category.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />

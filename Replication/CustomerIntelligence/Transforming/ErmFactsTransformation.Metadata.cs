@@ -26,7 +26,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                   ErmFactInfo.OfType<Category>()
                           .HasSource(context => context.Categories)
-                          .HasMatchedAggregate<CI.Category>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategory),
 
                   ErmFactInfo.OfType<CategoryFirmAddress>()
