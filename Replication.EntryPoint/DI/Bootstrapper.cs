@@ -53,6 +53,8 @@ using NuClear.Security.API.UserContext;
 using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
+using NuClear.Telemetry;
+using NuClear.Telemetry.Zabbix;
 using NuClear.Tracing.API;
 using NuClear.WCF.Client;
 using NuClear.WCF.Client.Config;
@@ -148,7 +150,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                                      new ResolvedArrayParameter<IProfiler>(
                                                                          new ResolvedParameter<DebugProfiler>(),
                                                                          new ResolvedParameter<PerformanceCounterProfiler>(),
-                                                                         new ResolvedParameter<GraphiteProfiler>())));
+                                                                         new ResolvedParameter<GraphiteProfiler>(),
+                                                                         new ResolvedParameter<ZabbixProfiler>())));
 
             // primary
             container

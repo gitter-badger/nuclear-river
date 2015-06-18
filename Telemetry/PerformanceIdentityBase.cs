@@ -1,6 +1,6 @@
 using NuClear.Model.Common;
 
-namespace NuClear.Replication.OperationsProcessing.Performance
+namespace NuClear.Telemetry
 {
     public abstract class PerformanceIdentityBase<T> : IdentityBase<T> 
         where T : IdentityBase<T>, new()

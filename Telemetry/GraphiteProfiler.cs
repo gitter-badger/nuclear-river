@@ -4,7 +4,7 @@ using Graphite;
 
 using NuClear.AdvancedSearch.Settings;
 
-namespace NuClear.Replication.OperationsProcessing.Performance
+namespace NuClear.Telemetry
 {
     public sealed class GraphiteProfiler : IProfiler
     {

@@ -1,3 +1,5 @@
+using NuClear.Telemetry;
+
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
     public sealed class FinalProcessingDelayIdentity : PerformanceIdentityBase<FinalProcessingDelayIdentity>

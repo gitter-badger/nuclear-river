@@ -1,6 +1,7 @@
 ﻿using NuClear.AdvancedSearch.Settings;
 using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Settings.API;
+using NuClear.Telemetry.Zabbix;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
@@ -15,6 +16,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
             Aspects.Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus)));
             Aspects.Use<TaskServiceProcessingSettingsAspect>();
             Aspects.Use<CorporateBusSettingsAspect>();
+            Aspects.Use<ZabbixSettingsAspect>();
             Aspects.Use(connectionStringSettings);
         }
     }

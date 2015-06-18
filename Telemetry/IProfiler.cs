@@ -1,4 +1,4 @@
-namespace NuClear.Replication.OperationsProcessing.Performance
+namespace NuClear.Telemetry
 {
     public interface IProfiler
     {

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.Model.Common;
 
-namespace NuClear.Replication.OperationsProcessing.Performance
+namespace NuClear.Telemetry
 {
     public sealed class PerformanceCounterProfiler : IProfiler
     {
@@ -23,7 +23,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             counter.RawValue = value;
         }
 
-        private PerformanceCounter GetCounter(string environmentName, string counterName)
+        private static PerformanceCounter GetCounter(string environmentName, string counterName)
         {
             PerformanceCounter counter;
             if (!Counters.TryGetValue(counterName, out counter))

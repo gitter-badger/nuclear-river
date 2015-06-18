@@ -6,6 +6,7 @@ using NuClear.Messaging.API;
 using NuClear.Messaging.API.Receivers;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {

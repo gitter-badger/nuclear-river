@@ -1,4 +1,4 @@
-using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {

@@ -5,6 +5,7 @@ using System.Linq;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Receivers;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {

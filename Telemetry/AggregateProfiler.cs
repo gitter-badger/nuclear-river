@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NuClear.Replication.OperationsProcessing.Performance
+namespace NuClear.Telemetry
 {
     public sealed class AggregateProfiler : IProfiler
     {
