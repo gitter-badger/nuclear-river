@@ -32,6 +32,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
+        public void ReloadFirmCategoryStatistics()
+        {
+            Reload(ctx => ctx.FirmCategoryStatistics);
+        }
+
+        [Test]
         public void ReloadCategoryGroups()
         {
             Reload(ctx => ctx.CategoryGroups);

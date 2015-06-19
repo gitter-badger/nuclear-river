@@ -184,15 +184,35 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
                 return from firmCategory in level3.Union(level2).Union(level1)
                        from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
-                       //let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new FirmCategory
                        {
                            FirmId = firmCategory.FirmId,
                            CategoryId = firmCategory.CategoryId,
                            Hits = statistics != null ? statistics.Hits : 0,
                            Shows = statistics != null ? statistics.Shows : 0,
-                           //FirmCount = firmCount,
-                           //AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
+                       };
+            }
+        }
+
+        public IQueryable<FirmCategoryStatistics> FirmCategoryStatistics
+        {
+            get
+            {
+                var firmCategories = from firm in _ermContext.Firms
+                                     join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                     select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
+
+                return from project in _ermContext.Projects
+                       join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
+                       let statistics = _bitContext.CategoryStatistics.Where(x => x.ProjectId == project.Id && x.CategoryId == categoryOrganizationUnit.CategoryId).Select(x => x.AdvertisersCount).SingleOrDefault()
+                       select new FirmCategoryStatistics
+                       {
+                           OrganizationUnitId = project.OrganizationUnitId.Value,
+                           CategoryId = categoryOrganizationUnit.CategoryId,
+                           FirmCount = firmCount,
+                           AdvertisersShare = firmCount != 0 ? statistics / firmCount : 0
                        };
             }
         }
@@ -214,16 +234,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var firmCategories = from firm in _ermContext.Firms
-                                     join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
-                                     join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                     select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
-
-                // Со статистикой по рубрикам выполняется left join, это допустимо при условии, что (ProjectId, CategoryId) - primary key, иначе можно получить дублирование записей.
                 return from project in _ermContext.Projects
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
-                       join сategoryStatistics in _bitContext.CategoryStatistics on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
-                           new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,

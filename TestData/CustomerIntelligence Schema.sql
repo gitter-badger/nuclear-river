@@ -3,6 +3,10 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
+-- drop views
+if object_id('CustomerIntelligence.ViewFirmCategory', 'view') is not null drop view ERM.ViewFirmCategory;
+go
+
 -- drop tables
 if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
 if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
@@ -13,6 +17,7 @@ if object_id('CustomerIntelligence.FirmBalance') is not null drop table Customer
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
+if object_id('CustomerIntelligence.FirmCategoryStatistics') is not null drop table CustomerIntelligence.FirmCategoryStatistics;
 go
 
 
@@ -85,12 +90,20 @@ go
 -- FirmCategory
 create table CustomerIntelligence.FirmCategory(
 	FirmId bigint not null
-    , AdvertisersShare float not null constraint DF_FirmCategories_AdvertisersShare default 0
-    , FirmCount bigint not null constraint DF_FirmCategories_FirmCount default 0
     , Hits bigint not null constraint DF_FirmCategories_Hits default 0
     , Shows bigint not null constraint DF_FirmCategories_Shows default 0
     , CategoryId bigint not null
     , constraint PK_FirmCategories primary key (FirmId, CategoryId)
+)
+go
+
+-- FirmCategoryStatistics
+create table CustomerIntelligence.FirmCategoryStatistics(
+	ProjectId bigint not null
+    , CategoryId bigint not null
+    , FirmCount int not null
+    , AdvertisersShare float null
+    , constraint PK_FirmCategoryStatistics primary key (ProjectId, CategoryId)
 )
 go
 
@@ -111,4 +124,20 @@ create table CustomerIntelligence.Contact(
     , ClientId bigint not null
     , constraint PK_Contacts primary key (Id)
 )
+go
+
+-- ¬ьюха дл€ сведени€ FirmCategory и FirmCategoryStatistics в единую бизнес-сущность
+create view CustomerIntelligence.ViewFirmCategory
+as
+select
+	FirmCategory.FirmId
+	, FirmCategory.CategoryId
+	, FirmCategory.Hits
+	, FirmCategory.Shows
+	, FirmCategoryStatistics.FirmCount
+	, FirmCategoryStatistics.AdvertisersShare
+from
+	CustomerIntelligence.Firm 
+	inner join CustomerIntelligence.FirmCategory on Firm.Id = FirmCategory.FirmId 
+	left join CustomerIntelligence.FirmCategoryStatistics on Firm.ProjectId = FirmCategoryStatistics.ProjectId and FirmCategory.CategoryId = FirmCategoryStatistics.CategoryId
 go
