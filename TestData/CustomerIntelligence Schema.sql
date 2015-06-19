@@ -99,11 +99,11 @@ go
 
 -- FirmCategoryStatistics
 create table CustomerIntelligence.FirmCategoryStatistics(
-	ProjectId bigint not null
+	FirmId bigint not null
     , CategoryId bigint not null
     , FirmCount int not null
     , AdvertisersShare float null
-    , constraint PK_FirmCategoryStatistics primary key (ProjectId, CategoryId)
+    , constraint PK_FirmCategoryStatistics primary key (FirmId, CategoryId)
 )
 go
 
@@ -137,7 +137,6 @@ select
 	, FirmCategoryStatistics.FirmCount
 	, FirmCategoryStatistics.AdvertisersShare
 from
-	CustomerIntelligence.Firm 
-	inner join CustomerIntelligence.FirmCategory on Firm.Id = FirmCategory.FirmId 
-	left join CustomerIntelligence.FirmCategoryStatistics on Firm.ProjectId = FirmCategoryStatistics.ProjectId and FirmCategory.CategoryId = FirmCategoryStatistics.CategoryId
+	CustomerIntelligence.FirmCategory
+	left join CustomerIntelligence.FirmCategoryStatistics on FirmCategory.FirmId = FirmCategoryStatistics.FirmId and FirmCategory.CategoryId = FirmCategoryStatistics.CategoryId
 go

@@ -4,7 +4,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
     public sealed class FirmCategoryStatistics : ICustomerIntelligenceObject
     {
-        public long OrganizationUnitId { get; set; }
+        public long FirmId { get; set; }
 
         public long CategoryId { get; set; }
 
@@ -31,13 +31,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
         {
             unchecked
             {
-                return (OrganizationUnitId.GetHashCode() * 397) ^ CategoryId.GetHashCode();
+                return (FirmId.GetHashCode() * 397) ^ CategoryId.GetHashCode();
             }
         }
 
         private bool Equals(FirmCategoryStatistics other)
         {
-            return OrganizationUnitId == other.OrganizationUnitId && CategoryId == other.CategoryId;
+            return FirmId == other.FirmId && CategoryId == other.CategoryId;
         }
     }
 }
