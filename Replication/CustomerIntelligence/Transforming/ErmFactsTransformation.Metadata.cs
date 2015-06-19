@@ -31,6 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   ErmFactInfo.OfType<CategoryFirmAddress>()
                           .HasSource(context => context.CategoryFirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress)
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryFirmAddress),
 
                   ErmFactInfo.OfType<CategoryGroup>()
@@ -58,11 +59,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   ErmFactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
                           .HasMatchedAggregate<CI.Firm>()
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
 
                   ErmFactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress)
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByFirmAddress),
 
                   ErmFactInfo.OfType<FirmContact>()
@@ -207,6 +210,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firmAddress.FirmId;
                 }
 
+                public static IEnumerable<long> ByCategoryFirmAddressForStatistics(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    var changeKeys = from firm in context.Firms
+                                     join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                     where ids.Contains(firmAddressCategory.Id)
+                                     select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
+
+                    return from firm in context.Firms
+                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           select firm.Id;
+                }
+
                 public static IEnumerable<long> ByCategoryOrganizationUnit(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return (from firm in context.Firms
@@ -233,11 +251,41 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                            select firm.Id;
                 }
 
+                public static IEnumerable<long> ByFirmForStatistics(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    var changeKeys = from firm in context.Firms
+                                     join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                     where ids.Contains(firm.Id)
+                                     select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
+
+                    return from firm in context.Firms
+                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           select firm.Id;
+                }
+
                 public static IEnumerable<long> ByFirmAddress(IErmFactsContext context, IEnumerable<long> ids)
                 {
                     return from firmAddress in context.FirmAddresses
                            where ids.Contains(firmAddress.Id)
                            select firmAddress.FirmId;
+                }
+
+                public static IEnumerable<long> ByFirmAddressForStatistics(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    var changeKeys = from firm in context.Firms
+                                     join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                     join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                     where ids.Contains(firmAddress.Id)
+                                     select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
+
+                    return from firm in context.Firms
+                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           select firm.Id;
                 }
 
                 public static IEnumerable<long> ByFirmContacts(IErmFactsContext context, IEnumerable<long> ids)
