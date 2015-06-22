@@ -34,14 +34,16 @@ namespace NuClear.Telemetry
         public void Report<T>(long value)
             where T : PerformanceIdentityBase<T>, new()
         {
-            var path = string.Format("{0}.{1}.{2}", _environmentSettings.EntryPointName, _environmentSettings.EnvironmentName, PerformanceIdentityBase<T>.Instance.Name);
+            string path;
             GraphiteMetadataElement metadata;
             if (_provider == null || (metadata = _provider.Get<T>()) == null)
             {
+                path = string.Format("{0}.{1}.{2}", _environmentSettings.EntryPointName, _environmentSettings.EnvironmentName, PerformanceIdentityBase<T>.Instance.Name);
                 MetricsPipe.Current.Gauge(path, value);
                 return;
             }
 
+            path = string.Format("{0}.{1}.{2}", _environmentSettings.EntryPointName, _environmentSettings.EnvironmentName, metadata.Name);
             switch (metadata.Type)
             {
                 case GraphiteMetadataElement.CounterType.Gauge:
