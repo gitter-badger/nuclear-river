@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class FactsTransformation
     {
-        private readonly IFactsContext _source;
-        private readonly IFactsContext _target;
+        private readonly IQuery _source;
+        private readonly IQuery _target;
         private readonly IDataMapper _mapper;
 
-        public FactsTransformation(IFactsContext source, IFactsContext target, IDataMapper mapper)
+        public FactsTransformation(IQuery source, IQuery target, IDataMapper mapper)
         {
             if (source == null)
             {

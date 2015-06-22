@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+using NuClear.AdvancedSearch.Replication.Specifications;
+using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+    using CI = Model;
+    using Facts = Model.Facts;
 
     public sealed partial class FactsTransformation
     {
@@ -16,72 +17,72 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private static readonly Dictionary<Type, FactInfo> Facts
             = new FactInfo[]
               {
-                  FactInfo.OfType<Account>()
-                          .HasSource(context => context.Accounts)
+                  FactInfo.OfType<Facts.Account>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Accounts())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByAccount),
 
-                  FactInfo.OfType<BranchOfficeOrganizationUnit>()
-                          .HasSource(context => context.BranchOfficeOrganizationUnits)
+                  FactInfo.OfType<Facts.BranchOfficeOrganizationUnit>()
+                          .HasSource(Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByBranchOfficeOrganizationUnit),
 
-                  FactInfo.OfType<Category>()
-                          .HasSource(context => context.Categories)
+                  FactInfo.OfType<Facts.Category>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Categories())
                           .HasMatchedAggregate<CI.Category>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategory),
 
-                  FactInfo.OfType<CategoryFirmAddress>()
-                          .HasSource(context => context.CategoryFirmAddresses)
+                  FactInfo.OfType<Facts.CategoryFirmAddress>()
+                          .HasSource(Specs.Erm.Map.ToFacts.CategoryFirmAddresses())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress),
 
                   // TODO {all, 18.05.2015}: Сейчас не используются ценовые группы, но после их введения в стой нужно будет добавить зависимые от них объекты CI
-                  FactInfo.OfType<CategoryGroup>()
-                          .HasSource(context => context.CategoryGroups)
+                  FactInfo.OfType<Facts.CategoryGroup>()
+                          .HasSource(Specs.Erm.Map.ToFacts.CategoryGroups())
                           .HasMatchedAggregate<CI.CategoryGroup>(),
 
-                  FactInfo.OfType<CategoryOrganizationUnit>()
-                          .HasSource(context => context.CategoryOrganizationUnits)
+                  FactInfo.OfType<Facts.CategoryOrganizationUnit>()
+                          .HasSource(Specs.Erm.Map.ToFacts.CategoryOrganizationUnits())
                           .HasDependentAggregate<CI.Project>(Find.Project.ByCategoryOrganizationUnit)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryOrganizationUnit),
 
-                  FactInfo.OfType<Client>()
-                          .HasSource(context => context.Clients)
+                  FactInfo.OfType<Facts.Client>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Clients())
                           .HasMatchedAggregate<CI.Client>()
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByClient),
 
-                  FactInfo.OfType<Contact>()
-                          .HasSource(context => context.Contacts)
+                  FactInfo.OfType<Facts.Contact>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Contacts())
                           .HasDependentAggregate<CI.Client>(Find.Client.ByContacts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByContacts),
 
                   // TODO {all, 18.05.2015}: Ценовая группа клиента рассчитывается через фирму = не забыть дополнить связи после ввода ценовых групп
-                  FactInfo.OfType<Firm>()
-                          .HasSource(context => context.Firms)
+                  FactInfo.OfType<Facts.Firm>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Firms())
                           .HasMatchedAggregate<CI.Firm>(),
 
-                  FactInfo.OfType<FirmAddress>()
-                          .HasSource(context => context.FirmAddresses)
+                  FactInfo.OfType<Facts.FirmAddress>()
+                          .HasSource(Specs.Erm.Map.ToFacts.FirmAddresses())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress),
 
-                  FactInfo.OfType<FirmContact>()
-                          .HasSource(context => context.FirmContacts)
+                  FactInfo.OfType<Facts.FirmContact>()
+                          .HasSource(Specs.Erm.Map.ToFacts.FirmContacts())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmContacts),
 
-                  FactInfo.OfType<LegalPerson>()
-                          .HasSource(context => context.LegalPersons)
+                  FactInfo.OfType<Facts.LegalPerson>()
+                          .HasSource(Specs.Erm.Map.ToFacts.LegalPersons())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByLegalPerson),
 
-                  FactInfo.OfType<Order>()
-                          .HasSource(context => context.Orders)
+                  FactInfo.OfType<Facts.Order>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Orders())
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByOrder),
 
-                  FactInfo.OfType<Project>()
-                          .HasSource(context => context.Projects)
+                  FactInfo.OfType<Facts.Project>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Projects())
                           .HasMatchedAggregate<CI.Project>()
                           .HasDependentAggregate<CI.Territory>(Find.Territory.ByProject)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByProject),
 
-                  FactInfo.OfType<Territory>()
-                          .HasSource(context => context.Territories)
+                  FactInfo.OfType<Facts.Territory>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Territories())
                           .HasMatchedAggregate<CI.Territory>(),
 
               }.ToDictionary(x => x.FactType);
@@ -90,17 +91,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             public static class Client
             {
-                public static IEnumerable<long> ByFirm(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirm(IQuery query, IEnumerable<long> ids)
                 {
-                    return from firm in context.Firms
+                    return from firm in query.For<Facts.Firm>()
                            where ids.Contains(firm.Id) && firm.ClientId != null
                            select firm.ClientId.Value;
                 }
 
-                public static IEnumerable<long> ByContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByContacts(IQuery query, IEnumerable<long> ids)
                 {
-                    return from client in context.Clients
-                           join contact in context.Contacts on client.Id equals contact.ClientId
+                    return from client in query.For<Facts.Client>()
+                           join contact in query.For<Facts.Contact>() on client.Id equals contact.ClientId
                            where ids.Contains(contact.Id)
                            select client.Id;
                 }
@@ -108,45 +109,45 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Firm
             {
-                public static IEnumerable<long> ByAccount(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByAccount(IQuery query, IEnumerable<long> ids)
                 {
-                    return from account in context.Accounts.Where(x => ids.Contains(x.Id))
-                           join legalPerson in context.LegalPersons on account.LegalPersonId equals legalPerson.Id
-                           join client in context.Clients on legalPerson.ClientId equals client.Id
-                           join branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
-                           join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
+                    return from account in query.For<Facts.Account>().Where(x => ids.Contains(x.Id))
+                           join legalPerson in query.For<Facts.LegalPerson>() on account.LegalPersonId equals legalPerson.Id
+                           join client in query.For<Facts.Client>() on legalPerson.ClientId equals client.Id
+                           join branchOfficeOrganizationUnit in query.For<Facts.BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
+                           join firm in query.For<Facts.Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                            where firm.ClientId == client.Id
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByBranchOfficeOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByBranchOfficeOrganizationUnit(IQuery query, IEnumerable<long> ids)
                 {
-                    return from branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits.Where(x => ids.Contains(x.Id))
-                           join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
+                    return from branchOfficeOrganizationUnit in query.For<Facts.BranchOfficeOrganizationUnit>().Where(x => ids.Contains(x.Id))
+                           join firm in query.For<Facts.Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByCategory(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategory(IQuery query, IEnumerable<long> ids)
                 {
-                    var categories1 = context.Categories.Where(x => x.Level == 1);
-                    var categories2 = context.Categories.Where(x => x.Level == 2);
-                    var categories3 = context.Categories.Where(x => x.Level == 3);
+                    var categories1 = query.For<Facts.Category>().Where(x => x.Level == 1);
+                    var categories2 = query.For<Facts.Category>().Where(x => x.Level == 2);
+                    var categories3 = query.For<Facts.Category>().Where(x => x.Level == 3);
 
-                    var level3 = from firmAddress in context.FirmAddresses
-                                 join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                    var level3 = from firmAddress in query.For<Facts.FirmAddress>()
+                                 join categoryFirmAddress in query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                  join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                                  where ids.Contains(category3.Id)
                                  select firmAddress.FirmId;
 
-                    var level2 = from firmAddress in context.FirmAddresses
-                                 join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                    var level2 = from firmAddress in query.For<Facts.FirmAddress>()
+                                 join categoryFirmAddress in query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                  join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                                  join category2 in categories2 on category3.ParentId equals category2.Id
                                  where ids.Contains(category2.Id)
                                  select firmAddress.FirmId;
 
-                    var level1 = from firmAddress in context.FirmAddresses
-                                 join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                    var level1 = from firmAddress in query.For<Facts.FirmAddress>()
+                                 join categoryFirmAddress in query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                  join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                                  join category2 in categories2 on category3.ParentId equals category2.Id
                                  join category1 in categories1 on category2.ParentId equals category1.Id
@@ -156,77 +157,77 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return level3.Union(level2).Union(level1);
                 }
 
-                public static IEnumerable<long> ByCategoryFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryFirmAddress(IQuery query, IEnumerable<long> ids)
                 {
-                    return from categoryFirmAddress in context.CategoryFirmAddresses
-                           join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
+                    return from categoryFirmAddress in query.For<Facts.CategoryFirmAddress>()
+                           join firmAddress in query.For<Facts.FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                            where ids.Contains(categoryFirmAddress.Id)
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryOrganizationUnit(IQuery query, IEnumerable<long> ids)
                 {
-                    return (from firm in context.Firms
-                            join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                            join categoryFirmAddress in context.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                            join categoryOrganizationUnit in context.CategoryOrganizationUnits.Where(x => ids.Contains(x.Id)) on categoryFirmAddress.CategoryId equals categoryOrganizationUnit.CategoryId
+                    return (from firm in query.For<Facts.Firm>()
+                            join firmAddress in query.For<Facts.FirmAddress>() on firm.Id equals firmAddress.FirmId
+                            join categoryFirmAddress in query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                            join categoryOrganizationUnit in query.For<Facts.CategoryOrganizationUnit>().Where(x => ids.Contains(x.Id)) on categoryFirmAddress.CategoryId equals categoryOrganizationUnit.CategoryId
                             where firm.OrganizationUnitId == categoryOrganizationUnit.OrganizationUnitId
                             select firmAddress.FirmId).Distinct();
                 }
 
-                public static IEnumerable<long> ByClient(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByClient(IQuery query, IEnumerable<long> ids)
                 {
-                    return from firm in context.Firms
+                    return from firm in query.For<Facts.Firm>()
                            where firm.ClientId != null && ids.Contains(firm.ClientId.Value)
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByContacts(IQuery query, IEnumerable<long> ids)
                 {
-                    return from firm in context.Firms
-                           join client in context.Clients on firm.ClientId equals client.Id
-                           join contact in context.Contacts on client.Id equals contact.ClientId
+                    return from firm in query.For<Facts.Firm>()
+                           join client in query.For<Facts.Client>() on firm.ClientId equals client.Id
+                           join contact in query.For<Facts.Contact>() on client.Id equals contact.ClientId
                            where ids.Contains(contact.Id)
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByFirmAddress(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirmAddress(IQuery query, IEnumerable<long> ids)
                 {
-                    return from firmAddress in context.FirmAddresses
+                    return from firmAddress in query.For<Facts.FirmAddress>()
                            where ids.Contains(firmAddress.Id)
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByFirmContacts(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByFirmContacts(IQuery query, IEnumerable<long> ids)
                 {
-                    return from firmAddress in context.FirmAddresses
-                           join firmContact in context.FirmContacts on firmAddress.Id equals firmContact.FirmAddressId
+                    return from firmAddress in query.For<Facts.FirmAddress>()
+                           join firmContact in query.For<Facts.FirmContact>() on firmAddress.Id equals firmContact.FirmAddressId
                            where ids.Contains(firmContact.Id)
                            select firmAddress.FirmId;
                 }
 
-                public static IEnumerable<long> ByLegalPerson(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByLegalPerson(IQuery query, IEnumerable<long> ids)
                 {
-                    return from account in context.Accounts
-                           join legalPerson in context.LegalPersons.Where(x => ids.Contains(x.Id)) on account.LegalPersonId equals legalPerson.Id
-                           join client in context.Clients on legalPerson.ClientId equals client.Id
-                           join branchOfficeOrganizationUnit in context.BranchOfficeOrganizationUnits on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
-                           join firm in context.Firms on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
+                    return from account in query.For<Facts.Account>()
+                           join legalPerson in query.For<Facts.LegalPerson>().Where(x => ids.Contains(x.Id)) on account.LegalPersonId equals legalPerson.Id
+                           join client in query.For<Facts.Client>() on legalPerson.ClientId equals client.Id
+                           join branchOfficeOrganizationUnit in query.For<Facts.BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
+                           join firm in query.For<Facts.Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                            where firm.ClientId == client.Id
                            select firm.Id;
                 }
 
-                public static IEnumerable<long> ByOrder(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByOrder(IQuery query, IEnumerable<long> ids)
                 {
-                    return from order in context.Orders
+                    return from order in query.For<Facts.Order>()
                            where ids.Contains(order.Id)
                            select order.FirmId;
                 }
 
-                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByProject(IQuery query, IEnumerable<long> ids)
                 {
-                    return from project in context.Projects
-                           join firm in context.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
+                    return from project in query.For<Facts.Project>()
+                           join firm in query.For<Facts.Firm>() on project.OrganizationUnitId equals firm.OrganizationUnitId
                            where ids.Contains(project.Id)
                            select firm.Id;
                 }
@@ -234,10 +235,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Territory
             {
-                public static IEnumerable<long> ByProject(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByProject(IQuery query, IEnumerable<long> ids)
                 {
-                    return from project in context.Projects
-                           join territory in context.Territories on project.OrganizationUnitId equals territory.OrganizationUnitId
+                    return from project in query.For<Facts.Project>()
+                           join territory in query.For<Facts.Territory>() on project.OrganizationUnitId equals territory.OrganizationUnitId
                            where ids.Contains(project.Id)
                            select territory.Id;
                 }
@@ -245,10 +246,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static class Project
             {
-                public static IEnumerable<long> ByCategoryOrganizationUnit(IFactsContext context, IEnumerable<long> ids)
+                public static IEnumerable<long> ByCategoryOrganizationUnit(IQuery query, IEnumerable<long> ids)
                 {
-                    return from categoryOrganizationUnit in context.CategoryOrganizationUnits
-                           join project in context.Projects on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
+                    return from categoryOrganizationUnit in query.For<Facts.CategoryOrganizationUnit>()
+                           join project in query.For<Facts.Project>() on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
                            where ids.Contains(categoryOrganizationUnit.Id)
                            select project.Id;
                 }

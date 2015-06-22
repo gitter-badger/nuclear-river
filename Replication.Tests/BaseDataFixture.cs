@@ -14,6 +14,7 @@ using LinqToDB.SqlQuery;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
@@ -47,6 +48,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             return elements.AsQueryable();
         }
 
+        protected IQuery ErmQuery
+        {
+            get { return new Query(new StubReadableDomainContextProvider(ErmDb)); }
+        }
+
+        protected IQuery FactsQuery
+        {
+            get { return new Query(new StubReadableDomainContextProvider(FactsDb)); }
+        }
+
+        protected IQuery CustomerIntelligenceQuery
+        {
+            get { return new Query(new StubReadableDomainContextProvider(CustomerIntelligenceDb)); }
+        }
+        
         protected DataConnection ErmDb
         {
             get { return CreateConnection("Erm", Schema.Erm); }

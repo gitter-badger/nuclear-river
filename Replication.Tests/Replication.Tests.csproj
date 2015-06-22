@@ -31,6 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="linq2db">
       <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
     </Reference>
@@ -51,30 +67,20 @@
     <Reference Include="System.Data.SQLite">
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.96.0\lib\net451\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Transformation\FactsTransformationTests.Category.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.CategoryOrganizationUnit.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.Project.cs" />
+    <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="BaseFixture.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />
     <Compile Include="BaseDataFixture.cs" />
-    <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
-    <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataContextExtensions.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
-    <Compile Include="Transformation\FactsTransformationContextTests.cs" />
-    <Compile Include="Transformation\ErmContextFilteringTests.cs" />
-    <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
-    <Compile Include="Transformation\CustomerIntelligenceTransformationContextTests.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
     <Compile Include="IdentifiableObjectExtensions.cs" />
   </ItemGroup>

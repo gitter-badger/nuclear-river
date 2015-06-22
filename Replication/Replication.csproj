@@ -31,6 +31,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
@@ -43,11 +59,8 @@
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\Implementation\FactsContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\Implementation\FactsTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IErmContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IFactsContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\Implementation\ErmContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Category.cs" />
@@ -119,6 +132,8 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\DeleteFact.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
+    <Compile Include="Specifications\Specs.Facts.cs" />
+    <Compile Include="Specifications\Specs.Erm.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.cs" />
