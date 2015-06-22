@@ -243,6 +243,7 @@
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Bootstrapper.Transformation.cs" />
+    <Compile Include="DI\GraphiteCounterMetadata.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />

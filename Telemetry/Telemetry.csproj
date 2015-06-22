@@ -61,9 +61,11 @@
     <Compile Include="AggregateProfiler.cs" />
     <Compile Include="DebugProfiler.cs" />
     <Compile Include="GraphiteProfiler.cs" />
+    <Compile Include="Metadata\IGraphiteCounterMetadata.cs" />
     <Compile Include="IProfiler.cs" />
+    <Compile Include="Metadata\GraphiteMetadataElement.cs" />
     <Compile Include="PerformanceCounterProfiler.cs" />
-    <Compile Include="PerformanceIdentityBase.cs" />
+    <Compile Include="Metadata\PerformanceIdentityBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Zabbix\IZabbixSettings.cs" />
     <Compile Include="Zabbix\ZabbixProfiler.cs" />

@@ -145,6 +145,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
+            container.RegisterType<IGraphiteCounterMetadata, GraphiteCounterMetadata>();
             container.RegisterType<IProfiler, AggregateProfiler>(Lifetime.Singleton,
                                                                  new InjectionConstructor(
                                                                      new ResolvedArrayParameter<IProfiler>(
