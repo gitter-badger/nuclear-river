@@ -30,7 +30,7 @@ namespace NuClear.Telemetry
             where T : PerformanceIdentityBase<T>, new()
         {
             var path = string.Format("{0}.{1}.{2}", _environmentSettings.EntryPointName, _environmentSettings.EnvironmentName, PerformanceIdentityBase<T>.Instance.Name);
-            MetricsPipe.Current.Raw(path, value);
+            MetricsPipe.Current.Gauge(path, value);
         }
     }
 }
