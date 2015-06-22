@@ -6,6 +6,7 @@ using Moq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
@@ -304,6 +305,37 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
                     new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }
                     ));
+        }
+
+        [Test]
+        public void ShouldCalculateStatistics()
+        {
+            const string ErmContext =
+                @"{" +
+                    "Projects: [ { Id: 1, OrganizationUnitId: 2 }, { Id: 3, OrganizationUnitId: 4 } ]," +
+                    "Categories: [ { Id: 5 }, { Id: 6 } ]," +
+                    "Firms: [ { Id: 7, OrganizationUnitId: 2 }, { Id: 8, OrganizationUnitId: 2 }, { Id: 9, OrganizationUnitId: 2 }, { Id: 10, OrganizationUnitId: 4 } ]," +
+                    "FirmAddresses: [ { Id: 7, FirmId: 7 }, { Id: 8, FirmId: 8 }, { Id: 9, FirmId: 9 }, { Id: 10, FirmId: 10 } ]," +
+                    "CategoryFirmAddresses: [" +
+                        "{ Id: 11, FirmAddressId: 7, CategoryId: 6 }," +
+                        "{ Id: 12, FirmAddressId: 8, CategoryId: 5 }," +
+                        "{ Id: 13, FirmAddressId: 8, CategoryId: 6 }," +
+                        "{ Id: 14, FirmAddressId: 9, CategoryId: 5 }," +
+                        "{ Id: 15, FirmAddressId: 10, CategoryId: 5 }," +
+                        "{ Id: 16, FirmAddressId: 10, CategoryId: 6 }" +
+                    "]" +
+                "}";
+
+            const string BitContext = @"{ CategoryStatistics: [ {ProjectId: 1, CategoryId: 6, AdvertisersCount: 1} ] }";
+
+            var ctx = new CustomerIntelligenceTransformationContext(ErmContext.ToErmFactsContext(), BitContext.ToBitFactsContext());
+
+            var statistics = ctx.FirmCategoryStatistics.ToList();
+
+            var firmStatistics = statistics.SingleOrDefault(x => x.FirmId == 7 && x.CategoryId == 6);
+            Assert.That(firmStatistics, Is.Not.Null);
+            Assert.That(firmStatistics.FirmCount, Is.EqualTo(2));
+            Assert.That(firmStatistics.AdvertisersShare, Is.EqualTo(0.5f));
         }
 
         #region Transformation
