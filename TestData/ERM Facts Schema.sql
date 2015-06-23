@@ -3,6 +3,10 @@ if not exists (select * from sys.schemas where name = 'ERM')
 	exec('create schema ERM')
 go
 
+-- drop views
+if object_id('ERM.ViewClient', 'view') is not null drop view ERM.ViewClient;
+go
+
 -- drop tables
 if object_id('ERM.Account') is not null drop table ERM.Account;
 if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
@@ -67,6 +71,10 @@ create table ERM.CategoryFirmAddress(
     , constraint PK_CategoryFirmAddresses primary key (Id)
 )
 go
+create nonclustered index IX_CategoryFirmAddress_FirmAddressId
+on ERM.CategoryFirmAddress (FirmAddressId)
+include (CategoryId)
+go
 
 -- CategoryOrganizationUnit
 create table ERM.CategoryOrganizationUnit(
@@ -76,6 +84,10 @@ create table ERM.CategoryOrganizationUnit(
     , OrganizationUnitId bigint not null
     , constraint PK_CategoryOrganizationUnits primary key (Id)
 )
+go
+create nonclustered index IX_CategoryOrganizationUnit_CategoryId_OrganizationUnitId
+on ERM.CategoryOrganizationUnit (CategoryId, OrganizationUnitId)
+include (CategoryGroupId)
 go
 
 -- Client
@@ -117,6 +129,10 @@ create table ERM.Firm(
     , constraint PK_Firms primary key (Id)
 )
 go
+create nonclustered index IX_Firm_ClientId_OrganizationUnitId
+on ERM.Firm (ClientId, OrganizationUnitId)
+include (Id)
+go
 
 -- FirmAddress
 create table ERM.FirmAddress(
@@ -124,6 +140,10 @@ create table ERM.FirmAddress(
     , FirmId bigint not null
     , constraint PK_FirmAddresses primary key (Id)
 )
+go
+create nonclustered index IX_FirmAddress_FirmId
+on ERM.FirmAddress (FirmId)
+include (Id)
 go
 
 -- FirmContact
@@ -176,3 +196,29 @@ create table ERM.Territory(
     , constraint PK_Territories primary key (Id)
 )
 go
+
+-- ViewClient, indexed view for query optimization
+create view ERM.ViewClient
+with schemabinding
+as
+select 
+	Firm.ClientId,
+	CategoryFirmAddress.FirmAddressId,
+	CategoryOrganizationUnit.CategoryId,
+	CategoryOrganizationUnit.CategoryGroupId,
+	CategoryGroup.Rate
+from ERM.Firm
+	inner join ERM.FirmAddress on Firm.Id = FirmAddress.FirmId
+	inner join ERM.CategoryFirmAddress on FirmAddress.Id = CategoryFirmAddress.FirmAddressId
+	inner join ERM.CategoryOrganizationUnit on CategoryFirmAddress.CategoryId = CategoryOrganizationUnit.CategoryId AND Firm.OrganizationUnitId = CategoryOrganizationUnit.OrganizationUnitId
+	inner join ERM.CategoryGroup on CategoryOrganizationUnit.CategoryGroupId = CategoryGroup.Id
+where Firm.ClientId is not null
+go
+create unique clustered index PK_ViewClient
+    on ERM.ViewClient (FirmAddressId, CategoryId);
+go
+create nonclustered index IX_ViewClient_ClientId_CategoryGroupId_Rate
+	on ERM.ViewClient (ClientId, Rate)
+	include (CategoryGroupId)
+go
+

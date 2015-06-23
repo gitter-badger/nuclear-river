@@ -473,13 +473,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             public static Transformation Create(IDataContext source = null, IDataContext target = null)
             {
                 return Create(
-                    new FactsContext(source ?? new Mock<IDataContext>().Object),
+                    new ErmFactsContext(source ?? new Mock<IDataContext>().Object),
                     new CustomerIntelligenceContext(target ?? new Mock<IDataContext>().Object));
             }
 
-            public static Transformation Create(IFactsContext source = null, ICustomerIntelligenceContext target = null)
+            public static Transformation Create(IErmFactsContext source = null, ICustomerIntelligenceContext target = null)
             {
-                return Create(new CustomerIntelligenceTransformationContext(source ?? new Mock<IFactsContext>().Object), target);
+                return Create(new CustomerIntelligenceTransformationContext(source ?? new Mock<IErmFactsContext>().Object, Mock.Of<IBitFactsContext>()), target);
             }
 
             public static Transformation Create(ICustomerIntelligenceContext source = null, ICustomerIntelligenceContext target = null)

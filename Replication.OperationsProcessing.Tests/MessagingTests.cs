@@ -5,10 +5,10 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI;
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
-using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Properties;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
+using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Metadata;
@@ -22,15 +22,14 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
     public sealed class MessagingTests
     {
         [Test]
-        public void PrimaryTest1()
+        public void ImportFactsFromErmPrimaryAccumulator()
         {
             var succeeded = Enumerable.Empty<IMessage>();
             var failed = Enumerable.Empty<IMessage>();
 
             var receiver = new MockMessageReceiver(new[]
             {
-                Resources.UpdateFirm,
-                Resources.ComplexUseCase
+                TrackedUsecases.UpdateFirms(),
             },
             (x, y) =>
             {
@@ -38,13 +37,13 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
                 failed = y;
             });
 
-            var container = new UnityContainer().ConfigureUnity(receiver);
-            var flowId = typeof(Replicate2CustomerIntelligenceFlow).Name.AsPrimaryProcessingFlowId();
+            var container = new UnityContainer().ConfigureUnity(receiver, new[] { MessageProcessingStage.Accumulation });
+            var flowId = typeof(ImportFactsFromErmFlow).Name.AsPrimaryProcessingFlowId();
 
             var processor = GetProcessor(container, flowId);
             processor.Process();
 
-            Assert.That(succeeded.Count(), Is.EqualTo(2));
+            Assert.That(succeeded.Count(), Is.EqualTo(1));
             Assert.That(failed.Count(), Is.EqualTo(0));
         }
 

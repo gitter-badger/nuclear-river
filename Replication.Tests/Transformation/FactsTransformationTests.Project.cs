@@ -18,29 +18,29 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::Project>(1))
+                          .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Project>(1)));
         }
 
         [Test]
         public void ShouldDestroyProjectIfProjectDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::Project>(1))
+                          .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Project>(1)));
         }
 
         [Test]
         public void ShouldRecalculateDependentAggregatesIfProjectUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 })
@@ -49,7 +49,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::Project>(1))
+                          .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1),
                                           Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Project>(1),

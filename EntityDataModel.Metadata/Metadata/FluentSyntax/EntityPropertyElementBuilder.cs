@@ -2,7 +2,7 @@ using System;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
+using NuClear.Metamodeling.Elements.Identities;
 
 // ReSharper disable once CheckNamespace
 namespace NuClear.AdvancedSearch.EntityDataModel.Metadata

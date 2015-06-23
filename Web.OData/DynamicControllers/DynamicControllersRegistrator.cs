@@ -2,10 +2,14 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Web.Http;
+using System.Web.OData;
 
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
+using NuClear.AdvancedSearch.EntityDataModel.Metadata.Features;
 using NuClear.AdvancedSearch.Web.OData.Controllers;
+using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.Web.OData.DynamicControllers
@@ -68,6 +72,56 @@ namespace NuClear.AdvancedSearch.Web.OData.DynamicControllers
             typeBuilder.SetCustomAttribute(customAttributeBuilder);
         }
 
+        private static void AddContainmentEntitiesMethods(TypeBuilder typeBuilder, Type parentType, EntityElement entity, Type entityType)
+        {
+            var propertyInfos = entity.Relations
+                .Where(x => x.Uses<EntityRelationContainmentFeature>())
+                .Select(x =>
+                {
+                    var propertyName = x.ResolveName();
+                    return entityType.GetProperty(propertyName);
+                });
+
+            foreach (var propertyInfo in propertyInfos)
+            {
+                AddContainmentEntitiesMethod(typeBuilder, parentType, propertyInfo);
+            }
+        }
+
+        private static void AddContainmentEntitiesMethod(TypeBuilder typeBuilder, Type parentType, PropertyInfo propertyInfo)
+        {
+            var methodBuilder = typeBuilder.DefineMethod("Get" + propertyInfo.Name, MethodAttributes.Public , typeof(IHttpActionResult), new[] { typeof(long) });
+            var keyParameter = methodBuilder.DefineParameter(1, ParameterAttributes.None, "key");
+
+            var dynamicEnableQueryAttribute = typeof(DynamicEnableQueryAttribute).GetConstructor(Type.EmptyTypes);
+            if (dynamicEnableQueryAttribute == null)
+            {
+                throw new ArgumentException();
+            }
+            methodBuilder.SetCustomAttribute(new CustomAttributeBuilder(dynamicEnableQueryAttribute, new object[0]));
+
+            var fromODataUriAttribute = typeof(FromODataUriAttribute).GetConstructor(Type.EmptyTypes);
+            if (fromODataUriAttribute == null)
+            {
+                throw new ArgumentException();
+            }
+            keyParameter.SetCustomAttribute(new CustomAttributeBuilder(fromODataUriAttribute, new object[0]));
+
+            var getContainedEntityMethodInfo = parentType.GetMethod("GetContainedEntity", BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(propertyInfo.PropertyType.GetGenericArguments());
+
+            var generator = methodBuilder.GetILGenerator();
+
+            // push "this"
+            generator.Emit(OpCodes.Ldarg_0);
+            // push "key"
+            generator.Emit(OpCodes.Ldarg_1);
+            // push propertyName
+            generator.Emit(OpCodes.Ldstr, propertyInfo.Name);
+            // call
+            generator.Emit(OpCodes.Call, getContainedEntityMethodInfo);
+            generator.Emit(OpCodes.Ret);
+        }
+
         private Assembly CreateDynamicControllersAssembly(BoundedContextElement boundedContextElement)
         {
             var assemblyModuleName = boundedContextElement.Identity.Id.Segments.LastOrDefault() + "Controllers";
@@ -87,6 +141,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DynamicControllers
 
                 AddParentConstructor(typeBuilder, parentType);
                 AddEntityElementIdAnnotation(typeBuilder, entity);
+                AddContainmentEntitiesMethods(typeBuilder, parentType, entity, entityType);
 
                 typeBuilder.CreateType();
             }

@@ -6,7 +6,7 @@ using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
-    using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+    using Facts = Model.Facts;
 
     public sealed class CustomerIntelligenceTransformationContext : ICustomerIntelligenceContext
     {
@@ -18,6 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 throw new ArgumentNullException("query");
             }
+
             _query = query;
         }
 
@@ -54,13 +55,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from client in _query.For<Facts.Client>()
+                       let rates = from firm in _query.For<Facts.Firm>()
+                                   join firmAddress in _query.For<Facts.FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                   join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _query.For<Facts.CategoryOrganizationUnit>() on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
+                                       equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _query.For<Facts.CategoryGroup>() on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   where client.Id == firm.ClientId
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Client
                               {
                                   Id = client.Id,
                                   Name = client.Name,
-                                  //CategoryGroupId = null
+                                  CategoryGroupId = rates.FirstOrDefault()
                               };
             }
         }
@@ -103,8 +112,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                 return from firm in _query.For<Facts.Firm>()
                        join project in _query.For<Facts.Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
-                       join client in _query.For<Facts.Client>() on firm.ClientId equals client.Id into firmClients
-                       from firmClient in firmClients.DefaultIfEmpty()
+                       let firmClient = _query.For<Facts.Client>().SingleOrDefault(client => client.Id == firm.ClientId)
+                       let rates = from firmAddress in _query.For<Facts.FirmAddress>().Where(firmAddress => firmAddress.FirmId == firm.Id)
+                                   join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                   join categoryOrganizationUnit in _query.For<Facts.CategoryOrganizationUnit>() on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
+                                       new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                   join categoryGroup in _query.For<Facts.CategoryGroup>() on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                   orderby categoryGroup.Rate descending
+                                   select categoryGroup.Id
                        select new Firm
                               {
                                   Id = firm.Id,
@@ -115,7 +130,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _query.For<Facts.FirmAddress>().Count(fa => fa.FirmId == firm.Id),
-                                  //CategoryGroupId = null,
+                                  CategoryGroupId = rates.FirstOrDefault(),
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
@@ -149,23 +164,44 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var level3 = from firmAddress in _query.For<Facts.FirmAddress>()
                              join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category3.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category3.Id
+                             };
 
                 var level2 = from firmAddress in _query.For<Facts.FirmAddress>()
                              join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category2.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category2.Id
+                             };
 
                 var level1 = from firmAddress in _query.For<Facts.FirmAddress>()
                              join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategory { FirmId = firmAddress.FirmId, CategoryId = category1.Id };
+                             select new FirmCategory
+                             {
+                                 FirmId = firmAddress.FirmId,
+                                 CategoryId = category1.Id
+                             };
 
                 // perform union using distinct
-                return level3.Union(level2).Union(level1);
+                // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
+                return from firmCategory in level3.Union(level2).Union(level1)
+                       from statistics in _query.For<Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
+                       select new FirmCategory
+                       {
+                           FirmId = firmCategory.FirmId,
+                           CategoryId = firmCategory.CategoryId,
+                           Hits = statistics != null ? statistics.Hits : 0,
+                           Shows = statistics != null ? statistics.Shows : 0,
+                       };
             }
         }
 
@@ -186,12 +222,23 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
+                var firmCategories = from firm in _query.For<Facts.Firm>()
+                                     join firmAddress in _query.For<Facts.FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                     join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                     select new { firm.Id, firm.OrganizationUnitId, categoryFirmAddress.CategoryId };
+
+                // Со статистикой по рубрикам выполняется left join, это допустимо при условии, что (ProjectId, CategoryId) - primary key, иначе можно получить дублирование записей.
                 return from project in _query.For<Facts.Project>()
                        join categoryOrganizationUnit in _query.For<Facts.CategoryOrganizationUnit>() on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       join сategoryStatistics in _query.For<Facts.ProjectCategoryStatistics>() on new { ProjectId = project.Id, categoryOrganizationUnit.CategoryId } equals
+                           new { сategoryStatistics.ProjectId, сategoryStatistics.CategoryId } into projectCategoryStatistics
+                       let firmCount = firmCategories.Where(x => x.OrganizationUnitId == project.OrganizationUnitId && x.CategoryId == categoryOrganizationUnit.CategoryId).Distinct().Count()
                        select new ProjectCategory
                        {
                            ProjectId = project.Id,
                            CategoryId = categoryOrganizationUnit.CategoryId,
+                                  FirmCount = firmCount,
+                                  AdvertisersShare = firmCount != 0 ? (float)projectCategoryStatistics.Select(x => x.AdvertisersCount).SingleOrDefault() / firmCount : 0
                        };
             }
         }

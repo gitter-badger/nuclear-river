@@ -5,11 +5,11 @@ using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Metamodeling.Provider;
-using NuClear.Metamodeling.Utils;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.Security.API;
 using NuClear.Tracing.API;
+using NuClear.Utils;
 
 using Quartz;
 
@@ -77,9 +77,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                     new PerformedOperationsFinalFlowProcessorSettings
                     {
                         MessageBatchSize = BatchSize,
-                        AppropriatedStages = new[] { MessageProcessingStage.Transforming, MessageProcessingStage.Processing, MessageProcessingStage.Handle },
+                        AppropriatedStages = new[]
+                                             {
+                                                 MessageProcessingStage.Transformation,
+                                                 MessageProcessingStage.Accumulation,
+                                                 MessageProcessingStage.Handling
+                                             },
                         FirstFaultTolerantStage = _firstFaultTolerantStageSetting.Value,
-                        ReprocessingBatchSize = ReprocessingBatchSize.HasValue ? ReprocessingBatchSize.Value : BatchSize
+                        ReprocessingBatchSize = ReprocessingBatchSize ?? BatchSize
                     });
             }
             catch (Exception ex)

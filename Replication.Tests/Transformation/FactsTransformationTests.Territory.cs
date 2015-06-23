@@ -18,34 +18,34 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeTerritoryIfTerritoryCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Territories == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Territories == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 2 }));
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Territory>(1)));
         }
 
         [Test]
         public void ShouldDestroyTerritoryIfTerritoryDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 2 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Territory>(1)));
         }
 
         [Test]
         public void ShouldRecalculateTerritoryIfTerritoryUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Territories == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Territories == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::Territory>(1))
+                          .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1)));
         }
     }

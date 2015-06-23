@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformCategory()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Categories).Returns(Inquire(
                 new Facts::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }
                 ));
@@ -32,7 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformCategoryGroup()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.CategoryGroups).Returns(Inquire(
                 new Facts::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }
                 ));
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformClient()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Clients).Returns(Inquire(
                 new Facts::Client { Id = 1, Name = "a client" }
                 ));
@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformContact()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Contacts).Returns(Inquire(
                 new Facts::Contact { Id = 1, Role = 1 },
                 new Facts::Contact { Id = 2, IsFired = true },
@@ -77,7 +77,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var dayAgo = now.AddDays(-1);
             var monthAgo = now.AddMonths(-1);
 
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(
                 new Facts::Project { Id = 1, OrganizationUnitId = 1},
                 new Facts::Project { Id = 2, OrganizationUnitId = 2}
@@ -125,7 +125,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmContactInfoFromClient()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(
                 new Facts::Project { Id = 1, OrganizationUnitId = 0 }
                 ));
@@ -156,7 +156,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmContactInfoFromFirm()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(
                 new Facts::Project { Id = 1, OrganizationUnitId = 0 }
                 ));
@@ -191,7 +191,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmBalance()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
                 new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
@@ -226,7 +226,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmCategory()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Categories)
                    .Returns(Inquire(
                         new Facts::Category { Id = 1, Level = 1 }, 
@@ -245,11 +245,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 }
                 ));
 
-            Transformation.Create(context.Object)
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.FirmStatistics).Returns(Inquire(
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }
+                ));
+
+            Transformation.Create(context.Object, bitContext.Object)
                 .VerifyTransform(x => x.FirmCategories, Inquire(
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2, Hits = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3, Shows = 2 },
                     new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
@@ -257,7 +264,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformProject()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects)
                    .Returns(Inquire(
                         new Facts::Project { Id = 123, Name = "p1"},
@@ -273,18 +280,28 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformProjectCategory()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
-            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 }));
+            context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
+                                                                               new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+            
+            // Десять фирм в проекте, каждая с рубрикой #3
+            context.SetupGet(x => x.Firms).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }).ToArray()));
+            context.SetupGet(x => x.FirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::FirmAddress { Id = i, FirmId = i }).ToArray()));
+            context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }).ToArray()));
 
-            Transformation.Create(context.Object)
-                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 }));
+            var bitContext = new Mock<IBitFactsContext>();
+            bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
+
+            Transformation.Create(context.Object, bitContext.Object)
+                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, AdvertisersShare = 0.1f, FirmCount = 10 },
+                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4, AdvertisersShare = 0, FirmCount = 0 }));
         }
 
         [Test]
         public void ShouldTransformTerritories()
         {
-            var context = new Mock<IFactsContext>();
+            var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Projects)
                    .Returns(Inquire(
                         new Facts::Project { Id = 1, OrganizationUnitId = 1 },
@@ -307,14 +324,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly ICustomerIntelligenceContext _transformation;
 
-            private Transformation(IFactsContext source)
+            private Transformation(IErmFactsContext source, IBitFactsContext bitFactsContext)
             {
-                _transformation = new CustomerIntelligenceTransformationContext(source);
+                _transformation = new CustomerIntelligenceTransformationContext(source, bitFactsContext);
             }
 
-            public static Transformation Create(IFactsContext source = null)
+            public static Transformation Create(IErmFactsContext source = null, IBitFactsContext bitFactsContext = null)
             {
-                return new Transformation(source ?? new Mock<IFactsContext>().Object);
+                return new Transformation(source ?? new Mock<IErmFactsContext>().Object, bitFactsContext ?? Mock.Of<IBitFactsContext>());
             }
 
             public Transformation VerifyTransform<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)

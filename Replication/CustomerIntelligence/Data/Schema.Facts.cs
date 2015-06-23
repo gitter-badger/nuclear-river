@@ -7,7 +7,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
     public static partial class Schema
     {
         private const string ErmSchema = "ERM";
-        
+        private const string BitSchema = "BIT";
+
         public static MappingSchema Facts
         {
             get
@@ -30,6 +31,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<Order>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Project>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Territory>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+
+                config.Entity<FirmCategoryStatistics>().HasSchemaName(BitSchema)
+                      .Property(x => x.FirmId).IsPrimaryKey()
+                      .Property(x => x.CategoryId).IsPrimaryKey();
+
+                config.Entity<ProjectCategoryStatistics>().HasSchemaName(BitSchema)
+                      .Property(x => x.ProjectId).IsPrimaryKey()
+                      .Property(x => x.CategoryId).IsPrimaryKey();
 
                 return schema;
             }

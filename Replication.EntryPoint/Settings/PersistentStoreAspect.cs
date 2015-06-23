@@ -12,12 +12,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 
         public PersistentStoreAspect(IConnectionStringSettings connectionStringSettings)
         {
-            _storeConnectionStringSettings = connectionStringSettings.GetConnectionStringSettings(ConnectionStringName.QuartzJobStore);
+            _storeConnectionStringSettings = connectionStringSettings.GetConnectionStringSettings(ConnectionStringName.Infrastructure);
         }
 
-        ConnectionStringSettings IPersistentStoreSettings.ConnectionStringSettings
+        string IPersistentStoreSettings.ConnectionString
         {
-            get { return _storeConnectionStringSettings; }
+            get { return _storeConnectionStringSettings.ConnectionString; }
         }
+
+        public string TablePrefix { get { return "Quartz."; } }
     }
 }

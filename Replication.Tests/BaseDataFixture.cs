@@ -95,7 +95,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                     var connection = provider.CreateConnection(settings.ConnectionString);
                     connection.Open();
 
-                    return TuneConnectionIfSqlite(new DataConnection(provider, connection).AddMappingSchema(schema));
+                    var dataConnection = new DataConnection(provider, connection).AddMappingSchema(schema);
+                    if (Settings.SqlCommandTimeout.HasValue)
+                    {
+                        dataConnection.CommandTimeout = Settings.SqlCommandTimeout.Value;
+                    }
+                    
+                    return TuneConnectionIfSqlite(dataConnection);
                 });
         }
 

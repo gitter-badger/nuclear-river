@@ -11,6 +11,7 @@ using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
+using NuClear.OperationsProcessing.API.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
@@ -34,17 +35,20 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
                 .RegisterType<IErmContext, ErmContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Erm)))
 
-                .RegisterType<FactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
-                .RegisterType<FactsTransformationContext>(Lifetime.PerScope)
+                .RegisterType<ErmFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
+                .RegisterType<ErmFactsTransformationContext>(Lifetime.PerScope)
+
+                .RegisterType<BitFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
+                // No BitTransformationContext registration, it depends on dto
 
                 .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<FactsContext>()))
+                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>(), new ResolvedParameter<BitFactsContext>()))
 
 
-                .RegisterType<FactsTransformation>(Lifetime.PerScope,
+                .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<FactsTransformationContext>(),
-                                                       new ResolvedParameter<FactsContext>(),
+                                                       new ResolvedParameter<ErmFactsTransformationContext>(),
+                                                       new ResolvedParameter<ErmFactsContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts)))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
@@ -53,8 +57,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<CustomerIntelligenceContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
 
+                .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
+                                                   new InjectionConstructor(
+                                                       new ResolvedParameter<BitFactsContext>(),
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
+
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
-                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
+                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
         }
 
         private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema)

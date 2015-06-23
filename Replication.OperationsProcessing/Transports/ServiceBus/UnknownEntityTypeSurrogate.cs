@@ -1,5 +1,5 @@
 ﻿using NuClear.Model.Common.Entities;
-using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
+using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf.Surrogates;
 
 using ProtoBuf;
 

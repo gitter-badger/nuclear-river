@@ -103,12 +103,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             Reload(ctx => ctx.Territories);
         }
 
-        private void Reload<T>(Func<IFactsContext, IEnumerable<T>> loader)
+        private void Reload<T>(Func<IErmFactsContext, IEnumerable<T>> loader)
+            where T : class
         {
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
-                var context = new FactsTransformationContext(new ErmContext(ermDb));
+                var context = new ErmFactsTransformationContext(new ErmContext(ermDb));
                 factDb.Reload(loader(context));
             }
         }

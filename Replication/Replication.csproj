@@ -49,7 +49,7 @@
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -57,10 +57,13 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IErmContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\IFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\IErmFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Category.cs" />
@@ -87,24 +90,31 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
+    <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\DestroyAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />
+    <Compile Include="Model\IBitFactObject.cs" />
     <Compile Include="Model\ICustomerIntelligenceObject.cs" />
     <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
+    <Compile Include="Model\IErmFactObject.cs" />
     <Compile Include="Model\IErmObject.cs" />
-    <Compile Include="Model\IFactObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
@@ -128,16 +138,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\CreateFact.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\DeleteFact.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Specifications\Specs.Facts.cs" />
     <Compile Include="Specifications\Specs.Erm.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactsTransformation.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\UpdateFact.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -19,38 +19,38 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateClientIfContactCreated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 1 }));
 
             FactsDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Create<Facts::Contact>(1))
+                          .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
 
         [Test]
         public void ShouldRecalulateClientIfContactDeleted()
         {
-            var source = Mock.Of<IFactsContext>();
+            var source = Mock.Of<IErmFactsContext>();
 
             FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Delete<Facts::Contact>(1))
+                          .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
 
         [Test]
         public void ShouldRecalulateClientIfContactUpdated()
         {
-            var source = Mock.Of<IFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 1 }));
+            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Contacts == Inquire(new Facts::Contact { Id = 1, ClientId = 1 }));
 
             FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(source, FactsDb)
-                          .Transform(Fact.Update<Facts::Contact>(1))
+                          .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Client>(1)));
         }
     }

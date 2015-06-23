@@ -13,7 +13,7 @@ function Replicate-ErmToFacts {
 	[void]$ermConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Erm)
 
 	$ermContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmContext($ermConnection)
-	$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsTransformationContext($ermContext)
+	$factsTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmFactsTransformationContext($ermContext)
 
 	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
@@ -27,8 +27,10 @@ function Replicate-FactsToCI {
 	$factsConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
 
-	$factsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.FactsContext($factsConnection)
-	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($factsContext)
+	$ermFactsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmFactsContext($factsConnection)
+	$bitFactsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.BitFactsContext($factsConnection)
+	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($ermFactsContext, $bitFactsContext)
+
 
 	$ciConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 	[void]$ciConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::CustomerIntelligence)
@@ -75,7 +77,7 @@ function Replicate-QueryDtoToConnection ($connection, $queryDtos){
 		$fullTableName = "[$($queryDto.SchemaName)].[$($queryDto.TableName)]"
 		Write-Host "$fullTableName..."
 
-		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, "truncate table $fullTableName")
+		$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, "delete from $fullTableName")
 		[void]$commandInfo.Execute()
 
 		[void][LinqToDB.Data.DataConnectionExtensions]::BulkCopy($connection, $bulkCopyOptions, $queryDto.Query)
@@ -134,7 +136,7 @@ function Exec-Command ($connection, [string]$command){
 
 function Clear-ServiceBusTopic ($topicName) {
 	
-	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.Replicate2CustomerIntelligenceFlow
+	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.ImportFactsFromErmFlow
 
 	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($Config.ConnectionStrings.ServiceBus)
 	$messageReceiver = $messageFactory.CreateSubscriptionClient($topicName, $messageFlow.Id, 'ReceiveAndDelete')
