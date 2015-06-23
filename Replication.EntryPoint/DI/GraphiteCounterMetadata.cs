@@ -11,10 +11,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static readonly IDictionary<IIdentity, GraphiteMetadataElement> data =
             new Dictionary<IIdentity, GraphiteMetadataElement>()
             {
-                { PrimaryProcessingDelayIdentity.Instance, new GraphiteMetadataElement("Primary_ProcessingDelay", GraphiteMetadataElement.CounterType.Gauge) },
-                { FinalProcessingDelayIdentity.Instance, new GraphiteMetadataElement("Final_ProcessingDelay", GraphiteMetadataElement.CounterType.Gauge) },
-                { PrimaryProcessedOperationCountIdentity.Instance, new GraphiteMetadataElement("Primary_OperationCountIdentity", GraphiteMetadataElement.CounterType.Counter) },
-                { FinalProcessedOperationCountIdentity.Instance, new GraphiteMetadataElement("Final_OperationCount", GraphiteMetadataElement.CounterType.Counter) },
+                { PrimaryProcessingDelayIdentity.Instance, new GraphiteMetadataElement("PrimaryProcessingDelay", GraphiteMetadataElement.CounterType.Gauge) },
+                { FinalProcessingDelayIdentity.Instance, new GraphiteMetadataElement("FinalProcessingDelay", GraphiteMetadataElement.CounterType.Gauge) },
+                { ErmFactOperationProcessedCountIdentity.Instance, new GraphiteMetadataElement("ErmOperation", GraphiteMetadataElement.CounterType.Counter) },
+                { BitStatisticsEntityProcessedCountIdentity.Instance, new GraphiteMetadataElement("BitEntity", GraphiteMetadataElement.CounterType.Counter) },
+                { AggregateOperationProcessedCountIdentity.Instance, new GraphiteMetadataElement("AggregateOperation", GraphiteMetadataElement.CounterType.Counter) },
             };
 
         public GraphiteMetadataElement Get<T>() where T : PerformanceIdentityBase<T>, new()

@@ -40,7 +40,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 var message = messages.OfType<FactOperationAggregatableMessage>().Single();
                 var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
-                _profiler.Report<PrimaryProcessedOperationCountIdentity>(message.Operations.Count());
+                _profiler.Report<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
 
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

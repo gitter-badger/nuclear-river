@@ -7,8 +7,10 @@ using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
+using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
@@ -18,12 +20,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         private readonly BitFactsTransformation _bitFactsTransformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
+        private readonly IProfiler _profiler;
 
-        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer)
+        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer, IProfiler profiler)
         {
             _bitFactsTransformation = bitFactsTransformation;
             _sender = sender;
             _tracer = tracer;
+            _profiler = profiler;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -41,18 +45,20 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                     {
                         var firmStatisticsDto = dto as FirmStatisticsDto;
                         if (firmStatisticsDto != null)
-                    {
-                        var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
-                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                    }
+                        {
+                            var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
+                            _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
+                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                        }
 
                         var categoryStatisticsDto = dto as CategoryStatisticsDto;
                         if (categoryStatisticsDto != null)
-                    {
-                        var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
-                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                        {
+                            var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
+                            _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
+                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                        }
                     }
-                }
                 }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

@@ -172,8 +172,9 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
-    <Compile Include="Performance\FinalProcessedOperationCountIdentity.cs" />
-    <Compile Include="Performance\PrimaryProcessedOperationCountIdentity.cs" />
+    <Compile Include="Performance\AggregateOperationProcessedCountIdentity.cs" />
+    <Compile Include="Performance\BitStatisticsEntityProcessedCountIdentity.cs" />
+    <Compile Include="Performance\ErmFactOperationProcessedCountIdentity.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverWrapper.cs" />

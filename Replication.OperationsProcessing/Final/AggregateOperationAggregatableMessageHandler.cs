@@ -34,7 +34,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
             {
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
                 _customerIntelligenceTransformation.Transform(message.Operations);
-                _profiler.Report<FinalProcessedOperationCountIdentity>(message.Operations.Count());
+                _profiler.Report<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
