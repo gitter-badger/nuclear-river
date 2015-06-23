@@ -28,10 +28,12 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
         {
-            var enqueuedTime = successfullyProcessedMessages.OfType<PerformedOperationsFinalProcessingMessage>()
-                                                            .SelectMany(message => message.FinalProcessings)
-                                                            .Select(message => message.CreatedOn)
-                                                            .Min();
+            var enqueuedTime = successfullyProcessedMessages
+                .Concat(failedProcessedMessages)
+                .OfType<PerformedOperationsFinalProcessingMessage>()
+                .SelectMany(message => message.FinalProcessings)
+                .Select(message => message.CreatedOn)
+                .Min();
 
             _profiler.Report<FinalProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
