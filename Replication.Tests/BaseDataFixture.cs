@@ -24,6 +24,24 @@ namespace NuClear.AdvancedSearch.Replication.Tests
     {
         private static readonly ConcurrentDictionary<ConnectionStringSettings, DataConnection> Connections = new ConcurrentDictionary<ConnectionStringSettings, DataConnection>();
 
+        private static readonly MethodInfo CreateTableMethodInfo =
+            MemberHelper.MethodOf(() => default(IDataContext).CreateTable<object>(default(string),
+                                                                                  default(string),
+                                                                                  default(string),
+                                                                                  default(string),
+                                                                                  default(string),
+                                                                                  DefaulNullable.None))
+                        .GetGenericMethodDefinition();
+
+        private static readonly Lazy<Type[]> Tables = new Lazy<Type[]>(
+            () =>
+            {
+                var accessor = typeof(Firm);
+                return accessor.Assembly.GetTypes()
+                               .Where(t => t.IsClass && (t.Namespace ?? string.Empty).Contains(accessor.Namespace ?? string.Empty))
+                               .ToArray();
+            });
+
         static BaseDataFixture()
         {
 #if DEBUG
@@ -31,21 +49,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             DataConnection.TurnTraceSwitchOn(TraceLevel.Verbose);
             DataConnection.WriteTraceLine = (s1, s2) => Debug.WriteLine(s1, s2);
 #endif
-        }
-
-        [TearDown]
-        public void FixtureTearDown()
-        {
-            foreach (var connection in Connections.Values.Select(x => x.Connection))
-            {
-                connection.Close();
-            }
-            Connections.Clear();
-        }
-
-        protected static IQueryable<T> Inquire<T>(params T[] elements)
-        {
-            return elements.AsQueryable();
         }
 
         protected IQuery ErmQuery
@@ -76,6 +79,22 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         protected DataConnection CustomerIntelligenceDb
         {
             get { return CreateConnection("CustomerIntelligence", Schema.CustomerIntelligence); }
+        }
+
+        [TearDown]
+        public void FixtureTearDown()
+        {
+            foreach (var connection in Connections.Values.Select(x => x.Connection))
+            {
+                connection.Close();
+            }
+
+            Connections.Clear();
+        }
+
+        protected static IQueryable<T> Inquire<T>(params T[] elements)
+        {
+            return elements.AsQueryable();
         }
 
         protected DataConnection CreateConnection(string connectionStringName, MappingSchema schema)
@@ -129,18 +148,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                     Tables.Value.SelectMany(table => db.MappingSchema.GetAttributes<TableAttribute>(table)).ToList().ForEach(x => x.Schema = null);
                 }
             }
+
             return db;
         }
-
-        private static readonly MethodInfo CreateTableMethodInfo = MemberHelper.MethodOf(() => DataExtensions.CreateTable<object>(default(IDataContext), default(string), default(string), default(string), default(string), default(string), DefaulNullable.None)).GetGenericMethodDefinition();
-
-        private static readonly Lazy<Type[]> Tables = new Lazy<Type[]>(
-            () =>
-            {
-                var accessor = typeof(Firm);
-                return accessor.Assembly.GetTypes()
-                    .Where(t => t.IsClass && (t.Namespace ?? "").Contains(accessor.Namespace ?? ""))
-                    .ToArray();
-            });
     }
 }

@@ -6,29 +6,30 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class ErmFactsTransformation
     {
-        private readonly IQuery _source;
-        private readonly IQuery _target;
+        private readonly IQuery _ermQuery;
+        private readonly IQuery _factsQuery;
         private readonly IDataMapper _mapper;
 
-        public ErmFactsTransformation(IQuery source, IQuery target, IDataMapper mapper)
+        public ErmFactsTransformation(IQuery ermQuery, IQuery factsQuery, IDataMapper mapper)
         {
-            if (source == null)
+            if (ermQuery == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException("ermQuery");
             }
 
-            if (target == null)
+            if (factsQuery == null)
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException("factsQuery");
             }
 
-            _source = source;
-            _target = target;
+            _ermQuery = ermQuery;
+            _factsQuery = factsQuery;
             _mapper = mapper;
         }
 
@@ -62,8 +63,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             where T : IErmFactObject
         {
             var result = MergeTool.Merge<long>(
-                query.Invoke(_source).Select(fact => fact.Id), 
-                query.Invoke(_target).Select(fact => fact.Id));
+                query.Invoke(_ermQuery).Select(fact => fact.Id), 
+                query.Invoke(_factsQuery).Select(fact => fact.Id));
 
             return result;
         }
@@ -72,7 +73,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             Func<IQuery, IEnumerable<long>, IQueryable<T>> query,
             IReadOnlyCollection<FactDependencyInfo> dependentAggregates,
             MergeTool.MergeResult<long> changes)
-            where T : IErmFactObject
+            where T : class, IErmFactObject
         {
             var idsToCreate = changes.Difference.ToArray();
             var idsToUpdate = changes.Intersection.ToArray();
@@ -87,7 +88,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<AggregateOperation> CreateFact<T>(IReadOnlyCollection<long> factIds, Func<IQuery, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
         {
-            _mapper.InsertAll(query.Invoke(_source, factIds));
+            _mapper.InsertAll<T>(query.Invoke(_ermQuery, factIds));
 
             return ProcessDependencies(dependentAggregates,
                                        factIds,
@@ -103,7 +104,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                              factIds,
                                              (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id));
 
-            _mapper.UpdateAll(query.Invoke(_source, factIds));
+            _mapper.UpdateAll(query.Invoke(_ermQuery, factIds));
 
             var after = ProcessDependencies(dependentAggregates,
                                             factIds,
@@ -112,7 +113,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return before.Concat(after);
         }
 
-        private IEnumerable<AggregateOperation> DeleteFact<T>(IReadOnlyCollection<long> factIds, Func<IQuery, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates)
+        private IEnumerable<AggregateOperation> DeleteFact<T>(IReadOnlyCollection<long> factIds, Func<IQuery, IEnumerable<long>, IQueryable<T>> query, IReadOnlyCollection<FactDependencyInfo> dependentAggregates) 
+            where T : class, IErmFactObject
         {
             var result = ProcessDependencies(dependentAggregates,
                                              factIds,
@@ -121,14 +123,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                                  ? (AggregateOperation)new DestroyAggregate(dependency.AggregateType, id)
                                                  : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id));
 
-            _mapper.DeleteAll(query.Invoke(_target, factIds));
+            _mapper.DeleteAll(_factsQuery.For(new FindSpecification<T>(x => factIds.Contains(x.Id))));
 
             return result;
         }
 
         private IReadOnlyCollection<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, IEnumerable<long> ids, Func<FactDependencyInfo, long, AggregateOperation> build)
         {
-            return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id))).ToArray();
+            return dependencies.SelectMany(info => info.Query(_factsQuery, ids).Select(id => build(info, id))).ToArray();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldInitializeClientIfClientCreated()
         {
             var source = Mock.Of<IQuery>(query => query.For<Facts::Client>() == Inquire(new Facts::Client { Id = 1 }));
-
+            
             Transformation.Create(source, FactsQuery)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Client>(1)));
@@ -937,6 +937,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 {
                     operations = operations.Where(predicate);
                 }
+
                 Assert.That(operations.ToArray(), Is.EqualTo(expected.ToArray()));
                 return this;
             }

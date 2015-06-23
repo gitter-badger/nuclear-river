@@ -75,6 +75,9 @@
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="BaseFixture.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />
