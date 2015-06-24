@@ -401,7 +401,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public Reader VerifyRead<T, TProjection>(Func<IQuery, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
             {
-                Assert.That(reader(_query).ToArray(), Is.EqualTo(expected.ToArray()).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
+                Assert.That(reader(_query), Is.EqualTo(expected.ToArray()).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
                 return this;
             }
         }

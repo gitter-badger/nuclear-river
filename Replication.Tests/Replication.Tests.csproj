@@ -76,6 +76,7 @@
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\ErmContextFilteringTests.cs" />
+    <Compile Include="Transformation\FactsTransformationContextTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Category.cs">
       <SubType>Code</SubType>
     </Compile>
