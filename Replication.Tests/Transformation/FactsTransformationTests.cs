@@ -633,7 +633,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactCreated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::FirmContact>>()) == Inquire(new Erm::FirmContact { Id = 3, FirmAddressId = 2 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::FirmContact>>()) == Inquire(new Erm::FirmContact { Id = 3, FirmAddressId = 2, ContactType = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
@@ -646,7 +646,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactUpdated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::FirmContact>>()) == Inquire(new Erm::FirmContact { Id = 1, FirmAddressId = 2 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::FirmContact>>()) == Inquire(new Erm::FirmContact { Id = 1, FirmAddressId = 2, ContactType = 1 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
@@ -725,7 +725,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderCreated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Order>>()) == Inquire(new Erm::Order { Id = 2, FirmId = 1 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Order>>()) == Inquire(new Erm::Order { Id = 2, FirmId = 1, WorkflowStepId = 4 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
@@ -737,7 +737,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderUpdated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Order>>()) == Inquire(new Erm::Order { Id = 1, FirmId = 2 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Order>>()) == Inquire(new Erm::Order { Id = 1, FirmId = 2, WorkflowStepId = 4 }));
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
