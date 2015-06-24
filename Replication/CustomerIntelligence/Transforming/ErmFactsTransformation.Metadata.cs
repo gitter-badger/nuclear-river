@@ -221,7 +221,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from firm in context.Firms
                            join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
                            join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
                            select firm.Id;
                 }
 
@@ -262,7 +262,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from firm in context.Firms
                            join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
                            join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
                            select firm.Id;
                 }
 
@@ -284,7 +284,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from firm in context.Firms
                            join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
                            join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals key
+                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
                            select firm.Id;
                 }
 
