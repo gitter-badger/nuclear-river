@@ -239,11 +239,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             {
                 return from project in _ermContext.Projects
                        join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
+                       join category in _ermContext.Categories on categoryOrganizationUnit.CategoryId equals category.Id
                        select new ProjectCategory
-                       {
-                           ProjectId = project.Id,
-                           CategoryId = categoryOrganizationUnit.CategoryId,
-                       };
+                              {
+                                  ProjectId = project.Id,
+                                  CategoryId = categoryOrganizationUnit.CategoryId,
+                                  Name = category.Name,
+                                  Level = category.Level,
+                                  ParentId = category.ParentId,
+                              };
             }
         }
 

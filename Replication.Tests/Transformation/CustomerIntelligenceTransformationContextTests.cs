@@ -273,6 +273,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
             context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
                                                                                new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+            context.SetupGet(x => x.Categories).Returns(Inquire(new Facts::Category { Id = 3 },
+                                                                new Facts::Category { Id = 4 }));
             
             // Десять фирм в проекте, каждая с рубрикой #3
             context.SetupGet(x => x.Firms).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }).ToArray()));
