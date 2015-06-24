@@ -24,13 +24,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         internal class Builder<TFact> where TFact : class, IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
-            private readonly Func<IQuery, IEnumerable<long>, IQueryable<TFact>> _factsQuery = (query, ids) => query.For<TFact>().Where(fact => ids.Contains(fact.Id));
-            
-            private Func<IQuery, IEnumerable<long>, IQueryable<TFact>> _ermQuery;
+            private Func<IQuery, IEnumerable<long>, IQueryable<TFact>> _query;
             
             public Builder<TFact> HasSource(Func<IQuery, IQueryable<TFact>> factQueryableProvider)
             {
-                _ermQuery = (query, ids) => factQueryableProvider(query).Where(fact => ids.Contains(fact.Id));
+                _query = (query, ids) => factQueryableProvider(query).Where(fact => ids.Contains(fact.Id));
                 return this;
             }
 
@@ -49,7 +47,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static implicit operator ErmFactInfo(Builder<TFact> builder)
             {
-                return new ErmFactInfoImpl<TFact>(builder._ermQuery, builder._factsQuery, builder._dependencies);
+                return new ErmFactInfoImpl<TFact>(builder._query, builder._dependencies);
             }
         }
 
@@ -57,16 +55,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             where T : class, IErmFactObject
         {
             private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _ermQuery;
-            private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _factsQuery;
             private readonly IReadOnlyCollection<FactDependencyInfo> _aggregates;
+            private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _factsQuery = (query, ids) => query.For<T>().Where(fact => ids.Contains(fact.Id));
 
             public ErmFactInfoImpl(
                 Func<IQuery, IEnumerable<long>, IQueryable<T>> ermQuery,
-                Func<IQuery, IEnumerable<long>, IQueryable<T>> factsQuery,
                 IReadOnlyCollection<FactDependencyInfo> aggregates)
             {
                 _ermQuery = ermQuery;
-                _factsQuery = factsQuery;
                 _aggregates = aggregates ?? new FactDependencyInfo[0];
             }
 
@@ -77,7 +73,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public override MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds)
             {
-                return transformation.DetectChanges(context => _factsQuery.Invoke(context, factIds));
+                return transformation.DetectChanges(query => _ermQuery.Invoke(query, factIds), query => _factsQuery.Invoke(query, factIds));
             }
 
             public override IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes)

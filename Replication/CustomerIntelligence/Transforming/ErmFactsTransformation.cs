@@ -59,12 +59,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return result;
         }
 
-        internal MergeTool.MergeResult<long> DetectChanges<T>(Func<IQuery, IQueryable<T>> query)
+        internal MergeTool.MergeResult<long> DetectChanges<T>(Func<IQuery, IQueryable<T>> ermQueryFunc, Func<IQuery, IQueryable<T>> factsQueryFunc)
             where T : IErmFactObject
         {
             var result = MergeTool.Merge<long>(
-                query.Invoke(_ermQuery).Select(fact => fact.Id), 
-                query.Invoke(_factsQuery).Select(fact => fact.Id));
+                ermQueryFunc.Invoke(_ermQuery).Select(fact => fact.Id),
+                factsQueryFunc.Invoke(_factsQuery).Select(fact => fact.Id));
 
             return result;
         }

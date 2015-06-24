@@ -96,6 +96,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 public static IEnumerable<long> ByFirm(IQuery query, IEnumerable<long> ids)
                 {
+                    var firms = query.For<Facts.Firm>().ToArray();
+
                     return from firm in query.For<Facts.Firm>()
                            where ids.Contains(firm.Id) && firm.ClientId != null
                            select firm.ClientId.Value;

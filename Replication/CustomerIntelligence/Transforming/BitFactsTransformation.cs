@@ -3,6 +3,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 
@@ -28,7 +29,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var firmsBefore = _bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
             _mapper.DeleteAll(_bitFactsContext.FirmStatistics.Where(stat => stat.ProjectId == dto.ProjectId));
-            _mapper.InsertAll(firmCategoryStatistics.AsQueryable());
+            _mapper.InsertAll<FirmCategoryStatistics>(firmCategoryStatistics.AsQueryable());
 
             var firmsAfter = firmCategoryStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
 
@@ -40,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
 
             _mapper.DeleteAll(_bitFactsContext.CategoryStatistics.Where(stat => stat.ProjectId == dto.ProjectId));
-            _mapper.InsertAll(projectCategoryStatistics.AsQueryable());
+            _mapper.InsertAll<ProjectCategoryStatistics>(projectCategoryStatistics.AsQueryable());
 
             return new [] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };
         }
