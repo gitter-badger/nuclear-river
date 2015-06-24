@@ -62,8 +62,6 @@
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\IErmContext.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\IErmFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Category.cs" />
