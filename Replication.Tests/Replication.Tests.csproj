@@ -75,7 +75,32 @@
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
+    <Compile Include="Transformation\ErmContextFilteringTests.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Category.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.CategoryOrganizationUnit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.Contact.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Transformation\FactsTransformationTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.Project.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.Territory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Transformation\OperationSortingFixture.cs" />

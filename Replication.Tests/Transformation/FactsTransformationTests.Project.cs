@@ -1,16 +1,17 @@
 ﻿using Moq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 using NUnit.Framework;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
+    using CI = CustomerIntelligence.Model;
     using Erm = CustomerIntelligence.Model.Erm;
     using Facts = CustomerIntelligence.Model.Facts;
-    using CI = CustomerIntelligence.Model;
 
     [TestFixture]
     internal partial class FactsTransformationTests
@@ -18,9 +19,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
-            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Project>>()) == Inquire(new Erm::Project { Id = 1, OrganizationUnitId = 2 }));
 
-            Transformation.Create(source, FactsDb)
+            Transformation.Create(source, FactsQuery)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Project>(1)));
         }
@@ -28,11 +29,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyProjectIfProjectDeleted()
         {
-            var source = Mock.Of<IErmFactsContext>();
+            var source = Mock.Of<IQuery>();
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsDb)
+            Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Project>(1)));
         }
@@ -40,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDependentAggregatesIfProjectUpdated()
         {
-            var source = Mock.Of<IErmFactsContext>(ctx => ctx.Projects == Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
+            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Project>>()) == Inquire(new Erm::Project { Id = 1, OrganizationUnitId = 2 }));
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 })
@@ -48,7 +49,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsDb)
+            Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1),
                                           Aggregate.Recalculate<CI::Firm>(1),

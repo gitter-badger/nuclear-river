@@ -2,6 +2,7 @@ using System;
 using System.Linq.Expressions;
 
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.Storage.Specifications;
 
 using NUnit.Framework;
 
@@ -35,5 +36,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         #endregion
+
+        public static class TestSpecs
+        {
+            public static class Find
+            {
+                public static FindSpecification<T> ById<T>(long id) where T : IIdentifiable
+                {
+                    return new FindSpecification<T>(x => x.Id == id);
+                }
+            }
+        }
     }
 }
