@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
@@ -16,101 +16,101 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadAccounts()
         {
-            Reload(ctx => ctx.Accounts);
+            Reload(query => query.For(Specs.Erm.Find.Accounts()));
         }
 
         [Test]
         public void ReloadBranchOfficeOrganizationUnits()
         {
-            Reload(ctx => ctx.BranchOfficeOrganizationUnits);
+            Reload(query => query.For(Specs.Erm.Find.BranchOfficeOrganizationUnits()));
         }
 
         [Test]
         public void ReloadCategories()
         {
-            Reload(ctx => ctx.Categories);
+            Reload(query => query.For(Specs.Erm.Find.Categories()));
         }
 
         [Test]
         public void ReloadCategoryGroups()
         {
-            Reload(ctx => ctx.CategoryGroups);
+            Reload(query => query.For(Specs.Erm.Find.CategoryGroups()));
         }
 
         [Test]
         public void ReloadCategoryFirmAddresses()
         {
-            Reload(ctx => ctx.CategoryFirmAddresses);
+            Reload(query => query.For(Specs.Erm.Find.CategoryFirmAddresses()));
         }
 
         [Test]
         public void ReloadCategoryOrganizationUnits()
         {
-            Reload(ctx => ctx.CategoryOrganizationUnits);
+            Reload(query => query.For(Specs.Erm.Find.CategoryOrganizationUnits()));
         }
 
         [Test]
         public void ReloadClients()
         {
-            Reload(ctx => ctx.Clients);
+            Reload(query => query.For(Specs.Erm.Find.Clients()));
         }
 
         [Test]
         public void ReloadContacts()
         {
-            Reload(ctx => ctx.Contacts);
+            Reload(query => query.For(Specs.Erm.Find.Contacts()));
         }
 
         [Test]
         public void ReloadFirms()
         {
-            Reload(ctx => ctx.Firms);
+            Reload(query => query.For(Specs.Erm.Find.Firms()));
         }
 
         [Test]
         public void ReloadFirmAddresses()
         {
-            Reload(ctx => ctx.FirmAddresses);
+            Reload(query => query.For(Specs.Erm.Find.FirmAddresses()));
         }
 
         [Test]
         public void ReloadFirmContacts()
         {
-            Reload(ctx => ctx.FirmContacts);
+            Reload(query => query.For(Specs.Erm.Find.FirmContacts()));
         }
 
         [Test]
         public void ReloadLegalPersons()
         {
-            Reload(ctx => ctx.LegalPersons);
+            Reload(query => query.For(Specs.Erm.Find.LegalPersons()));
         }
 
         [Test]
         public void ReloadOrders()
         {
-            Reload(ctx => ctx.Orders);
+            Reload(query => query.For(Specs.Erm.Find.Orders()));
         }
 
         [Test]
         public void ReloadProjects()
         {
-            Reload(ctx => ctx.Projects);
+            Reload(query => query.For(Specs.Erm.Find.Projects()));
         }
 
         [Test]
         public void ReloadTerritories()
         {
-            Reload(ctx => ctx.Territories);
+            Reload(query => query.For(Specs.Erm.Find.Territories()));
         }
 
-        private void Reload<T>(Func<IErmFactsContext, IEnumerable<T>> loader)
+        private void Reload<T>(Func<IQuery, IEnumerable<T>> loader)
             where T : class
         {
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
-                var context = new ErmFactsTransformationContext(new ErmContext(ermDb));
-                factDb.Reload(loader(context));
+                var query = new Query(new StubReadableDomainContextProvider(ermDb));
+                factDb.Reload(loader(query));
             }
         }
     }
