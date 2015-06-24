@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
@@ -19,13 +20,15 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly BitFactsTransformation _bitFactsTransformation;
         private readonly SqlStoreSender _sender;
+        private readonly ITransactionsManager _transactionsManager;
         private readonly ITracer _tracer;
         private readonly IProfiler _profiler;
 
-        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer, IProfiler profiler)
+        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITransactionsManager transactionsManager, ITracer tracer, IProfiler profiler)
         {
             _bitFactsTransformation = bitFactsTransformation;
             _sender = sender;
+            _transactionsManager = transactionsManager;
             _tracer = tracer;
             _profiler = profiler;
         }
@@ -43,20 +46,33 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                 {
                     foreach (var dto in message.Dtos)
                     {
-                        var firmStatisticsDto = dto as FirmStatisticsDto;
-                        if (firmStatisticsDto != null)
+                        try
                         {
-                            var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
-                            _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
-                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                        }
+                            // Не весь пакет в одной транзакции, ибо по каждому объекту очень много изменений.
+                            _transactionsManager.BeginTransaction();
+                            
+                            var firmStatisticsDto = dto as FirmStatisticsDto;
+                            if (firmStatisticsDto != null)
+                            {
+                                var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
+                                _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
+                                _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                            }
 
-                        var categoryStatisticsDto = dto as CategoryStatisticsDto;
-                        if (categoryStatisticsDto != null)
+                            var categoryStatisticsDto = dto as CategoryStatisticsDto;
+                            if (categoryStatisticsDto != null)
+                            {
+                                var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
+                                _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
+                                _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                            }
+
+                            _transactionsManager.CommitTransaction();
+                        }
+                        catch (Exception)
                         {
-                            var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
-                            _profiler.Report<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
-                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                            _transactionsManager.RollbackTransaction();
+                            throw;
                         }
                     }
                 }
