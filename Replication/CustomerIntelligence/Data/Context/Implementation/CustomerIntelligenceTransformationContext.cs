@@ -202,13 +202,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                       join firm in _ermContext.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
                                       join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
                                       join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                      select new { firm.OrganizationUnitId, ProjectId = project.Id, FirmId = firm.Id, categoryFirmAddress.CategoryId }).Distinct();
+                                      select new { ProjectId = project.Id, FirmId = firm.Id, categoryFirmAddress.CategoryId }).Distinct();
 
-                var firmCounts = firmCategories.GroupBy(x => new { x.OrganizationUnitId, x.CategoryId })
-                                         .Select(x => new { x.Key.CategoryId, x.Key.OrganizationUnitId, FirmCount = x.Count() });
+                var firmCounts = firmCategories.GroupBy(x => new { x.ProjectId, x.CategoryId })
+                                         .Select(x => new { x.Key.CategoryId, x.Key.ProjectId, FirmCount = x.Count() });
 
                 return from firmCategory in firmCategories
-                       let count = firmCounts.Where(x => x.OrganizationUnitId == firmCategory.OrganizationUnitId && x.CategoryId == firmCategory.CategoryId).Select(x => x.FirmCount).SingleOrDefault()
+                       let count = firmCounts.Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.FirmCount).SingleOrDefault()
                        let statistics = _bitContext.CategoryStatistics.Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.AdvertisersCount).SingleOrDefault()
                        select new FirmCategoryPartProject
                               {
