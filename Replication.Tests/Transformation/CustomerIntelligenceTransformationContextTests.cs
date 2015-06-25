@@ -242,11 +242,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 ));
 
             Transformation.Create(context.Object, bitContext.Object)
-                .VerifyTransform(x => x.FirmCategories, Inquire(
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2, Hits = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 3, Shows = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
+                .VerifyTransform(x => x.FirmCategoriesPartFirm, Inquire(
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 2, Hits = 2 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 3, Shows = 2 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
 
@@ -332,7 +332,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var ctx = new CustomerIntelligenceTransformationContext(ErmContext.ToErmFactsContext(), BitContext.ToBitFactsContext());
 
-            var statistics = ctx.FirmCategoryStatistics.ToList();
+            var statistics = ctx.FirmCategoriesPartProject.ToList();
 
             var firmStatistics = statistics.SingleOrDefault(x => x.FirmId == 7 && x.CategoryId == 6);
             Assert.That(firmStatistics, Is.Not.Null);

@@ -142,7 +142,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmCategory> FirmCategories
+        public IQueryable<FirmCategoryPartFirm> FirmCategoriesPartFirm
         {
             get
             {
@@ -153,7 +153,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var level3 = from firmAddress in _ermContext.FirmAddresses
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategory
+                             select new FirmCategoryPartFirm
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category3.Id
@@ -163,7 +163,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategory
+                             select new FirmCategoryPartFirm
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category2.Id
@@ -174,7 +174,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategory
+                             select new FirmCategoryPartFirm
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category1.Id
@@ -184,7 +184,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
                 return from firmCategory in level3.Union(level2).Union(level1)
                        from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
-                       select new FirmCategory
+                       select new FirmCategoryPartFirm
                        {
                            FirmId = firmCategory.FirmId,
                            CategoryId = firmCategory.CategoryId,
@@ -194,7 +194,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmCategoryStatistics> FirmCategoryStatistics
+        public IQueryable<FirmCategoryPartProject> FirmCategoriesPartProject
         {
             get
             {
@@ -210,7 +210,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 return from z in firmCategories.Distinct()
                        let count = firmCounts.Where(x => x.OrganizationUnitId == z.OrganizationUnitId && x.CategoryId == z.CategoryId).Select(x => x.FirmCount).SingleOrDefault()
                        let statistics = _bitContext.CategoryStatistics.Where(x => x.ProjectId == z.ProjectId && x.CategoryId == z.CategoryId).Select(x => x.AdvertisersCount).SingleOrDefault()
-                       select new FirmCategoryStatistics
+                       select new FirmCategoryPartProject
                               {
                                   FirmId = z.FirmId,
                                   CategoryId = z.CategoryId,
