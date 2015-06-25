@@ -6,7 +6,6 @@ using Moq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
@@ -312,25 +311,36 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldCalculateStatistics()
         {
-            const string ErmContext =
-                @"{" +
-                    "Projects: [ { Id: 1, OrganizationUnitId: 2 }, { Id: 3, OrganizationUnitId: 4 } ]," +
-                    "Categories: [ { Id: 5 }, { Id: 6 } ]," +
-                    "Firms: [ { Id: 7, OrganizationUnitId: 2 }, { Id: 8, OrganizationUnitId: 2 }, { Id: 9, OrganizationUnitId: 2 }, { Id: 10, OrganizationUnitId: 4 } ]," +
-                    "FirmAddresses: [ { Id: 7, FirmId: 7 }, { Id: 8, FirmId: 8 }, { Id: 9, FirmId: 9 }, { Id: 10, FirmId: 10 } ]," +
-                    "CategoryFirmAddresses: [" +
-                        "{ Id: 11, FirmAddressId: 7, CategoryId: 6 }," +
-                        "{ Id: 12, FirmAddressId: 8, CategoryId: 5 }," +
-                        "{ Id: 13, FirmAddressId: 8, CategoryId: 6 }," +
-                        "{ Id: 14, FirmAddressId: 9, CategoryId: 5 }," +
-                        "{ Id: 15, FirmAddressId: 10, CategoryId: 5 }," +
-                        "{ Id: 16, FirmAddressId: 10, CategoryId: 6 }" +
-                    "]" +
-                "}";
+            var erm = new Mock<IErmFactsContext>()
+                .Setup(x => x.Projects,
+                       new Facts.Project { Id = 1, OrganizationUnitId = 2 },
+                       new Facts.Project { Id = 3, OrganizationUnitId = 4 })
+                .Setup(x => x.Categories,
+                       new Facts.Category { Id = 5 },
+                       new Facts.Category { Id = 6 })
+                .Setup(x => x.Firms,
+                       new Facts.Firm { Id = 7, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 8, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 9, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 10, OrganizationUnitId = 4 })
+                .Setup(x => x.FirmAddresses,
+                       new Facts.FirmAddress { Id = 7, FirmId = 7 },
+                       new Facts.FirmAddress { Id = 8, FirmId = 8 },
+                       new Facts.FirmAddress { Id = 9, FirmId = 9 },
+                       new Facts.FirmAddress { Id = 10, FirmId = 10 })
+                .Setup(x => x.CategoryFirmAddresses,
+                       new Facts.CategoryFirmAddress { Id = 11, FirmAddressId = 7, CategoryId = 6 },
+                       new Facts.CategoryFirmAddress { Id = 12, FirmAddressId = 8, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 13, FirmAddressId = 8, CategoryId = 6 },
+                       new Facts.CategoryFirmAddress { Id = 14, FirmAddressId = 9, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 });
 
-            const string BitContext = @"{ CategoryStatistics: [ {ProjectId: 1, CategoryId: 6, AdvertisersCount: 1} ] }";
+            var bit = new Mock<IBitFactsContext>()
+                .Setup(x => x.CategoryStatistics,
+                       new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 6, AdvertisersCount = 1 });
 
-            var ctx = new CustomerIntelligenceTransformationContext(ErmContext.ToErmFactsContext(), BitContext.ToBitFactsContext());
+            var ctx = new CustomerIntelligenceTransformationContext(erm.Object, bit.Object);
 
             var statistics = ctx.FirmCategoriesPartProject.ToList();
 

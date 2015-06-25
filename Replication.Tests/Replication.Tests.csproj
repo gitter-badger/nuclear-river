@@ -58,6 +58,7 @@
     <Compile Include="Data\ErmFactsContextDataExtensions.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
+    <Compile Include="MockExtensions.cs" />
     <Compile Include="Transformation\WhenFirmToCategoryRelationChanged.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
