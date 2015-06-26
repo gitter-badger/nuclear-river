@@ -3,6 +3,10 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
+-- drop views
+if object_id('CustomerIntelligence.FirmCategory', 'view') is not null drop view CustomerIntelligence.FirmCategory;
+go
+
 -- drop tables
 if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
 if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
@@ -10,9 +14,11 @@ if object_id('CustomerIntelligence.ProjectCategory') is not null drop table Cust
 if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIntelligence.Territory;
 if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm;
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
-if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
+if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
+if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
+if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 go
 
 
@@ -82,15 +88,23 @@ create table CustomerIntelligence.FirmBalance(
 )
 go
 
--- FirmCategory
-create table CustomerIntelligence.FirmCategory(
+-- FirmCategoryPartFirm
+create table CustomerIntelligence.FirmCategoryPartFirm(
 	FirmId bigint not null
-    , AdvertisersShare float not null constraint DF_FirmCategories_AdvertisersShare default 0
-    , FirmCount bigint not null constraint DF_FirmCategories_FirmCount default 0
+	, CategoryId bigint not null
     , Hits bigint not null constraint DF_FirmCategories_Hits default 0
     , Shows bigint not null constraint DF_FirmCategories_Shows default 0
+    , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
+)
+go
+
+-- FirmCategoryPartProject
+create table CustomerIntelligence.FirmCategoryPartProject(
+	FirmId bigint not null
     , CategoryId bigint not null
-    , constraint PK_FirmCategories primary key (FirmId, CategoryId)
+    , FirmCount int not null
+    , AdvertisersShare float null
+    , constraint PK_FirmCategoryPartProject primary key (FirmId, CategoryId)
 )
 go
 
@@ -111,4 +125,19 @@ create table CustomerIntelligence.Contact(
     , ClientId bigint not null
     , constraint PK_Contacts primary key (Id)
 )
+go
+
+-- ¬ьюха дл€ сведени€ FirmCategory и FirmCategoryStatistics в единую бизнес-сущность
+create view CustomerIntelligence.FirmCategory
+as
+select
+	FirmCategoryPartFirm.FirmId
+	, FirmCategoryPartFirm.CategoryId
+	, FirmCategoryPartFirm.Hits
+	, FirmCategoryPartFirm.Shows
+	, FirmCategoryPartProject.FirmCount
+	, FirmCategoryPartProject.AdvertisersShare
+from 
+	CustomerIntelligence.FirmCategoryPartFirm
+	left join CustomerIntelligence.FirmCategoryPartProject on FirmCategoryPartFirm.FirmId = FirmCategoryPartProject.FirmId and FirmCategoryPartFirm.CategoryId = FirmCategoryPartProject.CategoryId
 go

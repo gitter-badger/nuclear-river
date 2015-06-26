@@ -20,11 +20,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             _context = context;
         }
 
-        public IQueryable<Category> Categories
-        {
-            get { return _context.GetTable<Category>(); }
-        }
-
         public IQueryable<CategoryGroup> CategoryGroups
         {
             get { return _context.GetTable<CategoryGroup>(); }
@@ -50,11 +45,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get { return _context.GetTable<FirmBalance>(); }
         }
 
-        public IQueryable<FirmCategory> FirmCategories
+        public IQueryable<FirmCategoryPartFirm> FirmCategoriesPartFirm
         {
-            get { return _context.GetTable<FirmCategory>(); }
+            get { return _context.GetTable<FirmCategoryPartFirm>(); }
         }
 
+        public IQueryable<FirmCategoryPartProject> FirmCategoriesPartProject
+        {
+            get { return _context.GetTable<FirmCategoryPartProject>(); }
+        }
+        
         public IQueryable<Project> Projects
         {
             get { return _context.GetTable<Project>(); }

@@ -26,15 +26,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
-        public void ReloadFirmCategories()
+        public void ReloadFirmCategoriesPartFirm()
         {
-            Reload(ctx => ctx.FirmCategories);
+            Reload(ctx => ctx.FirmCategoriesPartFirm);
         }
 
         [Test]
-        public void ReloadCategories()
+        public void ReloadFirmCategoriesPartProject()
         {
-            Reload(ctx => ctx.Categories);
+            Reload(ctx => ctx.FirmCategoriesPartProject);
         }
 
         [Test]
