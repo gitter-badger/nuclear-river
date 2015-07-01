@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Name
         {
-            get { return "PrimaryProcessedOperationCountIdentity"; }
+            get { return "ErmFactOperationProcessedCountIdentity"; }
         }
 
         public override string Description

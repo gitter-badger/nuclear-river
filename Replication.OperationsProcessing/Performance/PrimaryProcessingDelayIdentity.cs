@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Name
         {
-            get { return "PrimaryProcessingDelay"; }
+            get { return "PrimaryProcessingDelayIdentity"; }
         }
 
         public override string Description
