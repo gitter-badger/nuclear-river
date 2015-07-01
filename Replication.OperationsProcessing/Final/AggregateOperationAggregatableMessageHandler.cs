@@ -16,13 +16,13 @@ namespace NuClear.Replication.OperationsProcessing.Final
     public class AggregateOperationAggregatableMessageHandler : IMessageProcessingHandler
     {
         private readonly CustomerIntelligenceTransformation _customerIntelligenceTransformation;
-        private readonly ITransactionsManager _transactionsManager;
+        private readonly ITransactionManager _transactionManager;
         private readonly IProfiler _profiler;
 
-        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITransactionsManager transactionsManager, IProfiler profiler)
+        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITransactionManager transactionManager, IProfiler profiler)
         {
             _customerIntelligenceTransformation = customerIntelligenceTransformation;
-            _transactionsManager = transactionsManager;
+            _transactionManager = transactionManager;
             _profiler = profiler;
         }
 
@@ -37,16 +37,16 @@ namespace NuClear.Replication.OperationsProcessing.Final
             {
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
 
-                _transactionsManager.BeginTransaction();
+                _transactionManager.BeginTransaction();
                 _customerIntelligenceTransformation.Transform(message.Operations);
                 _profiler.Report<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
-                _transactionsManager.CommitTransaction();
+                _transactionManager.CommitTransaction();
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)
             {
-                _transactionsManager.RollbackTransaction();
+                _transactionManager.RollbackTransaction();
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }

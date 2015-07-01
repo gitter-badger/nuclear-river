@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Replication.Data
 {
-    public interface ITransactionsManager
+    public interface ITransactionManager
     {
         void BeginTransaction();
         void CommitTransaction();

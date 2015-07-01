@@ -19,15 +19,15 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly SqlStoreSender _sender;
-        private readonly ITransactionsManager _transactionsManager;
+        private readonly ITransactionManager _transactionManager;
         private readonly ITracer _tracer;
         private readonly IProfiler _profiler;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITransactionsManager transactionsManager, ITracer tracer, IProfiler profiler)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITransactionManager transactionManager, ITracer tracer, IProfiler profiler)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
-            _transactionsManager = transactionsManager;
+            _transactionManager = transactionManager;
             _tracer = tracer;
             _profiler = profiler;
         }
@@ -41,18 +41,18 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                _transactionsManager.BeginTransaction();
+                _transactionManager.BeginTransaction();
                 var message = messages.OfType<FactOperationAggregatableMessage>().Single();
                 var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
                 _profiler.Report<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                _transactionsManager.CommitTransaction();
+                _transactionManager.CommitTransaction();
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)
             {
-                _transactionsManager.RollbackTransaction();
+                _transactionManager.RollbackTransaction();
                 _tracer.Error(ex, "Error then import facts for ERM");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }

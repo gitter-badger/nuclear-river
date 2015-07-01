@@ -6,12 +6,12 @@ using IsolationLevel = System.Data.IsolationLevel;
 
 namespace NuClear.AdvancedSearch.Replication.Data
 {
-    public sealed class Linq2DbDataConnectionTransactionsManager : ITransactionsManager
+    public sealed class Linq2DbDataConnectionTransactionManager : ITransactionManager
     {
         private const IsolationLevel DefaultIsolationLevel = IsolationLevel.ReadCommitted;
         private readonly IEnumerable<DataConnection> _connections;
 
-        public Linq2DbDataConnectionTransactionsManager(IEnumerable<DataConnection> connections)
+        public Linq2DbDataConnectionTransactionManager(IEnumerable<DataConnection> connections)
         {
             _connections = connections;
         }

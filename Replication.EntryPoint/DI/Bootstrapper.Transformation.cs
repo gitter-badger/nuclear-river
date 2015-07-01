@@ -30,7 +30,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence)
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport)
 
-                .RegisterType<ITransactionsManager, Linq2DbDataConnectionTransactionsManager>(
+                .RegisterType<ITransactionManager, Linq2DbDataConnectionTransactionManager>(
                     Lifetime.PerScope,
                     new InjectionConstructor(new ResolvedArrayParameter<DataConnection>(
                                                  new ResolvedParameter<DataConnection>(Scope.Erm),

@@ -20,15 +20,15 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly BitFactsTransformation _bitFactsTransformation;
         private readonly SqlStoreSender _sender;
-        private readonly ITransactionsManager _transactionsManager;
+        private readonly ITransactionManager _transactionManager;
         private readonly ITracer _tracer;
         private readonly IProfiler _profiler;
 
-        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITransactionsManager transactionsManager, ITracer tracer, IProfiler profiler)
+        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITransactionManager transactionManager, ITracer tracer, IProfiler profiler)
         {
             _bitFactsTransformation = bitFactsTransformation;
             _sender = sender;
-            _transactionsManager = transactionsManager;
+            _transactionManager = transactionManager;
             _tracer = tracer;
             _profiler = profiler;
         }
@@ -49,7 +49,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         try
                         {
                             // Не весь пакет в одной транзакции, ибо по каждому объекту очень много изменений.
-                            _transactionsManager.BeginTransaction();
+                            _transactionManager.BeginTransaction();
                             
                             var firmStatisticsDto = dto as FirmStatisticsDto;
                             if (firmStatisticsDto != null)
@@ -67,11 +67,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                             }
 
-                            _transactionsManager.CommitTransaction();
+                            _transactionManager.CommitTransaction();
                         }
                         catch (Exception)
                         {
-                            _transactionsManager.RollbackTransaction();
+                            _transactionManager.RollbackTransaction();
                             throw;
                         }
                     }
