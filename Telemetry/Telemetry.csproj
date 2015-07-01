@@ -59,8 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregateProfiler.cs" />
+    <Compile Include="LogstashProfiler.cs" />
     <Compile Include="DebugProfiler.cs" />
     <Compile Include="GraphiteProfiler.cs" />
+    <Compile Include="Logstash\ILogstashSettings.cs" />
+    <Compile Include="Logstash\LogstashSettingsAspect.cs" />
     <Compile Include="Metadata\IGraphiteCounterMetadata.cs" />
     <Compile Include="IProfiler.cs" />
     <Compile Include="Metadata\GraphiteMetadataElement.cs" />
@@ -81,7 +84,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
