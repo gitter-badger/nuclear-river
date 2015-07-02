@@ -146,11 +146,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
             container.RegisterType<IGraphiteCounterMetadata, GraphiteCounterMetadata>();
-            container.RegisterType<IProfiler, AggregateProfiler>(Lifetime.Singleton,
+            container.RegisterType<ITelemetry, AggregateTelemetry>(Lifetime.Singleton,
                                                                  new InjectionConstructor(
-                                                                     new ResolvedArrayParameter<IProfiler>(
-                                                                         new ResolvedParameter<DebugProfiler>(),
-                                                                         new ResolvedParameter<LogstashProfiler>())));
+                                                                     new ResolvedArrayParameter<ITelemetry>(
+                                                                         new ResolvedParameter<DebugTelemetry>(),
+                                                                         new ResolvedParameter<LogstashTelemetry>())));
 
             // primary
             container

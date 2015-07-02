@@ -13,12 +13,12 @@ namespace NuClear.Replication.OperationsProcessing.Performance
     public sealed class SqlStoreReceiverWrapper : IMessageReceiver
     {
         private readonly IMessageReceiver _receiver;
-        private readonly IProfiler _profiler;
+        private readonly ITelemetry _telemetry;
 
-        public SqlStoreReceiverWrapper(SqlStoreReceiver receiver, IProfiler profiler)
+        public SqlStoreReceiverWrapper(SqlStoreReceiver receiver, ITelemetry telemetry)
         {
             _receiver = receiver;
-            _profiler = profiler;
+            _telemetry = telemetry;
         }
 
         public IReadOnlyList<IMessage> Peek()
@@ -35,7 +35,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
                 .Select(message => message.CreatedOn)
                 .Min();
 
-            _profiler.Report<FinalProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
+            _telemetry.Report<FinalProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
             _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
         }
