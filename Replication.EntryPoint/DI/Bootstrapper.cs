@@ -54,7 +54,6 @@ using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
 using NuClear.Telemetry;
-using NuClear.Telemetry.Zabbix;
 using NuClear.Tracing.API;
 using NuClear.WCF.Client;
 using NuClear.WCF.Client.Config;
@@ -145,7 +144,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
-            container.RegisterType<IGraphiteCounterMetadata, GraphiteCounterMetadata>();
             container.RegisterType<ITelemetry, AggregateTelemetry>(Lifetime.Singleton,
                                                                  new InjectionConstructor(
                                                                      new ResolvedArrayParameter<ITelemetry>(
