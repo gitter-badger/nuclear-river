@@ -153,13 +153,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             // primary
             container
                      .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
-                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverWrapper), Lifetime.PerScope, null)
+                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryWrapper), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
-            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverWrapper), Lifetime.PerScope, null)
+            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverTelemetryWrapper), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
 
 

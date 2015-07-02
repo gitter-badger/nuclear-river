@@ -178,8 +178,8 @@
     <Compile Include="Performance\ErmFactOperationProcessedCountIdentity.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
-    <Compile Include="Performance\ServiceBusOperationsReceiverWrapper.cs" />
-    <Compile Include="Performance\SqlStoreReceiverWrapper.cs" />
+    <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
+    <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />

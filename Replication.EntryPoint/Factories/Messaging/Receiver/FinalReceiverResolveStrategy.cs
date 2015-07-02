@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Rece
     public sealed class FinalReceiverResolveStrategy : MessageFlowReceiverResolveStrategyBase
     {
         public FinalReceiverResolveStrategy(IMetadataProvider metadataProvider)
-            : base(metadataProvider, typeof(SqlStoreReceiverWrapper), PerformedOperations.IsPerformedOperationsFinalSource)
+            : base(metadataProvider, typeof(SqlStoreReceiverTelemetryWrapper), PerformedOperations.IsPerformedOperationsFinalSource)
         {
         }
     }
