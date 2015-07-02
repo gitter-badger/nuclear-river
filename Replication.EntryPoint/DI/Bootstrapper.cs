@@ -150,9 +150,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                                  new InjectionConstructor(
                                                                      new ResolvedArrayParameter<IProfiler>(
                                                                          new ResolvedParameter<DebugProfiler>(),
-                                                                         new ResolvedParameter<PerformanceCounterProfiler>(),
-                                                                         new ResolvedParameter<GraphiteProfiler>(),
-                                                                         new ResolvedParameter<ZabbixProfiler>())));
+                                                                         new ResolvedParameter<LogstashProfiler>())));
 
             // primary
             container
