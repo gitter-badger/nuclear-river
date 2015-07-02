@@ -5,6 +5,9 @@ namespace NuClear.Telemetry
     public abstract class PerformanceIdentityBase<T> : IdentityBase<T> 
         where T : IdentityBase<T>, new()
     {
-        public abstract string Name { get; }
+        public virtual string Name
+        {
+            get { return GetType().Name.Replace("Identity", string.Empty); }
+        }
     }
 }
