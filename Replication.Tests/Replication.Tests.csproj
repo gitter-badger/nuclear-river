@@ -54,8 +54,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\BitFactsContextDataExtensions.cs" />
-    <Compile Include="Data\ErmFactsContextDataExtensions.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="MockExtensions.cs" />
