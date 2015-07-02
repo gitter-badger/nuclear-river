@@ -31,12 +31,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport)
 
                 .RegisterType<ITransactionManager, Linq2DbDataConnectionTransactionManager>(
+                    Scope.Facts,
                     Lifetime.PerScope,
-                    new InjectionConstructor(new ResolvedArrayParameter<DataConnection>(
-                                                 new ResolvedParameter<DataConnection>(Scope.Erm),
-                                                 new ResolvedParameter<DataConnection>(Scope.Facts),
-                                                 new ResolvedParameter<DataConnection>(Scope.CustomerIntelligence),
-                                                 new ResolvedParameter<DataConnection>(Scope.Transport))))
+                    new InjectionConstructor(new ResolvedArrayParameter<DataConnection>(new ResolvedParameter<DataConnection>(Scope.Facts))))
+
+                .RegisterType<ITransactionManager, Linq2DbDataConnectionTransactionManager>(
+                    Scope.CustomerIntelligence,
+                    Lifetime.PerScope,
+                    new InjectionConstructor(new ResolvedArrayParameter<DataConnection>(new ResolvedParameter<DataConnection>(Scope.CustomerIntelligence))))
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
@@ -57,18 +59,21 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<ErmFactsTransformationContext>(),
                                                        new ResolvedParameter<ErmFactsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts),
+                                                       new ResolvedParameter<ITransactionManager>(Scope.Facts)))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<CustomerIntelligenceTransformationContext>(),
                                                        new ResolvedParameter<CustomerIntelligenceContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence),
+                                                       new ResolvedParameter<ITransactionManager>(Scope.CustomerIntelligence)))
 
                 .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<BitFactsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts),
+                                                       new ResolvedParameter<ITransactionManager>(Scope.Facts)))
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));

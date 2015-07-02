@@ -912,7 +912,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private Transformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
             {
                 _mapper = mapper ?? Mock.Of<IDataMapper>();
-                _transformation = new ErmFactsTransformation(source, target, _mapper);
+                _transformation = new ErmFactsTransformation(source, target, _mapper, Mock.Of<ITransactionManager>());
                 _operations = new List<AggregateOperation>();
             }
 

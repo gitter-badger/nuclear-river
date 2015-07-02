@@ -14,8 +14,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly IErmFactsContext _source;
         private readonly IErmFactsContext _target;
         private readonly IDataMapper _mapper;
+        private readonly ITransactionManager _transactionManager;
 
-        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
+        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper, ITransactionManager transactionManager)
         {
             if (source == null)
             {
@@ -30,9 +31,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _source = source;
             _target = target;
             _mapper = mapper;
+            _transactionManager = transactionManager;
         }
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
+        {
+            return _transactionManager.InvokeTransactionalFunc(DoTransform, operations);
+        }
+
+        private IEnumerable<AggregateOperation> DoTransform(IEnumerable<FactOperation> operations)
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
