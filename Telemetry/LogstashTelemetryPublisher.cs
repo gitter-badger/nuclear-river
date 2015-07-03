@@ -1,6 +1,7 @@
 using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
@@ -57,7 +58,7 @@ namespace NuClear.Telemetry
             {
                 lock (_sync)
                 {
-                    _client.Send(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
+                    _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
                 }
             }
             catch(Exception)
@@ -88,6 +89,7 @@ namespace NuClear.Telemetry
 
         private interface IClientWrapper : IDisposable
         {
+            Task SendAsync(byte[] data);
             void Send(byte[] data);
         }
 
@@ -109,7 +111,12 @@ namespace NuClear.Telemetry
             {
                 Dispose(false);
             }
-            
+
+            public Task SendAsync(byte[] data)
+            {
+                return Task.Factory.StartNew(() => Send(data));
+            }
+
             public void Send(byte[] data)
             {
                 var client = GetClient();
@@ -176,7 +183,12 @@ namespace NuClear.Telemetry
             {
                 Dispose(false);
             }
-            
+
+            public Task SendAsync(byte[] data)
+            {
+                return Task.Factory.StartNew(() => Send(data));
+            }
+
             public void Send(byte[] data)
             {
                 _client.Send(data, data.Length);
