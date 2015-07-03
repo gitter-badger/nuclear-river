@@ -177,7 +177,9 @@
     <Compile Include="Performance\ErmOperationCountIdentity.cs" />
     <Compile Include="Performance\ErmFactOperationProcessedCountIdentity.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
     <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />

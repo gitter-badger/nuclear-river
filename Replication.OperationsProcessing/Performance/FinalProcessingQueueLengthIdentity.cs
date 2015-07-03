@@ -1,0 +1,17 @@
+using NuClear.Telemetry;
+
+namespace NuClear.Replication.OperationsProcessing.Performance
+{
+    public class FinalProcessingQueueLengthIdentity : PerformanceIdentityBase<FinalProcessingQueueLengthIdentity>
+    {
+        public override int Id
+        {
+            get { return 0; }
+        }
+
+        public override string Description
+        {
+            get { return "Размер очереди ETL2"; }
+        }
+    }
+}
