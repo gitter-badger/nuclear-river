@@ -18,18 +18,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class CustomerIntelligenceTransformationContextTests : BaseTransformationFixture
     {
         [Test]
-        public void ShouldTransformCategory()
-        {
-            var context = new Mock<IErmFactsContext>();
-            context.SetupGet(x => x.Categories).Returns(Inquire(
-                new Facts::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }
-                ));
-
-            Transformation.Create(context.Object)
-                          .VerifyTransform(x => x.Categories.ById(2), Inquire(new CI::Category { Id = 2, Name = "category", Level = 2, ParentId = 1 }));
-        }
-
-        [Test]
         public void ShouldTransformCategoryGroup()
         {
             var context = new Mock<IErmFactsContext>();
@@ -253,11 +241,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 ));
 
             Transformation.Create(context.Object, bitContext.Object)
-                .VerifyTransform(x => x.FirmCategories, Inquire(
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 2, Hits = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 3, Shows = 2 },
-                    new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
+                .VerifyTransform(x => x.FirmCategoriesPartFirm, Inquire(
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 2, Hits = 2 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 3, Shows = 2 },
+                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
 
@@ -284,6 +272,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             context.SetupGet(x => x.Projects).Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
             context.SetupGet(x => x.CategoryOrganizationUnits).Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
                                                                                new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+            context.SetupGet(x => x.Categories).Returns(Inquire(new Facts::Category { Id = 3 },
+                                                                new Facts::Category { Id = 4 }));
             
             // Десять фирм в проекте, каждая с рубрикой #3
             context.SetupGet(x => x.Firms).Returns(Inquire(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }).ToArray()));
@@ -294,8 +284,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             bitContext.SetupGet(x => x.CategoryStatistics).Returns(Inquire(new Facts.ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 }));
 
             Transformation.Create(context.Object, bitContext.Object)
-                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, AdvertisersShare = 0.1f, FirmCount = 10 },
-                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4, AdvertisersShare = 0, FirmCount = 0 }));
+                          .VerifyTransform(x => x.ProjectCategories, Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 },
+                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
         }
 
         [Test]
@@ -316,6 +306,48 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
                     new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }
                     ));
+        }
+
+        [Test]
+        public void ShouldCalculateStatistics()
+        {
+            var erm = new Mock<IErmFactsContext>()
+                .Setup(x => x.Projects,
+                       new Facts.Project { Id = 1, OrganizationUnitId = 2 },
+                       new Facts.Project { Id = 3, OrganizationUnitId = 4 })
+                .Setup(x => x.Categories,
+                       new Facts.Category { Id = 5 },
+                       new Facts.Category { Id = 6 })
+                .Setup(x => x.Firms,
+                       new Facts.Firm { Id = 7, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 8, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 9, OrganizationUnitId = 2 },
+                       new Facts.Firm { Id = 10, OrganizationUnitId = 4 })
+                .Setup(x => x.FirmAddresses,
+                       new Facts.FirmAddress { Id = 7, FirmId = 7 },
+                       new Facts.FirmAddress { Id = 8, FirmId = 8 },
+                       new Facts.FirmAddress { Id = 9, FirmId = 9 },
+                       new Facts.FirmAddress { Id = 10, FirmId = 10 })
+                .Setup(x => x.CategoryFirmAddresses,
+                       new Facts.CategoryFirmAddress { Id = 11, FirmAddressId = 7, CategoryId = 6 },
+                       new Facts.CategoryFirmAddress { Id = 12, FirmAddressId = 8, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 13, FirmAddressId = 8, CategoryId = 6 },
+                       new Facts.CategoryFirmAddress { Id = 14, FirmAddressId = 9, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
+                       new Facts.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 });
+
+            var bit = new Mock<IBitFactsContext>()
+                .Setup(x => x.CategoryStatistics,
+                       new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 6, AdvertisersCount = 1 });
+
+            var ctx = new CustomerIntelligenceTransformationContext(erm.Object, bit.Object);
+
+            var statistics = ctx.FirmCategoriesPartProject.ToList();
+
+            var firmStatistics = statistics.SingleOrDefault(x => x.FirmId == 7 && x.CategoryId == 6);
+            Assert.That(firmStatistics, Is.Not.Null);
+            Assert.That(firmStatistics.FirmCount, Is.EqualTo(2));
+            Assert.That(firmStatistics.AdvertisersShare, Is.EqualTo(0.5f));
         }
 
         #region Transformation

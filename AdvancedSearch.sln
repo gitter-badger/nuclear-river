@@ -47,6 +47,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9
 	ProjectSection(SolutionItems) = preProject
 		build\convertusecases.ps1 = build\convertusecases.ps1
 		build\default.ps1 = build\default.ps1
+		build\metadata.psm1 = build\metadata.psm1
+		build\metadata.servicebus.psm1 = build\metadata.servicebus.psm1
+		build\metadata.taskservice.psm1 = build\metadata.taskservice.psm1
+		build\metadata.transform.psm1 = build\metadata.transform.psm1
+		build\metadata.web.psm1 = build\metadata.web.psm1
 		build\replicate.ps1 = build\replicate.ps1
 		build\run-build.ps1 = build\run-build.ps1
 	EndProjectSection

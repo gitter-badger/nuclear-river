@@ -14,12 +14,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                         .Member("MakingDecisions", 3)
                 )
                 .Elements(
-                    EntityElement.Config.Name(EntityName.Category).EntitySetName("Categories")
-                        .HasKey("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
-                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                        .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
-                        .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable()),
                     EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
@@ -31,12 +25,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                         .Relation(EntityRelationElement.Config.Name("Categories")
                             .DirectTo(
                                 EntityElement.Config.Name(EntityName.ProjectCategory).EntitySetName("ProjectCategories")
-                                    .HasKey("ProjectId", "CategoryId")
-                                    .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
+                                    .HasKey("CategoryId")
                                     .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
-                                    .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
-                                    .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
+                                    .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                    .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
                             ).AsMany().AsContainment()
                         )
                         .Relation(EntityRelationElement.Config.Name("Territories")
@@ -63,18 +55,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                     .Relation(EntityRelationElement.Config.Name("Balances")
                                         .DirectTo(
                                             EntityElement.Config.Name(EntityName.FirmBalance)
-                                                .HasKey("AccountId", "FirmId")
+                                                .HasKey("AccountId")
                                                 .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
-                                                .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
                                                 .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
                                         ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("Categories")
                                         .DirectTo(
                                             EntityElement.Config.Name(EntityName.FirmCategory)
-                                                .HasKey("CategoryId", "FirmId")
+                                                .HasKey("CategoryId")
                                                 .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                                .Property(EntityPropertyElement.Config.Name("FirmId").OfType(ElementaryTypeKind.Int64))
-                                                .Relation(EntityRelationElement.Config.Name("Category").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsOne())
+                                                .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
+                                                .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                         ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
                                     .Relation(EntityRelationElement.Config.Name("Client")
@@ -106,12 +99,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
             private static readonly StructuralModelElementBuilder StoreModel =
                 StructuralModelElement.Config.Elements(
-                    EntityElement.Config.Name(TableName.Category)
-                                 .HasKey("Id")
-                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                                 .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
-                                 .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable()),
                     EntityElement.Config.Name(TableName.CategoryGroup)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
@@ -123,10 +110,11 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
                     EntityElement.Config.Name(TableName.ProjectCategory)
                                  .HasKey("ProjectId", "CategoryId")
-                                 .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
-                                 .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
-                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64)),
+                                 .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                                 .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
+                                 .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable())
+                                 .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne()),
                     EntityElement.Config.Name(TableName.ProjectTerritory)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
@@ -166,13 +154,16 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     EntityElement.Config.Name(TableName.FirmCategory)
                                  .HasKey("FirmId", "CategoryId")
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double))
+                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =
                 BoundedContextElement.Config.Name("CustomerIntelligence")
                     .ConceptualModel(ConceptualModel)
                     .StoreModel(StoreModel)
-                    .Map(EntityName.Category, TableName.Category)
                     .Map(EntityName.CategoryGroup, TableName.CategoryGroup)
                     .Map(EntityName.Project, TableName.Project)
                     .Map(EntityName.ProjectCategory, TableName.ProjectCategory)
@@ -190,7 +181,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
             private static class EntityName
             {
-                public const string Category = "Category";
                 public const string CategoryGroup = "CategoryGroup";
                 public const string Project = "Project";
                 public const string ProjectCategory = "ProjectCategory";
@@ -204,7 +194,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
 
             private static class TableName
             {
-                public const string Category = TableSchema + "." + "Category";
                 public const string CategoryGroup = TableSchema + "." + "CategoryGroup";
                 public const string Project = TableSchema + "." + "Project";
                 public const string ProjectCategory = TableSchema + "." + "ProjectCategory";

@@ -15,7 +15,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 var schema = new MappingSchema();
                 var config = schema.GetFluentMappingBuilder();
 
-                config.Entity<Category>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<CategoryGroup>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Client>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Contact>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
@@ -23,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<FirmBalance>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.AccountId).IsPrimaryKey()
                     .Property(x => x.FirmId).IsPrimaryKey();
-                config.Entity<FirmCategory>().HasSchemaName(CustomerIntelligenceSchema)
+                config.Entity<FirmCategoryPartFirm>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.CategoryId).IsPrimaryKey()
                     .Property(x => x.FirmId).IsPrimaryKey();
                 config.Entity<Project>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
@@ -31,6 +30,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                     .Property(x => x.ProjectId).IsPrimaryKey()
                     .Property(x => x.CategoryId).IsPrimaryKey();
                 config.Entity<Territory>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<FirmCategoryPartProject>().HasSchemaName(CustomerIntelligenceSchema)
+                    .Property(x => x.FirmId).IsPrimaryKey()
+                    .Property(x => x.CategoryId).IsPrimaryKey();
 
                 return schema;
             }

@@ -45,12 +45,10 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         }
 
         [TestCase("CustomerIntelligence", MetadataKind.Identity | MetadataKind.Elements | MetadataKind.Features, Explicit = true, Description = "Used to get dump of hierarchy (manual run)")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Category", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Category'},'Features':[{'EntitySetName':'Categories'}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Project", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Project'},'Features':[{'EntitySetName':'Projects'}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Project/Categories", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Project/Categories'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory'},'Features':[{'EntitySetName':'ProjectCategories'}]}}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory'},'Features':[{'EntitySetName':'ProjectCategories'}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory/Category", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ProjectCategory/Category'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Category'},'Features':[{'EntitySetName':'Categories'}]}}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Territory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Territory'},'Features':[]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm'},'Features':[{'EntitySetName':'Firms'}]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm/Balances", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Firm/Balances'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmBalance'},'Features':[]}}]}")]
@@ -82,7 +80,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
 
         [TestCase("CustomerIntelligence")]
         [TestCase("CustomerIntelligence/ConceptualModel")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Category")]
         [TestCase("CustomerIntelligence/ConceptualModel/CategoryGroup")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client")]
         [TestCase("CustomerIntelligence/ConceptualModel/Contact")]
@@ -93,7 +90,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         [TestCase("CustomerIntelligence/ConceptualModel/ProjectCategory")]
         [TestCase("CustomerIntelligence/ConceptualModel/Territory")]
         [TestCase("CustomerIntelligence/StoreModel")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Category")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.CategoryGroup")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Client")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Contact")]

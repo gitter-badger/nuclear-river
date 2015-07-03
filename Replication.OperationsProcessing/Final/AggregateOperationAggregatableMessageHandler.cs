@@ -9,17 +9,20 @@ using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Primary;
 using NuClear.Telemetry;
+using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
-    public class AggregateOperationAggregatableMessageHandler : IMessageProcessingHandler
+    public sealed class AggregateOperationAggregatableMessageHandler : IMessageProcessingHandler
     {
         private readonly CustomerIntelligenceTransformation _customerIntelligenceTransformation;
+        private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITelemetryPublisher telemetryPublisher)
+        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
             _customerIntelligenceTransformation = customerIntelligenceTransformation;
+            _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
         }
 
@@ -40,6 +43,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
             }
             catch (Exception ex)
             {
+                _tracer.Error(ex, "Error then calculating aggregates");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
