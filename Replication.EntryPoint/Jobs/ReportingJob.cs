@@ -17,14 +17,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
     [DisallowConcurrentExecution]
     public sealed class ReportingJob : TaskServiceJobBase
     {
-        private readonly ITelemetry _telemetry;
+        private readonly ITelemetryPublisher _telemetry;
         private readonly NamespaceManager _manager;
         private readonly SqlConnection _sqlConnection;
 
         public ReportingJob(ITracer tracer,
                             ISignInService signInService,
                             IUserImpersonationService userImpersonationService,
-                            ITelemetry telemetry,
+                            ITelemetryPublisher telemetry,
                             IConnectionStringSettings connectionStringSettings)
             : base(signInService, userImpersonationService, tracer)
         {
@@ -49,7 +49,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
             const string CommandText = "select count(*) from Transport.PerformedOperationFinalProcessing";
             var command = new SqlCommand(CommandText, _sqlConnection);
             var count = (int)command.ExecuteScalar();
-            _telemetry.Report<FinalProcessingQueueLengthIdentity>(count);
+            _telemetry.Publish<FinalProcessingQueueLengthIdentity>(count);
 
             _sqlConnection.Close();
         }
@@ -57,7 +57,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         private void ReportPrimaryProcessingQueueLength()
         {
             var subscription = _manager.GetSubscription("topic.advancedsearch", "9F2C5A2A-924C-485A-9790-9066631DB307");
-            _telemetry.Report<PrimaryProcessingQueueLengthIdentity>(subscription.MessageCountDetails.ActiveMessageCount);
+            _telemetry.Publish<PrimaryProcessingQueueLengthIdentity>(subscription.MessageCountDetails.ActiveMessageCount);
         }
     }
 }
