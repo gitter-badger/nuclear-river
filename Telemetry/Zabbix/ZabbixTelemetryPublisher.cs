@@ -18,7 +18,7 @@ namespace NuClear.Telemetry.Zabbix
             _zabbixSender = new ZabbixSender(zabbixSettings.ZabbixUri);
         }
 
-        public async void Report<T>(long value) where T : TelemetryIdentityBase<T>, new()
+        public async void Publish<T>(long value) where T : TelemetryIdentityBase<T>, new()
         {
             var zabbixItem = new ZabbixItem
             {

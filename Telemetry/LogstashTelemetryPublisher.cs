@@ -36,7 +36,7 @@ namespace NuClear.Telemetry
             }
         }
 
-        public void Report<T>(long value)
+        public void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new()
         {
             var report = new

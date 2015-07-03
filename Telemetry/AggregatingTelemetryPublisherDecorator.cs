@@ -11,12 +11,12 @@ namespace NuClear.Telemetry
             _profilers = profilers;
         }
 
-        public void Report<T>(long value)
+        public void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new()
         {
             foreach (var profiler in _profilers)
             {
-                profiler.Report<T>(value);
+                profiler.Publish<T>(value);
             }
         }
     }

@@ -17,7 +17,7 @@ namespace NuClear.Telemetry
             _environmentSettings = environmentSettings;
         }
 
-        public void Report<T>(long value)
+        public void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new()
         {
             try

@@ -29,7 +29,7 @@ namespace NuClear.Telemetry
             _provider = provider;
         }
 
-        public void Report<T>(long value)
+        public void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new()
         {
             string path;
