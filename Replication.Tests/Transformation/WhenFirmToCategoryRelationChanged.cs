@@ -55,7 +55,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [TestCaseSource("Cases")]
         public void ItShouldAffectFirm(IErmFactsContext sourceContext, IErmFactsContext targetContext, FactOperation impact)
         {
-            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>()); 
+            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>()); 
 
             var aggregateOperations = transformation.Transform(new[] { impact }).ToList();
 
@@ -65,7 +65,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [TestCaseSource("Cases")]
         public void ItShouldAffectFirmsOfSameProjectAndSameCategory(IErmFactsContext sourceContext, IErmFactsContext targetContext, FactOperation impact)
         {
-            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>()); 
+            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>()); 
 
             var aggregateOperations = transformation.Transform(new[] { impact }).ToList();
 
@@ -75,7 +75,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [TestCaseSource("Cases")]
         public void ItShouldNotAffectFirmsOfOtherCategories(IErmFactsContext sourceContext, IErmFactsContext targetContext, FactOperation impact)
         {
-            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>());
+            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>());
 
             var aggregateOperations = transformation.Transform(new[] { impact }).ToList();
 
@@ -85,7 +85,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [TestCaseSource("Cases")]
         public void ItShouldNotAffectFirmsOfOtherProjects(IErmFactsContext sourceContext, IErmFactsContext targetContext, FactOperation impact)
         {
-            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>());
+            var transformation = new ErmFactsTransformation(sourceContext, targetContext, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>());
 
             var aggregateOperations = transformation.Transform(new[] { impact }).ToList();
 
