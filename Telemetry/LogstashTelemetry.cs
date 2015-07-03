@@ -13,10 +13,12 @@ namespace NuClear.Telemetry
     {
         private readonly IClientWrapper _client;
         private readonly IEnvironmentSettings _environmentSettings;
+        private readonly object _sync;
 
         public LogstashTelemetry(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
         {
             _environmentSettings = environmentSettings;
+            _sync = new object();
 
             var scheme = logstashSettings.LogstashUri.Scheme;
             var host = logstashSettings.LogstashUri.Host;
@@ -47,7 +49,16 @@ namespace NuClear.Telemetry
                 Value = value,
             };
 
-            _client.Send(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
+            try
+            {
+                lock (_sync)
+                {
+                    _client.Send(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private interface IClientWrapper
@@ -60,36 +71,41 @@ namespace NuClear.Telemetry
             private static readonly byte[] NewLine = { 10 };
             private readonly string _host;
             private readonly int _port;
-            private readonly TcpClient _client;
-            private readonly object _sync;
+            private TcpClient _client;
 
             public TcpClientWrapper(string host, int port)
             {
                 _host = host;
                 _port = port;
-                _sync = new object();
-                _client = new TcpClient();
             }
 
             public void Send(byte[] data)
             {
                 try
                 {
-                    lock (_sync)
+                    if (_client == null)
                     {
-                        if (!_client.Connected)
-                        {
-                            _client.Connect(_host, _port);
-                        }
-
-                        var s = _client.GetStream();
-                        s.Write(data, 0, data.Length);
-                        s.Write(NewLine, 0, NewLine.Length);
-                        s.Flush();
+                        _client = new TcpClient();
+                        _client.Connect(_host, _port);
                     }
+
+                    var s = _client.GetStream();
+                    s.Write(data, 0, data.Length);
+                    s.Write(NewLine, 0, NewLine.Length);
+                    s.Flush();
                 }
                 catch (Exception)
                 {
+                    try
+                    {
+                        _client.Close();
+                    }
+                    finally
+                    {
+                        _client = null;
+                    }
+
+                    throw;
                 }
             }
         }
