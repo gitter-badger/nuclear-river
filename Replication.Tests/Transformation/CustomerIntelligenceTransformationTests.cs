@@ -434,7 +434,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private Transformation(ICustomerIntelligenceContext source, ICustomerIntelligenceContext target)
             {
                 _mapper = new Mock<IDataMapper>();
-                _transformation = new CustomerIntelligenceTransformation(source, target, _mapper.Object);
+                _transformation = new CustomerIntelligenceTransformation(source, target, _mapper.Object, Mock.Of<ITransactionManager>());
             }
 
             public static Transformation Create(IDataContext source = null, IDataContext target = null)

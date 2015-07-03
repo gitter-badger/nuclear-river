@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 
@@ -14,14 +13,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IDataMapper _mapper;
         private readonly IBitFactsContext _bitFactsContext;
+        private readonly ITransactionManager _transactionManager;
 
-        public BitFactsTransformation(IBitFactsContext bitFactsContext, IDataMapper mapper)
+        public BitFactsTransformation(IBitFactsContext bitFactsContext, IDataMapper mapper, ITransactionManager transactionManager)
         {
             _mapper = mapper;
+            _transactionManager = transactionManager;
             _bitFactsContext = bitFactsContext;
         }
 
         public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
+        {
+            return _transactionManager.WithinTransaction(() => DoTransform(dto));
+        }
+
+        public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
+        {
+            return _transactionManager.WithinTransaction(() => DoTransform(dto));
+        }
+
+        private IEnumerable<AggregateOperation> DoTransform(FirmStatisticsDto dto)
         {
             var firmCategoryStatistics = dto.ToFirmCategoryStatistics();
 
@@ -35,7 +46,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
         }
 
-        public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
+        private IEnumerable<AggregateOperation> DoTransform(CategoryStatisticsDto dto)
         {
             var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
 

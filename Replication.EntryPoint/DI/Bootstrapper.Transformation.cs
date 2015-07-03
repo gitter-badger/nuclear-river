@@ -1,4 +1,6 @@
-﻿using LinqToDB;
+﻿using System.Linq;
+
+using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
@@ -49,21 +51,37 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<ErmFactsTransformationContext>(),
                                                        new ResolvedParameter<ErmFactsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts),
+                                                       ResolvedTransactionManager(container, Scope.Erm, Scope.Facts)))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<CustomerIntelligenceTransformationContext>(),
                                                        new ResolvedParameter<CustomerIntelligenceContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence),
+                                                       ResolvedTransactionManager(container, Scope.Facts, Scope.CustomerIntelligence)))
 
                 .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<BitFactsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Facts)))
+                                                       new ResolvedParameter<IDataMapper>(Scope.Facts),
+                                                       ResolvedTransactionManager(container, Scope.Facts)))
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
+        }
+
+        private static ResolvedParameter ResolvedTransactionManager(IUnityContainer container, params string[] contexts)
+        {
+            var specificScope = string.Join("+", contexts);
+            if (!container.IsRegistered<ITransactionManager>(specificScope))
+            {
+                var resolvedContexts = contexts.Select(context => new ResolvedParameter<DataConnection>(context)).ToArray();
+                var managerConstructor = new InjectionConstructor(new ResolvedArrayParameter<DataConnection>(resolvedContexts));
+                container.RegisterType<ITransactionManager, Linq2DbDataConnectionTransactionManager>(specificScope, managerConstructor);
+            }
+
+            return new ResolvedParameter<ITransactionManager>(specificScope);
         }
 
         private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema)

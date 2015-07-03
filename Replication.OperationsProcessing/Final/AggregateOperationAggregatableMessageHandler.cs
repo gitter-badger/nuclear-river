@@ -36,6 +36,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
             try
             {
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
+
                 _customerIntelligenceTransformation.Transform(message.Operations);
                 _telemetryPublisher.Publish<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
 
