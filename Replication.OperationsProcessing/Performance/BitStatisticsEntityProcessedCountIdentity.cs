@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class BitStatisticsEntityProcessedCountIdentity : PerformanceIdentityBase<BitStatisticsEntityProcessedCountIdentity>
+    public sealed class BitStatisticsEntityProcessedCountIdentity : TelemetryIdentityBase<BitStatisticsEntityProcessedCountIdentity>
     {
         public override int Id
         {

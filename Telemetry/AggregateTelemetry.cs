@@ -12,7 +12,7 @@ namespace NuClear.Telemetry
         }
 
         public void Report<T>(long value)
-            where T : PerformanceIdentityBase<T>, new()
+            where T : TelemetryIdentityBase<T>, new()
         {
             foreach (var profiler in _profilers)
             {

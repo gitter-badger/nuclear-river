@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class PrimaryProcessingDelayIdentity : PerformanceIdentityBase<PrimaryProcessingDelayIdentity>
+    public sealed class PrimaryProcessingDelayIdentity : TelemetryIdentityBase<PrimaryProcessingDelayIdentity>
     {
         public override int Id
         {

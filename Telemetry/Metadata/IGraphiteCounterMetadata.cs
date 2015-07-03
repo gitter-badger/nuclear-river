@@ -4,6 +4,6 @@ namespace NuClear.Telemetry
     public interface IGraphiteCounterMetadata
     {
         GraphiteMetadataElement Get<T>()
-            where T : PerformanceIdentityBase<T>, new();
+            where T : TelemetryIdentityBase<T>, new();
     }
 }

@@ -39,13 +39,13 @@ namespace NuClear.Telemetry
         }
 
         public void Report<T>(long value)
-            where T : PerformanceIdentityBase<T>, new()
+            where T : TelemetryIdentityBase<T>, new()
         {
             var report = new
             {
                 EntryPoint = _environmentSettings.EntryPointName,
                 Environment = _environmentSettings.EnvironmentName,
-                Name = PerformanceIdentityBase<T>.Instance.Name,
+                Name = TelemetryIdentityBase<T>.Instance.Name,
                 Value = value,
             };
 

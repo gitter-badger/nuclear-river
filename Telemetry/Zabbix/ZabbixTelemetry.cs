@@ -18,12 +18,12 @@ namespace NuClear.Telemetry.Zabbix
             _zabbixSender = new ZabbixSender(zabbixSettings.ZabbixUri);
         }
 
-        public async void Report<T>(long value) where T : PerformanceIdentityBase<T>, new()
+        public async void Report<T>(long value) where T : TelemetryIdentityBase<T>, new()
         {
             var zabbixItem = new ZabbixItem
             {
                 Host = _environmentSettings.EnvironmentName,
-                ItemKey = string.Format("{0}.{1}", _environmentSettings.EntryPointName, PerformanceIdentityBase<T>.Instance.Name),
+                ItemKey = string.Format("{0}.{1}", _environmentSettings.EntryPointName, TelemetryIdentityBase<T>.Instance.Name),
                 Value = value,
             };
 
