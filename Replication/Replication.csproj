@@ -82,12 +82,13 @@
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
@@ -124,14 +125,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\CreateFact.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\DeleteFact.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\UpdateFact.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public Builder<TAggregate> HasSource(Func<ICustomerIntelligenceContext, IQueryable<TAggregate>> queryProvider)
             {
-                _aggregateProvider = CreateFilteredQueryProvider(queryProvider, identifiable => identifiable.Id);
+                _aggregateProvider = CreateFilteredQueryProvider(queryProvider, CreateKeyAccessor());
                 return this;
             }
 
@@ -71,6 +71,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     var filterExpression = CreateFilterExpression(ids, idSelector);
                     return query.Where(filterExpression);
                 };
+            }
+
+            private Expression<Func<TAggregate, long>> CreateKeyAccessor()
+            {
+                // Если написать (TAggregate x) => x.Id, то в этом выражении свойство Id будет получено не у типа TAggregate, а у типа IIdentifiable
+                // В большинстве случаев нам это пофиг, но вот когда имеем дело с linq2db - это становится важным, ибо остальной запрос построен 
+                // вокруг типа TAggregate и он просто не знает, что такое IIdentifiable.Id
+                var param = Expression.Parameter(typeof(TAggregate));
+                return Expression.Lambda<Func<TAggregate, long>>(Expression.Property(param, "Id"), param);
             }
 
             private static Expression<Func<T, bool>> CreateFilterExpression<T>(IEnumerable<long> ids, Expression<Func<T, long>> idSelector)

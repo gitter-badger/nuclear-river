@@ -74,6 +74,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
+            where T : class
         {
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))

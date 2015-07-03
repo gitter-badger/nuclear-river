@@ -25,7 +25,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
             var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-            using (var scope = new TransactionScope(TransactionScopeOption.Required))
+            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
             {
                 foreach (var message in transportMessages)
                 {

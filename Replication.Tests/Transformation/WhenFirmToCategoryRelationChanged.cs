@@ -47,9 +47,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         private static IEnumerable<TestCaseData> Cases()
         {
-            yield return new TestCaseData(Erm.Object, Erm.Object, new UpdateFact(typeof(Facts::CategoryFirmAddress), 11));
-            yield return new TestCaseData(Erm.Object, Erm.Object, new UpdateFact(typeof(Facts::FirmAddress), 7));
-            yield return new TestCaseData(Erm.Object, Erm.Object, new UpdateFact(typeof(Facts::Firm), 7));
+            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::CategoryFirmAddress), 11));
+            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::FirmAddress), 7));
+            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::Firm), 7));
         }
             
         [TestCaseSource("Cases")]

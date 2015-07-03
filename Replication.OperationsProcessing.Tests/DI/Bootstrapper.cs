@@ -3,8 +3,8 @@
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks;
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
+using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
-using NuClear.Messaging.API.Processing.Actors.Strategies;
 using NuClear.Messaging.API.Processing.Actors.Transformers;
 using NuClear.Messaging.API.Processing.Processors;
 using NuClear.Messaging.API.Processing.Stages;
@@ -31,17 +31,9 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
 {
     public static class Bootstrapper
     {
-        public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver)
+        public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver, MessageProcessingStage[] stages)
         {
-            var settings = new PerformedOperationsPrimaryFlowProcessorSettings
-            {
-                AppropriatedStages = new[]
-                {
-                    MessageProcessingStage.Transforming,
-                    MessageProcessingStage.Processing,
-                    MessageProcessingStage.Handle
-                }
-            };
+            var settings = new PerformedOperationsPrimaryFlowProcessorSettings { AppropriatedStages = stages };
 
             var metadataProvider = new MetadataProvider(new IMetadataSource[]
             {
@@ -53,8 +45,6 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
             });
 
             return container
-                        .RegisterType<ITrackedUseCaseParser, TrackedUseCaseParser>(Lifetime.Singleton)
-
                         .RegisterType<ITracer, NullTracer>()
                         .RegisterInstance<IMetadataProvider>(metadataProvider)
                         .RegisterInstance<IPerformedOperationsFlowProcessorSettings>(settings)
@@ -66,8 +56,8 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
                         .RegisterType<IMessageTransformerFactory, UnityMessageTransformerFactory>(Lifetime.Singleton)
                         .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.Singleton)
                         .RegisterType<IParentContainerUsedRegistrationsContainer, ParentContainerUsedRegistrationsContainer>(Lifetime.Singleton)
-                        .RegisterType<IMessageAggregatedProcessingResultsHandlerFactory, UnityMessageAggregatedProcessingResultsHandlerFactory>(Lifetime.PerScope)
-                        .RegisterType<IMessageProcessingStrategyFactory, UnityMessageProcessingStrategyFactory>(Lifetime.PerScope);
+                        .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
+                        .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
     }
 }

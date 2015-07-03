@@ -5,7 +5,7 @@
         Erm,
         CustomerIntelligence,
         ServiceBus,
-        QuartzJobStore,
+        Infrastructure,
         Logging
     }
 }

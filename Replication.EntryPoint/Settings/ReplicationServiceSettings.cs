@@ -14,6 +14,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
             Aspects.Use(new PersistentStoreAspect(connectionStringSettings));
             Aspects.Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus)));
             Aspects.Use<TaskServiceProcessingSettingsAspect>();
+            Aspects.Use<CorporateBusSettingsAspect>();
             Aspects.Use(connectionStringSettings);
         }
     }

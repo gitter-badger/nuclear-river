@@ -17,8 +17,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories
 
         public IServiceBusMessageFlowReceiver Create(IMessageFlow messageFlow)
         {
-            return (IServiceBusMessageFlowReceiver)_container.Resolve(typeof(ServiceBusMessageFlowReceiver<>).MakeGenericType(messageFlow.GetType()));
-
+            return _container.Resolve<ServiceBusMessageFlowReceiver>(new DependencyOverride(typeof(IMessageFlow), messageFlow));
         }
     }
 }
