@@ -34,7 +34,6 @@ namespace NuClear.Telemetry
                 default:
                     throw new ArgumentException(string.Format("Protocol '{0}' is not supported for logstash connection", scheme));
             }
-            
         }
 
         public void Report<T>(long value)
@@ -80,32 +79,29 @@ namespace NuClear.Telemetry
 
             public void Send(byte[] data)
             {
+                var client = GetClient();
                 try
                 {
-                    if (_client == null)
-                    {
-                        _client = new TcpClient();
-                        _client.Connect(_host, _port);
-                    }
-
-                    var s = _client.GetStream();
+                    var s = client.GetStream();
                     s.Write(data, 0, data.Length);
                     s.Write(NewLine, 0, NewLine.Length);
                     s.Flush();
                 }
                 catch (Exception)
                 {
-                    try
-                    {
-                        _client.Close();
-                    }
-                    finally
-                    {
-                        _client = null;
-                    }
-
+                    client.Close();
                     throw;
                 }
+            }
+
+            private TcpClient GetClient()
+            {
+                if (_client != null && _client.Connected)
+                {
+                    return _client;
+                }
+
+                return _client = new TcpClient(_host, _port);
             }
         }
 
