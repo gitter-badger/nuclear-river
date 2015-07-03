@@ -9,11 +9,12 @@ using NuClear.Telemetry.Logstash;
 
 namespace NuClear.Telemetry
 {
-    public sealed class LogstashTelemetryPublisher : ITelemetryPublisher
+    public sealed class LogstashTelemetryPublisher : ITelemetryPublisher, IDisposable
     {
         private readonly IClientWrapper _client;
         private readonly IEnvironmentSettings _environmentSettings;
         private readonly object _sync = new object();
+        private bool _disposed;
 
         public LogstashTelemetryPublisher(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
         {
@@ -36,16 +37,21 @@ namespace NuClear.Telemetry
             }
         }
 
+        ~LogstashTelemetryPublisher()
+        {
+            Dispose(false);
+        }
+
         public void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new()
         {
             var report = new
-            {
-                EntryPoint = _environmentSettings.EntryPointName,
-                Environment = _environmentSettings.EnvironmentName,
-                Name = TelemetryIdentityBase<T>.Instance.Name,
-                Value = value,
-            };
+                         {
+                             EntryPoint = _environmentSettings.EntryPointName,
+                             Environment = _environmentSettings.EnvironmentName,
+                             Name = TelemetryIdentityBase<T>.Instance.Name,
+                             Value = value,
+                         };
 
             try
             {
@@ -54,12 +60,33 @@ namespace NuClear.Telemetry
                     _client.Send(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
                 }
             }
-            catch (Exception)
+            catch(Exception)
             {
             }
         }
 
-        private interface IClientWrapper
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            if (disposing)
+            {
+                _client.Dispose();
+            }
+        }
+
+        private interface IClientWrapper : IDisposable
         {
             void Send(byte[] data);
         }
@@ -70,6 +97,7 @@ namespace NuClear.Telemetry
             private readonly string _host;
             private readonly int _port;
             private TcpClient _client;
+            private bool _disposed;
 
             public TcpClientWrapper(string host, int port)
             {
@@ -77,6 +105,11 @@ namespace NuClear.Telemetry
                 _port = port;
             }
 
+            ~TcpClientWrapper()
+            {
+                Dispose(false);
+            }
+            
             public void Send(byte[] data)
             {
                 var client = GetClient();
@@ -94,6 +127,12 @@ namespace NuClear.Telemetry
                 }
             }
 
+            void IDisposable.Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            
             private TcpClient GetClient()
             {
                 if (_client != null && _client.Connected)
@@ -103,20 +142,65 @@ namespace NuClear.Telemetry
 
                 return _client = new TcpClient(_host, _port);
             }
+
+            private void Dispose(bool disposing)
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+
+                if (disposing)
+                {
+                    if (_client != null)
+                    {
+                        _client.Close();
+                    }
+                }
+            }
         }
 
         private class UdpClientWrapper : IClientWrapper
         {
             private readonly UdpClient _client;
+            private bool _disposed;
 
             public UdpClientWrapper(string host, int port)
             {
                 _client = new UdpClient(host, port);
             }
 
+            ~UdpClientWrapper()
+            {
+                Dispose(false);
+            }
+            
             public void Send(byte[] data)
             {
                 _client.Send(data, data.Length);
+            }
+
+            void IDisposable.Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            private void Dispose(bool disposing)
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                _disposed = true;
+
+                if (disposing)
+                {
+                    _client.Close();
+                }
             }
         }
     }
