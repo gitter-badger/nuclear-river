@@ -24,12 +24,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
         {
-            return _transactionManager.InvokeTransactionalFunc(DoTransform, dto);
+            return _transactionManager.WithinTransaction(() => DoTransform(dto));
         }
 
         public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
         {
-            return _transactionManager.InvokeTransactionalFunc(DoTransform, dto);
+            return _transactionManager.WithinTransaction(() => DoTransform(dto));
         }
 
         private IEnumerable<AggregateOperation> DoTransform(FirmStatisticsDto dto)

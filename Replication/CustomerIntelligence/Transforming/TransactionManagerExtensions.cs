@@ -6,12 +6,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public static class TransactionManagerExtensions
     {
-        public static TResult InvokeTransactionalFunc<TArgument, TResult>(this ITransactionManager manager, Func<TArgument, TResult> function, TArgument argument)
+        public static TResult WithinTransaction<TResult>(this ITransactionManager manager, Func<TResult> function)
         {
             try
             {
                 manager.BeginTransaction();
-                var result = function.Invoke(argument);
+                var result = function.Invoke();
                 manager.CommitTransaction();
                 return result;
             }
@@ -22,12 +22,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
         }
 
-        public static void InvokeTransactionalAction<TArgument>(this ITransactionManager manager, Action<TArgument> function, TArgument argument)
+        public static void WithinTransaction(this ITransactionManager manager, Action function)
         {
             try
             {
                 manager.BeginTransaction();
-                function.Invoke(argument);
+                function.Invoke();
                 manager.CommitTransaction();
             }
             catch (Exception)

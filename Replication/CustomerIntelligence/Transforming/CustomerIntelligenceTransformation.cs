@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            _transactionManager.InvokeTransactionalAction(DoTransform, operations);
+            _transactionManager.WithinTransaction(() => DoTransform(operations));
         }
 
         private void DoTransform(IEnumerable<AggregateOperation> operations)
