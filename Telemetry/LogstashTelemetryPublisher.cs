@@ -90,7 +90,6 @@ namespace NuClear.Telemetry
         private interface IClientWrapper : IDisposable
         {
             Task SendAsync(byte[] data);
-            void Send(byte[] data);
         }
 
         private class TcpClientWrapper : IClientWrapper
@@ -117,7 +116,7 @@ namespace NuClear.Telemetry
                 return Task.Factory.StartNew(() => Send(data));
             }
 
-            public void Send(byte[] data)
+            private void Send(byte[] data)
             {
                 var client = GetClient();
                 try
@@ -186,12 +185,7 @@ namespace NuClear.Telemetry
 
             public Task SendAsync(byte[] data)
             {
-                return Task.Factory.StartNew(() => Send(data));
-            }
-
-            public void Send(byte[] data)
-            {
-                _client.Send(data, data.Length);
+                return _client.SendAsync(data, data.Length);
             }
 
             void IDisposable.Dispose()
