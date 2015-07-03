@@ -59,7 +59,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                               {
                                   Id = client.Id,
                                   Name = client.Name,
-                                  CategoryGroupId = rate.CategoryGroupId
+                                  CategoryGroupId = rate != null ? rate.CategoryGroupId : 0
                               };
             }
         }
