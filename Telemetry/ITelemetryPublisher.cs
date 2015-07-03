@@ -1,6 +1,6 @@
 namespace NuClear.Telemetry
 {
-    public interface ITelemetry
+    public interface ITelemetryPublisher
     {
         void Report<T>(long value)
             where T : TelemetryIdentityBase<T>, new();

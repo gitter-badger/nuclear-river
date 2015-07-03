@@ -12,12 +12,12 @@ namespace NuClear.Replication.OperationsProcessing.Performance
     public sealed class ServiceBusOperationsReceiverTelemetryWrapper : IMessageReceiver
     {
         private readonly IMessageReceiver _receiver;
-        private readonly ITelemetry _telemetry;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ServiceBusOperationsReceiverTelemetryWrapper(ServiceBusOperationsReceiver receiver, ITelemetry telemetry)
+        public ServiceBusOperationsReceiverTelemetryWrapper(ServiceBusOperationsReceiver receiver, ITelemetryPublisher telemetryPublisher)
         {
             _receiver = receiver;
-            _telemetry = telemetry;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public IReadOnlyList<IMessage> Peek()
@@ -34,7 +34,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
                 .Select(message => message.EnqueuedTimeUtc)
                 .Min();
 
-            _telemetry.Report<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
+            _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
             _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
         }

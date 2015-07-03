@@ -58,20 +58,20 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateTelemetry.cs" />
-    <Compile Include="LogstashTelemetry.cs" />
-    <Compile Include="DebugTelemetry.cs" />
-    <Compile Include="GraphiteTelemetry.cs" />
+    <Compile Include="AggregateTelemetryPublisher.cs" />
+    <Compile Include="LogstashTelemetryPublisher.cs" />
+    <Compile Include="DebugTelemetryPublisher.cs" />
+    <Compile Include="GraphiteTelemetryPublisher.cs" />
     <Compile Include="Logstash\ILogstashSettings.cs" />
     <Compile Include="Logstash\LogstashSettingsAspect.cs" />
     <Compile Include="Metadata\IGraphiteCounterMetadata.cs" />
-    <Compile Include="ITelemetry.cs" />
+    <Compile Include="ITelemetryPublisher.cs" />
     <Compile Include="Metadata\GraphiteMetadataElement.cs" />
-    <Compile Include="PerformanceCounterTelemetry.cs" />
+    <Compile Include="PerformanceCounterTelemetryPublisher.cs" />
     <Compile Include="Metadata\TelemetryIdentityBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Zabbix\IZabbixSettings.cs" />
-    <Compile Include="Zabbix\ZabbixTelemetry.cs" />
+    <Compile Include="Zabbix\ZabbixTelemetryPublisher.cs" />
     <Compile Include="Zabbix\ZabbixItem.cs" />
     <Compile Include="Zabbix\ZabbixResponse.cs" />
     <Compile Include="Zabbix\ZabbixSender.cs" />

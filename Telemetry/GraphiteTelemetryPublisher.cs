@@ -1,20 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 using Graphite;
 
 using NuClear.AdvancedSearch.Settings;
-using NuClear.Model.Common;
 
 namespace NuClear.Telemetry
 {
-    public sealed class GraphiteTelemetry : ITelemetry
+    public sealed class GraphiteTelemetryPublisher : ITelemetryPublisher
     {
         private readonly IEnvironmentSettings _environmentSettings;
         private readonly IGraphiteCounterMetadata _provider;
 
-        static GraphiteTelemetry()
+        static GraphiteTelemetryPublisher()
         {
             try
             {
@@ -25,7 +23,7 @@ namespace NuClear.Telemetry
             }
         }
 
-        public GraphiteTelemetry(IEnvironmentSettings environmentSettings, IGraphiteCounterMetadata provider)
+        public GraphiteTelemetryPublisher(IEnvironmentSettings environmentSettings, IGraphiteCounterMetadata provider)
         {
             _environmentSettings = environmentSettings;
             _provider = provider;

@@ -19,14 +19,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
-        private readonly ITelemetry _telemetry;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetry telemetry)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
             _tracer = tracer;
-            _telemetry = telemetry;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -40,7 +40,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 var message = messages.OfType<FactOperationAggregatableMessage>().Single();
                 var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
-                _telemetry.Report<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
+                _telemetryPublisher.Report<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
 
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

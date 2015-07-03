@@ -6,12 +6,12 @@ using NuClear.Model.Common;
 
 namespace NuClear.Telemetry
 {
-    public sealed class PerformanceCounterTelemetry : ITelemetry
+    public sealed class PerformanceCounterTelemetryPublisher : ITelemetryPublisher
     {
         private static readonly IDictionary<string, PerformanceCounter> Counters = new Dictionary<string, PerformanceCounter>();
         private readonly IEnvironmentSettings _environmentSettings;
 
-        public PerformanceCounterTelemetry(IEnvironmentSettings environmentSettings)
+        public PerformanceCounterTelemetryPublisher(IEnvironmentSettings environmentSettings)
         {
             _environmentSettings = environmentSettings;
         }

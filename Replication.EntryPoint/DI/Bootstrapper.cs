@@ -144,11 +144,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
-            container.RegisterType<ITelemetry, AggregateTelemetry>(Lifetime.Singleton,
+            container.RegisterType<ITelemetryPublisher, AggregateTelemetryPublisher>(Lifetime.Singleton,
                                                                  new InjectionConstructor(
-                                                                     new ResolvedArrayParameter<ITelemetry>(
-                                                                         new ResolvedParameter<DebugTelemetry>(),
-                                                                         new ResolvedParameter<LogstashTelemetry>())));
+                                                                     new ResolvedArrayParameter<ITelemetryPublisher>(
+                                                                         new ResolvedParameter<DebugTelemetryPublisher>(),
+                                                                         new ResolvedParameter<LogstashTelemetryPublisher>())));
 
             // primary
             container

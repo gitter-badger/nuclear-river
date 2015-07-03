@@ -20,14 +20,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         private readonly BitFactsTransformation _bitFactsTransformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
-        private readonly ITelemetry _telemetry;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetry telemetry)
+        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
             _bitFactsTransformation = bitFactsTransformation;
             _sender = sender;
             _tracer = tracer;
-            _telemetry = telemetry;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -47,7 +47,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         if (firmStatisticsDto != null)
                         {
                             var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
-                            _telemetry.Report<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
+                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
                             _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                         }
 
@@ -55,7 +55,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         if (categoryStatisticsDto != null)
                         {
                             var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
-                            _telemetry.Report<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
+                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
                             _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                         }
                     }

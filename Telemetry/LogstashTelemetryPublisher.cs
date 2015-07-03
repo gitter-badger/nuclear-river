@@ -9,13 +9,13 @@ using NuClear.Telemetry.Logstash;
 
 namespace NuClear.Telemetry
 {
-    public sealed class LogstashTelemetry : ITelemetry
+    public sealed class LogstashTelemetryPublisher : ITelemetryPublisher
     {
         private readonly IClientWrapper _client;
         private readonly IEnvironmentSettings _environmentSettings;
         private readonly object _sync;
 
-        public LogstashTelemetry(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
+        public LogstashTelemetryPublisher(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
         {
             _environmentSettings = environmentSettings;
             _sync = new object();

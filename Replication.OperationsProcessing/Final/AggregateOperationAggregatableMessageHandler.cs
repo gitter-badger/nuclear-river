@@ -15,12 +15,12 @@ namespace NuClear.Replication.OperationsProcessing.Final
     public class AggregateOperationAggregatableMessageHandler : IMessageProcessingHandler
     {
         private readonly CustomerIntelligenceTransformation _customerIntelligenceTransformation;
-        private readonly ITelemetry _telemetry;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITelemetry telemetry)
+        public AggregateOperationAggregatableMessageHandler(CustomerIntelligenceTransformation customerIntelligenceTransformation, ITelemetryPublisher telemetryPublisher)
         {
             _customerIntelligenceTransformation = customerIntelligenceTransformation;
-            _telemetry = telemetry;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -34,7 +34,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
             {
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
                 _customerIntelligenceTransformation.Transform(message.Operations);
-                _telemetry.Report<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
+                _telemetryPublisher.Publish<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
