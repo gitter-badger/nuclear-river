@@ -253,6 +253,7 @@
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
     <Compile Include="Factories\UnityCorporateBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
+    <Compile Include="Jobs\ReportingJob.cs" />
     <Compile Include="Jobs\DebugTestJob.cs" />
     <Compile Include="Jobs\OperationsFinalProcessingJob.cs" />
     <Compile Include="Jobs\OperationsPrimaryProcessingJob.cs" />
