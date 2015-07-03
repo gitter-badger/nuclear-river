@@ -43,6 +43,7 @@ using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model;
+using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -52,6 +53,7 @@ using NuClear.Security.API.UserContext;
 using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
+using NuClear.Telemetry;
 using NuClear.Tracing.API;
 using NuClear.WCF.Client;
 using NuClear.WCF.Client.Config;
@@ -142,18 +144,23 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
-
+            container.RegisterType<ITelemetryPublisher, AggregatingTelemetryPublisherDecorator>(Lifetime.Singleton,
+                                                                 new InjectionConstructor(
+                                                                     new ResolvedArrayParameter<ITelemetryPublisher>(
+                                                                         new ResolvedParameter<DebugTelemetryPublisher>(),
+                                                                         new ResolvedParameter<LogstashTelemetryPublisher>())));
 
             // primary
             container
                      .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
-                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiver), Lifetime.PerScope, null)
+                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryWrapper), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
-            container.RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
+            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverTelemetryWrapper), Lifetime.PerScope, null)
+                     .RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
 
 
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)

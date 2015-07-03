@@ -67,8 +67,9 @@
       <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.5-local-000000-0\lib\net451\2GIS.NuClear.OperationsProcessing.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.ServiceBus">
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.1.0.3\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.dll</HintPath>
+    <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.1.0.5-local-000000-0\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.SQLStore, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.5-local-000000-0\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.dll</HintPath>
@@ -96,6 +97,10 @@
     </Reference>
     <Reference Include="2GIS.NuClear.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Utils.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Utils.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Utils.Legacy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Utils.Legacy.1.0.4\lib\net451\2GIS.NuClear.Utils.Legacy.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.WCF.Client, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
@@ -167,6 +172,14 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
+    <Compile Include="Performance\AggregateOperationProcessedCountIdentity.cs" />
+    <Compile Include="Performance\BitStatisticsEntityProcessedCountIdentity.cs" />
+    <Compile Include="Performance\ErmOperationCountIdentity.cs" />
+    <Compile Include="Performance\ErmFactOperationProcessedCountIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
+    <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
     <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
@@ -203,8 +216,15 @@
       <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
       <Name>Replication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Settings\Settings.csproj">
+      <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
+      <Name>Settings</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telemetry\Telemetry.csproj">
+      <Project>{8b8accd8-6c08-477c-8acf-cd47ece91d05}</Project>
+      <Name>Telemetry</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -44,21 +44,22 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
+                var clientRates = from firm in _ermContext.Firms
+                                  join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                  join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
+                                  join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
+                                      equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                  join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
+                                  group categoryGroup by firm.ClientId into categoryGroups
+                                  select new { ClientId = categoryGroups.Key, CategoryGroupId = categoryGroups.Min(x => x.Id) };
+
                 return from client in _ermContext.Clients
-                       let rates = from firm in _ermContext.Firms
-                                   join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
-                                   join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                   join categoryOrganizationUnit in _ermContext.CategoryOrganizationUnits on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
-                                       equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
-                                   join categoryGroup in _ermContext.CategoryGroups on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
-                                   where client.Id == firm.ClientId
-                                   orderby categoryGroup.Rate descending
-                                   select categoryGroup.Id
+                       from rate in clientRates.Where(x => x.ClientId == client.Id).DefaultIfEmpty()
                        select new Client
                               {
                                   Id = client.Id,
                                   Name = client.Name,
-                                  CategoryGroupId = rates.FirstOrDefault()
+                                  CategoryGroupId = rate != null ? rate.CategoryGroupId : 0
                               };
             }
         }

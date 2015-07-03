@@ -301,6 +301,10 @@
       <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
       <Name>Settings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Telemetry\Telemetry.csproj">
+      <Project>{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}</Project>
+      <Name>Telemetry</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.1">
