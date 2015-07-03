@@ -7,7 +7,7 @@ namespace NuClear.Telemetry.Zabbix
 {
     public sealed class ZabbixSettingsAspect : ISettingsAspect, IZabbixSettings
     {
-        private readonly StringSetting _zabbixUri = ConfigFileSetting.String.Required("ZabbixUri");
+        private readonly StringSetting _zabbixUri = ConfigFileSetting.String.Optional("ZabbixUri", string.Empty);
 
         Uri IZabbixSettings.ZabbixUri
         {

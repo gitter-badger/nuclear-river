@@ -7,7 +7,7 @@ namespace NuClear.Telemetry.Logstash
 {
     public sealed class LogstashSettingsAspect : ISettingsAspect, ILogstashSettings
     {
-        private readonly StringSetting _uri = ConfigFileSetting.String.Required("LogstashUri");
+        private readonly StringSetting _uri = ConfigFileSetting.String.Optional("LogstashUri", string.Empty);
 
         Uri ILogstashSettings.LogstashUri
         {
