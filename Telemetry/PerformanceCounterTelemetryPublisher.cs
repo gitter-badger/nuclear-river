@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 using NuClear.AdvancedSearch.Settings;
@@ -8,7 +9,7 @@ namespace NuClear.Telemetry
 {
     public sealed class PerformanceCounterTelemetryPublisher : ITelemetryPublisher
     {
-        private static readonly IDictionary<string, PerformanceCounter> Counters = new Dictionary<string, PerformanceCounter>();
+        private static readonly ConcurrentDictionary<string, PerformanceCounter> Counters = new ConcurrentDictionary<string, PerformanceCounter>();
         private readonly IEnvironmentSettings _environmentSettings;
 
         public PerformanceCounterTelemetryPublisher(IEnvironmentSettings environmentSettings)
@@ -24,29 +25,22 @@ namespace NuClear.Telemetry
                 var counter = GetCounter(_environmentSettings.EnvironmentName, IdentityBase<T>.Instance.Name);
                 counter.RawValue = value;
             }
-            catch
+            catch(Exception)
             {
-                // FIXME {a.rechkalov, 18.06.2015}: пофиксить ecpetion
             }
         }
 
         private static PerformanceCounter GetCounter(string environmentName, string counterName)
         {
-            PerformanceCounter counter;
-            if (!Counters.TryGetValue(counterName, out counter))
-            {
-                counter = new PerformanceCounter
-                          {
-                              CategoryName = "Erm",
-                              CounterName = counterName,
-                              InstanceName = environmentName,
-                              ReadOnly = false,
-                              InstanceLifetime = PerformanceCounterInstanceLifetime.Process,
-                          };
-                Counters.Add(counterName, counter);
-            }
-
-            return counter;
+            return Counters.GetOrAdd(counterName,
+                                     key => new PerformanceCounter
+                                            {
+                                                CategoryName = "Erm",
+                                                CounterName = key,
+                                                InstanceName = environmentName,
+                                                ReadOnly = false,
+                                                InstanceLifetime = PerformanceCounterInstanceLifetime.Process,
+                                            });
         }
     }
 }
