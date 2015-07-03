@@ -58,7 +58,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateTelemetryPublisher.cs" />
+    <Compile Include="AggregatingTelemetryPublisherDecorator.cs" />
     <Compile Include="LogstashTelemetryPublisher.cs" />
     <Compile Include="DebugTelemetryPublisher.cs" />
     <Compile Include="GraphiteTelemetryPublisher.cs" />

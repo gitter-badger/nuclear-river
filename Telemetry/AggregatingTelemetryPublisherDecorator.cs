@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace NuClear.Telemetry
 {
-    public sealed class AggregateTelemetryPublisher : ITelemetryPublisher
+    public sealed class AggregatingTelemetryPublisherDecorator : ITelemetryPublisher
     {
         private readonly IEnumerable<ITelemetryPublisher> _profilers;
 
-        public AggregateTelemetryPublisher(IEnumerable<ITelemetryPublisher> profilers)
+        public AggregatingTelemetryPublisherDecorator(IEnumerable<ITelemetryPublisher> profilers)
         {
             _profilers = profilers;
         }
