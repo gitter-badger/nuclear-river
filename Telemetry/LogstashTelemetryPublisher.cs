@@ -13,12 +13,11 @@ namespace NuClear.Telemetry
     {
         private readonly IClientWrapper _client;
         private readonly IEnvironmentSettings _environmentSettings;
-        private readonly object _sync;
+        private readonly object _sync = new object();
 
         public LogstashTelemetryPublisher(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
         {
             _environmentSettings = environmentSettings;
-            _sync = new object();
 
             var scheme = logstashSettings.LogstashUri.Scheme;
             var host = logstashSettings.LogstashUri.Host;
