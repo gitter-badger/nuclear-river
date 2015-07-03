@@ -5,13 +5,13 @@ using NuClear.Tracing.API;
 
 namespace NuClear.Telemetry.Zabbix
 {
-    public sealed class ZabbixProfiler : IProfiler, IDisposable
+    public sealed class ZabbixTelemetry : ITelemetry, IDisposable
     {
         private readonly IEnvironmentSettings _environmentSettings;
         private readonly ITracer _tracer;
         private readonly ZabbixSender _zabbixSender;
 
-        public ZabbixProfiler(IEnvironmentSettings environmentSettings, IZabbixSettings zabbixSettings, ITracer tracer)
+        public ZabbixTelemetry(IEnvironmentSettings environmentSettings, IZabbixSettings zabbixSettings, ITracer tracer)
         {
             _environmentSettings = environmentSettings;
             _tracer = tracer;

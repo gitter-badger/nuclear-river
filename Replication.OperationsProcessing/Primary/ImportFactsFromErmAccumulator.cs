@@ -21,12 +21,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     public sealed class ImportFactsFromErmAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromErmFlow, TrackedUseCase, FactOperationAggregatableMessage>
     {
         private readonly ITracer _tracer;
-        private readonly IProfiler _profiler;
+        private readonly ITelemetry _telemetry;
 
-        public ImportFactsFromErmAccumulator(ITracer tracer, IProfiler profiler)
+        public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetry telemetry)
         {
             _tracer = tracer;
-            _profiler = profiler;
+            _telemetry = telemetry;
         }
 
         protected override FactOperationAggregatableMessage Process(TrackedUseCase message)
@@ -41,7 +41,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                    z => new ErmOperation(x.Key, y.Key, z.ChangeKind))))
                        .ToList();
 
-            _profiler.Report<ErmOperationCountIdentity>(plainChanges.Count());
+            _telemetry.Report<ErmOperationCountIdentity>(plainChanges.Count());
 
             return new FactOperationAggregatableMessage
                    {

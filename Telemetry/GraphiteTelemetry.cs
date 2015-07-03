@@ -9,12 +9,12 @@ using NuClear.Model.Common;
 
 namespace NuClear.Telemetry
 {
-    public sealed class GraphiteProfiler : IProfiler
+    public sealed class GraphiteTelemetry : ITelemetry
     {
         private readonly IEnvironmentSettings _environmentSettings;
         private readonly IGraphiteCounterMetadata _provider;
 
-        static GraphiteProfiler()
+        static GraphiteTelemetry()
         {
             try
             {
@@ -25,7 +25,7 @@ namespace NuClear.Telemetry
             }
         }
 
-        public GraphiteProfiler(IEnvironmentSettings environmentSettings, IGraphiteCounterMetadata provider)
+        public GraphiteTelemetry(IEnvironmentSettings environmentSettings, IGraphiteCounterMetadata provider)
         {
             _environmentSettings = environmentSettings;
             _provider = provider;

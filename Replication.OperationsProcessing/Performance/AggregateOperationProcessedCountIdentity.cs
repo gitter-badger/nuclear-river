@@ -9,11 +9,6 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             get { return 0; }
         }
 
-        public override string Name
-        {
-            get { return "FinalProcessedOperationCountIdentity"; }
-        }
-
         public override string Description
         {
             get { return " оличество обработанных операций на этапе final"; }

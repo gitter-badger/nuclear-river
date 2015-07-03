@@ -4,7 +4,7 @@ using NuClear.Model.Common;
 
 namespace NuClear.Telemetry
 {
-    public sealed class DebugProfiler : IProfiler
+    public sealed class DebugTelemetry : ITelemetry
     {
         public void Report<T>(long value)
             where T : PerformanceIdentityBase<T>, new()

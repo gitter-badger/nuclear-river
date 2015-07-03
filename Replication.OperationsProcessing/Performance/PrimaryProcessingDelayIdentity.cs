@@ -9,11 +9,6 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             get { return 0; }
         }
 
-        public override string Name
-        {
-            get { return "PrimaryProcessingDelay"; }
-        }
-
         public override string Description
         {
             get { return "ќтставание обработки сообщений от генерации"; }

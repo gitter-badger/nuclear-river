@@ -9,11 +9,6 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             get { return 0; }
         }
 
-        public override string Name
-        {
-            get { return "BitStatisticsEntityProcessedCountIdentity"; }
-        }
-
         public override string Description
         {
             get { return " оличество прин€тых записей статистики из Bit"; }
