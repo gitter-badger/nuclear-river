@@ -61,11 +61,13 @@ namespace NuClear.Telemetry
             private readonly string _host;
             private readonly int _port;
             private readonly TcpClient _client;
+            private readonly object _sync;
 
             public TcpClientWrapper(string host, int port)
             {
                 _host = host;
                 _port = port;
+                _sync = new object();
                 _client = new TcpClient();
             }
 
@@ -73,15 +75,18 @@ namespace NuClear.Telemetry
             {
                 try
                 {
-                    if (!_client.Connected)
+                    lock (_sync)
                     {
-                        _client.Connect(_host, _port);
-                    }
+                        if (!_client.Connected)
+                        {
+                            _client.Connect(_host, _port);
+                        }
 
-                    var s = _client.GetStream();
-                    s.Write(data, 0, data.Length);
-                    s.Write(NewLine, 0, NewLine.Length);
-                    s.Flush();
+                        var s = _client.GetStream();
+                        s.Write(data, 0, data.Length);
+                        s.Write(NewLine, 0, NewLine.Length);
+                        s.Flush();
+                    }
                 }
                 catch (Exception)
                 {
