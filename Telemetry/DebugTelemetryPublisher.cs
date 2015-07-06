@@ -11,5 +11,10 @@ namespace NuClear.Telemetry
         {
             Debug.WriteLine(value, IdentityBase<T>.Instance.Name);
         }
+
+        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

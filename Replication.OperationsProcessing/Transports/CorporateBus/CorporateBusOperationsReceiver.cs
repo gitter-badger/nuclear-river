@@ -6,6 +6,7 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.CorporateBus.Flows;
 using NuClear.OperationsProcessing.API.Primary;
+using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
@@ -14,15 +15,18 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
     {
         private readonly ICorporateBusMessageFlowReceiver _corporateBusMessageFlowReceiver;
         private readonly ITracer _tracer;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
         public CorporateBusOperationsReceiver(
             MessageFlowMetadata sourceFlowMetadata,
             IPerformedOperationsReceiverSettings messageReceiverSettings,
             ICorporateBusMessageFlowReceiverFactory corporateBusMessageFlowReceiverFactory, 
-            ITracer tracer) :
+            ITracer tracer, 
+            ITelemetryPublisher telemetryPublisher) :
             base(sourceFlowMetadata, messageReceiverSettings)
         {
             _tracer = tracer;
+            _telemetryPublisher = telemetryPublisher;
             var messageFlow = (ICorporateBusFlow)SourceFlowMetadata.MessageFlow;
             _corporateBusMessageFlowReceiver = corporateBusMessageFlowReceiverFactory.Create(messageFlow);
         }
@@ -31,6 +35,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
         {
             var batch = _corporateBusMessageFlowReceiver.ReceiveBatch(MessageReceiverSettings.BatchSize);
             var messages = batch.Select(corporateBusMessage => new CorporateBusPerformedOperationsMessage(new [] { corporateBusMessage })).ToList();
+            _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
             return messages;
         }
 

@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
@@ -41,6 +43,33 @@ namespace NuClear.Telemetry
         ~LogstashTelemetryPublisher()
         {
             Dispose(false);
+        }
+
+        public void Trace(string message, object data, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        {
+            var report = new
+                         {
+                             EntryPoint = _environmentSettings.EntryPointName,
+                             Environment = _environmentSettings.EnvironmentName,
+                             Name = "Tracing",
+                             Message = message,
+                             Data = data,
+                             MemberName = memberName,
+                             SourceFilePath = sourceFilePath,
+                             SourceLineNumber = sourceLineNumber,
+                             Thread = Thread.CurrentThread.ManagedThreadId
+                         };
+
+            try
+            {
+                lock (_sync)
+                {
+                    _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
+                }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public void Publish<T>(long value)

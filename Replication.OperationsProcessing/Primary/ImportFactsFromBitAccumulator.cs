@@ -6,13 +6,23 @@ using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromBitAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromBitFlow, CorporateBusPerformedOperationsMessage, CorporateBusDtoMessage>
     {
+        private readonly ITelemetryPublisher _telemetryPublisher;
+
+        public ImportFactsFromBitAccumulator(ITelemetryPublisher telemetryPublisher)
+        {
+            _telemetryPublisher = telemetryPublisher;
+        }
+
         protected override CorporateBusDtoMessage Process(CorporateBusPerformedOperationsMessage message)
         {
+            _telemetryPublisher.Trace("Process");
+
             var xmls = message.Packages.SelectMany(x => x.ConvertToXElements());
 
             var dtos = xmls.Select(x =>

@@ -8,6 +8,7 @@ using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.Security.API;
+using NuClear.Telemetry;
 using NuClear.Tracing.API;
 using NuClear.Utils;
 
@@ -21,17 +22,20 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         private readonly IMetadataProvider _metadataProvider;
         private readonly IMessageFlowProcessorFactory _messageFlowProcessorFactory;
         private readonly Lazy<MessageProcessingStage> _firstFaultTolerantStageSetting;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
         public OperationsFinalProcessingJob(
             IMetadataProvider metadataProvider,
             IMessageFlowProcessorFactory messageFlowProcessorFactory,
             ISignInService signInService,
             IUserImpersonationService userImpersonationService,
-            ITracer tracer)
+            ITracer tracer, 
+            ITelemetryPublisher telemetryPublisher)
             : base(signInService, userImpersonationService, tracer)
         {
             _metadataProvider = metadataProvider;
             _messageFlowProcessorFactory = messageFlowProcessorFactory;
+            _telemetryPublisher = telemetryPublisher;
             _firstFaultTolerantStageSetting = new Lazy<MessageProcessingStage>(EvaluateFirstFaultTolerantStage);
         }
 
@@ -58,6 +62,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         private void ProcessFlow(string flow)
         {
+            _telemetryPublisher.Trace("Start", new { Flow = flow });
+
             MessageFlowMetadata messageFlowMetadata;
             if (!_metadataProvider.TryGetMetadata(flow.AsFinalProcessingFlowId(), out messageFlowMetadata))
             {
@@ -95,17 +101,21 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
             try
             {
+                _telemetryPublisher.Trace("Before process", new { Flow = flow });
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
                 messageFlowProcessor.Process();
+                _telemetryPublisher.Trace("After process", new { Flow = flow });
                 Tracer.Debug("Message flow processor finished. Target message flow: " + messageFlowMetadata);
             }
             catch (Exception ex)
             {
+                _telemetryPublisher.Trace("Fatal", ex);
                 Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
                 throw;
             }
             finally
             {
+                _telemetryPublisher.Trace("Finalizing");
                 if (messageFlowProcessor != null)
                 {
                     messageFlowProcessor.Dispose();

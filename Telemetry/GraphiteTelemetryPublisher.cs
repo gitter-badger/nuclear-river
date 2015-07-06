@@ -57,5 +57,10 @@ namespace NuClear.Telemetry
                     throw new InvalidEnumArgumentException();
             }
         }
+
+        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

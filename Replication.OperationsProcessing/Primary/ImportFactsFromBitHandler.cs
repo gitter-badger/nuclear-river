@@ -37,6 +37,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
+            _telemetryPublisher.Trace("Process");
+
             try
             {
                 foreach (var message in messages.OfType<CorporateBusDtoMessage>())

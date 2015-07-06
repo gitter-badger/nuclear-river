@@ -32,6 +32,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         protected override FactOperationAggregatableMessage Process(TrackedUseCase message)
         {
             _tracer.DebugFormat("Processing TUC {0}", message.Id);
+            _telemetryPublisher.Trace("Process");
 
             var plainChanges =
                 message.Operations.SelectMany(scope => scope.AffectedEntities.Changes)
@@ -41,7 +42,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                    z => new ErmOperation(x.Key, y.Key, z.ChangeKind))))
                        .ToList();
 
-            _telemetryPublisher.Publish<ErmOperationCountIdentity>(plainChanges.Count());
+            _telemetryPublisher.Publish<ErmOperationCountIdentity>(plainChanges.Count);
+            _telemetryPublisher.Trace("Detected change count", plainChanges.Count);
 
             return new FactOperationAggregatableMessage
                    {

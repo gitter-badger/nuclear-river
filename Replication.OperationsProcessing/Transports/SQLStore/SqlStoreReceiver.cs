@@ -9,17 +9,20 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreReceiver : MessageReceiverBase<PerformedOperationsFinalProcessingMessage, IFinalProcessingQueueReceiverSettings> 
     {
         private readonly IDataContext _context;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context)
+        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context, ITelemetryPublisher telemetryPublisher)
             : base(sourceFlowMetadata, messageReceiverSettings)
         {
             _context = context;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         protected override IReadOnlyList<PerformedOperationsFinalProcessingMessage> Peek()
@@ -46,6 +49,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 scope.Complete();
             }
 
+            _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
             return messages;
         }
 
@@ -54,6 +58,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
             // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
             // Или пока админ не удалит его из очереди.
+            _telemetryPublisher.Trace("Complete", new { SuccessCount = successfullyProcessedMessages.Count(), FailCount = failedProcessedMessages.Count() });
 
             using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
             {

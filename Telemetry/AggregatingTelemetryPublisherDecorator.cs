@@ -19,5 +19,13 @@ namespace NuClear.Telemetry
                 profiler.Publish<T>(value);
             }
         }
+
+        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        {
+            foreach (var profiler in _profilers)
+            {
+                profiler.Trace(message, data, memberName, sourceFilePath, sourceLineNumber);
+            }
+        }
     }
 }

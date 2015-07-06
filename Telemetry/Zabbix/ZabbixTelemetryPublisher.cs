@@ -34,6 +34,11 @@ namespace NuClear.Telemetry.Zabbix
             }
         }
 
+        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             _zabbixSender.Dispose();
