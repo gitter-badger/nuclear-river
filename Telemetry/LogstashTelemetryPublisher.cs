@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,7 +15,6 @@ namespace NuClear.Telemetry
     {
         private readonly IClientWrapper _client;
         private readonly IEnvironmentSettings _environmentSettings;
-        private readonly object _sync = new object();
         private bool _disposed;
 
         public LogstashTelemetryPublisher(IEnvironmentSettings environmentSettings, ILogstashSettings logstashSettings)
@@ -62,10 +60,7 @@ namespace NuClear.Telemetry
 
             try
             {
-                lock (_sync)
-                {
-                    _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
-                }
+                _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
             }
             catch (Exception)
             {
@@ -85,10 +80,7 @@ namespace NuClear.Telemetry
 
             try
             {
-                lock (_sync)
-                {
-                    _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
-                }
+                _client.SendAsync(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(report)));
             }
             catch(Exception)
             {
@@ -126,6 +118,7 @@ namespace NuClear.Telemetry
             private static readonly byte[] NewLine = { 10 };
             private readonly string _host;
             private readonly int _port;
+            private readonly object _sync = new object();
             private TcpClient _client;
             private bool _disposed;
 
@@ -147,18 +140,21 @@ namespace NuClear.Telemetry
 
             private void Send(byte[] data)
             {
-                var client = GetClient();
-                try
+                lock (_sync)
                 {
-                    var s = client.GetStream();
-                    s.Write(data, 0, data.Length);
-                    s.Write(NewLine, 0, NewLine.Length);
-                    s.Flush();
-                }
-                catch (Exception)
-                {
-                    client.Close();
-                    throw;
+                    var client = GetClient();
+                    try
+                    {
+                        var s = client.GetStream();
+                        s.Write(data, 0, data.Length);
+                        s.Write(NewLine, 0, NewLine.Length);
+                        s.Flush();
+                    }
+                    catch (Exception)
+                    {
+                        client.Close();
+                        throw;
+                    }
                 }
             }
 
