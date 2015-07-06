@@ -26,11 +26,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
+            var sqlSettings = container.Resolve<ISqlSettingsAspect>();
+
             return container
-                .RegisterDataContext(Scope.Erm, ConnectionStringName.Erm, Schema.Erm)
-                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts)
-                .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence)
-                .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport)
+                .RegisterDataContext(Scope.Erm, ConnectionStringName.Erm, Schema.Erm, sqlSettings.SqlCommandTimeout)
+                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts, sqlSettings.SqlCommandTimeout)
+                .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence, sqlSettings.SqlCommandTimeout)
+                .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport, sqlSettings.SqlCommandTimeout)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
@@ -84,11 +86,17 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return new ResolvedParameter<ITransactionManager>(specificScope);
         }
 
-        private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema)
+        private static IUnityContainer RegisterDataContext(this IUnityContainer container, string scope, ConnectionStringName connectionStringName, MappingSchema schema, int timeout)
         {
             return container.RegisterType<IDataContext, DataConnection>(scope, 
                 Lifetime.PerScope,
-                new InjectionFactory(c => new DataConnection(connectionStringName.ToString()).AddMappingSchema(schema)));
+                new InjectionFactory(c =>
+                                     {
+                                         var connection = new DataConnection(connectionStringName.ToString());
+                                         connection.AddMappingSchema(schema);
+                                         connection.CommandTimeout = timeout;
+                                         return connection;
+                                     }));
         }
 
         private static class Scope

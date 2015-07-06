@@ -12,6 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
         {
             var connectionStringSettings = new ConnectionStringsSettingsAspect();
 
+            Aspects.Use<SqlSettingsAspect>();
             Aspects.Use<EnvironmentSettingsAspect>();
             Aspects.Use(new PersistentStoreAspect(connectionStringSettings));
             Aspects.Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus)));

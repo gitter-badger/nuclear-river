@@ -49,7 +49,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             foreach (var slice in slices)
             {
                 var factType = slice.Key.FactType;
-                var factIds = slice.Select(x => x.FactId).ToArray();
+                var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
                 ErmFactInfo factInfo;
                 if (!Facts.TryGetValue(factType, out factInfo))
