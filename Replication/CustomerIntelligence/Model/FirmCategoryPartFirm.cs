@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
-    public sealed class FirmCategory : ICustomerIntelligenceObject
+    public sealed class FirmCategoryPartFirm : ICustomerIntelligenceObject
     {
         public long FirmId { get; set; }
 
@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             {
                 return true;
             }
-            return obj is FirmCategory && Equals((FirmCategory)obj);
+            return obj is FirmCategoryPartFirm && Equals((FirmCategoryPartFirm)obj);
         }
 
         public override int GetHashCode()
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             }
         }
 
-        private bool Equals(FirmCategory other)
+        private bool Equals(FirmCategoryPartFirm other)
         {
             return FirmId == other.FirmId && CategoryId == other.CategoryId;
         }

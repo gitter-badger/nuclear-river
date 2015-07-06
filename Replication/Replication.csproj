@@ -58,13 +58,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartProject.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
-    <Compile Include="CustomerIntelligence\Model\Category.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Territory.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\CategoryGroup.cs" />
@@ -100,6 +100,7 @@
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\TransactionManagerExtensions.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />
+    <Compile Include="Data\ITransactionManager.cs" />
     <Compile Include="Model\IBitFactObject.cs" />
     <Compile Include="Model\ICustomerIntelligenceObject.cs" />
     <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
@@ -120,7 +122,7 @@
     <Compile Include="CustomerIntelligence\Model\Contact.cs" />
     <Compile Include="CustomerIntelligence\Model\Firm.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmBalance.cs" />
-    <Compile Include="CustomerIntelligence\Model\FirmCategory.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartFirm.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Account.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Firm.cs" />
@@ -140,6 +142,7 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Specifications\Specs.Facts.cs" />
     <Compile Include="Specifications\Specs.Erm.cs" />
+    <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />

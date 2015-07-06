@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}"
 EndProject
@@ -47,6 +47,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9
 	ProjectSection(SolutionItems) = preProject
 		build\convertusecases.ps1 = build\convertusecases.ps1
 		build\default.ps1 = build\default.ps1
+		build\metadata.psm1 = build\metadata.psm1
+		build\metadata.servicebus.psm1 = build\metadata.servicebus.psm1
+		build\metadata.taskservice.psm1 = build\metadata.taskservice.psm1
+		build\metadata.transform.psm1 = build\metadata.transform.psm1
+		build\metadata.web.psm1 = build\metadata.web.psm1
 		build\replicate.ps1 = build\replicate.ps1
 		build\run-build.ps1 = build\run-build.ps1
 	EndProjectSection
@@ -56,6 +61,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Tests", "Replication.Tests\Replication.Tests.csproj", "{25AACA77-648A-4462-8EC1-709963219C8E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settings.csproj", "{D4238D0C-3315-4449-B1AE-80F716D58D04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telemetry", "Telemetry\Telemetry.csproj", "{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +130,10 @@ Global
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,8 +13,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly ICustomerIntelligenceContext _source;
         private readonly ICustomerIntelligenceContext _target;
         private readonly IDataMapper _mapper;
+        private readonly ITransactionManager _transactionManager;
 
-        public CustomerIntelligenceTransformation(ICustomerIntelligenceContext source, ICustomerIntelligenceContext target, IDataMapper mapper)
+        public CustomerIntelligenceTransformation(ICustomerIntelligenceContext source, ICustomerIntelligenceContext target, IDataMapper mapper, ITransactionManager transactionManager)
         {
             if (source == null)
             {
@@ -29,9 +30,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _source = source;
             _target = target;
             _mapper = mapper;
+            _transactionManager = transactionManager;
         }
 
+
         public void Transform(IEnumerable<AggregateOperation> operations)
+        {
+            _transactionManager.WithinTransaction(() => DoTransform(operations));
+        }
+
+        private void DoTransform(IEnumerable<AggregateOperation> operations)
         {
             var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
                                    .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
@@ -40,7 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
-                var aggregateIds = slice.Select(x => x.AggregateId).ToArray();
+                var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToArray();
 
                 AggregateInfo aggregateInfo;
                 if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))

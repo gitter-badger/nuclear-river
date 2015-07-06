@@ -15,8 +15,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly IQuery _ermQuery;
         private readonly IQuery _factsQuery;
         private readonly IDataMapper _mapper;
+        private readonly ITransactionManager _transactionManager;
 
-        public ErmFactsTransformation(IQuery ermQuery, IQuery factsQuery, IDataMapper mapper)
+        public ErmFactsTransformation(IQuery ermQuery, IQuery factsQuery, IDataMapper mapper, ITransactionManager transactionManager)
         {
             if (ermQuery == null)
             {
@@ -31,9 +32,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _ermQuery = ermQuery;
             _factsQuery = factsQuery;
             _mapper = mapper;
+            _transactionManager = transactionManager;
         }
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
+        {
+            return _transactionManager.WithinTransaction(() => DoTransform(operations));
+        }
+
+        private IEnumerable<AggregateOperation> DoTransform(IEnumerable<FactOperation> operations)
         {
             var result = Enumerable.Empty<AggregateOperation>();
 
@@ -43,7 +50,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             foreach (var slice in slices)
             {
                 var factType = slice.Key.FactType;
-                var factIds = slice.Select(x => x.FactId).ToArray();
+                var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
                 ErmFactInfo factInfo;
                 if (!Facts.TryGetValue(factType, out factInfo))

@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 using Microsoft.Owin;
 using Microsoft.Practices.Unity;
@@ -26,6 +27,9 @@ namespace NuClear.AdvancedSearch.Web.OData
             // DI
             var container = Bootstrapper.ConfigureUnity(settingsContainer);
             httpServer.Configuration.DependencyResolver = new UnityResolver(container);
+
+            // turn on CORS support
+            httpServer.Configuration.EnableCors(new EnableCorsAttribute("*", "*", "*"));
 
             // default web api
             httpServer.Configuration.MapHttpAttributeRoutes();

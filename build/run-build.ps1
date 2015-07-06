@@ -15,63 +15,11 @@ $ErrorActionPreference = 'Stop'
 cls
 
 $Properties.SemanticVersion = '0.0.1'
-$Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 $Properties.SolutionDir = Join-Path $PSScriptRoot '..'
+$Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 
-$Properties.EnvironmentMetadata = @{
-	'Test.21' = @{
-		'Transform' = @{
-			'Xdt' = @('Erm.Release.config', 'log4net.Release.config')
-			'Regex' = @{}
-		}
-		'Web.OData' = @{
-			'ValidateWebsite' = $true
-			'IisAppPath' = 'search21.api.test.erm.2gis.ru'
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Web'
-		}
-		'Replication.EntryPoint' = @{
-			'ServiceName' = 'AdvSearch'
-			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
-			'QuartzConfigs' = @()
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Desktop'
-		}
-		'ConvertUseCasesService' = @{
-			'ServiceName' = 'ConvertUseCases'
-			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Convert UseCases Service'
-			'QuartzConfigs' = @()
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Desktop'
-		}
-	}
-	'Test.09' = @{
-		'Transform' = @{
-			'Xdt' = @('Erm.Release.config', 'log4net.Release.config')
-			'Regex' = @{}
-		}
-		'Web.OData' = @{
-			'ValidateWebsite' = $true
-			'IisAppPath' = 'search09.api.test.erm.2gis.ru'
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Web'
-		}
-		'Replication.EntryPoint' = @{
-			'ServiceName' = 'AdvSearch'
-			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Replication Service'
-			'QuartzConfigs' = @()
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Desktop'
-		}
-		'ConvertUseCasesService' = @{
-			'ServiceName' = 'ConvertUseCases'
-			'ServiceDisplayName' = '2GIS ERM AdvancedSearch Convert UseCases Service'
-			'QuartzConfigs' = @()
-			'TargetHosts' = @('uk-erm-test01')
-			'EntrypointType' = 'Desktop'
-		}
-	}
-}
+Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking
+$Properties.EnvironmentMetadata = $EnvironmentMetadata
 
 # Restore-Packages
 & {
@@ -86,5 +34,5 @@ $Properties.EnvironmentMetadata = @{
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.42\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.45\tools\buildtools.psm1" -DisableNameChecking -Force
 Run-Build $TaskList $Properties

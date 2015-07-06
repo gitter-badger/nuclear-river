@@ -6,10 +6,10 @@
         
         public long CategoryId { get; set; }
 
-        public double AdvertisersShare { get; set; }
+        public string Name { get; set; }
 
-        public long FirmCount { get; set; }
+        public int Level { get; set; }
 
-        public Category Category { get; set; }
+        public long? ParentId { get; set; }
     }
 }

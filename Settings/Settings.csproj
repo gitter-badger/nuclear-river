@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="ConnectionStringName.cs" />
     <Compile Include="ConnectionStringsSettingsAspect.cs" />
+    <Compile Include="ISqlSettingsAspect.cs" />
+    <Compile Include="SqlSettingsAspect.cs" />
     <Compile Include="EnvironmentSettingsAspect.cs" />
     <Compile Include="IConnectionStringSettings.cs" />
     <Compile Include="IEnvironmentSettings.cs" />

@@ -73,38 +73,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkLoadingOfFacts.cs" />
+    <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
-    <Compile Include="StubReadableDomainContextProvider.cs" />
-    <Compile Include="Transformation\ErmContextFilteringTests.cs" />
+    <Compile Include="MockExtensions.cs" />
     <Compile Include="Transformation\FactsTransformationContextTests.cs" />
-    <Compile Include="Transformation\FactsTransformationTests.Category.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.CategoryOrganizationUnit.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.Contact.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.Project.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Transformation\FactsTransformationTests.Territory.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Transformation\FactsTransformationTests.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.CategoryOrganizationUnit.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Project.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="BaseFixture.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />
@@ -116,9 +97,14 @@
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
     <Compile Include="IdentifiableObjectExtensions.cs" />
+    <Compile Include="Transformation\WhenFirmToCategoryRelationChanged.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +122,11 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.96.0\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.96.0\build\net451\System.Data.SQLite.Core.targets'))" />
   </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties Resources_2Data_1Source_1json__JSONSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
