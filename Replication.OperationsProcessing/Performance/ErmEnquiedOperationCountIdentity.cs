@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class ErmFactOperationProcessedCountIdentity : TelemetryIdentityBase<ErmFactOperationProcessedCountIdentity>
+    public sealed class ErmEnquiedOperationCountIdentity : TelemetryIdentityBase<ErmEnquiedOperationCountIdentity>
     {
         public override int Id
         {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return " оличество обработанных операций на этапе primary"; }
+            get { return " оличество вз€тых на обработку CUD операций"; }
         }
     }
 }

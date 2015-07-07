@@ -42,11 +42,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
 
-                var aggregateOperations = _ermFactsTransformation.Transform(operations);
-
-                _telemetryPublisher.Publish<ErmFactOperationProcessedCountIdentity>(operations.Count());
+                var aggregateOperations = _ermFactsTransformation.Transform(operations).ToList();
+                _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)

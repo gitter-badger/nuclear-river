@@ -40,14 +40,16 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                y => y.Value.Select(
                                    z => new ErmOperation(x.Key, y.Key, z.ChangeKind))))
                        .ToList();
+            _telemetryPublisher.Publish<ErmReceivedOperationCountIdentity>(plainChanges.Count);
 
-            _telemetryPublisher.Publish<ErmOperationCountIdentity>(plainChanges.Count);
+            var transformableChanges = Convert(plainChanges).ToList();
+            _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(transformableChanges.Count);
 
             return new FactOperationAggregatableMessage
                    {
                        Id = message.Id,
                        TargetFlow = MessageFlow,
-                       Operations = Convert(plainChanges),
+                       Operations = transformableChanges,
                    };
         }
 
