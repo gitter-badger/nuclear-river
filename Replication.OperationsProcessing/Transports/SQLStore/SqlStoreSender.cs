@@ -44,6 +44,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             catch
             {
                 _dataConnection.RollbackTransaction();
+                throw;
             }
         }
 

@@ -57,6 +57,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             {
                 messages = new List<PerformedOperationsFinalProcessingMessage>();
                 _dataConnection.RollbackTransaction();
+                throw;
             }
 
             _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
@@ -85,6 +86,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             catch
             {
                 _dataConnection.RollbackTransaction();
+                throw;
             }
         }
     }
