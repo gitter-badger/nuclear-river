@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   ErmFactInfo.OfType<CategoryFirmAddress>()
                           .HasSource(context => context.CategoryFirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddress)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddressForStatistics)
+                          //.HasDependentAggregate<CI.Firm>(Find.Firm.ByCategoryFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByCategoryFirmAddress),
 
                   ErmFactInfo.OfType<CategoryGroup>()
@@ -59,13 +59,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   ErmFactInfo.OfType<Firm>()
                           .HasSource(context => context.Firms)
                           .HasMatchedAggregate<CI.Firm>()
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmForStatistics)
+                          //.HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByFirm),
 
                   ErmFactInfo.OfType<FirmAddress>()
                           .HasSource(context => context.FirmAddresses)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddress)
-                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddressForStatistics)
+                          //.HasDependentAggregate<CI.Firm>(Find.Firm.ByFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Find.Client.ByFirmAddress),
 
                   ErmFactInfo.OfType<FirmContact>()
