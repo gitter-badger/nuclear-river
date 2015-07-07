@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Flows;
@@ -16,12 +17,12 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
-        private readonly IDataContext _context;
+        private readonly DataConnection _dataConnection;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public SqlStoreSender(IDataContext context, ITelemetryPublisher telemetryPublisher)
+        public SqlStoreSender(IDataContext dataConnection, ITelemetryPublisher telemetryPublisher)
         {
-            _context = context;
+            _dataConnection = (DataConnection)dataConnection;
             _telemetryPublisher = telemetryPublisher;
         }
 
@@ -30,14 +31,19 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             _telemetryPublisher.Trace("Sending");
 
             var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            try
             {
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
                 foreach (var message in transportMessages)
                 {
-                    _context.Insert(message);
+                    _dataConnection.Insert(message);
                 }
 
-                scope.Complete();
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
             }
         }
 
