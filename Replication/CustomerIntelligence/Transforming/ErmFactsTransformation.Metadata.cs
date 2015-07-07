@@ -218,11 +218,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                      where ids.Contains(firmAddressCategory.Id)
                                      select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                    return from firm in context.Firms
-                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
-                           select firm.Id;
+                    var query = from firm in context.Firms
+                                join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
+                                select firm.Id;
+
+                    return query.Distinct();
                 }
 
                 public static IEnumerable<long> ByCategoryOrganizationUnit(IErmFactsContext context, IEnumerable<long> ids)
@@ -259,11 +261,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                      where ids.Contains(firm.Id)
                                      select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                    return from firm in context.Firms
-                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
-                           select firm.Id;
+                    var query = from firm in context.Firms
+                                join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
+                                select firm.Id;
+
+                    return query.Distinct();
                 }
 
                 public static IEnumerable<long> ByFirmAddress(IErmFactsContext context, IEnumerable<long> ids)
@@ -281,11 +285,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                      where ids.Contains(firmAddress.Id)
                                      select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                    return from firm in context.Firms
-                           join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
-                           join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                           join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
-                           select firm.Id;
+                    var query = from firm in context.Firms
+                                join firmAddress in context.FirmAddresses on firm.Id equals firmAddress.FirmId
+                                join firmAddressCategory in context.CategoryFirmAddresses on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
+                                select firm.Id;
+
+                    return query.Distinct();
                 }
 
                 public static IEnumerable<long> ByFirmContacts(IErmFactsContext context, IEnumerable<long> ids)
