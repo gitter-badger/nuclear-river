@@ -70,8 +70,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts),
                                                        ResolvedTransactionManager(container, Scope.Facts)))
 
-                .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport), new ResolvedParameter<ITelemetryPublisher>()))
-                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport), new ResolvedParameter<ITelemetryPublisher>()));
+                .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
+                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
         }
 
         private static ResolvedParameter ResolvedTransactionManager(IUnityContainer container, params string[] contexts)
