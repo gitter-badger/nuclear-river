@@ -28,7 +28,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         protected override IReadOnlyList<PerformedOperationsFinalProcessingMessage> Peek()
         {
-            IReadOnlyList<PerformedOperationsFinalProcessingMessage> messages;
+            ICollection<PerformedOperationFinalProcessing> messages;
 
             try
             {
@@ -37,32 +37,29 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 messages = _dataConnection.GetTable<PerformedOperationFinalProcessing>()
                                           .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
                                           .Take(MessageReceiverSettings.BatchSize)
-                                          .AsEnumerable()
-                                          
-                                          // fake grouping
-                                          .GroupBy(x => 0)
-                                          .Select(x => new PerformedOperationsFinalProcessingMessage
-                                                       {
-                                                           EntityId = 0,
-                                                           MaxAttemptCount = 0,
-                                                           EntityType = EntityType.Instance.None(),
-                                                           Flow = SourceFlowMetadata.MessageFlow,
-                                                           FinalProcessings = x,
-                                                       })
                                           .ToList();
 
                 _dataConnection.CommitTransaction();
             }
             catch
             {
-                messages = new List<PerformedOperationsFinalProcessingMessage>();
                 _dataConnection.RollbackTransaction();
                 throw;
             }
 
             _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
 
-            return messages;
+            return new[]
+                   {
+                       new PerformedOperationsFinalProcessingMessage
+                       {
+                           EntityId = 0,
+                           MaxAttemptCount = 0,
+                           EntityType = EntityType.Instance.None(),
+                           Flow = SourceFlowMetadata.MessageFlow,
+                           FinalProcessings = messages,
+                       }
+                   };
         }
 
         protected override void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages, IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
