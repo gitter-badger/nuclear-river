@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Receivers;
@@ -15,13 +16,13 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreReceiver : MessageReceiverBase<PerformedOperationsFinalProcessingMessage, IFinalProcessingQueueReceiverSettings> 
     {
-        private readonly IDataContext _context;
+        private readonly DataConnection _dataConnection;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
         public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context, ITelemetryPublisher telemetryPublisher)
             : base(sourceFlowMetadata, messageReceiverSettings)
         {
-            _context = context;
+            _dataConnection = (DataConnection)context;
             _telemetryPublisher = telemetryPublisher;
         }
 
@@ -29,27 +30,37 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         {
             IReadOnlyList<PerformedOperationsFinalProcessingMessage> messages;
 
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            try
             {
-                messages = _context.GetTable<PerformedOperationFinalProcessing>()
-                                      .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
-                                      .Take(MessageReceiverSettings.BatchSize)
-                                      .AsEnumerable()
-                                      // fake grouping
-                                      .GroupBy(x => 0)
-                                      .Select(x => new PerformedOperationsFinalProcessingMessage
-                                        {
-                                            EntityId = 0,
-                                            MaxAttemptCount = 0,
-                                            EntityType = EntityType.Instance.None(),
-                                            Flow = SourceFlowMetadata.MessageFlow,
-                                            FinalProcessings = x,
-                                        }).ToList();
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
 
-                scope.Complete();
+                messages = _dataConnection.GetTable<PerformedOperationFinalProcessing>()
+                                          .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
+                                          .Take(MessageReceiverSettings.BatchSize)
+                                          .AsEnumerable()
+                                          
+                                          // fake grouping
+                                          .GroupBy(x => 0)
+                                          .Select(x => new PerformedOperationsFinalProcessingMessage
+                                                       {
+                                                           EntityId = 0,
+                                                           MaxAttemptCount = 0,
+                                                           EntityType = EntityType.Instance.None(),
+                                                           Flow = SourceFlowMetadata.MessageFlow,
+                                                           FinalProcessings = x,
+                                                       })
+                                          .ToList();
+
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                messages = new List<PerformedOperationsFinalProcessingMessage>();
+                _dataConnection.RollbackTransaction();
             }
 
             _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
+
             return messages;
         }
 
@@ -60,14 +71,20 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             // Или пока админ не удалит его из очереди.
             _telemetryPublisher.Trace("Complete", new { SuccessCount = successfullyProcessedMessages.Count(), FailCount = failedProcessedMessages.Count() });
 
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            try
             {
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+
                 foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
                 {
-                    _context.Delete(message);
+                    _dataConnection.Delete(message);
                 }
 
-                scope.Complete();
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
             }
         }
     }
