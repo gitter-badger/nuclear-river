@@ -17,13 +17,11 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
     public sealed class SqlStoreReceiver : MessageReceiverBase<PerformedOperationsFinalProcessingMessage, IFinalProcessingQueueReceiverSettings> 
     {
         private readonly DataConnection _dataConnection;
-        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context, ITelemetryPublisher telemetryPublisher)
+        public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context)
             : base(sourceFlowMetadata, messageReceiverSettings)
         {
             _dataConnection = (DataConnection)context;
-            _telemetryPublisher = telemetryPublisher;
         }
 
         protected override IReadOnlyList<PerformedOperationsFinalProcessingMessage> Peek()
@@ -47,8 +45,6 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 throw;
             }
 
-            _telemetryPublisher.Trace("Peek", new { MessageCount = messages.Count });
-
             return new[]
                    {
                        new PerformedOperationsFinalProcessingMessage
@@ -67,8 +63,6 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
             // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
             // Или пока админ не удалит его из очереди.
-            _telemetryPublisher.Trace("Complete", new { SuccessCount = successfullyProcessedMessages.Count(), FailCount = failedProcessedMessages.Count() });
-
             try
             {
                 _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);

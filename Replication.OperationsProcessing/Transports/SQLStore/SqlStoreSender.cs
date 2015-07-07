@@ -11,25 +11,20 @@ using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
-using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
         private readonly DataConnection _dataConnection;
-        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public SqlStoreSender(IDataContext dataConnection, ITelemetryPublisher telemetryPublisher)
+        public SqlStoreSender(IDataContext dataConnection)
         {
             _dataConnection = (DataConnection)dataConnection;
-            _telemetryPublisher = telemetryPublisher;
         }
 
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
-            _telemetryPublisher.Trace("Sending");
-
             var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
             try
             {

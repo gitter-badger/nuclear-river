@@ -33,8 +33,6 @@ namespace NuClear.Replication.OperationsProcessing.Final
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
-            _telemetryPublisher.Trace("Process");
-
             try
             {
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
@@ -42,7 +40,6 @@ namespace NuClear.Replication.OperationsProcessing.Final
                 _customerIntelligenceTransformation.Transform(message.Operations);
                 _telemetryPublisher.Publish<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
 
-                _telemetryPublisher.Trace("Success");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)

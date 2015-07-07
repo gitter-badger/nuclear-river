@@ -37,17 +37,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
-            _telemetryPublisher.Trace("Process");
-
             IList<FactOperation> operations = null;
             try
             {
                 operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
 
-                _telemetryPublisher.Trace("Start", new { OperationCount = operations.Count() });
-
                 var aggregateOperations = _ermFactsTransformation.Transform(operations);
-                _telemetryPublisher.Trace("Success", new { OperationCount = operations.Count() });
 
                 _telemetryPublisher.Publish<ErmFactOperationProcessedCountIdentity>(operations.Count());
 

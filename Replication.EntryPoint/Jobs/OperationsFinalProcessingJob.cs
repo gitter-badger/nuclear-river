@@ -62,8 +62,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         private void ProcessFlow(string flow)
         {
-            _telemetryPublisher.Trace("Start", new { Flow = flow });
-
             MessageFlowMetadata messageFlowMetadata;
             if (!_metadataProvider.TryGetMetadata(flow.AsFinalProcessingFlowId(), out messageFlowMetadata))
             {
@@ -101,21 +99,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
             try
             {
-                _telemetryPublisher.Trace("Before process", new { Flow = flow });
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
                 messageFlowProcessor.Process();
-                _telemetryPublisher.Trace("After process", new { Flow = flow });
                 Tracer.Debug("Message flow processor finished. Target message flow: " + messageFlowMetadata);
             }
             catch (Exception ex)
             {
-                _telemetryPublisher.Trace("Fatal", ex);
+                _telemetryPublisher.Trace("Failure", ex);
                 Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
                 throw;
             }
             finally
             {
-                _telemetryPublisher.Trace("Finalizing");
                 if (messageFlowProcessor != null)
                 {
                     messageFlowProcessor.Dispose();

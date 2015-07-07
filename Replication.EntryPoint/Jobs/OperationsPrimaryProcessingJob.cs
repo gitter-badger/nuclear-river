@@ -80,7 +80,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         protected override void ExecuteInternal(IJobExecutionContext context)
         {
-            _telemetryPublisher.Trace("Start");
             if (string.IsNullOrEmpty(Flow))
             {
                 string msg = string.Format("Required job arg {0} is not specified, check job config", StaticReflection.GetMemberName(() => Flow));
@@ -130,8 +129,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                SufficientBatchUtilizationThreshold = SufficientBatchUtilizationThreshold ?? ThrottlingSettings.Default.SufficientBatchUtilizationThreshold,
                            };
 
-            _telemetryPublisher.Trace("ThrottlingSettings", settings);
-
             try
             {
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
@@ -144,12 +141,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
             catch (Exception ex)
             {
                 Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
-                _telemetryPublisher.Trace("FatalException", ex);
+                _telemetryPublisher.Trace("Failure", ex);
                 throw;
             }
             finally
             {
-                _telemetryPublisher.Trace("Finalizing");
                 var flowProcessor = MessageFlowProcessor;
                 if (flowProcessor != null)
                 {
