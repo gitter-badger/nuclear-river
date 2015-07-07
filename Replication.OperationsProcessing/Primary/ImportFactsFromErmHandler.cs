@@ -42,7 +42,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
 
-                var aggregateOperations = _ermFactsTransformation.Transform(operations).ToList();
+                var aggregateOperations = _ermFactsTransformation.Transform(operations).Distinct().ToList();
                 _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
