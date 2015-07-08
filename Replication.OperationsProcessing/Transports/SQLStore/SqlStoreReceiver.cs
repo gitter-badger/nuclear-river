@@ -10,7 +10,6 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
@@ -45,17 +44,19 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                 throw;
             }
 
-            return new[]
-                   {
-                       new PerformedOperationsFinalProcessingMessage
-                       {
-                           EntityId = 0,
-                           MaxAttemptCount = 0,
-                           EntityType = EntityType.Instance.None(),
-                           Flow = SourceFlowMetadata.MessageFlow,
-                           FinalProcessings = messages,
-                       }
-                   };
+            return messages.Any()
+                       ? new[]
+                         {
+                             new PerformedOperationsFinalProcessingMessage
+                             {
+                                 EntityId = 0,
+                                 MaxAttemptCount = 0,
+                                 EntityType = EntityType.Instance.None(),
+                                 Flow = SourceFlowMetadata.MessageFlow,
+                                 FinalProcessings = messages,
+                             }
+                         }
+                       : new PerformedOperationsFinalProcessingMessage[0];
         }
 
         protected override void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages, IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
