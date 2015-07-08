@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -74,8 +75,7 @@ namespace NuClear.Telemetry
                          {
                              EntryPoint = _environmentSettings.EntryPointName,
                              Environment = _environmentSettings.EnvironmentName,
-                             Name = TelemetryIdentityBase<T>.Instance.Name,
-                             Value = value,
+                             Indicator = new Dictionary<string, long> { { TelemetryIdentityBase<T>.Instance.Name, value } }
                          };
 
             try
