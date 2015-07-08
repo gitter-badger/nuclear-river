@@ -75,6 +75,7 @@ namespace NuClear.Telemetry
                          {
                              EntryPoint = _environmentSettings.EntryPointName,
                              Environment = _environmentSettings.EnvironmentName,
+                             Name = "Counter",
                              Indicator = new Dictionary<string, long> { { TelemetryIdentityBase<T>.Instance.Name, value } }
                          };
 
