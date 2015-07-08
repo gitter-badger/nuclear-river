@@ -5,6 +5,7 @@ using System.Linq;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -36,7 +37,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            _transactionManager.WithinTransaction(() => DoTransform(operations));
+            using (var probe = new Probe("ETL2 Transforming"))
+            {
+                _transactionManager.WithinTransaction(() => DoTransform(operations));
+            }
         }
 
         private void DoTransform(IEnumerable<AggregateOperation> operations)
@@ -56,19 +60,22 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                 }
 
-                if (operation == typeof(InitializeAggregate))
+                using (var probe = new Probe("ETL2 Transforming " + aggregateInfo.AggregateType.Name))
                 {
-                    InitializeAggregate(aggregateInfo, aggregateIds);
-                }
-                
-                if (operation == typeof(RecalculateAggregate))
-                {
-                    RecalculateAggregate(aggregateInfo, aggregateIds);
-                }
+                    if (operation == typeof(InitializeAggregate))
+                    {
+                        InitializeAggregate(aggregateInfo, aggregateIds);
+                    }
 
-                if (operation == typeof(DestroyAggregate))
-                {
-                    DestroyAggregate(aggregateInfo, aggregateIds);
+                    if (operation == typeof(RecalculateAggregate))
+                    {
+                        RecalculateAggregate(aggregateInfo, aggregateIds);
+                    }
+
+                    if (operation == typeof(DestroyAggregate))
+                    {
+                        DestroyAggregate(aggregateInfo, aggregateIds);
+                    }
                 }
             }
         }

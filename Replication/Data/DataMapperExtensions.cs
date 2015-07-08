@@ -8,6 +8,7 @@ using System.Reflection;
 using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.Data
 {
@@ -23,12 +24,28 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         public static void InsertAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, query);
+            using (var probe = new Probe("Deleting " + query.ElementType.Name))
+            {
+                IObject[] items;
+                using (var p = new Probe("Querying"))
+                    items = query.Cast<IObject>().ToArray();
+
+                using (var p = new Probe("Insering"))
+                    InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, items);
+            }
         }
 
         public static void UpdateAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, query);
+            using (var probe = new Probe("Deleting " + query.ElementType.Name))
+            {
+                IObject[] items;
+                using (var p = new Probe("Querying"))
+                    items = query.Cast<IObject>().ToArray();
+
+                using (var p = new Probe("Updating"))
+                    InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, items);
+            }
         }
 
         public static void DeleteAll(this IDataMapper mapper, IQueryable query)
@@ -36,8 +53,15 @@ namespace NuClear.AdvancedSearch.Replication.Data
             // Перед удалением требуется полность вычитать результат запроса.
             // Возможно, это баг в linq2db: он использует единственный SqlCommand для всех запросов в течении жизни DataContext
             // Это является проблемой только при удалении, поскольку все остальные операции проводят чтение и запись через разные DataContext
-            var items = query.Cast<IObject>().ToArray();
-            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
+            using (var probe = new Probe("Deleting " + query.ElementType.Name))
+            {
+                IObject[] items;
+                using (var p = new Probe("Querying"))
+                    items = query.Cast<IObject>().ToArray();
+
+                using (var p = new Probe("Deleting"))
+                    InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
+            }
         }
 
         private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable items)

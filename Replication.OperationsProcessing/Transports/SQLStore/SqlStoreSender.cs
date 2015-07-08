@@ -11,6 +11,7 @@ using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
@@ -25,21 +26,24 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
-            var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-            try
+            using (var probe = new Probe("Send Aggregate Operations"))
             {
-                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
-                foreach (var message in transportMessages)
+                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                try
                 {
-                    _dataConnection.Insert(message);
-                }
+                    _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+                    foreach (var message in transportMessages)
+                    {
+                        _dataConnection.Insert(message);
+                    }
 
-                _dataConnection.CommitTransaction();
-            }
-            catch
-            {
-                _dataConnection.RollbackTransaction();
-                throw;
+                    _dataConnection.CommitTransaction();
+                }
+                catch
+                {
+                    _dataConnection.RollbackTransaction();
+                    throw;
+                }
             }
         }
 

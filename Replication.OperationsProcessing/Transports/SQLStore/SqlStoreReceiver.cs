@@ -10,6 +10,7 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
@@ -27,58 +28,64 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         {
             ICollection<PerformedOperationFinalProcessing> messages;
 
-            try
+            using (var probe = new Probe("Peek Aggregate Operations"))
             {
-                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+                try
+                {
+                    _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
 
-                messages = _dataConnection.GetTable<PerformedOperationFinalProcessing>()
-                                          .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
-                                          .Take(MessageReceiverSettings.BatchSize)
-                                          .ToList();
+                    messages = _dataConnection.GetTable<PerformedOperationFinalProcessing>()
+                                              .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
+                                              .Take(MessageReceiverSettings.BatchSize)
+                                              .ToList();
 
-                _dataConnection.CommitTransaction();
-            }
-            catch
-            {
-                _dataConnection.RollbackTransaction();
-                throw;
-            }
+                    _dataConnection.CommitTransaction();
+                }
+                catch
+                {
+                    _dataConnection.RollbackTransaction();
+                    throw;
+                }
 
-            return messages.Any()
-                       ? new[]
-                         {
-                             new PerformedOperationsFinalProcessingMessage
+                return messages.Any()
+                           ? new[]
                              {
-                                 EntityId = 0,
-                                 MaxAttemptCount = 0,
-                                 EntityType = EntityType.Instance.None(),
-                                 Flow = SourceFlowMetadata.MessageFlow,
-                                 FinalProcessings = messages,
+                                 new PerformedOperationsFinalProcessingMessage
+                                 {
+                                     EntityId = 0,
+                                     MaxAttemptCount = 0,
+                                     EntityType = EntityType.Instance.None(),
+                                     Flow = SourceFlowMetadata.MessageFlow,
+                                     FinalProcessings = messages,
+                                 }
                              }
-                         }
-                       : new PerformedOperationsFinalProcessingMessage[0];
+                           : new PerformedOperationsFinalProcessingMessage[0];
+            }
         }
 
         protected override void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages, IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
         {
-            // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
-            // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
-            // Или пока админ не удалит его из очереди.
-            try
+            using (var probe = new Probe("Complete Aggregate Operations"))
             {
-                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
-
-                foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
+                // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
+                // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
+                // Или пока админ не удалит его из очереди.
+                try
                 {
-                    _dataConnection.Delete(message);
-                }
+                    _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
 
-                _dataConnection.CommitTransaction();
-            }
-            catch
-            {
-                _dataConnection.RollbackTransaction();
-                throw;
+                    foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
+                    {
+                        _dataConnection.Delete(message);
+                    }
+
+                    _dataConnection.CommitTransaction();
+                }
+                catch
+                {
+                    _dataConnection.RollbackTransaction();
+                    throw;
+                }
             }
         }
     }

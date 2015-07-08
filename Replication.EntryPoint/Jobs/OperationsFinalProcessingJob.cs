@@ -9,6 +9,7 @@ using NuClear.OperationsProcessing.API.Final;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.Security.API;
 using NuClear.Telemetry;
+using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 using NuClear.Utils;
 
@@ -53,10 +54,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            var targetFlows = Flows.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var targetFlow in targetFlows)
+            using (var probe = new Probe("ETL2 Job"))
             {
-                ProcessFlow(targetFlow);
+                var targetFlows = Flows.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var targetFlow in targetFlows)
+                {
+                    ProcessFlow(targetFlow);
+                }
             }
         }
 
