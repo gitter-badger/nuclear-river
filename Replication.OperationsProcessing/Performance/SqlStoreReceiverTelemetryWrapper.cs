@@ -30,7 +30,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
         {
             var enqueuedTime = successfullyProcessedMessages
                 .Concat(failedProcessedMessages)
-                .OfType<PerformedOperationsFinalProcessingMessage>()
+                .Cast<PerformedOperationsFinalProcessingMessage>()
                 .SelectMany(message => message.FinalProcessings)
                 .Select(message => message.CreatedOn)
                 .Min();
