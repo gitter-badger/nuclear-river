@@ -6,6 +6,7 @@ using NuClear.Messaging.API;
 using NuClear.Messaging.API.Receivers;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Telemetry;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
@@ -22,7 +23,10 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public IReadOnlyList<IMessage> Peek()
         {
-            return _receiver.Peek();
+            using (var probe = new Probe("Peek Erm Operations"))
+            {
+                return _receiver.Peek();
+            }
         }
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
@@ -36,7 +40,10 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
             _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
-            _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
+            using (var probe = new Probe("Complete Erm Operations"))
+            {
+                _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
+            }
         }
     }
 }
