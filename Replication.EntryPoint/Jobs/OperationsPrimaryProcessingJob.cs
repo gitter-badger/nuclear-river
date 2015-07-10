@@ -10,6 +10,7 @@ using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Security.API;
 using NuClear.Telemetry;
+using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 using NuClear.Utils;
 
@@ -87,6 +88,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
+            using (var probe = new Probe("ETL1 Job"))
+            {
+                ProcessFlow();
+            }
+        }
+
+        private void ProcessFlow()
+        {
             MessageFlowMetadata messageFlowMetadata;
             if (!_metadataProvider.TryGetMetadata(Flow.AsPrimaryProcessingFlowId(), out messageFlowMetadata))
             {
@@ -95,8 +104,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            Tracer.Debug("Launching message flow processing. Target message flow metadata: " + messageFlowMetadata);
+            Tracer.Debug("Launching message flow processing. Target message flow: " + messageFlowMetadata);
 
+            ISyncMessageFlowProcessor messageFlowProcessor; 
+            
             try
             {
                 var processorSettings = new PerformedOperationsPrimaryFlowProcessorSettings
@@ -112,44 +123,31 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                             TimeSafetyOffsetHours = TimeSafetyOffsetHours,
                                         };
 
-                MessageFlowProcessor = _messageFlowProcessorFactory.CreateAsync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
+                messageFlowProcessor = _messageFlowProcessorFactory.CreateSync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
             }
             catch (Exception ex)
             {
-                Tracer.Error(ex, "Can't create processor for  specified flow " + messageFlowMetadata);
+                Tracer.Error(ex, "Can't create processor for specified flow " + messageFlowMetadata);
                 throw;
             }
-
-            var settings = new ThrottlingSettings
-                           {
-                               BaseDelay = BaseDelay ?? ThrottlingSettings.Default.BaseDelay,
-                               DelayAfterFailure = DelayAfterFailure ?? ThrottlingSettings.Default.DelayAfterFailure,
-                               DelayIncrement = DelayIncrement ?? ThrottlingSettings.Default.DelayIncrement,
-                               MaxDelay = MaxDelay ?? ThrottlingSettings.Default.MaxDelay,
-                               SufficientBatchUtilizationThreshold = SufficientBatchUtilizationThreshold ?? ThrottlingSettings.Default.SufficientBatchUtilizationThreshold,
-                           };
 
             try
             {
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
-                MessageFlowProcessor.Start(settings);
-
-                Tracer.Debug("Message flow processor started, waiting for finish ... Target message flow: " + messageFlowMetadata);
-                MessageFlowProcessor.Wait();
+                messageFlowProcessor.Process();
                 Tracer.Debug("Message flow processor finished. Target message flow: " + messageFlowMetadata);
             }
             catch (Exception ex)
             {
-                Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
                 _telemetryPublisher.Trace("Failure", ex);
+                Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
                 throw;
             }
             finally
             {
-                var flowProcessor = MessageFlowProcessor;
-                if (flowProcessor != null)
+                if (messageFlowProcessor != null)
                 {
-                    flowProcessor.Dispose();
+                    messageFlowProcessor.Dispose();
                 }
             }
         }
