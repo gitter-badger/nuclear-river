@@ -19,7 +19,7 @@ using Quartz;
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 {
     [DisallowConcurrentExecution]
-    public class OperationsPrimaryProcessingJob : TaskServiceJobBase, IInterruptableJob
+    public class OperationsPrimaryProcessingJob : TaskServiceJobBase
     {
         private readonly object _sync = new object();
         private readonly IMetadataProvider _metadataProvider;
