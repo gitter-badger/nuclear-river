@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
+using System.Runtime.Remoting.Messaging;
 
 namespace NuClear.Telemetry.Probing
 {
     public sealed class Probe : IDisposable
     {
-        private static readonly ThreadLocal<Probe> Ambient = new ThreadLocal<Probe>();
         private readonly string _name;
         private readonly Stopwatch _watch;
         private readonly List<Probe> _childs;
@@ -19,14 +18,20 @@ namespace NuClear.Telemetry.Probing
             _name = name;
             _watch = Stopwatch.StartNew();
             _childs = new List<Probe>();
-            _parent = Ambient.Value;
-            Ambient.Value = this;
+            _parent = Ambient;
+            Ambient = this;
+        }
+
+        private static Probe Ambient
+        {
+            get { return (Probe)CallContext.LogicalGetData("AmbientProbe"); }
+            set { CallContext.LogicalSetData("AmbientProbe", value); }
         }
 
         public void Dispose()
         {
             _watch.Stop();
-            Ambient.Value = _parent;
+            Ambient = _parent;
 
             if (_parent == null)
             {
