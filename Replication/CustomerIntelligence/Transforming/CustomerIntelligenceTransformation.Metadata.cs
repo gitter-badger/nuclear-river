@@ -14,8 +14,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   AggregateInfo.OfType<Firm>()
                                .HasSource(context => context.Firms)
                                .HasValueObject(context => context.FirmBalances, x => x.FirmId)
-                               .HasValueObject(context => context.FirmCategoriesPartFirm, x => x.FirmId)
-                               .HasValueObject(context => context.FirmCategoriesPartProject, x => x.FirmId),
+                               .HasValueObject(context => context.FirmCategoriesPartFirm, x => x.FirmId),
 
                   AggregateInfo.OfType<Client>()
                                .HasSource(context => context.Clients)

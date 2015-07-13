@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
@@ -36,13 +37,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
+            IList<FactOperation> operations = null;
             try
             {
-                var message = messages.OfType<FactOperationAggregatableMessage>().Single();
-                var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
-                _telemetryPublisher.Publish<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
+                operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
+
+                var aggregateOperations = _ermFactsTransformation.Transform(operations).Distinct().ToList();
+                _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)

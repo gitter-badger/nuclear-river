@@ -19,5 +19,13 @@ namespace NuClear.Telemetry
                 profiler.Publish<T>(value);
             }
         }
+
+        public void Trace(string message, object data)
+        {
+            foreach (var profiler in _profilers)
+            {
+                profiler.Trace(message, data);
+            }
+        }
     }
 }

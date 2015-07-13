@@ -30,6 +30,11 @@ namespace NuClear.Telemetry
             }
         }
 
+        public void Trace(string message, object data)
+        {
+            throw new NotImplementedException();
+        }
+
         private static PerformanceCounter GetCounter(string environmentName, string counterName)
         {
             return Counters.GetOrAdd(counterName,

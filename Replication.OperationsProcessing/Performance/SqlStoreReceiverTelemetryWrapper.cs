@@ -7,6 +7,7 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Telemetry;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
@@ -23,21 +24,27 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public IReadOnlyList<IMessage> Peek()
         {
-            return _receiver.Peek();
+            using (var probe = new Probe("Peek Aggregate Operations"))
+            {
+                return _receiver.Peek();
+            }
         }
 
         public void Complete(IEnumerable<IMessage> successfullyProcessedMessages, IEnumerable<IMessage> failedProcessedMessages)
         {
             var enqueuedTime = successfullyProcessedMessages
                 .Concat(failedProcessedMessages)
-                .OfType<PerformedOperationsFinalProcessingMessage>()
+                .Cast<PerformedOperationsFinalProcessingMessage>()
                 .SelectMany(message => message.FinalProcessings)
                 .Select(message => message.CreatedOn)
                 .Min();
 
             _telemetryPublisher.Publish<FinalProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
-            _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
+            using (var probe = new Probe("Complete Aggregate Operations"))
+            {
+                _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
+            }
         }
     }
 }

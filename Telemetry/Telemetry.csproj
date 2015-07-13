@@ -69,6 +69,8 @@
     <Compile Include="Metadata\GraphiteMetadataElement.cs" />
     <Compile Include="PerformanceCounterTelemetryPublisher.cs" />
     <Compile Include="Metadata\TelemetryIdentityBase.cs" />
+    <Compile Include="Probing\Probe.cs" />
+    <Compile Include="Probing\ProbeReportsContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Zabbix\IZabbixSettings.cs" />
     <Compile Include="Zabbix\ZabbixTelemetryPublisher.cs" />

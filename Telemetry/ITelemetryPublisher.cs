@@ -4,5 +4,7 @@ namespace NuClear.Telemetry
     {
         void Publish<T>(long value)
             where T : TelemetryIdentityBase<T>, new();
+
+        void Trace(string message, object data);
     }
 }
