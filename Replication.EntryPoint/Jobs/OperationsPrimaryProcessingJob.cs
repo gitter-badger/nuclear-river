@@ -9,7 +9,6 @@ using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Security.API;
-using NuClear.Telemetry;
 using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 using NuClear.Utils;
@@ -24,7 +23,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         private readonly object _sync = new object();
         private readonly IMetadataProvider _metadataProvider;
         private readonly IMessageFlowProcessorFactory _messageFlowProcessorFactory;
-        private readonly ITelemetryPublisher _telemetryPublisher;
 
         private IAsyncMessageFlowProcessor _performedOperationsProcessor;
 
@@ -33,13 +31,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
             IMessageFlowProcessorFactory messageFlowProcessorFactory,
             ISignInService signInService,
             IUserImpersonationService userImpersonationService,
-            ITracer tracer,
-            ITelemetryPublisher telemetryPublisher)
+            ITracer tracer)
             : base(signInService, userImpersonationService, tracer)
         {
             _metadataProvider = metadataProvider;
             _messageFlowProcessorFactory = messageFlowProcessorFactory;
-            _telemetryPublisher = telemetryPublisher;
         }
 
         public int BatchSize { get; set; }
@@ -139,7 +135,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
             }
             catch (Exception ex)
             {
-                _telemetryPublisher.Trace("Failure", ex);
                 Tracer.Fatal(ex, "Message flow processor unexpectedly interrupted. Target message flow: " + messageFlowMetadata);
                 throw;
             }

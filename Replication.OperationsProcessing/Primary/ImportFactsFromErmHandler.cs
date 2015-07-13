@@ -52,7 +52,6 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             }
             catch (Exception ex)
             {
-                _telemetryPublisher.Trace("Failure", new { Exception = ex, Operations = operations });
                 _tracer.Error(ex, "Error then import facts for ERM");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }

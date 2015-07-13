@@ -34,7 +34,7 @@ namespace NuClear.Telemetry.Zabbix
             }
         }
 
-        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        public void Trace(string message, object data)
         {
             throw new NotImplementedException();
         }

@@ -20,11 +20,11 @@ namespace NuClear.Telemetry
             }
         }
 
-        public void Trace(string message, object data = null, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        public void Trace(string message, object data)
         {
             foreach (var profiler in _profilers)
             {
-                profiler.Trace(message, data, memberName, sourceFilePath, sourceLineNumber);
+                profiler.Trace(message, data);
             }
         }
     }

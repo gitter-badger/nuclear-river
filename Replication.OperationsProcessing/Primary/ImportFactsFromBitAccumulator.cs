@@ -6,7 +6,6 @@ using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
-using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {

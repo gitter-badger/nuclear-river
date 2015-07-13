@@ -5,7 +5,6 @@ using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Primary;
 using NuClear.Replication.OperationsProcessing.Transports;
-using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
@@ -14,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
     {
         protected override AggregateOperationAggregatableMessage Process(PerformedOperationsFinalProcessingMessage message)
         {
-            var operations = message.FinalProcessings.Select(x => x.OperationId.CreateOperation(x.EntityTypeId, x.EntityId)).ToList();
+            var operations = message.FinalProcessings.Select(x => x.OperationId.CreateOperation(x.EntityTypeId, x.EntityId));
 
             return new AggregateOperationAggregatableMessage
             {

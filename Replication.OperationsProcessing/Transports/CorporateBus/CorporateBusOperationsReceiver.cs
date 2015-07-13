@@ -6,7 +6,6 @@ using NuClear.Messaging.API.Receivers;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.CorporateBus.Flows;
 using NuClear.OperationsProcessing.API.Primary;
-using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus

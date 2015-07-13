@@ -44,7 +44,6 @@ namespace NuClear.Replication.OperationsProcessing.Final
             }
             catch (Exception ex)
             {
-                _telemetryPublisher.Trace("Failure", new { Exception = ex, Messages = messages });
                 _tracer.Error(ex, "Error then calculating aggregates");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }

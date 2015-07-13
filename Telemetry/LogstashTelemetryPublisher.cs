@@ -44,7 +44,7 @@ namespace NuClear.Telemetry
             Dispose(false);
         }
 
-        public void Trace(string message, object data, string memberName = "", string sourceFilePath = "", int sourceLineNumber = 0)
+        public void Trace(string message, object data)
         {
             var report = new
                          {
@@ -53,9 +53,6 @@ namespace NuClear.Telemetry
                              Name = "Tracing",
                              Message = message,
                              Data = data,
-                             MemberName = memberName,
-                             SourceFilePath = sourceFilePath,
-                             SourceLineNumber = sourceLineNumber,
                              Thread = Thread.CurrentThread.ManagedThreadId
                          };
 
