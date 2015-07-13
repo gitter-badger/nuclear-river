@@ -6,7 +6,7 @@ using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing;
 
-namespace NuClear.Replication.OperationsProcessing.Primary
+namespace NuClear.Replication.OperationsProcessing.Final
 {
     public class AggregateOperationAggregatableMessage : IAggregatableMessage
     {

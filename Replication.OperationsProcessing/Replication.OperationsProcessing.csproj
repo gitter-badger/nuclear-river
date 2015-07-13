@@ -184,7 +184,7 @@
     <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
     <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
-    <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
+    <Compile Include="Final\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromBitHandler.cs" />
