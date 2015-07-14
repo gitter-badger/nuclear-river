@@ -15,7 +15,6 @@ using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
-using NuClear.Telemetry;
 
 using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
 
