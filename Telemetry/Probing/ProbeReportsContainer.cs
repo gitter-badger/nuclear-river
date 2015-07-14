@@ -26,7 +26,7 @@ namespace NuClear.Telemetry.Probing
             }
         }
 
-        public IEnumerable<object> GetReports()
+        public IEnumerable<object> ConsumeReports()
         {
             lock (_continer)
             {
