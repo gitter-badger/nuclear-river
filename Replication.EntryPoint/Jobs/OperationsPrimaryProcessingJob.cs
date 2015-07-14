@@ -84,7 +84,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            using (var probe = new Probe("ETL1 Job"))
+            using (new Probe("ETL1 Job"))
             {
                 ProcessFlow();
             }

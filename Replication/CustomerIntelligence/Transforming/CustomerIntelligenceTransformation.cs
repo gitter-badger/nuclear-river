@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            using (var probe = new Probe("ETL2 Transforming"))
+            using (new Probe("ETL2 Transforming"))
             {
                 _transactionManager.WithinTransaction(() => DoTransform(operations));
             }
@@ -60,7 +60,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                 }
 
-                using (var probe = new Probe("ETL2 Transforming " + aggregateInfo.AggregateType.Name))
+                using (new Probe("ETL2 Transforming " + aggregateInfo.AggregateType.Name))
                 {
                     if (operation == typeof(InitializeAggregate))
                     {

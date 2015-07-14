@@ -23,7 +23,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public IReadOnlyList<IMessage> Peek()
         {
-            using (var probe = new Probe("Peek Erm Operations"))
+            using (new Probe("Peek Erm Operations"))
             {
                 return _receiver.Peek();
             }
@@ -40,7 +40,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
             _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
-            using (var probe = new Probe("Complete Erm Operations"))
+            using (new Probe("Complete Erm Operations"))
             {
                 _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
             }

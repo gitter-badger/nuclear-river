@@ -26,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
-            using (var probe = new Probe("Send Aggregate Operations"))
+            using (new Probe("Send Aggregate Operations"))
             {
                 var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
                 try
