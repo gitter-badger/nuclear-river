@@ -44,7 +44,11 @@ namespace NuClear.Telemetry.Probing
         {
             var parent = Ambient;
             var probe = new ProbeWatcher(name, parent, Complete);
-            parent.Childs.Add(probe);
+            if (parent != null)
+            {
+                parent.Childs.Add(probe);
+            }
+
             return parent;
         }
 
