@@ -24,7 +24,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public IReadOnlyList<IMessage> Peek()
         {
-            using (new Probe("Peek Aggregate Operations"))
+            using (Probe.Create("Peek Aggregate Operations"))
             {
                 return _receiver.Peek();
             }
@@ -41,7 +41,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
             _telemetryPublisher.Publish<FinalProcessingDelayIdentity>((long)(DateTime.UtcNow - enqueuedTime).TotalMilliseconds);
 
-            using (new Probe("Complete Aggregate Operations"))
+            using (Probe.Create("Complete Aggregate Operations"))
             {
                 _receiver.Complete(successfullyProcessedMessages, failedProcessedMessages);
             }

@@ -1,72 +1,62 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Runtime.Remoting.Messaging;
 
 namespace NuClear.Telemetry.Probing
 {
-    public sealed class Probe : IDisposable
+    /// <summary>
+    /// Реализует входную точку для сбора данных по продолжительности операций.
+    /// </summary>
+    public static class Probe
     {
-        private readonly string _name;
-        private readonly Stopwatch _watch;
-        private readonly List<Probe> _childs;
-        private readonly Probe _parent;
+        private static IReportBuilder _reportBuilder = new ReportBuilder();
+        private static IReportSink _reportSink = DefaultReportSink.Instance;
 
-        public Probe(string name)
+        public static IReportBuilder ReportBuilder 
         {
-            _name = name;
-            _watch = Stopwatch.StartNew();
-            _childs = new List<Probe>();
-            _parent = Ambient;
-            Ambient = this;
+            get { return _reportBuilder; }
+            set { _reportBuilder = value; }
         }
 
-        private static Probe Ambient
+        public static IReportSink ReportSink
         {
-            get { return (Probe)CallContext.LogicalGetData("AmbientProbe"); }
+            get { return _reportSink; }
+            set { _reportSink = value; }
+        }
+
+        private static ProbeWatcher Ambient
+        {
+            get { return (ProbeWatcher)CallContext.LogicalGetData("AmbientProbe"); }
             set { CallContext.LogicalSetData("AmbientProbe", value); }
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Создаёт scope измеряемой операции
+        /// </summary>
+        public static IDisposable Create(string name, params string[] nameItems)
         {
-            _watch.Stop();
-            Ambient = _parent;
+            return Create(name + " " + string.Join(" ", nameItems));
+        }
 
-            if (_parent == null)
+        /// <summary>
+        /// Создаёт scope измеряемой операции
+        /// </summary>
+        public static IDisposable Create(string name)
+        {
+            var parent = Ambient;
+            var probe = new ProbeWatcher(name, parent, Complete);
+            parent.Childs.Add(probe);
+            return parent;
+        }
+
+        private static void Complete(ProbeWatcher completed)
+        {
+            Ambient = completed.Parent;
+
+            if (completed.Parent == null)
             {
-                var report = BuildReport(new[] { this });
-                ProbeReportsContainer.Instance.Add(report);
+                var report = ReportBuilder.Build(completed);
+                ReportSink.Push(report);
             }
-            else
-            {
-                _parent.AddChild(this);
-            }
-        }
-        
-        private static Report BuildReport(IEnumerable<Probe> sameTypeProbes)
-        {
-            var probes = sameTypeProbes.ToList();
-            return new Report
-            {
-                Name = probes.First()._name,
-                Count = probes.Count,
-                ElapsedMilliseconds = probes.Sum(x => x._watch.ElapsedMilliseconds),
-                Subactivities = probes.SelectMany(x => x._childs).GroupBy(x => x._name).Select(BuildReport).ToArray()
-            };
-        }
-
-        private void AddChild(Probe probe)
-        {
-            _childs.Add(probe);
-        }
-
-        public class Report
-        {
-            public string Name { get; set; }
-            public long ElapsedMilliseconds { get; set; }
-            public int Count { get; set; }
-            public IEnumerable<Report> Subactivities { get; set; }
         }
     }
 }
