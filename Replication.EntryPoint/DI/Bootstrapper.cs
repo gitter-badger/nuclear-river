@@ -1,9 +1,14 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
+using System.Collections.Generic;
+
+using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
+using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
@@ -46,13 +51,19 @@ using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
-using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
 using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
+using NuClear.Storage;
+using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.Core;
+using NuClear.Storage.LinqToDB;
+using NuClear.Storage.Readings;
+using NuClear.Storage.UseCases;
+using NuClear.Storage.Writings;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
 using NuClear.WCF.Client;
@@ -83,6 +94,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureWcf()
+                     .ConfigureStorage(EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -90,13 +102,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container;
         }
 
-        public static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
+        private static LifetimeManager EntryPointSpecificLifetimeManagerFactory()
+        {
+            return Lifetime.PerScope;
+        }
+
+        private static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
         {
             return container.RegisterInstance(tracer)
                             .RegisterInstance(tracerContextManager);
         }
 
-        public static IUnityContainer ConfigureMetadata(this IUnityContainer container)
+        private static IUnityContainer ConfigureMetadata(this IUnityContainer container)
         {
             // provider
             container.RegisterType<IMetadataProvider, MetadataProvider>(Lifetime.Singleton);
@@ -185,6 +202,49 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterOne2ManyTypesPerTypeUniqueness<IMessageTransformerResolveStrategy, PrimaryMessageTransformerResolveStrategy>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
+        }
+
+        private static IUnityContainer ConfigureStorage(
+            this IUnityContainer container,
+            Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        {
+            return container
+                        .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
+                        .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
+                        .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IProducedQueryLogAccessor, NullProducedQueryLogAccessor>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IPersistenceChangesRegistryProvider, NullPersistenceChangesRegistryProvider>(Lifetime.Singleton)
+
+                        .RegisterType<IDomainContextScope, DomainContextScope>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
+                        .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
+
+                        .RegisterType<IQuery, Query>(Lifetime.PerResolve)
+                        .RegisterType<IFinder, Finder>(Lifetime.PerResolve)
+                        .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), Lifetime.PerResolve)
+
+                        .ConfigureReadWriteModels();
+        }
+
+        private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
+        {
+            var readConnectionStringNameMap = new Dictionary<string, IConnectionStringIdentity>
+                {
+                    { "Erm", ErmConnectionStringIdentity.Instance },
+                    { "Facts", FactsConnectionStringIdentity.Instance },
+                    { "CustomerIntelligence", CustomerIntelligenceConnectionStringIdentity.Instance }
+                };
+
+            var writeConnectionStringNameMap = new Dictionary<string, IConnectionStringIdentity>
+                {
+                    { "Facts", FactsConnectionStringIdentity.Instance },
+                    { "CustomerIntelligence", CustomerIntelligenceConnectionStringIdentity.Instance }
+                };
+
+            return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));
         }
     }
 }

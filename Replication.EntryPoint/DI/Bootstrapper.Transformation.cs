@@ -6,7 +6,6 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -15,6 +14,7 @@ using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.OperationsProcessing.API.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
+using NuClear.Storage.Readings;
 
 using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
 
@@ -37,19 +37,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
 
-                .RegisterType<ErmFactsTransformationContext>(Lifetime.PerScope)
-
                 .RegisterType<BitFactsContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 // No BitTransformationContext registration, it depends on dto
 
                 .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>(), new ResolvedParameter<BitFactsContext>()))
+                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, 
+                                                   new InjectionConstructor(new ResolvedParameter<IQuery>(Scope.Facts), new ResolvedParameter<BitFactsContext>()))
 
 
                 .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<ErmFactsTransformationContext>(),
-                                                       new ResolvedParameter<ErmFactsContext>(),
+                                                       new ResolvedParameter<IQuery>(Scope.Erm),
+                                                       new ResolvedParameter<IQuery>(Scope.Facts),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts),
                                                        ResolvedTransactionManager(container, Scope.Erm, Scope.Facts)))
 

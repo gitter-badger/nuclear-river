@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<AggregateOperation> DoTransform(IEnumerable<FactOperation> operations)
         {
-            var result = Enumerable.Empty<AggregateOperation>();
+            var result = new List<AggregateOperation>();
 
             var slices = operations.GroupBy(operation => new { operation.FactType })
                                    .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
@@ -56,15 +56,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                var changesDetector = (IChangesDetector)Activator.CreateInstance(typeof(ChangesDetector<>).MakeGenericType(factType), factInfo, _sourceQuery, _destQuery);
+                var changesDetector = CreateChangesDetector(factInfo);
                 var changes = changesDetector.DetectChanges(factIds);
-                
-                var changesApplier = (IChangesApplier)Activator.CreateInstance(typeof(ChangesApplier<>).MakeGenericType(factType), factInfo, _sourceQuery, _destQuery, _mapper);
+
+                var changesApplier = CreateChangesApplier(factInfo);
                 var aggregateOperations = changesApplier.ApplyChanges(changes);
-                result = result.Concat(aggregateOperations);
+
+                result.AddRange(aggregateOperations);
             }
 
             return result;
+        }
+
+        private IChangesDetector CreateChangesDetector(ErmFactInfo factInfo)
+        {
+            return (IChangesDetector)Activator.CreateInstance(typeof(ChangesDetector<>).MakeGenericType(factInfo.FactType), factInfo, _sourceQuery, _destQuery);
+        }
+
+        private IChangesApplier CreateChangesApplier(ErmFactInfo factInfo)
+        {
+            return (IChangesApplier)Activator.CreateInstance(typeof(ChangesApplier<>).MakeGenericType(factInfo.FactType), factInfo, _sourceQuery, _destQuery, _mapper);
         }
     }
 }

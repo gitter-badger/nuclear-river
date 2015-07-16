@@ -10,29 +10,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     internal abstract class ErmFactInfo
     {
+        public abstract Type FactType { get; }
+        public abstract IReadOnlyCollection<FactDependencyInfo> DependencyInfos { get; }
+
         public static Builder<TFact> OfType<TFact>(params object[] x) where TFact : class, IErmFactObject, IIdentifiable
         {
             return new Builder<TFact>();
         }
-
-        public abstract Type FactType { get; }
-        public abstract IReadOnlyCollection<FactDependencyInfo> DependencyInfos { get; }
 
         internal class Builder<TFact> where TFact : class, IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
             private MapSpecification<IQuery, IQueryable<TFact>> _mapSpec;
 
+            public static implicit operator ErmFactInfo(Builder<TFact> builder)
+            {
+                return new ErmFactInfoImpl<TFact>(builder._dependencies, builder._mapSpec);
+            }
+
             public Builder<TFact> HasSource(MapSpecification<IQuery, IQueryable<TFact>> factQueryableProvider)
             {
                 _mapSpec = factQueryableProvider;
-                return this;
-            }
-
-            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IQuery, IEnumerable<long>, IEnumerable<long>> dependentAggregateIdsQueryProvider)
-                where TAggregate : ICustomerIntelligenceObject
-            {
-                _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
                 return this;
             }
 
@@ -47,11 +45,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 _dependencies.Add(FactDependencyInfo.Create<TAggregate>());
                 return this;
-            }
-
-            public static implicit operator ErmFactInfo(Builder<TFact> builder)
-            {
-                return new ErmFactInfoImpl<TFact>(builder._dependencies, builder._mapSpec);
             }
         }
 
