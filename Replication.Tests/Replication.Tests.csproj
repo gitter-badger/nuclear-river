@@ -72,11 +72,13 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
+    <Compile Include="Transformation\ErmContextFilteringTests.cs" />
     <Compile Include="Transformation\FactsTransformationContextTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />

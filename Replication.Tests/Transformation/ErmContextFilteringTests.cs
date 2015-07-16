@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
 using NuClear.AdvancedSearch.Replication.Specifications;
@@ -383,12 +383,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly IQuery _query;
 
-            private Reader(IDataContext source)
+            private Reader(DataConnection source)
             {
-                _query = new Query(new StubReadableDomainContextProvider(source));
+                _query = new Query(new StubReadableDomainContextProvider(source.Connection, source));
             }
 
-            public static Reader Create(IDataContext source)
+            public static Reader Create(DataConnection source)
             {
                 return new Reader(source);
             }
@@ -399,7 +399,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return this;
             }
 
-            public Reader VerifyRead<T, TProjection>(Func<IQuery, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
+            private Reader VerifyRead<T, TProjection>(Func<IQuery, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
             {
                 Assert.That(reader(_query), Is.EqualTo(expected.ToArray()).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
                 return this;

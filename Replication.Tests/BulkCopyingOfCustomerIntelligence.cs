@@ -5,6 +5,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
@@ -79,7 +80,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb), new BitFactsContext(factsDb));
+                var query = new Query(new StubReadableDomainContextProvider(factsDb.Connection, factsDb));
+                var context = new CustomerIntelligenceTransformationContext(query);
                 ciDb.Reload(loader(context));
             }
         }
