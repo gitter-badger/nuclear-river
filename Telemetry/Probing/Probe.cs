@@ -49,7 +49,7 @@ namespace NuClear.Telemetry.Probing
                 parent.Childs.Add(probe);
             }
 
-            return parent;
+            return probe;
         }
 
         private static void Complete(ProbeWatcher completed)
