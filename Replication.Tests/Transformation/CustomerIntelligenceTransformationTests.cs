@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-using LinqToDB;
-
 using Moq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -435,18 +432,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             {
                 _mapper = new Mock<IDataMapper>();
                 _transformation = new CustomerIntelligenceTransformation(source, target, _mapper.Object, Mock.Of<ITransactionManager>());
-            }
-
-            public static Transformation Create(IDataContext source = null, IDataContext target = null)
-            {
-                return Create(
-                    new ErmFactsContext(source ?? new Mock<IDataContext>().Object),
-                    new CustomerIntelligenceContext(target ?? new Mock<IDataContext>().Object));
-            }
-
-            public static Transformation Create(IErmFactsContext source = null, ICustomerIntelligenceContext target = null)
-            {
-                return Create(new CustomerIntelligenceTransformationContext(source ?? new Mock<IErmFactsContext>().Object, Mock.Of<IBitFactsContext>()), target);
             }
 
             public static Transformation Create(ICustomerIntelligenceContext source = null, ICustomerIntelligenceContext target = null)
