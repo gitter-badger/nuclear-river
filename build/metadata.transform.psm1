@@ -8,8 +8,22 @@ function Get-XdtTransformMetadata($EnvType, $Country, $Index){
 	$xdt = @(
 		'Common\log4net.Release.config'
 		'Common\Erm.Release.config'
-		"Templates\Erm.Test.$Country.config"
 	)
+
+	switch($EnvType){
+		'Test' {
+			$xdt += @(
+				"Templates\Erm.Test.$Country.config"
+				"Templates\ConvertUseCases.Test.$Country.config"
+				)
+		}
+		'Production' {
+			$xdt += @(
+				"Erm.Production.$Country.config"
+				"ConvertUseCases.Production.$Country.config"
+				)
+		}
+	}
 
 	return $xdt
 }
