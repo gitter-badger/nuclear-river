@@ -46,6 +46,36 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    new Erm.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
                    new Erm.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 });
 
+        private static readonly Mock<IQuery> Facts = new Mock<IQuery>()
+            .Setup(query => query.For<Facts::Project>(),
+                   query => query.For(It.IsAny<FindSpecification<Facts::Project>>()),
+                   new Facts.Project { Id = 1, OrganizationUnitId = 2 },
+                   new Facts.Project { Id = 3, OrganizationUnitId = 4 })
+            .Setup(query => query.For<Facts::Category>(),
+                   query => query.For(It.IsAny<FindSpecification<Facts::Category>>()),
+                   new Facts.Category { Id = 5 },
+                   new Facts.Category { Id = 6 })
+            .Setup(query => query.For<Facts::Firm>(),
+                   query => query.For(It.IsAny<FindSpecification<Facts::Firm>>()),
+                   new Facts.Firm { Id = 7, OrganizationUnitId = 2 },
+                   new Facts.Firm { Id = 8, OrganizationUnitId = 2 },
+                   new Facts.Firm { Id = 9, OrganizationUnitId = 2 },
+                   new Facts.Firm { Id = 10, OrganizationUnitId = 4 })
+            .Setup(query => query.For<Facts::FirmAddress>(),
+                   query => query.For(It.IsAny<FindSpecification<Facts::FirmAddress>>()),
+                   new Facts.FirmAddress { Id = 7, FirmId = 7 },
+                   new Facts.FirmAddress { Id = 8, FirmId = 8 },
+                   new Facts.FirmAddress { Id = 9, FirmId = 9 },
+                   new Facts.FirmAddress { Id = 10, FirmId = 10 })
+            .Setup(query => query.For<Facts::CategoryFirmAddress>(),
+                   query => query.For(It.IsAny<FindSpecification<Facts::CategoryFirmAddress>>()),
+                   new Facts.CategoryFirmAddress { Id = 11, FirmAddressId = 7, CategoryId = 6 },
+                   new Facts.CategoryFirmAddress { Id = 12, FirmAddressId = 8, CategoryId = 5 },
+                   new Facts.CategoryFirmAddress { Id = 13, FirmAddressId = 8, CategoryId = 6 },
+                   new Facts.CategoryFirmAddress { Id = 14, FirmAddressId = 9, CategoryId = 5 },
+                   new Facts.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
+                   new Facts.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 });
+
         [TestCaseSource("Cases")]
         public void ItShouldAffectFirm(IQuery sourceQuery, IQuery targetQuery, FactOperation impact)
         {
@@ -88,9 +118,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         private static IEnumerable<TestCaseData> Cases()
         {
-            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::CategoryFirmAddress), 11));
-            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::FirmAddress), 7));
-            yield return new TestCaseData(Erm.Object, Erm.Object, new FactOperation(typeof(Facts::Firm), 7));
+            yield return new TestCaseData(Erm.Object, Facts.Object, new FactOperation(typeof(Facts::CategoryFirmAddress), 11));
+            yield return new TestCaseData(Erm.Object, Facts.Object, new FactOperation(typeof(Facts::FirmAddress), 7));
+            yield return new TestCaseData(Erm.Object, Facts.Object, new FactOperation(typeof(Facts::Firm), 7));
         }
     }
 }

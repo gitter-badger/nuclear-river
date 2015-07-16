@@ -109,7 +109,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
-                var query = new Query(new StubReadableDomainContextProvider(ermDb));
+                var query = new Query(new StubReadableDomainContextProvider(ermDb.Connection, ermDb));
                 factDb.Reload(loader(query));
             }
         }

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -16,19 +16,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         }
 
         public abstract Type FactType { get; }
-
-        public abstract IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes);
-
-        public abstract MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds);
+        public abstract IReadOnlyCollection<FactDependencyInfo> DependencyInfos { get; }
 
         internal class Builder<TFact> where TFact : class, IErmFactObject, IIdentifiable
         {
             private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
-            private Func<IQuery, IEnumerable<long>, IQueryable<TFact>> _query;
-            
-            public Builder<TFact> HasSource(Func<IQuery, IQueryable<TFact>> factQueryableProvider)
+            private MapSpecification<IQuery, IQueryable<TFact>> _mapSpec;
+
+            public Builder<TFact> HasSource(MapSpecification<IQuery, IQueryable<TFact>> factQueryableProvider)
             {
-                _query = (query, ids) => factQueryableProvider(query).Where(fact => ids.Contains(fact.Id));
+                _mapSpec = factQueryableProvider;
                 return this;
             }
 
@@ -36,6 +33,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 where TAggregate : ICustomerIntelligenceObject
             {
                 _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateIdsQueryProvider));
+                return this;
+            }
+
+            public Builder<TFact> HasDependentAggregate<TAggregate>(Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
+                where TAggregate : ICustomerIntelligenceObject
+            {
+                _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateSpecProvider));
                 return this;
             }
 
@@ -47,39 +51,34 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             public static implicit operator ErmFactInfo(Builder<TFact> builder)
             {
-                return new ErmFactInfoImpl<TFact>(builder._query, builder._dependencies);
+                return new ErmFactInfoImpl<TFact>(builder._dependencies, builder._mapSpec);
             }
         }
 
-        private class ErmFactInfoImpl<T> : ErmFactInfo
-            where T : class, IErmFactObject
+        internal class ErmFactInfoImpl<TFact> : ErmFactInfo
+            where TFact : class, IErmFactObject
         {
-            private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _ermQuery;
             private readonly IReadOnlyCollection<FactDependencyInfo> _aggregates;
-            private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _factsQuery = (query, ids) => query.For<T>().Where(fact => ids.Contains(fact.Id));
 
             public ErmFactInfoImpl(
-                Func<IQuery, IEnumerable<long>, IQueryable<T>> ermQuery,
-                IReadOnlyCollection<FactDependencyInfo> aggregates)
+                IReadOnlyCollection<FactDependencyInfo> aggregates,
+                MapSpecification<IQuery, IQueryable<TFact>> mapSpecification)
             {
-                _ermQuery = ermQuery;
                 _aggregates = aggregates ?? new FactDependencyInfo[0];
+                MapSpecification = mapSpecification;
             }
 
             public override Type FactType
             {
-                get { return typeof(T); }
+                get { return typeof(TFact); }
             }
 
-            public override MergeTool.MergeResult<long> DetectChangesWith(ErmFactsTransformation transformation, IReadOnlyCollection<long> factIds)
+            public override IReadOnlyCollection<FactDependencyInfo> DependencyInfos
             {
-                return transformation.DetectChanges(query => _ermQuery.Invoke(query, factIds), query => _factsQuery.Invoke(query, factIds));
+                get { return _aggregates; }
             }
 
-            public override IEnumerable<AggregateOperation> ApplyChangesWith(ErmFactsTransformation transformation, MergeTool.MergeResult<long> changes)
-            {
-                return transformation.ApplyChanges(_ermQuery, _aggregates, changes);
-            }
+            public MapSpecification<IQuery, IQueryable<TFact>> MapSpecification { get; private set; }
         }
     }
 }

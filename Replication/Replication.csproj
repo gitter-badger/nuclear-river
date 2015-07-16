@@ -40,16 +40,16 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.0\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.1.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -90,6 +90,8 @@
     <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ChangesApplier.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ChangesDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
@@ -140,6 +142,7 @@
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
+    <Compile Include="Specifications\Specs.cs" />
     <Compile Include="Specifications\Specs.Facts.cs" />
     <Compile Include="Specifications\Specs.Erm.cs" />
     <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />

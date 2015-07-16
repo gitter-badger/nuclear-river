@@ -53,17 +53,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         protected IQuery ErmQuery
         {
-            get { return new Query(new StubReadableDomainContextProvider(ErmDb)); }
+            get { return new Query(new StubReadableDomainContextProvider(ErmDb.Connection, ErmDb)); }
         }
 
         protected IQuery FactsQuery
         {
-            get { return new Query(new StubReadableDomainContextProvider(FactsDb)); }
+            get { return new Query(new StubReadableDomainContextProvider(FactsDb.Connection, FactsDb)); }
         }
 
         protected IQuery CustomerIntelligenceQuery
         {
-            get { return new Query(new StubReadableDomainContextProvider(CustomerIntelligenceDb)); }
+            get { return new Query(new StubReadableDomainContextProvider(CustomerIntelligenceDb.Connection, CustomerIntelligenceDb)); }
         }
         
         protected DataConnection ErmDb
@@ -88,7 +88,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             {
                 connection.Close();
             }
-
+            
             Connections.Clear();
         }
 
@@ -144,8 +144,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                         }
                     }
 
+                    /*
                     // SQLite does not support schemas
                     Tables.Value.SelectMany(table => db.MappingSchema.GetAttributes<TableAttribute>(table)).ToList().ForEach(x => x.Schema = null);
+                     */
                 }
             }
 

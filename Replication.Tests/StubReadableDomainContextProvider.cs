@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Data;
 using System.Transactions;
 
-using LinqToDB;
 using LinqToDB.Data;
 
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
+using NuClear.Storage.LinqToDB.Connections;
+
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
@@ -13,9 +16,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
     {
         private readonly IReadableDomainContext _readableDomainContext;
 
-        public StubReadableDomainContextProvider(IDataContext dataContext)
+        public StubReadableDomainContextProvider(IDbConnection connection, DataConnection dataContext)
         {
-            _readableDomainContext = CreateReadableDomainContext(dataContext);
+            _readableDomainContext = CreateReadableDomainContext(connection, dataContext);
         }
 
         public IReadableDomainContext Get()
@@ -23,9 +26,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             return _readableDomainContext;
         }
 
-        private static IReadableDomainContext CreateReadableDomainContext(IDataContext dataContext)
+        private static IReadableDomainContext CreateReadableDomainContext(IDbConnection connection, DataConnection dataContext)
         {
-            return new LinqToDBDomainContext((DataConnection)dataContext, 
+            return new LinqToDBDomainContext(connection,
+                                             dataContext,
+                                             new NullIManagedConnectionStateScopeFactory(),
                                              new TransactionOptions
                                              {
                                                  IsolationLevel = IsolationLevel.ReadCommitted,
