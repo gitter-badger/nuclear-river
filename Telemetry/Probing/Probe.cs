@@ -3,24 +3,14 @@ using System.Runtime.Remoting.Messaging;
 
 namespace NuClear.Telemetry.Probing
 {
-    /// <summary>
-    /// Реализует входную точку для сбора данных по продолжительности операций.
-    /// </summary>
     public static class Probe
     {
         private static IReportBuilder _reportBuilder = new ReportBuilder();
-        private static IReportSink _reportSink = DefaultReportSink.Instance;
 
         public static IReportBuilder ReportBuilder 
         {
             get { return _reportBuilder; }
             set { _reportBuilder = value; }
-        }
-
-        public static IReportSink ReportSink
-        {
-            get { return _reportSink; }
-            set { _reportSink = value; }
         }
 
         private static ProbeWatcher Ambient
@@ -58,8 +48,7 @@ namespace NuClear.Telemetry.Probing
 
             if (completed.Parent == null)
             {
-                var report = ReportBuilder.Build(completed);
-                ReportSink.Push(report);
+                ReportBuilder.Build(completed);
             }
         }
     }

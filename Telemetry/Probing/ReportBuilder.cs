@@ -5,9 +5,18 @@ namespace NuClear.Telemetry.Probing
 {
     internal sealed class ReportBuilder : IReportBuilder
     {
-        public IReport Build(ProbeWatcher root)
+        private static IReportSink _reportSink = DefaultReportSink.Instance;
+
+        public static IReportSink ReportSink
         {
-            return Build(new[] { root });
+            get { return _reportSink; }
+            set { _reportSink = value; }
+        }
+
+        public void Build(ProbeWatcher root)
+        {
+            var report = Build(new[] { root });
+            ReportSink.Push(report);
         }
 
         private static Report Build(IEnumerable<ProbeWatcher> sameTypeProbes)
