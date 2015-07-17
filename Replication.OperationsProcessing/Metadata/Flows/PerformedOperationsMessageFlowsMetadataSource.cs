@@ -32,10 +32,15 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                     )
                                .Final(
 
-                                    MessageFlowMetadata.Config.For<AggregatesFlow>()
-                                    .Strategy<AggregateOperationAccumulator<AggregatesFlow>>()
-                                    .Handler<AggregateOperationAggregatableMessageHandler>()
-                                    .To.Final().Flow<AggregatesFlow>().Connect()
+                                   MessageFlowMetadata.Config.For<AggregatesFlow>()
+                                                      .Strategy<AggregateOperationAccumulator<AggregatesFlow>>()
+                                                      .Handler<AggregateOperationAggregatableMessageHandler>()
+                                                      .To.Final().Flow<AggregatesFlow>().Connect(),
+
+                                   MessageFlowMetadata.Config.For<ProjectStatisticsFlow>()
+                                                      .Strategy<ProjectStatisticsOperationAccumulator<ProjectStatisticsFlow>>()
+                                                      .Handler<ProjectStatisticsAggregatableMessageHandler>()
+                                                      .To.Final().Flow<ProjectStatisticsFlow>().Connect()
 
                                     );
 

@@ -24,27 +24,52 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             _dataConnection = (DataConnection)dataConnection;
         }
 
+        public void Push(IEnumerable<StatisticsOperation> operations, IMessageFlow targetFlow)
+        {
+            using (new Probe("Send Statistics Operations"))
+            {
+                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                Save(transportMessages);
+            }
+        }
+
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
             using (var probe = new Probe("Send Aggregate Operations"))
             {
                 var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-                try
-                {
-                    _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
-                    foreach (var message in transportMessages)
-                    {
-                        _dataConnection.Insert(message);
-                    }
-
-                    _dataConnection.CommitTransaction();
-                }
-                catch
-                {
-                    _dataConnection.RollbackTransaction();
-                    throw;
-                }
+                Save(transportMessages);
             }
+        }
+
+        private void Save(IEnumerable<PerformedOperationFinalProcessing> transportMessages)
+        {
+            try
+            {
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+                foreach (var message in transportMessages)
+                {
+                    _dataConnection.Insert(message);
+                }
+
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
+                throw;
+            }
+        }
+
+        private static PerformedOperationFinalProcessing SerializeMessage(StatisticsOperation operation, IMessageFlow targetFlow)
+        {
+            return new PerformedOperationFinalProcessing
+            {
+                CreatedOn = DateTime.UtcNow,
+                MessageFlowId = targetFlow.Id,
+                Context = operation.Serialize().ToString(),
+                OperationId = operation.GetIdentity(),
+            };
         }
 
         private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
@@ -57,7 +82,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                        EntityId = operation.AggregateId,
                        EntityTypeId = entityType.Id,
                        OperationId = operation.GetIdentity(),
-            };
+                   };
         }
     }
 }

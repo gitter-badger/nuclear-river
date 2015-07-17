@@ -18,16 +18,18 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
+        private readonly StatisticsTransformation _statisticsTransformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher, StatisticsTransformation statisticsTransformation)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
+            _statisticsTransformation = statisticsTransformation;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -42,9 +44,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             {
                 operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
 
+                var statisticsOperations = _statisticsTransformation.DetectStatisticsOperations(operations);
+
                 var aggregateOperations = _ermFactsTransformation.Transform(operations).Distinct().ToList();
                 _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
+                statisticsOperations = statisticsOperations.Concat(_statisticsTransformation.DetectStatisticsOperations(operations)).Distinct().ToList();
+
+                _sender.Push(statisticsOperations, ProjectStatisticsFlow.Instance);
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
 
