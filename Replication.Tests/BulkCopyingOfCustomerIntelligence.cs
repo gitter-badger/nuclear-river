@@ -26,15 +26,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
-        public void ReloadFirmCategoriesPartFirm()
+        public void ReloadFirmCategories()
         {
-            Reload(ctx => ctx.FirmCategoriesPartFirm);
-        }
-
-        [Test]
-        public void ReloadFirmCategoriesPartProject()
-        {
-            Reload(ctx => ctx.FirmCategoriesPartProject);
+            Reload(ctx => ctx.FirmCategories);
         }
 
         [Test]
@@ -79,7 +73,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb), new BitFactsContext(factsDb));
+                var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb));
                 ciDb.Reload(loader(context));
             }
         }

@@ -8,22 +8,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
     public sealed class CustomerIntelligenceTransformationContext : ICustomerIntelligenceContext
     {
         private readonly IErmFactsContext _ermContext;
-        private readonly IBitFactsContext _bitContext;
 
-        public CustomerIntelligenceTransformationContext(IErmFactsContext ermContext, IBitFactsContext bitContext)
+        public CustomerIntelligenceTransformationContext(IErmFactsContext ermContext)
         {
             if (ermContext == null)
             {
                 throw new ArgumentNullException("ermContext");
             }
 
-            if (bitContext == null)
-            {
-                throw new ArgumentNullException("bitContext");
-        }
-
             _ermContext = ermContext;
-            _bitContext = bitContext;
         }
 
         public IQueryable<CategoryGroup> CategoryGroups
@@ -143,7 +136,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmCategoryPartFirm> FirmCategoriesPartFirm
+        public IQueryable<FirmCategory> FirmCategories
         {
             get
             {
@@ -154,7 +147,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var level3 = from firmAddress in _ermContext.FirmAddresses
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category3.Id
@@ -164,7 +157,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category2.Id
@@ -175,7 +168,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category1.Id
@@ -183,41 +176,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
                 // perform union using distinct
                 // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
-                return from firmCategory in level3.Union(level2).Union(level1)
-                       from statistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
-                       select new FirmCategoryPartFirm
-                       {
-                           FirmId = firmCategory.FirmId,
-                           CategoryId = firmCategory.CategoryId,
-                           Hits = statistics != null ? statistics.Hits : 0,
-                           Shows = statistics != null ? statistics.Shows : 0,
-                       };
-            }
-        }
-
-        public IQueryable<FirmCategoryPartProject> FirmCategoriesPartProject
-        {
-            get
-            {
-                var firmCategories = (from project in _ermContext.Projects
-                                      join firm in _ermContext.Firms on project.OrganizationUnitId equals firm.OrganizationUnitId
-                                      join firmAddress in _ermContext.FirmAddresses on firm.Id equals firmAddress.FirmId
-                                      join categoryFirmAddress in _ermContext.CategoryFirmAddresses on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                      select new { ProjectId = project.Id, FirmId = firm.Id, categoryFirmAddress.CategoryId }).Distinct();
-
-                var firmCounts = firmCategories.GroupBy(x => new { x.ProjectId, x.CategoryId })
-                                         .Select(x => new { x.Key.CategoryId, x.Key.ProjectId, FirmCount = x.Count() });
-
-                return from firmCategory in firmCategories
-                       let count = firmCounts.Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.FirmCount).SingleOrDefault()
-                       let statistics = _bitContext.CategoryStatistics.Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.AdvertisersCount).SingleOrDefault()
-                       select new FirmCategoryPartProject
-                              {
-                                  FirmId = firmCategory.FirmId,
-                                  CategoryId = firmCategory.CategoryId,
-                                  FirmCount = count,
-                                  AdvertisersShare = (float)statistics / count
-                              };
+                return level3.Union(level2).Union(level1);
             }
         }
 

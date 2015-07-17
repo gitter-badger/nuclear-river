@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
-    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartProject.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="CustomerIntelligence\Model\Contact.cs" />
     <Compile Include="CustomerIntelligence\Model\Firm.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmBalance.cs" />
-    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartFirm.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategory.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Account.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Firm.cs" />
