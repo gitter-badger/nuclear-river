@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Transactions;
+
+using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
@@ -61,6 +67,7 @@ using NuClear.Storage;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
+using NuClear.Storage.LinqToDB.Connections;
 using NuClear.Storage.Readings;
 using NuClear.Storage.UseCases;
 using NuClear.Storage.Writings;
@@ -86,7 +93,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                  };
 
             container.AttachQueryableContainerExtension()
-                     .UseParameterResolvers(ParameterResolvers.Defaults)
+                     .UseParameterResolvers(new ParameterResolver[]
+                                                 {
+                                                    //ScopedDomainContextsStoreDependencyResolver
+                                                 }
+                                                .Concat(ParameterResolvers.Defaults))
                      .ConfigureMetadata()
                      .ConfigureSettingsAspects(settingsContainer)
                      .ConfigureTracing(tracer, tracerContextManager)
@@ -94,7 +105,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureWcf()
-                     .ConfigureStorage(EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureStorage(Scope.Erm, EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureStorage(Scope.Facts, EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureReadWriteModels()
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -206,27 +219,44 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureStorage(
             this IUnityContainer container,
+            string scope,
             Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
+            var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
+
             return container
-                        .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
-                        .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
-                        .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IProducedQueryLogAccessor, NullProducedQueryLogAccessor>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IPersistenceChangesRegistryProvider, NullPersistenceChangesRegistryProvider>(Lifetime.Singleton)
-
-                        .RegisterType<IDomainContextScope, DomainContextScope>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
-                        .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
-
-                        .RegisterType<IQuery, Query>(Lifetime.PerResolve)
-                        .RegisterType<IFinder, Finder>(Lifetime.PerResolve)
-                        .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), Lifetime.PerResolve)
-
-                        .ConfigureReadWriteModels();
+                .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
+                .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
+                .RegisterType<IEntityContainerNameResolver, DefaultEntityContainerNameResolver>(Lifetime.Singleton)
+                .RegisterType<IManagedConnectionStateScopeFactory, ManagedConnectionStateScopeFactory>(Lifetime.Singleton)
+                .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterTypeWithDependencies<IQuery, Query>(scope, Lifetime.PerResolve, scope)
+                .RegisterTypeWithDependencies(typeof(IRepository<>), typeof(LinqToDBRepository<>), scope, Lifetime.PerResolve, scope)
+                .RegisterTypeWithDependencies<IDomainContextScope, DomainContextScope>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
+                .RegisterTypeWithDependencies<IReadableDomainContextProvider, ReadableDomainContextProvider>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
+                .RegisterTypeWithDependencies<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
+                .RegisterTypeWithDependencies(typeof(ScopedDomainContextsStore), scope, entryPointSpecificLifetimeManagerFactory(), scope)
+                .RegisterTypeWithDependencies<IReadableDomainContext, CachingReadableDomainContext>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
+                .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(
+                    scope,
+                    entryPointSpecificLifetimeManagerFactory(),
+                    new InjectionFactory(c => new LinqToDBDomainContextFactory(
+                                                  c.Resolve<IStorageMappingDescriptorProvider>(),
+                                                  c.Resolve<IConnectionStringSettings>(),
+                                                  c.Resolve<IManagedConnectionStateScopeFactory>(),
+                                                  ResolveMappingSchema(scope),
+                                                  transactionOptions,
+                                                  c.Resolve<IPendingChangesHandlingStrategy>())))
+                .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(
+                    scope,
+                    entryPointSpecificLifetimeManagerFactory(),
+                    new InjectionFactory(c => new LinqToDBDomainContextFactory(
+                                                  c.Resolve<IStorageMappingDescriptorProvider>(),
+                                                  c.Resolve<IConnectionStringSettings>(),
+                                                  c.Resolve<IManagedConnectionStateScopeFactory>(),
+                                                  ResolveMappingSchema(scope),
+                                                  transactionOptions,
+                                                  c.Resolve<IPendingChangesHandlingStrategy>())));
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
@@ -245,6 +275,33 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 };
 
             return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));
+        }
+
+        private static MappingSchema ResolveMappingSchema(string scope)
+        {
+            switch (scope)
+            {
+                case Scope.Erm:
+                    return Schema.Erm;
+                case Scope.Facts:
+                    return Schema.Facts;
+                case Scope.CustomerIntelligence:
+                    return Schema.Facts;
+                default:
+                    throw new IndexOutOfRangeException("Specified scope is unknown");
+            }
+        }
+
+        private static bool ScopedDomainContextsStoreDependencyResolver(IUnityContainer container, Type type, string targetNamedMapping, ParameterInfo constructorParameter, out object resolvedParameter)
+        {
+            resolvedParameter = null;
+            if (typeof(ScopedDomainContextsStore) == constructorParameter.ParameterType)
+            {
+                resolvedParameter = new ResolvedParameter(constructorParameter.ParameterType, targetNamedMapping);
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -7,6 +7,7 @@ using NuClear.Settings.API;
 
 namespace NuClear.AdvancedSearch.Settings
 {
+    [Obsolete("Use NuClear.Storage.ConnectionStrings.ConnectionStringSettingsAspect")]
     public sealed class ConnectionStringsSettingsAspect : ISettingsAspect, IConnectionStringSettings
     {
         private readonly IReadOnlyDictionary<ConnectionStringName, ConnectionStringSettings> _connectionStringsMap;

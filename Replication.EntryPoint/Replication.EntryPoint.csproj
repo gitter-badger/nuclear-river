@@ -52,8 +52,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.Aggregates.Storage.DI.Unity">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.Storage.DI.Unity.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Aggregates.Storage.DI.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.Storage.DI.Unity.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Assembling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -157,11 +158,13 @@
     <Reference Include="2GIS.NuClear.Settings.Unity">
       <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="2GIS.NuClear.Storage">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.dll</HintPath>
     </Reference>
-    <Reference Include="2GIS.NuClear.Storage.LinqToDB">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
@@ -246,11 +249,13 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Bootstrapper.Transformation.cs" />
+    <Compile Include="DI\DefaultEntityContainerNameResolver.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />
