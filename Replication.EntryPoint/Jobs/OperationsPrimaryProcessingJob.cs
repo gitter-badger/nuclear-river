@@ -9,6 +9,7 @@ using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Security.API;
+using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 using NuClear.Utils;
 
@@ -17,7 +18,7 @@ using Quartz;
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 {
     [DisallowConcurrentExecution]
-    public class OperationsPrimaryProcessingJob : TaskServiceJobBase, IInterruptableJob
+    public class OperationsPrimaryProcessingJob : TaskServiceJobBase
     {
         private readonly object _sync = new object();
         private readonly IMetadataProvider _metadataProvider;
@@ -40,12 +41,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         public int BatchSize { get; set; }
         public string Flow { get; set; }
         public int? TimeSafetyOffsetHours { get; set; }
-
-        public int? BaseDelay { get; set; }
-        public int? DelayAfterFailure { get; set; }
-        public int? DelayIncrement { get; set; }
-        public int? MaxDelay { get; set; }
-        public int? SufficientBatchUtilizationThreshold { get; set; }
 
         private IAsyncMessageFlowProcessor MessageFlowProcessor
         {
@@ -83,6 +78,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
+            using (Probe.Create("ETL1 Job"))
+            {
+                ProcessFlow();
+            }
+        }
+
+        private void ProcessFlow()
+        {
             MessageFlowMetadata messageFlowMetadata;
             if (!_metadataProvider.TryGetMetadata(Flow.AsPrimaryProcessingFlowId(), out messageFlowMetadata))
             {
@@ -91,8 +94,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            Tracer.Debug("Launching message flow processing. Target message flow metadata: " + messageFlowMetadata);
+            Tracer.Debug("Launching message flow processing. Target message flow: " + messageFlowMetadata);
 
+            ISyncMessageFlowProcessor messageFlowProcessor; 
+            
             try
             {
                 var processorSettings = new PerformedOperationsPrimaryFlowProcessorSettings
@@ -108,30 +113,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                             TimeSafetyOffsetHours = TimeSafetyOffsetHours,
                                         };
 
-                MessageFlowProcessor = _messageFlowProcessorFactory.CreateAsync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
+                messageFlowProcessor = _messageFlowProcessorFactory.CreateSync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
             }
             catch (Exception ex)
             {
-                Tracer.Error(ex, "Can't create processor for  specified flow " + messageFlowMetadata);
+                Tracer.Error(ex, "Can't create processor for specified flow " + messageFlowMetadata);
                 throw;
             }
-
-            var settings = new ThrottlingSettings
-                           {
-                               BaseDelay = BaseDelay ?? ThrottlingSettings.Default.BaseDelay,
-                               DelayAfterFailure = DelayAfterFailure ?? ThrottlingSettings.Default.DelayAfterFailure,
-                               DelayIncrement = DelayIncrement ?? ThrottlingSettings.Default.DelayIncrement,
-                               MaxDelay = MaxDelay ?? ThrottlingSettings.Default.MaxDelay,
-                               SufficientBatchUtilizationThreshold = SufficientBatchUtilizationThreshold ?? ThrottlingSettings.Default.SufficientBatchUtilizationThreshold,
-                           };
 
             try
             {
                 Tracer.Debug("Message flow processor starting. Target message flow: " + messageFlowMetadata);
-                MessageFlowProcessor.Start(settings);
-
-                Tracer.Debug("Message flow processor started, waiting for finish ... Target message flow: " + messageFlowMetadata);
-                MessageFlowProcessor.Wait();
+                messageFlowProcessor.Process();
                 Tracer.Debug("Message flow processor finished. Target message flow: " + messageFlowMetadata);
             }
             catch (Exception ex)
@@ -141,10 +134,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
             }
             finally
             {
-                var flowProcessor = MessageFlowProcessor;
-                if (flowProcessor != null)
+                if (messageFlowProcessor != null)
                 {
-                    flowProcessor.Dispose();
+                    messageFlowProcessor.Dispose();
                 }
             }
         }

@@ -11,5 +11,11 @@ namespace NuClear.Telemetry
         {
             Debug.WriteLine(value, IdentityBase<T>.Instance.Name);
         }
+
+        public void Trace(string message, object data)
+        {
+            Debug.WriteLine(message);
+            Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(data));
+        }
     }
 }

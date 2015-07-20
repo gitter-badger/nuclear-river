@@ -6,6 +6,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -36,7 +37,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
         {
-            return _transactionManager.WithinTransaction(() => DoTransform(operations));
+            using (Probe.Create("ETL1 Transforming"))
+            {
+                return _transactionManager.WithinTransaction(() => DoTransform(operations));
+            }
         }
 
         private IEnumerable<AggregateOperation> DoTransform(IEnumerable<FactOperation> operations)
@@ -57,9 +61,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                var changes = factInfo.DetectChangesWith(this, factIds);
-                var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
-                result = result.Concat(aggregateOperations);
+                using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
+                {
+                    var changes = factInfo.DetectChangesWith(this, factIds);
+                    var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
+                    result = result.Concat(aggregateOperations);
+                }
             }
 
             return result;
@@ -135,7 +142,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IReadOnlyCollection<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, IEnumerable<long> ids, Func<FactDependencyInfo, long, AggregateOperation> build)
         {
-            return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id))).ToArray();
+            using (Probe.Create("Querying dependent aggregates"))
+            {
+                return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id))).ToArray();
+            }
         }
     }
 }

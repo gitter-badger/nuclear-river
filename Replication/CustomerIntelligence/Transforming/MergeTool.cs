@@ -8,6 +8,7 @@ using System.Reflection;
 using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -32,15 +33,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
         {
-            var set1 = new HashSet<T>(data1);
-            var set2 = new HashSet<T>(data2);
+            using (Probe.Create("Merging", typeof(T).Name))
+            {
+                var set1 = new HashSet<T>(data1);
+                var set2 = new HashSet<T>(data2);
 
-            // NOTE: avoiding enumerable extensions to reuse hashset performance
-            var difference = set1.Where(x => !set2.Contains((T)x));
-            var intersection = set1.Where(x => set2.Contains((T)x));
-            var complement = set2.Where(x => !set1.Contains((T)x));
+                // NOTE: avoiding enumerable extensions to reuse hashset performance
+                var difference = set1.Where(x => !set2.Contains((T)x));
+                var intersection = set1.Where(x => set2.Contains((T)x));
+                var complement = set2.Where(x => !set1.Contains((T)x));
 
-            return new MergeResult<T> { Difference = difference, Intersection = intersection, Complement = complement };
+                return new MergeResult<T> { Difference = difference, Intersection = intersection, Complement = complement };
+            }
         }
 
         public interface IMergeResult

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.API.Receivers;
@@ -14,39 +15,48 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreReceiver : MessageReceiverBase<PerformedOperationsFinalProcessingMessage, IFinalProcessingQueueReceiverSettings> 
     {
-        private readonly IDataContext _context;
+        private readonly DataConnection _dataConnection;
 
         public SqlStoreReceiver(MessageFlowMetadata sourceFlowMetadata, IFinalProcessingQueueReceiverSettings messageReceiverSettings, IDataContext context)
             : base(sourceFlowMetadata, messageReceiverSettings)
         {
-            _context = context;
+            _dataConnection = (DataConnection)context;
         }
 
         protected override IReadOnlyList<PerformedOperationsFinalProcessingMessage> Peek()
         {
-            IReadOnlyList<PerformedOperationsFinalProcessingMessage> messages;
+            ICollection<PerformedOperationFinalProcessing> messages;
 
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            try
             {
-                messages = _context.GetTable<PerformedOperationFinalProcessing>()
-                                      .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
-                                      .Take(MessageReceiverSettings.BatchSize)
-                                      .AsEnumerable()
-                                      // fake grouping
-                                      .GroupBy(x => 0)
-                                      .Select(x => new PerformedOperationsFinalProcessingMessage
-                                        {
-                                            EntityId = 0,
-                                            MaxAttemptCount = 0,
-                                            EntityType = EntityType.Instance.None(),
-                                            Flow = SourceFlowMetadata.MessageFlow,
-                                            FinalProcessings = x,
-                                        }).ToList();
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
 
-                scope.Complete();
+                messages = _dataConnection.GetTable<PerformedOperationFinalProcessing>()
+                                            .Where(processing => processing.MessageFlowId == SourceFlowMetadata.MessageFlow.Id)
+                                            .Take(MessageReceiverSettings.BatchSize)
+                                            .ToList();
+
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
+                throw;
             }
 
-            return messages;
+            return messages.Any()
+                        ? new[]
+                            {
+                                new PerformedOperationsFinalProcessingMessage
+                                {
+                                    EntityId = 0,
+                                    MaxAttemptCount = 0,
+                                    EntityType = EntityType.Instance.None(),
+                                    Flow = SourceFlowMetadata.MessageFlow,
+                                    FinalProcessings = messages,
+                                }
+                            }
+                        : new PerformedOperationsFinalProcessingMessage[0];
         }
 
         protected override void Complete(IEnumerable<PerformedOperationsFinalProcessingMessage> successfullyProcessedMessages, IEnumerable<PerformedOperationsFinalProcessingMessage> failedProcessedMessages)
@@ -54,15 +64,21 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             // COMMENT {all, 05.05.2015}: Что делать при ошибках во время обработки?
             // Сейчас и на стадии Primary и на стадии Final сообщение будет пытаться обработаться до тех пор, пока не получится.
             // Или пока админ не удалит его из очереди.
-
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            try
             {
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+
                 foreach (var message in successfullyProcessedMessages.SelectMany(message => message.FinalProcessings))
                 {
-                    _context.Delete(message);
+                    _dataConnection.Delete(message);
                 }
 
-                scope.Complete();
+                _dataConnection.CommitTransaction();
+            }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
+                throw;
             }
         }
     }

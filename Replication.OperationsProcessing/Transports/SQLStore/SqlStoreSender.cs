@@ -1,38 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
-        private readonly IDataContext _context;
+        private readonly DataConnection _dataConnection;
 
-        public SqlStoreSender(IDataContext context)
+        public SqlStoreSender(IDataContext dataConnection)
         {
-            _context = context;
+            _dataConnection = (DataConnection)dataConnection;
         }
 
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
-            var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            using (Probe.Create("Send Aggregate Operations"))
             {
-                foreach (var message in transportMessages)
+                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                try
                 {
-                    _context.Insert(message);
-                }
+                    _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
+                    foreach (var message in transportMessages)
+                    {
+                        _dataConnection.Insert(message);
+                    }
 
-                scope.Complete();
+                    _dataConnection.CommitTransaction();
+                }
+                catch
+                {
+                    _dataConnection.RollbackTransaction();
+                    throw;
+                }
             }
         }
 

@@ -38,7 +38,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
                 var message = messages.OfType<AggregateOperationAggregatableMessage>().Single();
 
                 _customerIntelligenceTransformation.Transform(message.Operations);
-                _telemetryPublisher.Publish<AggregateOperationProcessedCountIdentity>(message.Operations.Count());
+                _telemetryPublisher.Publish<AggregateProcessedOperationCountIdentity>(message.Operations.Count());
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
