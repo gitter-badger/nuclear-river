@@ -42,14 +42,6 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Graphite, Version=1.1.0.0, Culture=neutral, PublicKeyToken=db1870846884bbb9, processorArchitecture=MSIL">
-      <HintPath>..\packages\Graphite.1.1.0.0\lib\net40-Client\Graphite.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -61,13 +53,9 @@
     <Compile Include="AggregatingTelemetryPublisherDecorator.cs" />
     <Compile Include="LogstashTelemetryPublisher.cs" />
     <Compile Include="DebugTelemetryPublisher.cs" />
-    <Compile Include="GraphiteTelemetryPublisher.cs" />
     <Compile Include="Logstash\ILogstashSettings.cs" />
     <Compile Include="Logstash\LogstashSettingsAspect.cs" />
-    <Compile Include="Metadata\IGraphiteCounterMetadata.cs" />
     <Compile Include="ITelemetryPublisher.cs" />
-    <Compile Include="Metadata\GraphiteMetadataElement.cs" />
-    <Compile Include="PerformanceCounterTelemetryPublisher.cs" />
     <Compile Include="Metadata\TelemetryIdentityBase.cs" />
     <Compile Include="Probing\IReport.cs" />
     <Compile Include="Probing\IReportBuilder.cs" />
@@ -78,12 +66,6 @@
     <Compile Include="Probing\Report.cs" />
     <Compile Include="Probing\ReportBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Zabbix\IZabbixSettings.cs" />
-    <Compile Include="Zabbix\ZabbixTelemetryPublisher.cs" />
-    <Compile Include="Zabbix\ZabbixItem.cs" />
-    <Compile Include="Zabbix\ZabbixResponse.cs" />
-    <Compile Include="Zabbix\ZabbixSender.cs" />
-    <Compile Include="Zabbix\ZabbixSettingsAspect.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Settings\Settings.csproj">
