@@ -8,9 +8,9 @@ using NuClear.Messaging.API.Processing;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
-    public class ProjectStatisticsAggregatableMessage : IAggregatableMessage
+    public class StatisticsAggregatableMessage : IAggregatableMessage
     {
-        public ProjectStatisticsAggregatableMessage()
+        public StatisticsAggregatableMessage()
         {
             Id = Guid.NewGuid();
         }
@@ -21,7 +21,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
 
         public bool Equals(IMessage other)
         {
-            var x = other as ProjectStatisticsAggregatableMessage;
+            var x = other as StatisticsAggregatableMessage;
             return x != null && Equals(x.Id, Id);
         }
     }

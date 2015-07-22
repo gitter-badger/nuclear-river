@@ -8,13 +8,13 @@ using NuClear.Replication.OperationsProcessing.Transports;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
-    public sealed class ProjectStatisticsOperationAccumulator<TMessageFlow> : MessageProcessingContextAccumulatorBase<TMessageFlow, PerformedOperationsFinalProcessingMessage, ProjectStatisticsAggregatableMessage>
+    public sealed class StatisticsOperationAccumulator<TMessageFlow> : MessageProcessingContextAccumulatorBase<TMessageFlow, PerformedOperationsFinalProcessingMessage, StatisticsAggregatableMessage>
         where TMessageFlow : class, IMessageFlow, new()
     {
-        protected override ProjectStatisticsAggregatableMessage Process(PerformedOperationsFinalProcessingMessage message)
+        protected override StatisticsAggregatableMessage Process(PerformedOperationsFinalProcessingMessage message)
         {
             var operations = message.FinalProcessings.Select(x => XElement.Parse(x.Context).DeserializeStatisticsOperation()).ToList();
-            return new ProjectStatisticsAggregatableMessage
+            return new StatisticsAggregatableMessage
                    {
                        TargetFlow = MessageFlow,
                        Operations = operations,

@@ -27,7 +27,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
         {
             try
             {
-                var operations = messages.OfType<ProjectStatisticsAggregatableMessage>().Single().Operations;
+                var operations = messages.OfType<StatisticsAggregatableMessage>().Single().Operations;
                 _statisticsTransformation.Recalculate(operations);
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

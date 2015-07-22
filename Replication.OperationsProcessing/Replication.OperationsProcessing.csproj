@@ -142,8 +142,8 @@
   <ItemGroup>
     <Compile Include="Final\StatisticsAggregatableMessageHandler.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
-    <Compile Include="Final\ProjectStatisticsAggregatableMessage.cs" />
-    <Compile Include="Final\ProjectStatisticsOperationAccumulator.cs" />
+    <Compile Include="Final\StatisticsAggregatableMessage.cs" />
+    <Compile Include="Final\StatisticsOperationAccumulator.cs" />
     <Compile Include="Metadata\Flows\StatisticsFlow.cs" />
     <Compile Include="Metadata\Flows\AggregatesFlow.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromBitFlow.cs" />

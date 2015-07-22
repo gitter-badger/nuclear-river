@@ -38,7 +38,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                                       .To.Final().Flow<AggregatesFlow>().Connect(),
 
                                    MessageFlowMetadata.Config.For<StatisticsFlow>()
-                                                      .Strategy<ProjectStatisticsOperationAccumulator<StatisticsFlow>>()
+                                                      .Strategy<StatisticsOperationAccumulator<StatisticsFlow>>()
                                                       .Handler<StatisticsAggregatableMessageHandler>()
                                                       .To.Final().Flow<StatisticsFlow>().Connect()
 
