@@ -200,7 +200,8 @@
     <Compile Include="Performance\ErmReceivedOperationCountIdentity.cs" />
     <Compile Include="Performance\ErmProcessedOperationCountIdentity.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
-    <Compile Include="Performance\FinalProcessingQueueLengthIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingStatisticsQueueLengthIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingAggregateQueueLengthIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
