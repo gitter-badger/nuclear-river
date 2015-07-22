@@ -52,6 +52,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.AdvancedSearch.Settings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.10.0\lib\net451\2GIS.NuClear.AdvancedSearch.Settings.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Assembling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Assembling.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Assembling.dll</HintPath>
@@ -154,6 +158,10 @@
     <Reference Include="2GIS.NuClear.Settings.Unity">
       <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.10.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
       <Private>True</Private>
@@ -222,6 +230,10 @@
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.0.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\protobuf-net.2.0.0.669\lib\net35\protobuf-net.dll</HintPath>
@@ -297,14 +309,6 @@
     <ProjectReference Include="..\Replication\Replication.csproj">
       <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
       <Name>Replication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Settings\Settings.csproj">
-      <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
-      <Name>Settings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Telemetry\Telemetry.csproj">
-      <Project>{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}</Project>
-      <Name>Telemetry</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
