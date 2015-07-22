@@ -42,12 +42,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         public string Flow { get; set; }
         public int? TimeSafetyOffsetHours { get; set; }
 
-        public int? BaseDelay { get; set; }
-        public int? DelayAfterFailure { get; set; }
-        public int? DelayIncrement { get; set; }
-        public int? MaxDelay { get; set; }
-        public int? SufficientBatchUtilizationThreshold { get; set; }
-
         private IAsyncMessageFlowProcessor MessageFlowProcessor
         {
             get
@@ -84,7 +78,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            using (var probe = new Probe("ETL1 Job"))
+            using (Probe.Create("ETL1 Job"))
             {
                 ProcessFlow();
             }

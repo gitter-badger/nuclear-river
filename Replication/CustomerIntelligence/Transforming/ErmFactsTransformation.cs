@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
         {
-            using (var probe = new Probe("ETL1 Transforming"))
+            using (Probe.Create("ETL1 Transforming"))
             {
                 return _transactionManager.WithinTransaction(() => DoTransform(operations));
             }
@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                using (var probe = new Probe("ETL1 Transforming " + factInfo.FactType.Name))
+                using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
                 {
                     var changes = factInfo.DetectChangesWith(this, factIds);
                     var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
@@ -142,7 +142,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IReadOnlyCollection<AggregateOperation> ProcessDependencies(IEnumerable<FactDependencyInfo> dependencies, IEnumerable<long> ids, Func<FactDependencyInfo, long, AggregateOperation> build)
         {
-            using (var probe = new Probe("Querying dependent aggregates"))
+            using (Probe.Create("Querying dependent aggregates"))
             {
                 return dependencies.SelectMany(info => info.Query(_target, ids).Select(id => build(info, id))).ToArray();
             }

@@ -39,11 +39,6 @@ namespace NuClear.Telemetry
             }
         }
 
-        ~LogstashTelemetryPublisher()
-        {
-            Dispose(false);
-        }
-
         public void Trace(string message, object data)
         {
             var report = new
@@ -126,11 +121,6 @@ namespace NuClear.Telemetry
                 _port = port;
             }
 
-            ~TcpClientWrapper()
-            {
-                Dispose(false);
-            }
-
             public Task SendAsync(byte[] data)
             {
                 return Task.Factory.StartNew(() => Send(data));
@@ -199,11 +189,6 @@ namespace NuClear.Telemetry
             public UdpClientWrapper(string host, int port)
             {
                 _client = new UdpClient(host, port);
-            }
-
-            ~UdpClientWrapper()
-            {
-                Dispose(false);
             }
 
             public Task SendAsync(byte[] data)

@@ -25,27 +25,17 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         public static void InsertAll(this IDataMapper mapper, IQueryable query)
         {
-            using (var probe = new Probe("Inserting " + query.ElementType.Name))
+            using (Probe.Create("Inserting", query.ElementType.Name))
             {
-                IEnumerable items;
-                using (var p = new Probe("Querying"))
-                    items = Enumerate(query);
-
-                using (var p = new Probe("Insering"))
-                    InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, items);
+                InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, query);
             }
         }
 
         public static void UpdateAll(this IDataMapper mapper, IQueryable query)
         {
-            using (var probe = new Probe("Updating " + query.ElementType.Name))
+            using (Probe.Create("Updating", query.ElementType.Name))
             {
-                IEnumerable items;
-                using (var p = new Probe("Querying"))
-                    items = Enumerate(query);
-
-                using (var p = new Probe("Updating"))
-                    InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, items);
+                InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, query);
             }
         }
 
@@ -54,14 +44,10 @@ namespace NuClear.AdvancedSearch.Replication.Data
             // Перед удалением требуется полность вычитать результат запроса.
             // Возможно, это баг в linq2db: он использует единственный SqlCommand для всех запросов в течении жизни DataContext
             // Это является проблемой только при удалении, поскольку все остальные операции проводят чтение и запись через разные DataContext
-            using (var probe = new Probe("Deleting " + query.ElementType.Name))
+            using (Probe.Create("Deleting", query.ElementType.Name))
             {
-                IEnumerable items;
-                using (var p = new Probe("Querying"))
-                    items = Enumerate(query);
-
-                using (var p = new Probe("Deleting"))
-                    InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
+                var items = query.Cast<IObject>().ToArray();
+                InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
             }
         }
 
@@ -76,18 +62,6 @@ namespace NuClear.AdvancedSearch.Replication.Data
         private static MethodInfo ResolveMethod(ConcurrentDictionary<Type, MethodInfo> methods, MethodInfo definition, Type type)
         {
             return methods.GetOrAdd(type, t => definition.MakeGenericMethod(t));
-        }
-
-        private static IEnumerable Enumerate(IQueryable queryable)
-        {
-            var e = queryable.GetEnumerator();
-            var result = new List<object>();
-            while (e.MoveNext())
-            {
-                result.Add(e.Current);
-            }
-
-            return result;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         private void ReportProbes()
         {
-            var reports = ProbeReportsContainer.Instance.GetReports();
+            var reports = DefaultReportSink.Instance.ConsumeReports();
             foreach (var report in reports)
             {
                 _telemetry.Trace("ProbeReport", report);

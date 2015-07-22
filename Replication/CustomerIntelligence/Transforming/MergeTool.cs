@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
         {
-            using (var probe = new Probe("Merging " + typeof(T).Name))
+            using (Probe.Create("Merging", typeof(T).Name))
             {
                 var set1 = new HashSet<T>(data1);
                 var set2 = new HashSet<T>(data2);
