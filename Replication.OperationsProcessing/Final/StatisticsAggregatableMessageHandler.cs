@@ -6,18 +6,14 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
-using NuClear.Replication.OperationsProcessing.Performance;
-using NuClear.Replication.OperationsProcessing.Primary;
-using NuClear.Telemetry;
-using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
-    public sealed class ProjectStatisticsAggregatableMessageHandler : IMessageProcessingHandler
+    public sealed class StatisticsAggregatableMessageHandler : IMessageProcessingHandler
     {
-        private readonly StatisticsTransformation _statisticsTransformation;
+        private readonly StatisticsFinalTransformation _statisticsTransformation;
 
-        public ProjectStatisticsAggregatableMessageHandler(StatisticsTransformation statisticsTransformation)
+        public StatisticsAggregatableMessageHandler(StatisticsFinalTransformation statisticsTransformation)
         {
             _statisticsTransformation = statisticsTransformation;
         }

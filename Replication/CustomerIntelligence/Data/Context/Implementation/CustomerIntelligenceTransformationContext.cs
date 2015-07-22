@@ -175,7 +175,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              };
 
                 // perform union using distinct
-                // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
                 return level3.Union(level2).Union(level1);
             }
         }

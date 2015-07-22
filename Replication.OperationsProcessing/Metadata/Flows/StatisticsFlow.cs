@@ -4,7 +4,7 @@ using NuClear.Messaging.API.Flows;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
 {
-    public sealed class ProjectStatisticsFlow : MessageFlowBase<ProjectStatisticsFlow>
+    public sealed class StatisticsFlow : MessageFlowBase<StatisticsFlow>
     {
         public override Guid Id
         {

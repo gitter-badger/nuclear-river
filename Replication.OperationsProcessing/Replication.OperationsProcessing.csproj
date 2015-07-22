@@ -140,11 +140,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Final\ProjectStatisticsAggregatableMessageHandler.cs" />
+    <Compile Include="Final\StatisticsAggregatableMessageHandler.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
     <Compile Include="Final\ProjectStatisticsAggregatableMessage.cs" />
     <Compile Include="Final\ProjectStatisticsOperationAccumulator.cs" />
-    <Compile Include="Metadata\Flows\ProjectStatisticsFlow.cs" />
+    <Compile Include="Metadata\Flows\StatisticsFlow.cs" />
     <Compile Include="Metadata\Flows\AggregatesFlow.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromBitFlow.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />

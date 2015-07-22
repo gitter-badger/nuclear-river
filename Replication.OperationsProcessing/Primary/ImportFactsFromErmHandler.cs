@@ -18,12 +18,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
-        private readonly StatisticsTransformation _statisticsTransformation;
+        private readonly StatisticsPrimaryTransformation _statisticsTransformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher, StatisticsTransformation statisticsTransformation)
+        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher, StatisticsPrimaryTransformation statisticsTransformation)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
@@ -51,7 +51,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
                 statisticsOperations = statisticsOperations.Concat(_statisticsTransformation.DetectStatisticsOperations(operations)).Distinct().ToList();
 
-                _sender.Push(statisticsOperations, ProjectStatisticsFlow.Instance);
+                _sender.Push(statisticsOperations, StatisticsFlow.Instance);
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
 

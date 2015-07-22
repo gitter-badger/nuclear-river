@@ -17,19 +17,19 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
             PerformedOperations.Flows
                                .Primary(
 
-                                    MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
-                                    .Strategy<ImportFactsFromErmAccumulator>()
-                                    .Handler<ImportFactsFromErmHandler>()
-                                    .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
-                                    .To.Final().Flow<AggregatesFlow>().Connect(),
+                                   MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
+                                                      .Strategy<ImportFactsFromErmAccumulator>()
+                                                      .Handler<ImportFactsFromErmHandler>()
+                                                      .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
+                                                      .To.Final().Flow<AggregatesFlow>().Connect(),
 
-                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
-                                    .Strategy<ImportFactsFromBitAccumulator>()
-                                    .Handler<ImportFactsFromBitHandler>()
-                                    .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
-                                    .To.Final().Flow<AggregatesFlow>().Connect()
+                                   MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
+                                                      .Strategy<ImportFactsFromBitAccumulator>()
+                                                      .Handler<ImportFactsFromBitHandler>()
+                                                      .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
+                                                      .To.Final().Flow<AggregatesFlow>().Connect()
 
-                                    )
+                )
                                .Final(
 
                                    MessageFlowMetadata.Config.For<AggregatesFlow>()
@@ -37,12 +37,12 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                                       .Handler<AggregateOperationAggregatableMessageHandler>()
                                                       .To.Final().Flow<AggregatesFlow>().Connect(),
 
-                                   MessageFlowMetadata.Config.For<ProjectStatisticsFlow>()
-                                                      .Strategy<ProjectStatisticsOperationAccumulator<ProjectStatisticsFlow>>()
-                                                      .Handler<ProjectStatisticsAggregatableMessageHandler>()
-                                                      .To.Final().Flow<ProjectStatisticsFlow>().Connect()
+                                   MessageFlowMetadata.Config.For<StatisticsFlow>()
+                                                      .Strategy<ProjectStatisticsOperationAccumulator<StatisticsFlow>>()
+                                                      .Handler<StatisticsAggregatableMessageHandler>()
+                                                      .To.Final().Flow<StatisticsFlow>().Connect()
 
-                                    );
+                );
 
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
 

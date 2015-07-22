@@ -4,6 +4,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {
     public sealed class FirmCategoryStatistics : ICustomerIntelligenceObject
     {
+        public long ProjectId { get; set; }
+
         public long FirmId { get; set; }
 
         public long CategoryId { get; set; }
