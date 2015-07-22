@@ -26,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         public void Push(IEnumerable<StatisticsOperation> operations, IMessageFlow targetFlow)
         {
-            using (new Probe("Send Statistics Operations"))
+            using (Probe.Create("Send Statistics Operations"))
             {
                 var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
                 Save(transportMessages);
