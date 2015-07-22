@@ -62,8 +62,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Tests", "Replic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settings.csproj", "{D4238D0C-3315-4449-B1AE-80F716D58D04}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telemetry", "Telemetry\Telemetry.csproj", "{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,10 +128,6 @@ Global
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B8ACCD8-6C08-477C-8ACF-CD47ECE91D05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
