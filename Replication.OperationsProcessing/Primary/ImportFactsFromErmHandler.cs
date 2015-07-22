@@ -52,6 +52,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                 statisticsOperations = statisticsOperations.Concat(_statisticsTransformation.DetectStatisticsOperations(operations)).Distinct().ToList();
 
                 _sender.Push(statisticsOperations, StatisticsFlow.Instance);
+                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(aggregateOperations.Count());
+
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
 
