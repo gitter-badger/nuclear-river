@@ -65,11 +65,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Jobs, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Jobs.1.2.2\lib\net451\2GIS.NuClear.Jobs.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Jobs.1.2.3\lib\net451\2GIS.NuClear.Jobs.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Jobs.Unity, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Jobs.Unity.1.2.2\lib\net451\2GIS.NuClear.Jobs.Unity.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Jobs.Unity.1.2.3\lib\net451\2GIS.NuClear.Jobs.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
