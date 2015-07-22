@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -26,15 +27,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Recalculate(IEnumerable<StatisticsOperation> operations)
         {
-            foreach (var project in operations.GroupBy(x => x.ProjectId, x => x.CategoryId))
+            using (Probe.Create("Recalculate Statistics Operations"))
             {
-                var filter = CreateFilter(project.Key, project.Distinct().ToList());
-                var changes = DetectChanges(filter);
+                foreach (var project in operations.GroupBy(x => x.ProjectId, x => x.CategoryId))
+                {
+                    var filter = CreateFilter(project.Key, project.Distinct().ToList());
+                    var changes = DetectChanges(filter);
 
-                // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
-                // Поэтому только обновление.
-                var toUpdate = changes.Intersection;
-                _mapper.UpdateAll(toUpdate.AsQueryable());
+                    // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
+                    // Поэтому только обновление.
+                    var toUpdate = changes.Intersection;
+                    _mapper.UpdateAll(toUpdate.AsQueryable());
+                }
             }
         }
 

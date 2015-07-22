@@ -3,6 +3,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -17,21 +18,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IEnumerable<StatisticsOperation> DetectStatisticsOperations(IEnumerable<FactOperation> enumerable)
         {
-            var result = Enumerable.Empty<StatisticsOperation>();
-
-            var ops = enumerable.GroupBy(x => x.FactType, x => x.FactId);
-            foreach (var group in ops)
+            using (Probe.Create("Detect Statistics Operations"))
             {
-                Query query;
-                if (!Transformations.TryGetValue(group.Key, out query))
+                var result = Enumerable.Empty<StatisticsOperation>();
+
+                var ops = enumerable.GroupBy(x => x.FactType, x => x.FactId);
+                foreach (var group in ops)
                 {
-                    continue;
+                    Query query;
+                    if (!Transformations.TryGetValue(group.Key, out query))
+                    {
+                        continue;
+                    }
+
+                    using (Probe.Create(group.Key.Name))
+                    {
+                        result = result.Concat(query.Invoke(_facts, group).ToList());
+                    }
                 }
 
-                result = result.Concat(query.Invoke(_facts, group).ToList());
+                return result;
             }
-
-            return result;
         }
     }
 }
