@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StstisticsTransformation\StatisticsFinalTransformationTests.cs" />
     <Compile Include="StstisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
