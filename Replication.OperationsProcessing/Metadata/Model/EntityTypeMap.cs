@@ -64,7 +64,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                     CreateMapping<EntityTypeContact, CI.Contact>(),
                     CreateMapping<EntityTypeFirm, CI.Firm>(),
                     CreateMapping<EntityTypeFirmBalance, CI.FirmBalance>(),
-                    CreateMapping<EntityTypeFirmCategory, CI.FirmCategoryPartFirm>(),
+                    CreateMapping<EntityTypeFirmCategory, CI.FirmCategory>(),
                     CreateMapping<EntityTypeProject, CI.Project>(),
                     CreateMapping<EntityTypeProjectCategory, CI.ProjectCategory>(),
                     CreateMapping<EntityTypeTerritory, CI.Territory>(),

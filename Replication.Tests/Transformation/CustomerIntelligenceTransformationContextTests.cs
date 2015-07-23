@@ -241,11 +241,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 ));
 
             Transformation.Create(context.Object, bitContext.Object)
-                .VerifyTransform(x => x.FirmCategoriesPartFirm, Inquire(
-                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 2, Hits = 2 },
-                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 3, Shows = 2 },
-                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 4 }
+                .VerifyTransform(x => x.FirmCategories, Inquire(
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 4 }
                     ), "The firm categories should be processed.");
         }
 
@@ -308,48 +308,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     ));
         }
 
-        [Test]
-        public void ShouldCalculateStatistics()
-        {
-            var erm = new Mock<IErmFactsContext>()
-                .Setup(x => x.Projects,
-                       new Facts.Project { Id = 1, OrganizationUnitId = 2 },
-                       new Facts.Project { Id = 3, OrganizationUnitId = 4 })
-                .Setup(x => x.Categories,
-                       new Facts.Category { Id = 5 },
-                       new Facts.Category { Id = 6 })
-                .Setup(x => x.Firms,
-                       new Facts.Firm { Id = 7, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 8, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 9, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 10, OrganizationUnitId = 4 })
-                .Setup(x => x.FirmAddresses,
-                       new Facts.FirmAddress { Id = 7, FirmId = 7 },
-                       new Facts.FirmAddress { Id = 8, FirmId = 8 },
-                       new Facts.FirmAddress { Id = 9, FirmId = 9 },
-                       new Facts.FirmAddress { Id = 10, FirmId = 10 })
-                .Setup(x => x.CategoryFirmAddresses,
-                       new Facts.CategoryFirmAddress { Id = 11, FirmAddressId = 7, CategoryId = 6 },
-                       new Facts.CategoryFirmAddress { Id = 12, FirmAddressId = 8, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 13, FirmAddressId = 8, CategoryId = 6 },
-                       new Facts.CategoryFirmAddress { Id = 14, FirmAddressId = 9, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 });
-
-            var bit = new Mock<IBitFactsContext>()
-                .Setup(x => x.CategoryStatistics,
-                       new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 6, AdvertisersCount = 1 });
-
-            var ctx = new CustomerIntelligenceTransformationContext(erm.Object, bit.Object);
-
-            var statistics = ctx.FirmCategoriesPartProject.ToList();
-
-            var firmStatistics = statistics.SingleOrDefault(x => x.FirmId == 7 && x.CategoryId == 6);
-            Assert.That(firmStatistics, Is.Not.Null);
-            Assert.That(firmStatistics.FirmCount, Is.EqualTo(2));
-            Assert.That(firmStatistics.AdvertisersShare, Is.EqualTo(0.5f));
-        }
-
         #region Transformation
 
         private class Transformation
@@ -358,7 +316,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             private Transformation(IErmFactsContext source, IBitFactsContext bitFactsContext)
             {
-                _transformation = new CustomerIntelligenceTransformationContext(source, bitFactsContext);
+                _transformation = new CustomerIntelligenceTransformationContext(source);
             }
 
             public static Transformation Create(IErmFactsContext source = null, IBitFactsContext bitFactsContext = null)

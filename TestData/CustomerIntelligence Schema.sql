@@ -88,23 +88,15 @@ create table CustomerIntelligence.FirmBalance(
 )
 go
 
--- FirmCategoryPartFirm
-create table CustomerIntelligence.FirmCategoryPartFirm(
+-- FirmCategory
+create table CustomerIntelligence.FirmCategory(
 	FirmId bigint not null
 	, CategoryId bigint not null
-    , Hits bigint not null constraint DF_FirmCategories_Hits default 0
-    , Shows bigint not null constraint DF_FirmCategories_Shows default 0
-    , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
-)
-go
-
--- FirmCategoryPartProject
-create table CustomerIntelligence.FirmCategoryPartProject(
-	FirmId bigint not null
-    , CategoryId bigint not null
-    , FirmCount int not null
+    , Hits bigint null
+    , Shows bigint null
+    , FirmCount int null
     , AdvertisersShare float null
-    , constraint PK_FirmCategoryPartProject primary key (FirmId, CategoryId)
+    , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
 )
 go
 
@@ -125,19 +117,4 @@ create table CustomerIntelligence.Contact(
     , ClientId bigint not null
     , constraint PK_Contacts primary key (Id)
 )
-go
-
--- ¬ьюха дл€ сведени€ FirmCategory и FirmCategoryStatistics в единую бизнес-сущность
-create view CustomerIntelligence.FirmCategory
-as
-select
-	FirmCategoryPartFirm.FirmId
-	, FirmCategoryPartFirm.CategoryId
-	, FirmCategoryPartFirm.Hits
-	, FirmCategoryPartFirm.Shows
-	, FirmCategoryPartProject.FirmCount
-	, FirmCategoryPartProject.AdvertisersShare
-from 
-	CustomerIntelligence.FirmCategoryPartFirm
-	left join CustomerIntelligence.FirmCategoryPartProject on FirmCategoryPartFirm.FirmId = FirmCategoryPartProject.FirmId and FirmCategoryPartFirm.CategoryId = FirmCategoryPartProject.CategoryId
 go

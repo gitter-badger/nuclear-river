@@ -152,12 +152,17 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Final\StatisticsAggregatableMessageHandler.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
+    <Compile Include="Final\StatisticsAggregatableMessage.cs" />
+    <Compile Include="Final\StatisticsOperationAccumulator.cs" />
+    <Compile Include="Metadata\Flows\StatisticsFlow.cs" />
     <Compile Include="Metadata\Flows\AggregatesFlow.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromBitFlow.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromErmFlow.cs" />
     <Compile Include="Metadata\Model\Context\CustomerIntelligenceContext.cs" />
+    <Compile Include="Metadata\Operations\StatisticsOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\DestroyAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Model\EntityTypeIds.cs" />
     <Compile Include="Metadata\Model\EntityTypeMap.cs" />
@@ -184,6 +189,7 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
     <Compile Include="Metadata\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\RecalculateAggregateOperationIdentity.cs" />
+    <Compile Include="Performance\StatisticsEnquiedOperationCountIdentity.cs" />
     <Compile Include="Performance\AggregateEnquiedOperationCountIdentity.cs" />
     <Compile Include="Performance\AggregateProcessedOperationCountIdentity.cs" />
     <Compile Include="Performance\BitStatisticsEntityProcessedCountIdentity.cs" />
@@ -191,12 +197,13 @@
     <Compile Include="Performance\ErmReceivedOperationCountIdentity.cs" />
     <Compile Include="Performance\ErmProcessedOperationCountIdentity.cs" />
     <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
-    <Compile Include="Performance\FinalProcessingQueueLengthIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingStatisticsQueueLengthIdentity.cs" />
+    <Compile Include="Performance\FinalProcessingAggregateQueueLengthIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
     <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
-    <Compile Include="Primary\AggregateOperationAggregatableMessage.cs" />
+    <Compile Include="Final\AggregateOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromBitHandler.cs" />
@@ -217,6 +224,7 @@
     <Compile Include="Transports\SQLStore\SqlStoreReceiver.cs" />
     <Compile Include="Transports\SQLStore\Schema.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />
+    <Compile Include="Transports\StatisticsOperationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

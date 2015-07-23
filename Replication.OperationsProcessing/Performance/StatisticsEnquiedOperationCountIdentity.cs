@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public class FinalProcessingQueueLengthIdentity : TelemetryIdentityBase<FinalProcessingQueueLengthIdentity>
+    public sealed class StatisticsEnquiedOperationCountIdentity : TelemetryIdentityBase<StatisticsEnquiedOperationCountIdentity>
     {
         public override int Id
         {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Размер очереди ETL2"; }
+            get { return "Количество взятых на обработку операций пересчёта статистики"; }
         }
     }
 }

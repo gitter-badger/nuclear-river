@@ -46,8 +46,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 // No BitTransformationContext registration, it depends on dto
 
                 .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>(), new ResolvedParameter<BitFactsContext>()))
+                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<ErmFactsContext>()))
 
+                .RegisterType<StatisticsContext>(Lifetime.PerScope, 
+                    new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
+                .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
+                    new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
 
                 .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
@@ -68,6 +72,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<BitFactsContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts),
                                                        ResolvedTransactionManager(container, Scope.Facts)))
+
+                .RegisterType<StatisticsPrimaryTransformation>(Lifetime.PerScope,
+                                                   new InjectionConstructor(
+                                                       new ResolvedParameter<ErmFactsContext>()))
+                                                       
+                .RegisterType<StatisticsFinalTransformation>(Lifetime.PerScope,
+                                                   new InjectionConstructor(
+                                                       new ResolvedParameter<StatisticsTransformationContext>(),
+                                                       new ResolvedParameter<StatisticsContext>(),
+                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
+
+                .RegisterType<PrimaryStageCompositeTransformation>(Lifetime.PerScope)
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));

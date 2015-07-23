@@ -17,17 +17,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
-        private readonly ErmFactsTransformation _ermFactsTransformation;
+        private readonly PrimaryStageCompositeTransformation _transformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmHandler(PrimaryStageCompositeTransformation transformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
-            _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
+            _transformation = transformation;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -37,14 +37,18 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
-            IList<FactOperation> operations = null;
             try
             {
-                operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
+                var operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
 
-                var aggregateOperations = _ermFactsTransformation.Transform(operations).Distinct().ToList();
+                var result = _transformation.Transform(operations);
                 _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
+                var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
+                _sender.Push(statisticOperations, StatisticsFlow.Instance);
+                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
+
+                var aggregateOperations = result.OfType<AggregateOperation>().ToList();
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
 
