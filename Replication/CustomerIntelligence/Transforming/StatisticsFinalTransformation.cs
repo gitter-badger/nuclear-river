@@ -36,8 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                     // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
                     // Поэтому только обновление.
-                    var toUpdate = changes.Intersection;
-                    _mapper.UpdateAll(toUpdate.AsQueryable());
+                    _mapper.UpdateAll(changes.Intersection.AsQueryable());
                 }
             }
         }
