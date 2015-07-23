@@ -6,12 +6,12 @@ using NuClear.AdvancedSearch.Replication.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class FirstStageCompositeTransformation
+    public sealed class PrimaryStageCompositeTransformation
     {
         private readonly ErmFactsTransformation _ermFactsTransformation;
         private readonly StatisticsPrimaryTransformation _statisticsTransformation;
 
-        public FirstStageCompositeTransformation(ErmFactsTransformation ermFactsTransformation, StatisticsPrimaryTransformation statisticsTransformation)
+        public PrimaryStageCompositeTransformation(ErmFactsTransformation ermFactsTransformation, StatisticsPrimaryTransformation statisticsTransformation)
         {
             _ermFactsTransformation = ermFactsTransformation;
             _statisticsTransformation = statisticsTransformation;

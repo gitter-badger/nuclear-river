@@ -83,7 +83,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<StatisticsContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
 
-                .RegisterType<FirstStageCompositeTransformation>(Lifetime.PerScope)
+                .RegisterType<PrimaryStageCompositeTransformation>(Lifetime.PerScope)
 
                 .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
                 .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));

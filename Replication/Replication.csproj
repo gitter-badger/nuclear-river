@@ -113,7 +113,7 @@
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IStatisticsContext.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FirstStageCompositeTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\PrimaryStageCompositeTransformation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\CalculateStatisticsOperation.cs" />

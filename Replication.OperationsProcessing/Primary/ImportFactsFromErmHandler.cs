@@ -17,12 +17,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
-        private readonly FirstStageCompositeTransformation _transformation;
+        private readonly PrimaryStageCompositeTransformation _transformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(FirstStageCompositeTransformation transformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmHandler(PrimaryStageCompositeTransformation transformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
             _sender = sender;
             _tracer = tracer;
