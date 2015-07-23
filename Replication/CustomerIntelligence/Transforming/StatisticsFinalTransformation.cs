@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _mapper = mapper;
         }
 
-        public void Recalculate(IEnumerable<StatisticsOperation> operations)
+        public void Recalculate(IEnumerable<CalculateStatisticsOperation> operations)
         {
             using (Probe.Create("Recalculate Statistics Operations"))
             {

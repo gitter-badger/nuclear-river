@@ -115,7 +115,7 @@
     <Compile Include="CustomerIntelligence\Data\Context\IStatisticsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\StatisticsOperation.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Operations\CalculateStatisticsOperation.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsPrimaryTransformation.Metadata.cs" />

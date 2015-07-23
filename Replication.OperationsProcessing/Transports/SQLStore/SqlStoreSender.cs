@@ -24,7 +24,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             _dataConnection = (DataConnection)dataConnection;
         }
 
-        public void Push(IEnumerable<StatisticsOperation> operations, IMessageFlow targetFlow)
+        public void Push(IEnumerable<CalculateStatisticsOperation> operations, IMessageFlow targetFlow)
         {
             using (Probe.Create("Send Statistics Operations"))
             {
@@ -61,7 +61,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             }
         }
 
-        private static PerformedOperationFinalProcessing SerializeMessage(StatisticsOperation operation, IMessageFlow targetFlow)
+        private static PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
         {
             return new PerformedOperationFinalProcessing
             {

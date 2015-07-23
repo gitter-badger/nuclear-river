@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
         {
             Mock<IDataMapper> mapper;
             var transformation = CreateTransformation(out mapper);
-            var operation = new StatisticsOperation { ProjectId = 1, CategoryId = 100 };
+            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = 100 };
 
             transformation.Recalculate(new[] { operation });
 
@@ -43,7 +43,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
         {
             Mock<IDataMapper> mapper;
             var transformation = CreateTransformation(out mapper);
-            var operation = new StatisticsOperation { ProjectId = 1, CategoryId = null };
+            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
 
             transformation.Recalculate(new[] { operation });
 

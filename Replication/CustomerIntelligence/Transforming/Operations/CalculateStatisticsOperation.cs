@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
 {
-    public class StatisticsOperation : IOperation
+    public class CalculateStatisticsOperation : IOperation
     {
         public long ProjectId { get; set; }
         public long? CategoryId { get; set; }
@@ -24,7 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
                 return false;
             }
 
-            return Equals((StatisticsOperation)obj);
+            return Equals((CalculateStatisticsOperation)obj);
         }
 
         public override int GetHashCode()
@@ -32,7 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.O
             return (CategoryId.GetHashCode() * 397) ^ ProjectId.GetHashCode();
         }
 
-        private bool Equals(StatisticsOperation other)
+        private bool Equals(CalculateStatisticsOperation other)
         {
             return CategoryId == other.CategoryId && ProjectId == other.ProjectId;
         }

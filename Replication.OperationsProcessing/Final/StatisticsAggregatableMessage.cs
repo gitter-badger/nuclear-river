@@ -17,7 +17,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
 
         public Guid Id { get; private set; }
         public IMessageFlow TargetFlow { get; set; }
-        public IReadOnlyCollection<StatisticsOperation> Operations { get; set; }
+        public IReadOnlyCollection<CalculateStatisticsOperation> Operations { get; set; }
 
         public bool Equals(IMessage other)
         {

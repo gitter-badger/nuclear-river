@@ -16,31 +16,31 @@ namespace NuClear.Replication.OperationsProcessing.Transports
         private static readonly Dictionary<Guid, Type> OperationIdRegistry =
             new Dictionary<Guid, Type>
             {
-                { StatisticsOperationIdentity.Instance.Guid, typeof(StatisticsOperation) }
+                { StatisticsOperationIdentity.Instance.Guid, typeof(CalculateStatisticsOperation) }
             };
 
         private static readonly Dictionary<Type, Guid> OperationTypeRegistry =
             OperationIdRegistry.ToDictionary(x => x.Value, x => x.Key);
 
-        public static StatisticsOperation DeserializeStatisticsOperation(this XElement context)
+        public static CalculateStatisticsOperation DeserializeStatisticsOperation(this XElement context)
         {
             var projectAttribute = context.Attribute("Project");
             var categoryAttribute = context.Attribute("Category");
-            return new StatisticsOperation
+            return new CalculateStatisticsOperation
                    {
                        ProjectId = long.Parse(projectAttribute.Value),
                        CategoryId = categoryAttribute != null ? (long?)long.Parse(categoryAttribute.Value) : null,
                    };
         }
 
-        public static XElement Serialize(this StatisticsOperation operation)
+        public static XElement Serialize(this CalculateStatisticsOperation operation)
         {
             return new XElement("RecalulateStatistics",
                                 new XAttribute("Project", operation.ProjectId),
                                 operation.CategoryId.HasValue ? new XAttribute("Category", operation.CategoryId) : null);
         }
 
-        public static Guid GetIdentity(this StatisticsOperation operation)
+        public static Guid GetIdentity(this CalculateStatisticsOperation operation)
         {
             Guid guid;
             if (OperationTypeRegistry.TryGetValue(operation.GetType(), out guid))
