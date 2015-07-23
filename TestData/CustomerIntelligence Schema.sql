@@ -3,10 +3,8 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
--- obsolete
+-- drop views
 if object_id('CustomerIntelligence.FirmCategory', 'view') is not null drop view CustomerIntelligence.FirmCategory;
-if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
-if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
 go
 
 -- drop tables
@@ -16,11 +14,12 @@ if object_id('CustomerIntelligence.ProjectCategory') is not null drop table Cust
 if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIntelligence.Territory;
 if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm;
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
+if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
+if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 go
-
 
 
 -- CategoryGroup
