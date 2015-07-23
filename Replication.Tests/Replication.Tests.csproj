@@ -56,8 +56,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkCopyingOfStatistics.cs" />
-    <Compile Include="StstisticsTransformation\StatisticsFinalTransformationTests.cs" />
-    <Compile Include="StstisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
+    <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
+    <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="MockExtensions.cs" />

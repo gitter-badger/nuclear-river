@@ -13,7 +13,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.StstisticsTransformation
+namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
 {
     [TestFixture]
     internal sealed class StatisticsPrimaryTransformationTests

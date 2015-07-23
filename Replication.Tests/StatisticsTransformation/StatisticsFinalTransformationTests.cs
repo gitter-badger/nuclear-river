@@ -16,7 +16,7 @@ using NUnit.Framework;
 
 using FirmCategoryStatistics = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.FirmCategoryStatistics;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.StstisticsTransformation
+namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
 {
     [TestFixture]
     internal sealed class StatisticsFinalTransformationTests
