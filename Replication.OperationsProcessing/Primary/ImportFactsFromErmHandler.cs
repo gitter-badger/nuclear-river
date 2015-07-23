@@ -17,19 +17,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
-        private readonly ErmFactsTransformation _ermFactsTransformation;
-        private readonly StatisticsPrimaryTransformation _statisticsTransformation;
+        private readonly FirstStageCompositeTransformation _transformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher, StatisticsPrimaryTransformation statisticsTransformation)
+        public ImportFactsFromErmHandler(FirstStageCompositeTransformation transformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
-            _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
-            _statisticsTransformation = statisticsTransformation;
+            _transformation = transformation;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -41,18 +39,16 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                IReadOnlyCollection<FactOperation> operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
+                var operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
 
-                var statisticsOperations = _statisticsTransformation.DetectStatisticsOperations(operations);
-
-                var aggregateOperations = _ermFactsTransformation.Transform(operations).Distinct().ToList();
+                var result = _transformation.Transform(operations);
                 _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
 
-                statisticsOperations = statisticsOperations.Concat(_statisticsTransformation.DetectStatisticsOperations(operations)).Distinct().ToList();
+                var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
+                _sender.Push(statisticOperations, StatisticsFlow.Instance);
+                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
 
-                _sender.Push(statisticsOperations, StatisticsFlow.Instance);
-                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(aggregateOperations.Count());
-
+                var aggregateOperations = result.OfType<AggregateOperation>().ToList();
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                 _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
 
