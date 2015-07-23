@@ -16,13 +16,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _facts = facts;
         }
 
-        public IEnumerable<StatisticsOperation> DetectStatisticsOperations(IEnumerable<FactOperation> enumerable)
+        public IEnumerable<StatisticsOperation> DetectStatisticsOperations(IEnumerable<FactOperation> factOperations)
         {
             using (Probe.Create("Detect Statistics Operations"))
             {
                 var result = Enumerable.Empty<StatisticsOperation>();
 
-                var ops = enumerable.GroupBy(x => x.FactType, x => x.FactId);
+                var ops = factOperations.GroupBy(x => x.FactType, x => x.FactId);
                 foreach (var group in ops)
                 {
                     Query query;
