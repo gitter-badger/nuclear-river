@@ -2,12 +2,13 @@ using System.Linq;
 
 using LinqToDB;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
-
 using FirmCategoryStatistics = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.FirmCategoryStatistics;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
+    using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+    using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+
     public sealed class StatisticsTransformationContext : IStatisticsContext
     {
         private readonly IDataContext _bitContext;
@@ -21,13 +22,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var firmCounts = _bitContext.GetTable<FirmCategory>().GroupBy(x => new { x.ProjectId, x.CategoryId }).Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
+                var firmCounts = _bitContext.GetTable<Facts.FirmCategory>().GroupBy(x => new { x.ProjectId, x.CategoryId }).Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
 
-                return from firm in _bitContext.GetTable<FirmCategory>()
-                       from firmStatistics in _bitContext.GetTable<Model.Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
-                       from categoryStatistics in _bitContext.GetTable<ProjectCategoryStatistics>().Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
+                return from firm in _bitContext.GetTable<Facts.FirmCategory>()
+                       from firmStatistics in _bitContext.GetTable<Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
+                       from categoryStatistics in _bitContext.GetTable<Facts.ProjectCategoryStatistics>().Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
                        from firmCount in firmCounts.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
-                       select new Model.FirmCategoryStatistics
+                       select new CI.FirmCategoryStatistics
                               {
                                   ProjectId = firm.ProjectId,
                                   FirmId = firm.FirmId,
