@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.AdvancedSearch.Settings, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.10.0\lib\net451\2GIS.NuClear.AdvancedSearch.Settings.dll</HintPath>
-    </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.5\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
@@ -49,7 +45,7 @@
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.10.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.11.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
