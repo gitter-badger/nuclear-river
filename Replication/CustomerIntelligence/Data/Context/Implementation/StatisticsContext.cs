@@ -24,6 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        select new CI.FirmCategoryStatistics
                               {
                                   ProjectId = firm.ProjectId,
+
                                   FirmId = statistics.FirmId,
                                   CategoryId = statistics.CategoryId,
                                   AdvertisersShare = statistics.AdvertisersShare,
