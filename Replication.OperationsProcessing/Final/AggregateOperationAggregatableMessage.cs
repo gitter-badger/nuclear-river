@@ -13,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
         public Guid Id { get; set; }
         public IMessageFlow TargetFlow { get; set; }
 
-        public IEnumerable<AggregateOperation> Operations { get; set; }
+        public IReadOnlyCollection<AggregateOperation> Operations { get; set; }
 
         public bool Equals(IMessage other)
         {

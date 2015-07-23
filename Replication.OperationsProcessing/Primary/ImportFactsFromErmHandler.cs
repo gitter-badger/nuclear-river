@@ -39,10 +39,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
-            IList<FactOperation> operations = null;
             try
             {
-                operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations.ToList();
+                IReadOnlyCollection<FactOperation> operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
 
                 var statisticsOperations = _statisticsTransformation.DetectStatisticsOperations(operations);
 

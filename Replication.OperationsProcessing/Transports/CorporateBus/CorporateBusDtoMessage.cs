@@ -13,7 +13,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
         public Guid Id { get; set; }
         public IMessageFlow TargetFlow { get; set; }
 
-        public IEnumerable<ICorporateBusDto> Dtos { get; set; }
+        public IReadOnlyCollection<ICorporateBusDto> Dtos { get; set; }
+
         public bool Equals(IMessage other)
         {
             return ReferenceEquals(this, other);

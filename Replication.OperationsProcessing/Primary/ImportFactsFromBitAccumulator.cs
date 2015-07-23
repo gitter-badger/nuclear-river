@@ -34,7 +34,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                 };
             })
             .Where(x => x.Parsed)
-            .Select(x => x.Dto);
+            .Select(x => x.Dto)
+            .ToList();
 
             return new CorporateBusDtoMessage
             {

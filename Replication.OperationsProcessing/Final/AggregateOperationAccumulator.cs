@@ -12,7 +12,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
     {
         protected override AggregateOperationAggregatableMessage Process(PerformedOperationsFinalProcessingMessage message)
         {
-            var operations = message.FinalProcessings.Select(x => x.OperationId.CreateOperation(x.EntityTypeId, x.EntityId));
+            var operations = message.FinalProcessings.Select(x => x.OperationId.CreateOperation(x.EntityTypeId, x.EntityId)).ToList();
 
             return new AggregateOperationAggregatableMessage
             {
