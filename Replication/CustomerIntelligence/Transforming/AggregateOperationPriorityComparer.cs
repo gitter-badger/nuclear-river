@@ -10,9 +10,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private static readonly IReadOnlyDictionary<Type, int> Priority
             = new Dictionary<Type, int>
               {
-                  { typeof(InitializeAggregate), 3 },
-                  { typeof(RecalculateAggregate), 2 },
-                  { typeof(DestroyAggregate), 1 },
+                  { typeof(DestroyAggregate), 3 },
+                  { typeof(InitializeAggregate), 2 },
+                  { typeof(RecalculateAggregate), 1 },
               };
 
         public int Compare(Type x, Type y)
