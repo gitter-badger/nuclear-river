@@ -98,8 +98,9 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DataMappers\IValueObjectDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DataMappers\ValueObjectDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IAggregateInfo.cs" />

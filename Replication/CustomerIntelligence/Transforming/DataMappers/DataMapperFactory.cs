@@ -7,15 +7,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.D
 {
     internal static class DataMapperFactory
     {
-        public static IValueObjectDataMapper CreateValueObjectDataMapper(IDataMapper mapper, IValueObjectInfo valueObjectInfo)
+        public static ITypedDataMapper CreateTypedDataMapper(IDataMapper mapper, IMetadataInfo metadataInfo)
         {
-            var createType = typeof(ValueObjectDataMapper<>).MakeGenericType(valueObjectInfo.Type);
-            return (IValueObjectDataMapper)Activator.CreateInstance(createType, mapper);
-        }
-
-        public static ITypedDataMapper CreateTypedDataMapper(IDataMapper mapper, IIdentifiableInfo identifiableInfo)
-        {
-            var createType = typeof(TypedDataMapper<>).MakeGenericType(identifiableInfo.Type);
+            var createType = typeof(TypedDataMapper<>).MakeGenericType(metadataInfo.Type);
             return (ITypedDataMapper)Activator.CreateInstance(createType, mapper);
         }
     }

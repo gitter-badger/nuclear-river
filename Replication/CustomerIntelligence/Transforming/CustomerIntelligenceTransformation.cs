@@ -4,6 +4,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.DataMappers;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Mergers;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -99,9 +100,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
                 var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
 
-                var valueObjectDataMapper = DataMapperFactory.CreateValueObjectDataMapper(_mapper, valueObject);
-                var valueObjectMergeResult = valueObjectDataMapper.Merge(sourceValueObjects, targetValueObjects);
+                var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
+                var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
 
+                var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObject);
                 valueObjectDataMapper.Insert(valueObjectMergeResult.Difference);
             }
         }
@@ -117,9 +119,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
                 var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
 
-                var valueObjectDataMapper = DataMapperFactory.CreateValueObjectDataMapper(_mapper, valueObject);
-                var valueObjectMergeResult = valueObjectDataMapper.Merge(sourceValueObjects, targetValueObjects);
+                var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
+                var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
 
+                var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObject);
                 valueObjectDataMapper.Delete(valueObjectMergeResult.Complement);
                 valueObjectDataMapper.Insert(valueObjectMergeResult.Difference);
                 valueObjectDataMapper.Update(valueObjectMergeResult.Intersection);
@@ -166,9 +169,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
                 var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
 
-                var valueObjectDataMapper = DataMapperFactory.CreateValueObjectDataMapper(_mapper, valueObject);
-                var valueObjectMergeResult = valueObjectDataMapper.Merge(sourceValueObjects, targetValueObjects);
+                var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
+                var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
 
+                var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObject);
                 valueObjectDataMapper.Delete(valueObjectMergeResult.Complement);
             }
 
