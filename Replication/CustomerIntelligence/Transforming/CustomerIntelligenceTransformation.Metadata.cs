@@ -3,33 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class CustomerIntelligenceTransformation
     {
-        private static readonly Dictionary<Type, AggregateInfo> Aggregates
-            = new AggregateInfo[]
+        private static readonly Dictionary<Type, IAggregateInfo> Aggregates = new[]
               {
-                  AggregateInfo.OfType<Firm>()
+                  AggregateInfoBuilder.OfType<Firm>()
                                .HasSource(context => context.Firms)
                                .HasValueObject(context => context.FirmBalances, x => x.FirmId)
-                               .HasValueObject(context => context.FirmCategories, x => x.FirmId),
+                               .HasValueObject(context => context.FirmCategories, x => x.FirmId)
+                               .Build(),
 
-                  AggregateInfo.OfType<Client>()
+                  AggregateInfoBuilder.OfType<Client>()
                                .HasSource(context => context.Clients)
-                               .HasEntity(context => context.Contacts, x => x.ClientId),
+                               .HasEntity(context => context.Contacts, x => x.ClientId)
+                               .Build(),
 
-                  AggregateInfo.OfType<Project>()
+                  AggregateInfoBuilder.OfType<Project>()
                                .HasSource(context => context.Projects)
-                               .HasValueObject(context => context.ProjectCategories, x => x.ProjectId),
+                               .HasValueObject(context => context.ProjectCategories, x => x.ProjectId)
+                               .Build(),
 
-                  AggregateInfo.OfType<Territory>()
-                               .HasSource(context => context.Territories),
+                  AggregateInfoBuilder.OfType<Territory>()
+                               .HasSource(context => context.Territories)
+                               .Build(),
 
-                  AggregateInfo.OfType<CategoryGroup>()
-                               .HasSource(context => context.CategoryGroups),
+                  AggregateInfoBuilder.OfType<CategoryGroup>()
+                               .HasSource(context => context.CategoryGroups)
+                               .Build(),
 
-              }.ToDictionary(x => x.AggregateType);
+              }.ToDictionary(x => x.Type);
     }
 }
