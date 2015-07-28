@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}"
 EndProject
@@ -61,6 +61,26 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Tests", "Replication.Tests\Replication.Tests.csproj", "{25AACA77-648A-4462-8EC1-709963219C8E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settings.csproj", "{D4238D0C-3315-4449-B1AE-80F716D58D04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{8F3C0046-1F47-4C8E-8B03-D35E96686C6F}"
+	ProjectSection(SolutionItems) = preProject
+		Environments\ConvertUseCases.Production.Russia.config = Environments\ConvertUseCases.Production.Russia.config
+		Environments\Erm.Production.Russia.config = Environments\Erm.Production.Russia.config
+		Environments\quartz.Production.Russia.config = Environments\quartz.Production.Russia.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Templates", "Templates", "{F3C74BF1-8646-4DB6-AECB-42E10F8542B6}"
+	ProjectSection(SolutionItems) = preProject
+		Environments\Templates\ConvertUseCases.Test.Russia.config = Environments\Templates\ConvertUseCases.Test.Russia.config
+		Environments\Templates\Erm.Test.Russia.config = Environments\Templates\Erm.Test.Russia.config
+		Environments\Templates\quartz.Test.Russia.config = Environments\Templates\quartz.Test.Russia.config
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8A646634-2535-493C-A699-90B4D1C40A83}"
+	ProjectSection(SolutionItems) = preProject
+		Environments\Common\Erm.Release.config = Environments\Common\Erm.Release.config
+		Environments\Common\log4net.Release.config = Environments\Common\log4net.Release.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,5 +159,7 @@ Global
 		{1FB39973-A18A-4764-96D5-6F3347FF3EE6} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
 		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
 		{25AACA77-648A-4462-8EC1-709963219C8E} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
+		{F3C74BF1-8646-4DB6-AECB-42E10F8542B6} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
+		{8A646634-2535-493C-A699-90B4D1C40A83} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
 	EndGlobalSection
 EndGlobal
