@@ -26,6 +26,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
+            // разрешаем update на таблицу состоящую только из Primary Keys
+            LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;
+
             var sqlSettings = container.Resolve<ISqlSettingsAspect>();
 
             return container
