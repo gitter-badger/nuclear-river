@@ -6,16 +6,20 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
+using NuClear.Replication.OperationsProcessing.Performance;
+using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Final
 {
     public sealed class StatisticsAggregatableMessageHandler : IMessageProcessingHandler
     {
         private readonly StatisticsFinalTransformation _statisticsTransformation;
+        private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public StatisticsAggregatableMessageHandler(StatisticsFinalTransformation statisticsTransformation)
+        public StatisticsAggregatableMessageHandler(StatisticsFinalTransformation statisticsTransformation, ITelemetryPublisher telemetryPublisher)
         {
             _statisticsTransformation = statisticsTransformation;
+            _telemetryPublisher = telemetryPublisher;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -28,7 +32,10 @@ namespace NuClear.Replication.OperationsProcessing.Final
             try
             {
                 var operations = messages.OfType<StatisticsAggregatableMessage>().Single().Operations;
+
                 _statisticsTransformation.Recalculate(operations);
+                _telemetryPublisher.Publish<StatisticsProcessedOperationCountIdentity>(operations.Count());
+
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)

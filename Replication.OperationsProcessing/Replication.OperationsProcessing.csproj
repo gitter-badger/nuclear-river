@@ -207,6 +207,7 @@
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromBitHandler.cs" />
+    <Compile Include="Performance\StatisticsProcessedOperationCountIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Primary\FactOperationAggregatableMessage.cs" />
     <Compile Include="Primary\ImportFactsFromErmHandler.cs" />
