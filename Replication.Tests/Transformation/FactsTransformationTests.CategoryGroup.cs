@@ -72,9 +72,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1),
-                                          Aggregate.Recalculate<CI::CategoryGroup>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Client>(1)));
+                                          Aggregate.Recalculate<CI::CategoryGroup>(1)));
         }
     }
 }

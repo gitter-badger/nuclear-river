@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Contact>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Client>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
     }
 }

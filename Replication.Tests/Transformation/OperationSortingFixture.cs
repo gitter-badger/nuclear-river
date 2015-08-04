@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
@@ -25,9 +24,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var sortedData = data.OrderByDescending(x => x.GetType(), comparer).ToArray();
             
-            Assert.That(sortedData[0], Is.InstanceOf<InitializeAggregate>());
-            Assert.That(sortedData[1], Is.InstanceOf<RecalculateAggregate>());
-            Assert.That(sortedData[2], Is.InstanceOf<DestroyAggregate>());
+            Assert.That(sortedData[0], Is.InstanceOf<DestroyAggregate>());
+            Assert.That(sortedData[1], Is.InstanceOf<InitializeAggregate>());
+            Assert.That(sortedData[2], Is.InstanceOf<RecalculateAggregate>());
         }
 
         [Test]

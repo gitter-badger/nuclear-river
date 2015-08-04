@@ -33,10 +33,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Client>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1)));
         }
     }

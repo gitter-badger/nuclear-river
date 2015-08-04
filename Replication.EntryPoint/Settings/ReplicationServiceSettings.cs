@@ -6,7 +6,6 @@ using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Settings.API;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Telemetry.Logstash;
-using NuClear.Telemetry.Zabbix;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
@@ -16,13 +15,13 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
         {
             var connectionStringSettings = new ConnectionStringsSettingsAspect();
 
-            Aspects.Use<SqlSettingsAspect>()
+            Aspects.Use<ServiceBusMessageLockRenewalSettings>()
+                   .Use<SqlSettingsAspect>()
                    .Use<EnvironmentSettingsAspect>()
                    .Use(new PersistentStoreAspect(connectionStringSettings))
                    .Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus)))
                    .Use<TaskServiceProcessingSettingsAspect>()
                    .Use<CorporateBusSettingsAspect>()
-                   .Use<ZabbixSettingsAspect>()
                    .Use<LogstashSettingsAspect>()
                    .Use(connectionStringSettings)
                    .Use(new ConnectionStringSettingsAspect(new Dictionary<IConnectionStringIdentity, string>

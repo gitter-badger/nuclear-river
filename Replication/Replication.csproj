@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
       <Private>True</Private>
@@ -47,9 +43,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
     </Reference>
+    <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.5\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0-PashukCh-8b3440-40\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
-    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartProject.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\CustomerIntelligenceContext.cs" />
@@ -87,24 +95,44 @@
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\EntityInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IAggregateInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IdentifiableInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IEntityInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IIdentifiableInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IMetadataInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\IValueObjectInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfoBuilder.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ChangesApplier.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ChangesDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformationMetadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyProcessor.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IBitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Model\Facts\FirmCategory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\IStatisticsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Operations\CalculateStatisticsOperation.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.cs" />
+    <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsTransformationContext.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\Metadata\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\TransactionManagerExtensions.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ValueObjectInfo.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\DataMappers\DataMapperFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\DestroyAggregate.cs" />
@@ -125,7 +153,7 @@
     <Compile Include="CustomerIntelligence\Model\Contact.cs" />
     <Compile Include="CustomerIntelligence\Model\Firm.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmBalance.cs" />
-    <Compile Include="CustomerIntelligence\Model\FirmCategoryPartFirm.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmCategory.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Account.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Firm.cs" />
@@ -154,7 +182,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

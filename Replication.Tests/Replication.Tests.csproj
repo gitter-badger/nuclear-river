@@ -72,6 +72,9 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkCopyingOfStatistics.cs" />
+    <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
+    <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
@@ -101,9 +104,6 @@
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
     <Compile Include="IdentifiableObjectExtensions.cs" />
-    <Compile Include="Transformation\WhenFirmToCategoryRelationChanged.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

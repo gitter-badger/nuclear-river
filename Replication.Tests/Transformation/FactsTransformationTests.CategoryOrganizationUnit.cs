@@ -51,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Project>(1), Aggregate.Recalculate<CI::Project>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Project>(1)));
         }
 
         [Test]
@@ -73,8 +73,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Client>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1)));
         }
     }

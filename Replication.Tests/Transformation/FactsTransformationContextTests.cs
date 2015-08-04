@@ -30,8 +30,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformBranchOfficeOrganizationUnit()
         {
-            Transformation.Create(Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Erm::BranchOfficeOrganizationUnit>>()) ==
-                                                       Inquire(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 })))
+            Transformation.Create(Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Erm::BranchOfficeOrganizationUnit>>()) == Inquire(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 })))
                           .VerifyTransform(q => Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits().Map(q),
                                            Inquire(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 }));
         }

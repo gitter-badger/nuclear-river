@@ -6,7 +6,7 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal abstract class FactDependencyInfo
+    public abstract class FactDependencyInfo
     {
         public abstract Type AggregateType { get; }
 

@@ -4,6 +4,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Storage.Readings;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -54,7 +55,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             foreach (var dependency in _dependencies)
             {
                 var mapSpec = dependency.DependentAggregateSpecProvider(factIds);
-                var dependencyIds = mapSpec.Map(_query).ToArray();
+
+                IEnumerable<long> dependencyIds;
+                using (Probe.Create("Querying dependent aggregates"))
+                {
+                    dependencyIds = mapSpec.Map(_query).ToArray();
+                }
+
                 aggregateOperations.AddRange(dependencyIds.Select(dependencyId => operationFactory(dependency, dependencyId)));
             }
 

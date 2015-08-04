@@ -1,39 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
-        private readonly IDataContext _context;
+        private readonly DataConnection _dataConnection;
 
-        public SqlStoreSender(IDataContext context)
+        public SqlStoreSender(IDataContext dataConnection)
         {
-            _context = context;
+            _dataConnection = (DataConnection)dataConnection;
+        }
+
+        public void Push(IEnumerable<CalculateStatisticsOperation> operations, IMessageFlow targetFlow)
+        {
+            using (Probe.Create("Send Statistics Operations"))
+            {
+                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                Save(transportMessages);
+            }
         }
 
         public void Push(IEnumerable<AggregateOperation> operations, IMessageFlow targetFlow)
         {
-            var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
-            using (var scope = new TransactionScope(TransactionScopeOption.Required, DefaultTransactionOptions.Default))
+            using (Probe.Create("Send Aggregate Operations"))
             {
+                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                Save(transportMessages);
+            }
+        }
+
+        private void Save(IEnumerable<PerformedOperationFinalProcessing> transportMessages)
+        {
+            try
+            {
+                _dataConnection.BeginTransaction(IsolationLevel.ReadCommitted);
                 foreach (var message in transportMessages)
                 {
-                    _context.Insert(message);
+                    _dataConnection.Insert(message);
                 }
 
-                scope.Complete();
+                _dataConnection.CommitTransaction();
             }
+            catch
+            {
+                _dataConnection.RollbackTransaction();
+                throw;
+            }
+        }
+
+        private static PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
+        {
+            return new PerformedOperationFinalProcessing
+            {
+                CreatedOn = DateTime.UtcNow,
+                MessageFlowId = targetFlow.Id,
+                Context = operation.Serialize().ToString(),
+                OperationId = operation.GetIdentity(),
+            };
         }
 
         private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
@@ -46,7 +82,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                        EntityId = operation.AggregateId,
                        EntityTypeId = entityType.Id,
                        OperationId = operation.GetIdentity(),
-            };
+                   };
         }
     }
 }

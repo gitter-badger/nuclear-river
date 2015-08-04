@@ -2,6 +2,7 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
@@ -381,12 +382,14 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                  join firmAddressCategory in q.For(Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                                return from firm in q.For<Firm>()
-                                       join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                       join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                                       join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals
-                                           new { key.OrganizationUnitId, key.CategoryId }
-                                       select firm.Id;
+                                var query = from firm in q.For<Firm>()
+                                            join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                            join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                            join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals
+                                                new { key.OrganizationUnitId, key.CategoryId }
+                                            select firm.Id;
+
+                                return query.Distinct();
                             });
                     }
 
@@ -429,12 +432,14 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                                return from firm in q.For<Firm>()
-                                       join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                       join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                                       join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals
-                                           new { key.OrganizationUnitId, key.CategoryId }
-                                       select firm.Id;
+                                var query = from firm in q.For<Firm>()
+                                            join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                            join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                            join key in changeKeys on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals
+                                                new { key.OrganizationUnitId, key.CategoryId }
+                                            select firm.Id;
+
+                                return query.Distinct();
                             });
                     }
 
@@ -465,12 +470,14 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
-                                return from firm in q.For<Firm>()
-                                       join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                       join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
-                                       join key in changeKeys
-                                           on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
-                                       select firm.Id;
+                                var query = from firm in q.For<Firm>()
+                                            join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                            join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                            join key in changeKeys
+                                                on new { firm.OrganizationUnitId, firmAddressCategory.CategoryId } equals new { key.OrganizationUnitId, key.CategoryId }
+                                            select firm.Id;
+
+                                return query.Distinct(); 
                             });
                     }
 
@@ -530,6 +537,46 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             q => from project in q.For(Find.ByIds<Project>(ids))
                                  join territory in q.For<Territory>() on project.OrganizationUnitId equals territory.OrganizationUnitId
                                  select territory.Id);
+                    }
+                }
+
+                public static class ToStatistics
+                {
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirm(IEnumerable<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
+                            q => from firm in q.For(Find.ByIds<Firm>(ids))
+                                 join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
+                                 join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                 join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                 select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
+                    }
+
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddress(IEnumerable<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
+                            q => from firm in q.For<Firm>()
+                                 join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
+                                 join firmAddress in q.For(Find.ByIds<FirmAddress>(ids)) on firm.Id equals firmAddress.FirmId
+                                 join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                 select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
+                    }
+
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddressCategory(IEnumerable<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
+                            q => from firm in q.For<Firm>()
+                                 join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
+                                 join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
+                                 join firmAddressCategory in q.For(Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                 select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
+                    }
+
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByProject(IEnumerable<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
+                            q => from projectId in ids
+                                 select new CalculateStatisticsOperation { CategoryId = null, ProjectId = projectId });
                     }
                 }
             }

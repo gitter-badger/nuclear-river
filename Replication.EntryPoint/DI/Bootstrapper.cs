@@ -42,6 +42,7 @@ using NuClear.Messaging.Transports.CorporateBus;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.ServiceBus;
 using NuClear.Messaging.Transports.ServiceBus.API;
+using NuClear.Messaging.Transports.ServiceBus.LockRenewer;
 using NuClear.Metamodeling.Domain.Processors.Concrete;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
@@ -174,11 +175,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
             IdentitySurrogate.SetResolver(x => container.Resolve(x));
-            container.RegisterType<ITelemetryPublisher, AggregatingTelemetryPublisherDecorator>(Lifetime.Singleton,
-                                                                 new InjectionConstructor(
-                                                                     new ResolvedArrayParameter<ITelemetryPublisher>(
-                                                                         new ResolvedParameter<DebugTelemetryPublisher>(),
-                                                                         new ResolvedParameter<LogstashTelemetryPublisher>())));
+#if DEBUG
+            container.RegisterType<ITelemetryPublisher, DebugTelemetryPublisher>(Lifetime.Singleton);
+#else
+            container.RegisterType<ITelemetryPublisher, LogstashTelemetryPublisher>(Lifetime.Singleton);
+#endif
 
             // primary
             container
@@ -196,9 +197,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)
                             .RegisterType(typeof(ServiceBusMessageFlowReceiver), Lifetime.Singleton)
                             .RegisterType(typeof(CorporateBusMessageFlowReceiver), Lifetime.PerResolve)
-                            .RegisterType<ICorporateBusMessageFlowReceiverFactory, UnityCorporateBusMessageFlowReceiverFactory>(Lifetime.Singleton)
-                            .RegisterType<IServiceBusMessageFlowReceiverFactory, UnityServiceBusMessageFlowReceiverFactory>(Lifetime.Singleton)
-                            .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.Singleton)
+                            .RegisterType<IServiceBusLockRenewer, ReceivedMessagesLockRenewalManager>(Lifetime.Singleton)
+                            .RegisterType<ICorporateBusMessageFlowReceiverFactory, UnityCorporateBusMessageFlowReceiverFactory>(Lifetime.PerScope)
+                            .RegisterType<IServiceBusMessageFlowReceiverFactory, UnityServiceBusMessageFlowReceiverFactory>(Lifetime.PerScope)
+                            .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageFlowProcessorFactory, UnityMessageFlowProcessorFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.PerScope)
 

@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   join firmAddress in _query.For<Facts.FirmAddress>() on firm.Id equals firmAddress.FirmId
                                   join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                   join categoryOrganizationUnit in _query.For<Facts.CategoryOrganizationUnit>() on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId }
-                                       equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
+                                      equals new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
                                   join categoryGroup in _query.For<Facts.CategoryGroup>() on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
                                   group categoryGroup by firm.ClientId into categoryGroups
                                   select new { ClientId = categoryGroups.Key, CategoryGroupId = categoryGroups.Min(x => x.Id) };
@@ -139,7 +139,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<FirmCategoryPartFirm> FirmCategoriesPartFirm
+        public IQueryable<FirmCategory> FirmCategories
         {
             get
             {
@@ -150,7 +150,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var level3 = from firmAddress in _query.For<Facts.FirmAddress>()
                              join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category3.Id
@@ -160,7 +160,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category2.Id
@@ -171,49 +171,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                              join category2 in categories2 on category3.ParentId equals category2.Id
                              join category1 in categories1 on category2.ParentId equals category1.Id
-                             select new FirmCategoryPartFirm
+                             select new FirmCategory
                              {
                                  FirmId = firmAddress.FirmId,
                                  CategoryId = category1.Id
                              };
 
                 // perform union using distinct
-                // "left join FirmStatistics" допустим только при условии, что (FirmId, CategoryId) - primary key в ней, иначе эта операция может дать дубли по fc
-                return from firmCategory in level3.Union(level2).Union(level1)
-                       from statistics in _query.For<Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firmCategory.FirmId && x.CategoryId == firmCategory.CategoryId).DefaultIfEmpty()
-                       select new FirmCategoryPartFirm
-                       {
-                           FirmId = firmCategory.FirmId,
-                           CategoryId = firmCategory.CategoryId,
-                           Hits = statistics != null ? statistics.Hits : 0,
-                           Shows = statistics != null ? statistics.Shows : 0,
-                       };
-            }
-        }
-
-        public IQueryable<FirmCategoryPartProject> FirmCategoriesPartProject
-        {
-            get
-            {
-                var firmCategories = (from project in _query.For<Facts.Project>()
-                                      join firm in _query.For<Facts.Firm>() on project.OrganizationUnitId equals firm.OrganizationUnitId
-                                      join firmAddress in _query.For<Facts.FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                      join categoryFirmAddress in _query.For<Facts.CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                      select new { ProjectId = project.Id, FirmId = firm.Id, categoryFirmAddress.CategoryId }).Distinct();
-
-                var firmCounts = firmCategories.GroupBy(x => new { x.ProjectId, x.CategoryId })
-                                         .Select(x => new { x.Key.CategoryId, x.Key.ProjectId, FirmCount = x.Count() });
-
-                return from firmCategory in firmCategories
-                       let count = firmCounts.Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.FirmCount).SingleOrDefault()
-                       let statistics = _query.For<Facts.ProjectCategoryStatistics>().Where(x => x.ProjectId == firmCategory.ProjectId && x.CategoryId == firmCategory.CategoryId).Select(x => x.AdvertisersCount).SingleOrDefault()
-                       select new FirmCategoryPartProject
-                              {
-                                  FirmId = firmCategory.FirmId,
-                                  CategoryId = firmCategory.CategoryId,
-                                  FirmCount = count,
-                                  AdvertisersShare = (float)statistics / count
-                              };
+                return level3.Union(level2).Union(level1);
             }
         }
 
@@ -238,13 +203,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        join categoryOrganizationUnit in _query.For<Facts.CategoryOrganizationUnit>() on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                        join category in _query.For<Facts.Category>() on categoryOrganizationUnit.CategoryId equals category.Id
                        select new ProjectCategory
-                       {
-                           ProjectId = project.Id,
-                           CategoryId = categoryOrganizationUnit.CategoryId,
+                              {
+                                  ProjectId = project.Id,
+                                  CategoryId = categoryOrganizationUnit.CategoryId,
                                   Name = category.Name,
                                   Level = category.Level,
                                   ParentId = category.ParentId,
-                       };
+                              };
             }
         }
 

@@ -46,7 +46,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var mock = new Mock<IQuery>();
             mock.Setup(x => x.For<Facts::Contact>())
                 .Returns(Inquire(new Facts::Contact { Id = 1, Role = 1 },
-                                 new Facts::Contact { Id = 2, IsFired = true },
+                new Facts::Contact { Id = 2, IsFired = true },
                                  new Facts::Contact { Id = 3, ClientId = 1 }));
 
             Transformation.Create(mock.Object)
@@ -68,7 +68,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                  new Facts::Project { Id = 2, OrganizationUnitId = 2 }));
             mock.Setup(x => x.For<Facts::Firm>())
                 .Returns(Inquire(
-                    new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
+                new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
                     new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2 }));
             mock.Setup(x => x.For<Facts::FirmAddress>())
                 .Returns(Inquire(new Facts::FirmAddress { Id = 1, FirmId = 1 },
@@ -82,8 +82,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             // TODO: split into several tests
             Transformation.Create(mock.Object)
-                          .VerifyTransform(x => x.Firms.ById(1), Inquire(new CI::Firm { Name = "1st firm" }), x => new { x.Name }, "The name should be processed.")
-                          .VerifyTransform(x => x.Firms.ById(1), Inquire(new CI::Firm { CreatedOn = monthAgo }), x => new { x.CreatedOn }, "The createdOn should be processed.")
+                .VerifyTransform(x => x.Firms.ById(1), Inquire(new CI::Firm { Name = "1st firm" }), x => new { x.Name }, "The name should be processed.")
+                .VerifyTransform(x => x.Firms.ById(1), Inquire(new CI::Firm { CreatedOn = monthAgo }), x => new { x.CreatedOn }, "The createdOn should be processed.")
                           .VerifyTransform(x => x.Firms.ById(1, 2),
                                            Inquire(new CI::Firm { LastDisqualifiedOn = dayAgo },
                                                    new CI::Firm { LastDisqualifiedOn = now }),
@@ -114,16 +114,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 0 }));
             mock.Setup(x => x.For<Facts::Firm>())
                 .Returns(Inquire(new Facts::Firm { Id = 1, },
-                                 new Facts::Firm { Id = 2, ClientId = 1 },
-                                 new Facts::Firm { Id = 3, ClientId = 2 },
+                new Facts::Firm { Id = 2, ClientId = 1 },
+                new Facts::Firm { Id = 3, ClientId = 2 },
                                  new Facts::Firm { Id = 4, ClientId = 3 }));
             mock.Setup(x => x.For<Facts::Client>())
                 .Returns(Inquire(new Facts::Client { Id = 1, HasPhone = true, HasWebsite = true },
-                                 new Facts::Client { Id = 2, HasPhone = false, HasWebsite = false },
+                new Facts::Client { Id = 2, HasPhone = false, HasWebsite = false },
                                  new Facts::Client { Id = 3, HasPhone = false, HasWebsite = false }));
             mock.Setup(x => x.For<Facts::Contact>())
                 .Returns(Inquire(new Facts::Contact { Id = 1, ClientId = 2, HasPhone = true, HasWebsite = true },
-                                 new Facts::Contact { Id = 2, ClientId = 3, HasPhone = true, HasWebsite = false },
+                new Facts::Contact { Id = 2, ClientId = 3, HasPhone = true, HasWebsite = false },
                                  new Facts::Contact { Id = 3, ClientId = 3, HasPhone = false, HasWebsite = true }));
 
             Transformation.Create(mock.Object)
@@ -141,18 +141,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 0 }));
             mock.Setup(x => x.For<Facts::Firm>())
                 .Returns(Inquire(new Facts::Firm { Id = 1, Name = "has no addresses" },
-                                 new Facts::Firm { Id = 2, Name = "has addresses, but no contacts" },
-                                 new Facts::Firm { Id = 3, Name = "has one phone contact" },
-                                 new Facts::Firm { Id = 4, Name = "has one website contact" },
+                new Facts::Firm { Id = 2, Name = "has addresses, but no contacts" },
+                new Facts::Firm { Id = 3, Name = "has one phone contact" },
+                new Facts::Firm { Id = 4, Name = "has one website contact" },
                                  new Facts::Firm { Id = 5, Name = "has an unknown contact" }));
             mock.Setup(x => x.For<Facts::FirmAddress>())
                 .Returns(Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 },
-                                 new Facts::FirmAddress { Id = 2, FirmId = 3 },
-                                 new Facts::FirmAddress { Id = 3, FirmId = 4 },
+                new Facts::FirmAddress { Id = 2, FirmId = 3 },
+                new Facts::FirmAddress { Id = 3, FirmId = 4 },
                                  new Facts::FirmAddress { Id = 4, FirmId = 5 }));
             mock.Setup(x => x.For<Facts::FirmContact>())
                 .Returns(Inquire(new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = 2 },
-                                 new Facts::FirmContact { Id = 2, HasWebsite = true, FirmAddressId = 3 },
+                new Facts::FirmContact { Id = 2, HasWebsite = true, FirmAddressId = 3 },
                                  new Facts::FirmContact { Id = 3, FirmAddressId = 4 }));
 
             Transformation.Create(mock.Object)
@@ -169,7 +169,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var mock = new Mock<IQuery>();
             mock.Setup(x => x.For<Facts::Firm>())
                 .Returns(Inquire(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
-                                 new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
+                new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
                                  new Facts::Firm { Id = 3, ClientId = 1, OrganizationUnitId = 1 }));
             mock.Setup(x => x.For<Facts::Client>())
                 .Returns(Inquire(new Facts::Client { Id = 1 },
@@ -182,13 +182,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                  new Facts::BranchOfficeOrganizationUnit { Id = 2, OrganizationUnitId = 2 }));
             mock.Setup(x => x.For<Facts::Account>())
                 .Returns(Inquire(new Facts::Account { Id = 1, Balance = 123, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 },
-                                 new Facts::Account { Id = 2, Balance = 234, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 2 },
+                new Facts::Account { Id = 2, Balance = 234, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 2 },
                                  new Facts::Account { Id = 3, Balance = 345, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 2 }));
 
             Transformation.Create(mock.Object)
                           .VerifyTransform(x => x.FirmBalances.OrderBy(fb => fb.FirmId),
                                            Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1 },
-                                                   new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
+                    new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
                                                    new CI::FirmBalance { FirmId = 3, Balance = 123, AccountId = 1 }),
                                            "The balance should be processed.");
         }
@@ -212,15 +212,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                  new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 }));
             mock.Setup(x => x.For<Facts::FirmCategoryStatistics>())
                 .Returns(Inquire(new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                                 new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
                                  new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 }));
 
             Transformation.Create(mock.Object)
-                          .VerifyTransform(x => x.FirmCategoriesPartFirm,
-                                           Inquire(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                                                   new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 2, Hits = 2 },
-                                                   new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 3, Shows = 2 },
-                                                   new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 4 }),
+                          .VerifyTransform(x => x.FirmCategories,
+                                           Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                                                   new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
+                                                   new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                                                   new CI::FirmCategory { FirmId = 1, CategoryId = 4 }),
                                            "The firm categories should be processed.");
         }
 
@@ -247,10 +247,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 2 }));
             mock.Setup(x => x.For<Facts::CategoryOrganizationUnit>())
                 .Returns(Inquire(new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
-                                 new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
+                                                                               new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 }));
             mock.Setup(x => x.For<Facts::Category>())
                 .Returns(Inquire(new Facts::Category { Id = 3 },
-                                 new Facts::Category { Id = 4 }));
+                                                                new Facts::Category { Id = 4 }));
             
             // Десять фирм в проекте, каждая с рубрикой #3
             mock.Setup(x => x.For<Facts::Firm>())
@@ -266,7 +266,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Transformation.Create(mock.Object)
                           .VerifyTransform(x => x.ProjectCategories,
                                            Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 },
-                                                   new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
+                                                                             new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
         }
 
         [Test]
@@ -275,56 +275,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var mock = new Mock<IQuery>();
             mock.Setup(x => x.For<Facts::Project>())
                 .Returns(Inquire(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
-                                 new Facts::Project { Id = 2, OrganizationUnitId = 2 }));
+                        new Facts::Project { Id = 2, OrganizationUnitId = 2 }));
             mock.Setup(x => x.For<Facts::Territory>())
                 .Returns(Inquire(new Facts::Territory { Id = 1, Name = "name1", OrganizationUnitId = 1 },
-                                 new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 }));
+                        new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 }));
 
             Transformation.Create(mock.Object)
                           .VerifyTransform(x => x.Territories,
                                            Inquire(
-                                               new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
+                    new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
                                                new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }));
-        }
-
-        [Test]
-        public void ShouldCalculateStatistics()
-        {
-            var mock = new Mock<IQuery>()
-                .Setup(x => x.For<Facts::Project>(),
-                       new Facts.Project { Id = 1, OrganizationUnitId = 2 },
-                       new Facts.Project { Id = 3, OrganizationUnitId = 4 })
-                .Setup(x => x.For<Facts::Category>(),
-                       new Facts.Category { Id = 5 },
-                       new Facts.Category { Id = 6 })
-                .Setup(x => x.For<Facts::Firm>(),
-                       new Facts.Firm { Id = 7, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 8, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 9, OrganizationUnitId = 2 },
-                       new Facts.Firm { Id = 10, OrganizationUnitId = 4 })
-                .Setup(x => x.For<Facts::FirmAddress>(),
-                       new Facts.FirmAddress { Id = 7, FirmId = 7 },
-                       new Facts.FirmAddress { Id = 8, FirmId = 8 },
-                       new Facts.FirmAddress { Id = 9, FirmId = 9 },
-                       new Facts.FirmAddress { Id = 10, FirmId = 10 })
-                .Setup(x => x.For<Facts::CategoryFirmAddress>(),
-                       new Facts.CategoryFirmAddress { Id = 11, FirmAddressId = 7, CategoryId = 6 },
-                       new Facts.CategoryFirmAddress { Id = 12, FirmAddressId = 8, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 13, FirmAddressId = 8, CategoryId = 6 },
-                       new Facts.CategoryFirmAddress { Id = 14, FirmAddressId = 9, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 15, FirmAddressId = 10, CategoryId = 5 },
-                       new Facts.CategoryFirmAddress { Id = 16, FirmAddressId = 10, CategoryId = 6 })
-                .Setup(x => x.For<Facts::ProjectCategoryStatistics>(),
-                       new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 6, AdvertisersCount = 1 });
-
-            var ctx = new CustomerIntelligenceTransformationContext(mock.Object);
-
-            var statistics = ctx.FirmCategoriesPartProject.ToList();
-
-            var firmStatistics = statistics.SingleOrDefault(x => x.FirmId == 7 && x.CategoryId == 6);
-            Assert.That(firmStatistics, Is.Not.Null);
-            Assert.That(firmStatistics.FirmCount, Is.EqualTo(2));
-            Assert.That(firmStatistics.AdvertisersShare, Is.EqualTo(0.5f));
         }
 
         #region Transformation

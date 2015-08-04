@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
@@ -16,17 +17,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
-        private readonly ErmFactsTransformation _ermFactsTransformation;
+        private readonly ErmFactsTransformation _transformation;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(ErmFactsTransformation ermFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmHandler(ErmFactsTransformation transformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
-            _ermFactsTransformation = ermFactsTransformation;
             _sender = sender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
+            _transformation = transformation;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -38,11 +39,19 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                var message = messages.OfType<FactOperationAggregatableMessage>().Single();
-                var aggregateOperations = _ermFactsTransformation.Transform(message.Operations);
-                _telemetryPublisher.Publish<ErmFactOperationProcessedCountIdentity>(message.Operations.Count());
+                var operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
 
+                var result = _transformation.Transform(operations);
+                _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
+
+                var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
+                _sender.Push(statisticOperations, StatisticsFlow.Instance);
+                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
+
+                var aggregateOperations = result.OfType<AggregateOperation>().ToList();
                 _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)

@@ -13,6 +13,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Opera
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.AdvancedSearch.Replication.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
@@ -334,7 +335,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Category>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -354,7 +355,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Category>(2))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -374,7 +375,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Category>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -441,7 +442,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -460,7 +461,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2), Aggregate.Recalculate<CI::Firm>(2)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(2)));
         }
 
         [Test]
@@ -476,7 +477,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(3))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
 
         [Test]
@@ -550,7 +551,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Client>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Client>(1), Aggregate.Recalculate<CI::Firm>(1)));
+                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1), Aggregate.Recalculate<CI::Client>(1)));
         }
 
         [Test]
@@ -923,13 +924,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly ErmFactsTransformation _transformation;
             private readonly IDataMapper _mapper;
-            private readonly List<AggregateOperation> _operations;
+            private readonly List<IOperation> _operations;
 
             private Transformation(IQuery source, IQuery target, IDataMapper mapper)
             {
                 _mapper = mapper ?? Mock.Of<IDataMapper>();
                 _transformation = new ErmFactsTransformation(source, target, _mapper, Mock.Of<ITransactionManager>());
-                _operations = new List<AggregateOperation>();
+                _operations = new List<IOperation>();
             }
 
             public static Transformation Create(IQuery source = null, IQuery target = null, IDataMapper mapper = null)
@@ -955,7 +956,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return this;
             }
 
-            public Transformation Verify(IEnumerable<AggregateOperation> expected, Func<AggregateOperation, bool> predicate = null)
+            public Transformation Verify(IEnumerable<IOperation> expected, Func<IOperation, bool> predicate = null)
             {
                 var operations = _operations.AsEnumerable();
                 if (predicate != null)

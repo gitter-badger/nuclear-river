@@ -28,8 +28,7 @@ function Replicate-FactsToCI {
 	[void]$factsConnection.AddMappingSchema([NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema]::Facts)
 
 	$ermFactsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.ErmFactsContext($factsConnection)
-	$bitFactsContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.BitFactsContext($factsConnection)
-	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($ermFactsContext, $bitFactsContext)
+	$ciTransformationContext = New-Object NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation.CustomerIntelligenceTransformationContext($ermFactsContext)
 
 
 	$ciConnection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence

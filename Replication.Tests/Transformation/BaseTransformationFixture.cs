@@ -4,8 +4,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
     internal abstract class BaseTransformationFixture : BaseDataFixture
     {
-        #region Fact
-
         protected static class Fact
         {
             public static FactOperation Operation<T>(long entityId)
@@ -13,10 +11,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return new FactOperation(typeof(T), entityId);
             }
         }
-
-        #endregion
-
-        #region Aggregate
 
         protected static class Aggregate
         {
@@ -36,6 +30,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             }
         }
 
-        #endregion
+        protected static class Statistics
+        {
+            public static CalculateStatisticsOperation Operation(long projectId, long? categoryId = null)
+            {
+                return new CalculateStatisticsOperation { ProjectId = projectId, CategoryId = categoryId };
+            }
+        }
     }
 }

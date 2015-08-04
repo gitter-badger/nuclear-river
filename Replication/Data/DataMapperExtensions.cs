@@ -9,6 +9,7 @@ using System.Reflection;
 using LinqToDB.Expressions;
 
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.Data
 {
@@ -32,12 +33,18 @@ namespace NuClear.AdvancedSearch.Replication.Data
 
         public static void InsertAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, query);
+            using (Probe.Create("Inserting", query.ElementType.Name))
+            {
+                InvokeMethodOn(ResolveMethod(InsertMethods, InsertMethodInfo, query.ElementType), mapper, query);
+            }
         }
 
         public static void UpdateAll(this IDataMapper mapper, IQueryable query)
         {
-            InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, query);
+            using (Probe.Create("Updating", query.ElementType.Name))
+            {
+                InvokeMethodOn(ResolveMethod(UpdateMethods, UpdateMethodInfo, query.ElementType), mapper, query);
+            }
         }
 
         public static void DeleteAll(this IDataMapper mapper, IQueryable query)
@@ -45,8 +52,11 @@ namespace NuClear.AdvancedSearch.Replication.Data
             // Перед удалением требуется полность вычитать результат запроса.
             // Возможно, это баг в linq2db: он использует единственный SqlCommand для всех запросов в течении жизни DataContext
             // Это является проблемой только при удалении, поскольку все остальные операции проводят чтение и запись через разные DataContext
-            var items = query.Cast<IObject>().ToArray();
-            InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
+            using (Probe.Create("Deleting", query.ElementType.Name))
+            {
+                var items = query.Cast<IObject>().ToArray();
+                InvokeMethodOn(ResolveMethod(DeleteMethods, DeleteMethodInfo, query.ElementType), mapper, items);
+            }
         }
 
         private static void InvokeMethodOn(MethodInfo method, IDataMapper mapper, IEnumerable items)

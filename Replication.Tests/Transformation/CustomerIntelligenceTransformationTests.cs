@@ -145,12 +145,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             var source = Mock.Of<ICustomerIntelligenceContext>(ctx => 
                 ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
-                ctx.FirmCategoriesPartFirm == Inquire(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 }));
+                ctx.FirmCategories == Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }));
 
             Transformation.Create(source)
                 .Transform(Aggregate.Initialize<CI::Firm>(1))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 }))));
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
         }
         
         [Test]
@@ -223,9 +223,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Firm { Id = 2 },
                     new CI::Firm { Id = 3 }
                     ) &&
-                ctx.FirmCategoriesPartFirm == Inquire(
-                    new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 },
-                    new CI::FirmCategoryPartFirm { FirmId = 2, CategoryId = 2 }
+                ctx.FirmCategories == Inquire(
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                    new CI::FirmCategory { FirmId = 2, CategoryId = 2 }
                     ));
             var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
                 ctx.Firms == Inquire(
@@ -233,9 +233,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Firm { Id = 2 },
                     new CI::Firm { Id = 3 }
                     ) &&
-                ctx.FirmCategoriesPartFirm == Inquire(
-                    new CI::FirmCategoryPartFirm { FirmId = 2, CategoryId = 1 },
-                    new CI::FirmCategoryPartFirm { FirmId = 3, CategoryId = 1 }
+                ctx.FirmCategories == Inquire(
+                    new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
+                    new CI::FirmCategory { FirmId = 3, CategoryId = 1 }
                     ));
 
             Transformation.Create(source, target)
@@ -246,10 +246,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 2, CategoryId = 2 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 2, CategoryId = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 3, CategoryId = 1 }))));
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }))));
         }
 
         [Test]
@@ -300,12 +300,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var source = Mock.Of<ICustomerIntelligenceContext>();
             var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
                 ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
-                ctx.FirmCategoriesPartFirm == Inquire(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 }));
+                ctx.FirmCategories == Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }));
 
             Transformation.Create(source, target)
                 .Transform(Aggregate.Destroy<CI::Firm>(1))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategoryPartFirm { FirmId = 1, CategoryId = 1 }))));
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
         }
 
         [Test]

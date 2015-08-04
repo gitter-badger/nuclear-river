@@ -1,6 +1,7 @@
 ﻿using Moq;
 
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.AdvancedSearch.Replication.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
@@ -23,7 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery)
                           .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire(Aggregate.Initialize<CI::Project>(1)));
+                          .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Initialize<CI::Project>(1)));
         }
 
         [Test]
@@ -35,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire(Aggregate.Destroy<CI::Project>(1)));
+                          .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Destroy<CI::Project>(1)));
         }
 
         [Test]
@@ -51,11 +52,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1),
-                                          Aggregate.Recalculate<CI::Firm>(1),
-                                          Aggregate.Recalculate<CI::Project>(1),
-                                          Aggregate.Recalculate<CI::Territory>(2),
-                                          Aggregate.Recalculate<CI::Firm>(2)));
+                          .Verify(Inquire<IOperation>(Statistics.Operation(1),
+                                                      Aggregate.Recalculate<CI::Territory>(1),
+                                                      Aggregate.Recalculate<CI::Firm>(1),
+                                                      Aggregate.Recalculate<CI::Project>(1),
+                                                      Aggregate.Recalculate<CI::Territory>(2),
+                                                      Aggregate.Recalculate<CI::Firm>(2)));
         }
     }
 }

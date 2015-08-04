@@ -5,9 +5,11 @@ using Microsoft.ServiceBus;
 
 using NuClear.AdvancedSearch.Settings;
 using NuClear.Jobs;
+using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Security.API;
 using NuClear.Telemetry;
+using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 
 using Quartz;
@@ -37,6 +39,16 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         {
             ReportPrimaryProcessingQueueLength();
             ReportFinalProcessingQueueLength();
+            ReportProbes();
+        }
+
+        private void ReportProbes()
+        {
+            var reports = DefaultReportSink.Instance.ConsumeReports();
+            foreach (var report in reports)
+            {
+                _telemetry.Trace("ProbeReport", report);
+            }
         }
 
         private void ReportFinalProcessingQueueLength()
@@ -46,10 +58,16 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 _sqlConnection.Open();
             }
 
-            const string CommandText = "select count(*) from Transport.PerformedOperationFinalProcessing";
+            const string CommandText = "select count(*) from Transport.PerformedOperationFinalProcessing " +
+                                       "where MessageFlowId = @flowId";
             var command = new SqlCommand(CommandText, _sqlConnection);
-            var count = (int)command.ExecuteScalar();
-            _telemetry.Publish<FinalProcessingQueueLengthIdentity>(count);
+            command.Parameters.Add("@flowId", SqlDbType.UniqueIdentifier);
+
+            command.Parameters["@flowId"].Value = AggregatesFlow.Instance.Id;
+            _telemetry.Publish<FinalProcessingAggregateQueueLengthIdentity>((int)command.ExecuteScalar());
+
+            command.Parameters["@flowId"].Value = StatisticsFlow.Instance.Id;
+            _telemetry.Publish<FinalProcessingStatisticsQueueLengthIdentity>((int)command.ExecuteScalar());
 
             _sqlConnection.Close();
         }

@@ -4,11 +4,13 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.AdvancedSearch.Replication.Transforming;
 using NuClear.Storage.Readings;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class ErmFactsTransformation
+    public sealed class ErmFactsTransformation
     {
         private readonly IQuery _sourceQuery;
         private readonly IQuery _destQuery;
@@ -33,14 +35,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _transactionManager = transactionManager;
         }
 
-        public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
+        public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)
         {
-            return _transactionManager.WithinTransaction(() => DoTransform(operations));
+            using (Probe.Create("ETL1 Transforming"))
+            {
+                return _transactionManager.WithinTransaction(() => DoTransform(operations));
+            }
         }
 
-        private IEnumerable<AggregateOperation> DoTransform(IEnumerable<FactOperation> operations)
+        private IReadOnlyCollection<IOperation> DoTransform(IEnumerable<FactOperation> operations)
         {
-            var result = new List<AggregateOperation>();
+            var result = Enumerable.Empty<IOperation>();
 
             var slices = operations.GroupBy(operation => new { operation.FactType })
                                    .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
@@ -51,21 +56,30 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
                 ErmFactInfo factInfo;
-                if (!Facts.TryGetValue(factType, out factInfo))
+                if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
                 {
                     throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                 }
 
-                var changesDetector = CreateChangesDetector(factInfo);
-                var changes = changesDetector.DetectChanges(factIds);
+                using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
+                {
+                    var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _destQuery);
+                    var changesDetector = CreateChangesDetector(factInfo);
+                    var changesApplier = CreateChangesApplier(factInfo);
 
-                var changesApplier = CreateChangesApplier(factInfo);
-                var aggregateOperations = changesApplier.ApplyChanges(changes);
+                    var changes = changesDetector.DetectChanges(factIds);
 
-                result.AddRange(aggregateOperations);
+                    var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(factIds);
+                    var aggregateOperations = changesApplier.ApplyChanges(changes);
+                    var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(factIds);
+
+                    result = result.Union(statisticsOperationsBeforeChanges)
+                                   .Union(aggregateOperations)
+                                   .Union(statisticsOperationsAfterChanges);
+                }
             }
 
-            return result;
+            return result.ToList();
         }
 
         private IChangesDetector CreateChangesDetector(ErmFactInfo factInfo)
