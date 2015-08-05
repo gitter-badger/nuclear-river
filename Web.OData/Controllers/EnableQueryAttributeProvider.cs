@@ -36,11 +36,8 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
                 throw new ArgumentException();
             }
 
-            // клиент не должен беспокоиться за сортировку
-            EnsureStableOrdering = true;
-
-            // ограничение для клиентского paging
-            MaxTop = 1000;
+            // ограничение для серверного paging
+            PageSize = 100;
         }
     }
 }
