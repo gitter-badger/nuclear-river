@@ -3,10 +3,6 @@ if not exists (select * from sys.schemas where name = 'ERM')
 	exec('create schema ERM')
 go
 
--- drop views
-if object_id('ERM.ViewClient', 'view') is not null drop view ERM.ViewClient;
-go
-
 -- drop tables
 if object_id('ERM.Account') is not null drop table ERM.Account;
 if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
@@ -196,29 +192,3 @@ create table ERM.Territory(
     , constraint PK_Territories primary key (Id)
 )
 go
-
--- ViewClient, indexed view for query optimization
-create view ERM.ViewClient
-with schemabinding
-as
-select 
-	Firm.ClientId,
-	CategoryFirmAddress.FirmAddressId,
-	CategoryOrganizationUnit.CategoryId,
-	CategoryOrganizationUnit.CategoryGroupId,
-	CategoryGroup.Rate
-from ERM.Firm
-	inner join ERM.FirmAddress on Firm.Id = FirmAddress.FirmId
-	inner join ERM.CategoryFirmAddress on FirmAddress.Id = CategoryFirmAddress.FirmAddressId
-	inner join ERM.CategoryOrganizationUnit on CategoryFirmAddress.CategoryId = CategoryOrganizationUnit.CategoryId AND Firm.OrganizationUnitId = CategoryOrganizationUnit.OrganizationUnitId
-	inner join ERM.CategoryGroup on CategoryOrganizationUnit.CategoryGroupId = CategoryGroup.Id
-where Firm.ClientId is not null
-go
-create unique clustered index PK_ViewClient
-    on ERM.ViewClient (FirmAddressId, CategoryId);
-go
-create nonclustered index IX_ViewClient_ClientId_CategoryGroupId_Rate
-	on ERM.ViewClient (ClientId, Rate)
-	include (CategoryGroupId)
-go
-
