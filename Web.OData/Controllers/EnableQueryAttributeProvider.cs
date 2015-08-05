@@ -36,8 +36,8 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
                 throw new ArgumentException();
             }
 
-            // далее можно кастомизовать EnableQueryAttribute используя entityElement, но пока это не нужно
-            PageSize = 40;
+            // ограничение для клиентского paging
+            MaxTop = 1000;
         }
     }
 }
