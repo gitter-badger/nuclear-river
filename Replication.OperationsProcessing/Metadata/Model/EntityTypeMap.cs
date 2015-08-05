@@ -61,7 +61,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                 {
                     CreateMapping<EntityTypeCategoryGroup, CI.CategoryGroup>(),
                     CreateMapping<EntityTypeClient, CI.Client>(),
-                    CreateMapping<EntityTypeContact, CI.Contact>(),
+                    CreateMapping<EntityTypeContact, CI.ClientContact>(),
                     CreateMapping<EntityTypeFirm, CI.Firm>(),
                     CreateMapping<EntityTypeFirmBalance, CI.FirmBalance>(),
                     CreateMapping<EntityTypeFirmCategory, CI.FirmCategory>(),

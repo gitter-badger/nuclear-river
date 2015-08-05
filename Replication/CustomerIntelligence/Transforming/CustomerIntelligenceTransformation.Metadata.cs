@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                   AggregateInfoBuilder.OfType<Client>()
                                .HasSource(context => context.Clients)
-                               .HasEntity(context => context.Contacts, x => x.ClientId)
+                               .HasValueObject(context => context.ClientContacts, x => x.ClientId)
                                .Build(),
 
                   AggregateInfoBuilder.OfType<Project>()

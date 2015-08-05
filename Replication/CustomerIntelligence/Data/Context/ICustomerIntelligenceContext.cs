@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 
         IQueryable<Client> Clients { get; }
 
-        IQueryable<Contact> Contacts { get; }
+        IQueryable<ClientContact> ClientContacts { get; }
 
         IQueryable<Firm> Firms { get; }
 
