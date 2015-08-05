@@ -1,6 +1,5 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks;
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
@@ -25,6 +24,8 @@ using NuClear.Metamodeling.Provider.Sources;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Metadata.Model;
+using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
 namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
@@ -33,6 +34,8 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
     {
         public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver, MessageProcessingStage[] stages)
         {
+            EntityTypeMap.Initialize();
+
             var settings = new PerformedOperationsPrimaryFlowProcessorSettings { AppropriatedStages = stages };
 
             var metadataProvider = new MetadataProvider(new IMetadataSource[]
@@ -47,6 +50,7 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
             return container
                         .RegisterType<ITracer, NullTracer>()
                         .RegisterInstance<IMetadataProvider>(metadataProvider)
+                        .RegisterType<ITelemetryPublisher, DebugTelemetryPublisher>(Lifetime.Singleton)
                         .RegisterInstance<IPerformedOperationsFlowProcessorSettings>(settings)
                         .RegisterInstance(receiver)
                         .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.Singleton)

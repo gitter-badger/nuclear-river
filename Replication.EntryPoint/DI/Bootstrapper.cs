@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Transactions;
 
 using LinqToDB.Mapping;
@@ -64,7 +62,6 @@ using NuClear.Security.API.UserContext;
 using NuClear.Security.API.UserContext.Identity;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
-using NuClear.Storage;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
@@ -94,11 +91,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                  };
 
             container.AttachQueryableContainerExtension()
-                     .UseParameterResolvers(new ParameterResolver[]
-                                                 {
-                                                    //ScopedDomainContextsStoreDependencyResolver
-                                                 }
-                                                .Concat(ParameterResolvers.Defaults))
+                     .UseParameterResolvers(ParameterResolvers.Defaults)
                      .ConfigureMetadata()
                      .ConfigureSettingsAspects(settingsContainer)
                      .ConfigureTracing(tracer, tracerContextManager)
@@ -292,18 +285,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 default:
                     throw new IndexOutOfRangeException("Specified scope is unknown");
             }
-        }
-
-        private static bool ScopedDomainContextsStoreDependencyResolver(IUnityContainer container, Type type, string targetNamedMapping, ParameterInfo constructorParameter, out object resolvedParameter)
-        {
-            resolvedParameter = null;
-            if (typeof(ScopedDomainContextsStore) == constructorParameter.ParameterType)
-            {
-                resolvedParameter = new ResolvedParameter(constructorParameter.ParameterType, targetNamedMapping);
-                return true;
-            }
-
-            return false;
         }
     }
 }
