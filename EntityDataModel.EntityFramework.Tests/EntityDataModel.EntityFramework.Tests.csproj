@@ -96,7 +96,7 @@
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
     <Compile Include="Model\CustomerIntelligence\CategoryGroup.cs" />
     <Compile Include="Model\CustomerIntelligence\Client.cs" />
-    <Compile Include="Model\CustomerIntelligence\Contact.cs" />
+    <Compile Include="Model\CustomerIntelligence\ClientContact.cs" />
     <Compile Include="Model\CustomerIntelligence\ContactRole.cs" />
     <Compile Include="Model\CustomerIntelligence\Firm.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Contact.csv" />
+    <EmbeddedResource Include="Data\ClientContact.csv" />
     <EmbeddedResource Include="Data\Client.csv" />
     <EmbeddedResource Include="Data\Project.csv" />
     <EmbeddedResource Include="Data\Territory.csv" />

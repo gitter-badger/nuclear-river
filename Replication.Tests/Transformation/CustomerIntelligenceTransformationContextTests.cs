@@ -41,8 +41,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .VerifyTransform(x => x.Clients.ById(1), Inquire(new CI::Client { Name = "a client" }), x => new { x.Name }, "The name should be processed.");
         }
 
-        [Test]
-        public void ShouldTransformContact()
+       [Test]
+        public void ShouldTransformClientContact()
         {
             var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Contacts).Returns(Inquire(
@@ -52,9 +52,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 ));
 
             Transformation.Create(context.Object)
-                .VerifyTransform(x => x.Contacts.ById(1), Inquire(new CI::Contact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
-                .VerifyTransform(x => x.Contacts.ById(2), Inquire(new CI::Contact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
-                .VerifyTransform(x => x.Contacts.ById(3), Inquire(new CI::Contact { ClientId = 1 }), x => new { x.ClientId }, "The client reference should be processed.")
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 3), Inquire(new CI::ClientContact { ClientId = 1 }), x => new { x.ClientId }, "The client reference should be processed.")
                 ;
         }
 

@@ -44,9 +44,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
-        public void ReloadContacts()
+        public void ReloadClientContacts()
         {
-            Reload(ctx => ctx.Contacts);
+            Reload(ctx => ctx.ClientContacts);
         }
 
         [Test]

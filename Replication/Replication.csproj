@@ -102,10 +102,8 @@
     <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\EntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IAggregateInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IdentifiableInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IEntityInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IIdentifiableInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IMetadataInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IValueObjectInfo.cs" />
@@ -150,7 +148,7 @@
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
     <Compile Include="CustomerIntelligence\Model\Client.cs" />
-    <Compile Include="CustomerIntelligence\Model\Contact.cs" />
+    <Compile Include="CustomerIntelligence\Model\ClientContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Firm.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmBalance.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmCategory.cs" />

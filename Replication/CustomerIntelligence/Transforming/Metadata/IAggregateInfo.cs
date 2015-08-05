@@ -4,8 +4,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
 {
     internal interface IAggregateInfo : IIdentifiableInfo
     {
-        IEnumerable<IEntityInfo> Entities { get; }
-
         IEnumerable<IValueObjectInfo> ValueObjects { get; }
     }
 }

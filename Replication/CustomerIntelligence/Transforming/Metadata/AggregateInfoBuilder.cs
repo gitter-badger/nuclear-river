@@ -21,18 +21,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
         where TAggregate : ICustomerIntelligenceObject, IIdentifiable
     {
         private Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<TAggregate>> _queryByIds;
-        private readonly List<IEntityInfo> _entities;
         private readonly List<IValueObjectInfo> _valueObjects;
 
         public AggregateInfoBuilder()
         {
-            _entities = new List<IEntityInfo>();
             _valueObjects = new List<IValueObjectInfo>();
         }
 
         public IAggregateInfo Build()
         {
-            return new AggregateInfo<TAggregate>(_queryByIds, _entities, _valueObjects);
+            return new AggregateInfo<TAggregate>(_queryByIds, _valueObjects);
         }
 
         public AggregateInfoBuilder<TAggregate> HasSource(Func<ICustomerIntelligenceContext, IQueryable<TAggregate>> queryProvider)
@@ -45,15 +43,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
         {
             var queryByParentIds = CreateFilteredQueryProvider(queryProvider, parentIdSelector);
             _valueObjects.Add(new ValueObjectInfo<TValueObject>(queryByParentIds));
-            return this;
-        }
-
-        public AggregateInfoBuilder<TAggregate> HasEntity<TEntity>(Func<ICustomerIntelligenceContext, IQueryable<TEntity>> queryProvider, Expression<Func<TEntity, long>> parentIdSelector)
-            where TEntity : IIdentifiable
-        {
-            var queryByIds = CreateFilteredQueryProvider(queryProvider, CreateKeyAccessor<TEntity>());
-            var queryByParentIds = CreateFilteredQueryProvider(queryProvider, parentIdSelector);
-            _entities.Add(new EntityInfo<TEntity>(queryByIds, queryByParentIds));
             return this;
         }
 

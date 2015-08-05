@@ -80,9 +80,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .Relation(
                                                     EntityRelationElement.Config.Name("Contacts")
                                                         .DirectTo(
-                                                            EntityElement.Config.Name(EntityName.Contact)
-                                                                .HasKey("Id")
-                                                                .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                                            EntityElement.Config.Name(EntityName.ClientContact)
+                                                                .HasKey("ContactId")
+                                                                .Property(EntityPropertyElement.Config.Name("ContactId").OfType(ElementaryTypeKind.Int64))
                                                                 .Property(EntityPropertyElement.Config.Name("Role").OfType<EnumTypeElement>(EnumTypeElement.Config.Name(EnumName.ContactRole)))
                                                                 .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
                                                         )
@@ -125,9 +125,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                                  .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOne()),
-                    EntityElement.Config.Name(TableName.Contact)
-                                 .HasKey("Id")
-                                 .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                    EntityElement.Config.Name(TableName.ClientContact)
+                                 .HasKey("ClientId", "ContactId")
+                                 .Property(EntityPropertyElement.Config.Name("ContactId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Role").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOne()),
@@ -172,7 +172,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Map(EntityName.FirmBalance, TableName.FirmBalance)
                     .Map(EntityName.FirmCategory, TableName.FirmCategory)
                     .Map(EntityName.Client, TableName.Client)
-                    .Map(EntityName.Contact, TableName.Contact);
+                    .Map(EntityName.ClientContact, TableName.ClientContact);
 
             private static class EnumName
             {
@@ -186,7 +186,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string ProjectCategory = "ProjectCategory";
                 public const string ProjectTerritory = "Territory";
                 public const string Client = "Client";
-                public const string Contact = "Contact";
+                public const string ClientContact = "ClientContact";
                 public const string Firm = "Firm";
                 public const string FirmBalance = "FirmBalance";
                 public const string FirmCategory = "FirmCategory";
@@ -202,7 +202,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string FirmBalance = TableSchema + "." + "FirmBalance";
                 public const string FirmCategory = TableSchema + "." + "FirmCategory";
                 public const string Client = TableSchema + "." + "Client";
-                public const string Contact = TableSchema + "." + "Contact";
+                public const string ClientContact = TableSchema + "." + "ClientContact";
 
                 private const string TableSchema = "CustomerIntelligence";
             }
