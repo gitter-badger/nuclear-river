@@ -16,6 +16,7 @@ if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelli
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
 if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
+if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
 if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact;
 if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
