@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.Specifications;
@@ -16,94 +16,94 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadAccounts()
         {
-            Reload(query => query.For(Specs.Erm.Find.Accounts()));
+            Reload(query => Specs.Erm.Map.ToFacts.Accounts().Map(query));
         }
 
         [Test]
         public void ReloadBranchOfficeOrganizationUnits()
         {
-            Reload(query => query.For(Specs.Erm.Find.BranchOfficeOrganizationUnits()));
+            Reload(query => Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits().Map(query));
         }
 
         [Test]
         public void ReloadCategories()
         {
-            Reload(query => query.For(Specs.Erm.Find.Categories()));
+            Reload(query => Specs.Erm.Map.ToFacts.Categories().Map(query));
         }
 
         [Test]
         public void ReloadCategoryGroups()
         {
-            Reload(query => query.For(Specs.Erm.Find.CategoryGroups()));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryGroups().Map(query));
         }
 
         [Test]
         public void ReloadCategoryFirmAddresses()
         {
-            Reload(query => query.For(Specs.Erm.Find.CategoryFirmAddresses()));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryFirmAddresses().Map(query));
         }
 
         [Test]
         public void ReloadCategoryOrganizationUnits()
         {
-            Reload(query => query.For(Specs.Erm.Find.CategoryOrganizationUnits()));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryOrganizationUnits().Map(query));
         }
 
         [Test]
         public void ReloadClients()
         {
-            Reload(query => query.For(Specs.Erm.Find.Clients()));
+            Reload(query => Specs.Erm.Map.ToFacts.Clients().Map(query));
         }
 
         [Test]
         public void ReloadContacts()
         {
-            Reload(query => query.For(Specs.Erm.Find.Contacts()));
+            Reload(query => Specs.Erm.Map.ToFacts.Contacts().Map(query));
         }
 
         [Test]
         public void ReloadFirms()
         {
-            Reload(query => query.For(Specs.Erm.Find.Firms()));
+            Reload(query => Specs.Erm.Map.ToFacts.Firms().Map(query));
         }
 
         [Test]
         public void ReloadFirmAddresses()
         {
-            Reload(query => query.For(Specs.Erm.Find.FirmAddresses()));
+            Reload(query => Specs.Erm.Map.ToFacts.FirmAddresses().Map(query));
         }
 
         [Test]
         public void ReloadFirmContacts()
         {
-            Reload(query => query.For(Specs.Erm.Find.FirmContacts()));
+            Reload(query => Specs.Erm.Map.ToFacts.FirmContacts().Map(query));
         }
 
         [Test]
         public void ReloadLegalPersons()
         {
-            Reload(query => query.For(Specs.Erm.Find.LegalPersons()));
+            Reload(query => Specs.Erm.Map.ToFacts.LegalPersons().Map(query));
         }
 
         [Test]
         public void ReloadOrders()
         {
-            Reload(query => query.For(Specs.Erm.Find.Orders()));
+            Reload(query => Specs.Erm.Map.ToFacts.Orders().Map(query));
         }
 
         [Test]
         public void ReloadProjects()
         {
-            Reload(query => query.For(Specs.Erm.Find.Projects()));
+            Reload(query => Specs.Erm.Map.ToFacts.Projects().Map(query));
         }
 
         [Test]
         public void ReloadTerritories()
         {
-            Reload(query => query.For(Specs.Erm.Find.Territories()));
+            Reload(query => Specs.Erm.Map.ToFacts.Territories().Map(query));
         }
 
-        private void Reload<T>(Func<IQuery, IEnumerable<T>> loader)
+        private void Reload<T>(Func<IQuery, IQueryable<T>> loader)
             where T : class
         {
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
