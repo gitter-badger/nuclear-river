@@ -11,7 +11,7 @@ using NuClear.Tracing.API;
 
 namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public sealed class ImportFactsFromBitAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromBitFlow, CorporateBusPerformedOperationsMessage, CorporateBusDtoMessage>
+    public sealed class ImportFactsFromBitAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromBitFlow, CorporateBusPerformedOperationsMessage, CorporateBusAggregatableMessage>
     {
         private readonly ITracer _tracer;
 
@@ -20,7 +20,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _tracer = tracer;
         }
 
-        protected override CorporateBusDtoMessage Process(CorporateBusPerformedOperationsMessage message)
+        protected override CorporateBusAggregatableMessage Process(CorporateBusPerformedOperationsMessage message)
         {
             var xmls = message.Packages.SelectMany(x => x.ConvertToXElements());
 
@@ -37,9 +37,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             .Select(x => x.Dto)
             .ToList();
 
-            return new CorporateBusDtoMessage
+            return new CorporateBusAggregatableMessage
             {
-                Id = message.Id,
                 TargetFlow = MessageFlow,
                 Dtos = dtos,
             };

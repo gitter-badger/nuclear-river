@@ -8,7 +8,6 @@ using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Performance;
-using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
@@ -32,14 +31,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value));
         }
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
             try
             {
-                foreach (var message in messages.OfType<CorporateBusDtoMessage>())
+                foreach (var message in messages.OfType<CorporateBusAggregatableMessage>())
                 {
                     foreach (var dto in message.Dtos)
                     {

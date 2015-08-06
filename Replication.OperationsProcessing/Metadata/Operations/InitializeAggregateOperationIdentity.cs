@@ -4,7 +4,7 @@ using NuClear.Model.Common.Operations.Identity;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Operations
 {
-    class InitializeAggregateOperationIdentity : OperationIdentityBase<InitializeAggregateOperationIdentity>
+    internal sealed class InitializeAggregateOperationIdentity : OperationIdentityBase<InitializeAggregateOperationIdentity>
     {
         public override int Id { get { return 0; } }
 
