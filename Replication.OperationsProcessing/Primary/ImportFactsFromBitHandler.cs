@@ -45,17 +45,17 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         var firmStatisticsDto = dto as FirmStatisticsDto;
                         if (firmStatisticsDto != null)
                         {
-                            var aggregateOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
-                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count());
-                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                            var calculateStatisticsOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
+                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count);
+                            _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
                         }
 
                         var categoryStatisticsDto = dto as CategoryStatisticsDto;
                         if (categoryStatisticsDto != null)
                         {
-                            var aggregateOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
-                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count());
-                            _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                            var calculateStatisticsOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
+                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count);
+                            _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
                         }
                     }
                 }

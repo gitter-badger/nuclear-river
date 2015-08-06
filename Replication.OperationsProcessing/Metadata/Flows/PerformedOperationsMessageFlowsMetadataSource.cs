@@ -28,7 +28,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                                       .Strategy<ImportFactsFromBitAccumulator>()
                                                       .Handler<ImportFactsFromBitHandler>()
                                                       .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
-                                                      .To.Final().Flow<AggregatesFlow>().Connect()
+                                                      .To.Final().Flow<StatisticsFlow>().Connect()
                 )
                                .Final(
 
