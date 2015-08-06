@@ -110,10 +110,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private void RecalculateAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
         {
-            var sourceActualIds = aggregateInfo.QueryIdsByIds(_source, ids);
-            var targetActualIds = aggregateInfo.QueryIdsByIds(_target, ids);
-            var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
-
             foreach (var valueObject in aggregateInfo.ValueObjects)
             {
                 var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
@@ -128,42 +124,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 valueObjectDataMapper.Update(valueObjectMergeResult.Intersection);
             }
 
-            var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
-            aggregateDataMapper.Delete(aggregateInfo.QueryByIds(_target, mergeResult.Complement.ToList()));
-            aggregateDataMapper.Insert(aggregateInfo.QueryByIds(_source, mergeResult.Difference.ToList()));
-            aggregateDataMapper.Update(aggregateInfo.QueryByIds(_source, mergeResult.Intersection.ToList()));
-
-            foreach (var entity in aggregateInfo.Entities)
-            {
-                var sourceEntityIds = entity.QueryIdsByParentIds(_source, ids);
-                var targetEntityIds = entity.QueryIdsByParentIds(_target, ids);
-
-                var entityDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, entity);
-                var entityMergeResult = MergeTool.Merge(sourceEntityIds, targetEntityIds);
-
-                entityDataMapper.Delete(entity.QueryByIds(_target, entityMergeResult.Complement.ToList()));
-                entityDataMapper.Insert(entity.QueryByIds(_source, entityMergeResult.Difference.ToList()));
-                entityDataMapper.Update(entity.QueryByIds(_source, entityMergeResult.Intersection.ToList()));
-            }
-        }
-
-        private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
-        {
             var sourceActualIds = aggregateInfo.QueryIdsByIds(_source, ids);
             var targetActualIds = aggregateInfo.QueryIdsByIds(_target, ids);
             var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
 
-            foreach (var entity in aggregateInfo.Entities)
-            {
-                var sourceEntityIds = entity.QueryIdsByParentIds(_source, ids);
-                var targetEntityIds = entity.QueryIdsByParentIds(_target, ids);
+            var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
+            aggregateDataMapper.Delete(aggregateInfo.QueryByIds(_target, mergeResult.Complement.ToList()));
+            aggregateDataMapper.Insert(aggregateInfo.QueryByIds(_source, mergeResult.Difference.ToList()));
+            aggregateDataMapper.Update(aggregateInfo.QueryByIds(_source, mergeResult.Intersection.ToList()));
+        }
 
-                var entityDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, entity);
-                var entityMergeResult = MergeTool.Merge(sourceEntityIds, targetEntityIds);
-
-                entityDataMapper.Delete(entity.QueryByIds(_target, entityMergeResult.Complement.ToList()));
-            }
-
+        private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
+        {
             foreach (var valueObject in aggregateInfo.ValueObjects)
             {
                 var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
@@ -175,6 +147,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObject);
                 valueObjectDataMapper.Delete(valueObjectMergeResult.Complement);
             }
+
+            var sourceActualIds = aggregateInfo.QueryIdsByIds(_source, ids);
+            var targetActualIds = aggregateInfo.QueryIdsByIds(_target, ids);
+            var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
 
             var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
             aggregateDataMapper.Delete(aggregateInfo.QueryByIds(_target, mergeResult.Complement.ToList()));

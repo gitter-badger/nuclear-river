@@ -60,17 +60,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<Contact> Contacts
+        public IQueryable<ClientContact> ClientContacts
         {
             get
             {
                 return from contact in _query.For<Facts.Contact>()
-                       select new Contact
+                       select new ClientContact
                               {
-                                  Id = contact.Id,
+                                  ClientId = contact.ClientId,
+                                  ContactId = contact.Id,
                                   Role = contact.Role,
                                   IsFired = contact.IsFired,
-                                  ClientId = contact.ClientId
                               };
             }
         }

@@ -3,10 +3,6 @@ if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
 	exec('create schema CustomerIntelligence')
 go
 
--- drop views
-if object_id('CustomerIntelligence.FirmCategory', 'view') is not null drop view CustomerIntelligence.FirmCategory;
-go
-
 -- drop tables
 if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
 if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
@@ -17,6 +13,7 @@ if object_id('CustomerIntelligence.FirmBalance') is not null drop table Customer
 if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
+if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact;
 if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
 go
@@ -109,12 +106,12 @@ create table CustomerIntelligence.Client(
 )
 go
 
--- Contact
-create table CustomerIntelligence.Contact(
-	Id bigint not null
+-- ClientContact
+create table CustomerIntelligence.ClientContact(
+	ClientId bigint not null
+	, ContactId bigint not null
 	, [Role] int not null
 	, IsFired bit not null constraint DF_Contacts_IsFired default 0
-    , ClientId bigint not null
-    , constraint PK_Contacts primary key (Id)
+    , constraint PK_ClientContact primary key (ClientId, ContactId)
 )
 go

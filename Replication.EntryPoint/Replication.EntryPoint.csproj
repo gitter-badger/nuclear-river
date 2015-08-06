@@ -159,7 +159,7 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0-PashukCh-8b3440-40\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0-TypedMet-b25579-42\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">

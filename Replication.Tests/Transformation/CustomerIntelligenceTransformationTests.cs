@@ -28,17 +28,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))));
         }
 
-        [Test]
+       [Test]
         public void ShouldInitializeClientHavingContact()
         {
             var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
                 ctx.Clients == Inquire(new CI::Client { Id = 1 }) &&
-                ctx.Contacts == Inquire(new CI::Contact { Id = 1, ClientId = 1 }));
+                ctx.ClientContacts == Inquire(new CI::ClientContact { ClientId = 1, ContactId = 1 }));
 
             Transformation.Create(source)
                 .Transform(Aggregate.Initialize<CI::Client>(1))
                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Contact { Id = 1 }, x => x.Id))), Times.Never);
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))));
         }
 
         [Test]
@@ -63,9 +63,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Client { Id = 2 },
                     new CI::Client { Id = 3 }
                     ) &&
-                ctx.Contacts == Inquire(
-                    new CI::Contact { Id = 1, ClientId = 1 },
-                    new CI::Contact { Id = 2, ClientId = 2 }
+                ctx.ClientContacts == Inquire(
+                    new CI::ClientContact { ClientId = 1, ContactId = 1 },
+                    new CI::ClientContact { ClientId = 2, ContactId = 2 }
                     ));
             var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
                 ctx.Clients == Inquire(
@@ -73,9 +73,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Client { Id = 2 },
                     new CI::Client { Id = 3 }
                     ) &&
-                ctx.Contacts == Inquire(
-                    new CI::Contact { Id = 2, ClientId = 2 },
-                    new CI::Contact { Id = 3, ClientId = 3 }
+                ctx.ClientContacts == Inquire(
+                    new CI::ClientContact { ClientId = 2, ContactId = 2 },
+                    new CI::ClientContact { ClientId = 3, ContactId = 3 }
                     ));
 
             Transformation.Create(source, target)
@@ -86,9 +86,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 2 }))))
                 .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 3 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Contact { Id = 1, ClientId = 1 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Contact { Id = 2, ClientId = 2 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Contact { Id = 3, ClientId = 3 }))));
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))))
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 2, ContactId = 2 }))))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 3, ContactId = 3 }))));
         }
 
         [Test]
@@ -109,12 +109,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var source = Mock.Of<ICustomerIntelligenceContext>();
             var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
                 ctx.Clients == Inquire(new CI::Client { Id = 1 }) &&
-                ctx.Contacts == Inquire(new CI::Contact { Id = 1, ClientId = 1 }));
+                ctx.ClientContacts == Inquire(new CI::ClientContact { ClientId = 1, ContactId = 1 }));
 
             Transformation.Create(source, target)
                 .Transform(Aggregate.Destroy<CI::Client>(1))
                 .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Contact { Id = 1, ClientId = 1 }))));
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))));
         }
 
         [Test]

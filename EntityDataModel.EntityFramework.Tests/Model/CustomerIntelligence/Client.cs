@@ -8,6 +8,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public string Name { get; set; }
 
         public CategoryGroup CategoryGroup { get; set; }
-        public ICollection<Contact> Contacts { get; set; }
+        public ICollection<ClientContact> Contacts { get; set; }
     }
 }

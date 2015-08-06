@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             using (var context = new DbContext(connection, model.Compile(), false))
             {
                 Assert.That(context.Set<Client>().ToArray(), Has.Length.EqualTo(1));
-                Assert.That(context.Set<Contact>().ToArray(), Has.Length.EqualTo(3));
+                Assert.That(context.Set<ClientContact>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<Firm>().ToArray(), Has.Length.EqualTo(2));
                 Assert.That(context.Set<FirmBalance>().ToArray(), Has.Length.EqualTo(3));
                 Assert.That(context.Set<FirmCategory>().ToArray(), Has.Length.EqualTo(3));
@@ -100,6 +100,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             builder.Entity<Firm>();
             builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId });
+            builder.Entity<ClientContact>().HasKey(x => new { x.ContactId, x.ClientId });
 
             var model = builder.Build(EffortProvider);
             model.Dump();

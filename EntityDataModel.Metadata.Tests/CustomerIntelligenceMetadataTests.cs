@@ -61,8 +61,8 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         [TestCase("CustomerIntelligence/ConceptualModel/FirmCategory", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/FirmCategory'},'Features':[]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client'},'Features':[]}")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client/CategoryGroup", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client/CategoryGroup'},'Features':[{'Cardinality':'One','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/CategoryGroup'},'Features':[{'EntitySetName':'CategoryGroups'}]}}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Client/Contacts", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client/Contacts'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Contact'},'Features':[]}}]}")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Contact", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Contact'},'Features':[]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/Client/Contacts", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/Client/Contacts'},'Features':[{'Cardinality':'Many','Target':{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ClientContact'},'Features':[]}}]}")]
+        [TestCase("CustomerIntelligence/ConceptualModel/ClientContact", MetadataKind.Identity | MetadataKind.Features, Result = "{'Identity':{'Id':'erm://metadata/AdvancedSearch/CustomerIntelligence/ConceptualModel/ClientContact'},'Features':[]}")]
         public string ShouldReturnMetadata(string path, MetadataKind properties)
         {
             IMetadataElement element;
@@ -82,7 +82,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         [TestCase("CustomerIntelligence/ConceptualModel")]
         [TestCase("CustomerIntelligence/ConceptualModel/CategoryGroup")]
         [TestCase("CustomerIntelligence/ConceptualModel/Client")]
-        [TestCase("CustomerIntelligence/ConceptualModel/Contact")]
+        [TestCase("CustomerIntelligence/ConceptualModel/ClientContact")]
         [TestCase("CustomerIntelligence/ConceptualModel/Firm")]
         [TestCase("CustomerIntelligence/ConceptualModel/FirmBalance")]
         [TestCase("CustomerIntelligence/ConceptualModel/FirmCategory")]
@@ -92,7 +92,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         [TestCase("CustomerIntelligence/StoreModel")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.CategoryGroup")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Client")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Contact")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.ClientContact")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Firm")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmBalance")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmCategory")]

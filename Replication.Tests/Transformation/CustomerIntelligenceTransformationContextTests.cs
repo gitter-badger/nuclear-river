@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
-        public void ShouldTransformContact()
+        public void ShouldTransformClientContact()
         {
             var mock = new Mock<IQuery>();
             mock.Setup(x => x.For<Facts::Contact>())
@@ -50,9 +50,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                  new Facts::Contact { Id = 3, ClientId = 1 }));
 
             Transformation.Create(mock.Object)
-                .VerifyTransform(x => x.Contacts.ById(1), Inquire(new CI::Contact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
-                .VerifyTransform(x => x.Contacts.ById(2), Inquire(new CI::Contact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
-                .VerifyTransform(x => x.Contacts.ById(3), Inquire(new CI::Contact { ClientId = 1 }), x => new { x.ClientId }, "The client reference should be processed.");
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
+                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 3), Inquire(new CI::ClientContact { ClientId = 1 }), x => new { x.ClientId }, "The client reference should be processed.");
         }
 
         [Test]
@@ -199,9 +199,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var mock = new Mock<IQuery>();
             mock.Setup(x => x.For<Facts::Category>())
                 .Returns(Inquire(new Facts::Category { Id = 1, Level = 1 },
-                                 new Facts::Category { Id = 2, Level = 2, ParentId = 1 },
-                                 new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
-                                 new Facts::Category { Id = 4, Level = 3, ParentId = 2 }));
+                        new Facts::Category { Id = 2, Level = 2, ParentId = 1 }, 
+                        new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
+                        new Facts::Category { Id = 4, Level = 3, ParentId = 2 }));
             mock.Setup(x => x.For<Facts::Firm>())
                 .Returns(Inquire(new Facts::Firm { Id = 1 }));
             mock.Setup(x => x.For<Facts::FirmAddress>())
@@ -218,8 +218,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Transformation.Create(mock.Object)
                           .VerifyTransform(x => x.FirmCategories,
                                            Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
-                                                   new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
-                                                   new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
+                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
                                                    new CI::FirmCategory { FirmId = 1, CategoryId = 4 }),
                                            "The firm categories should be processed.");
         }
