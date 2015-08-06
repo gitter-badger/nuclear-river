@@ -13,7 +13,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public string Name { get; set; }
 
-        public long OrganizationUnitId { get; set; }
+        public long? OrganizationUnitId { get; set; }
 
         public bool IsActive { get; set; }
 

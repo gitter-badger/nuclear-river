@@ -181,7 +181,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Id = firmContact.Id,
                                   HasPhone = firmContact.ContactType == ContactType.Phone,
                                   HasWebsite = firmContact.ContactType == ContactType.Website,
-                                  FirmAddressId = (long)firmContact.FirmAddressId,
+                                  FirmAddressId = firmContact.FirmAddressId.Value,
                               };
             }
         }
@@ -195,7 +195,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        select new LegalPerson
                               {
                                   Id = legalPerson.Id,
-                                  ClientId = (long)legalPerson.ClientId,
+                                  ClientId = legalPerson.ClientId.Value,
                               };
             }
         }
@@ -226,11 +226,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from project in _context.Projects
+                       where project.OrganizationUnitId != null
                        select new Project
                        {
                            Id = project.Id, 
                            Name = project.Name,
-                           OrganizationUnitId = project.OrganizationUnitId
+                           OrganizationUnitId = project.OrganizationUnitId.Value
                        };
             }
         }
