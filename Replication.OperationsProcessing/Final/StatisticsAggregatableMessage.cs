@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing;

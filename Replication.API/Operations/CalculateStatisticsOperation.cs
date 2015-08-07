@@ -1,6 +1,4 @@
-﻿using NuClear.AdvancedSearch.Replication.Transforming;
-
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
+﻿namespace NuClear.AdvancedSearch.Replication.API.Operations
 {
     public class CalculateStatisticsOperation : IOperation
     {

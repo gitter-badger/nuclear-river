@@ -1,8 +1,6 @@
 ﻿using System;
 
-using NuClear.AdvancedSearch.Replication.Transforming;
-
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
+namespace NuClear.AdvancedSearch.Replication.API.Operations
 {
     public abstract class AggregateOperation : IOperation
     {

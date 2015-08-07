@@ -1,4 +1,4 @@
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 {

@@ -1,38 +1,34 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
+using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal interface IChangesApplier
-    {
-        IReadOnlyCollection<AggregateOperation> ApplyChanges(MergeTool.MergeResult<long> changes);
-    }
-
-    internal class ChangesApplier<TFact> : IChangesApplier where TFact : class, IErmFactObject
+    public class SourceChangesApplier<TFact> : ISourceChangesApplier<TFact> where TFact : class, IErmFactObject
     {
         private readonly MapSpecification<IQuery, IQueryable<TFact>> _sourceMapSpecification;
         private readonly IEnumerable<FactDependencyInfo> _dependentAggregates;
         private readonly IQuery _sourceQuery;
         private readonly IQuery _destQuery;
-        private readonly IDataMapper _mapper;
+        private readonly IRepository<TFact> _repository;
 
-        public ChangesApplier(ErmFactInfo factInfo, IQuery sourceQuery, IQuery destQuery, IDataMapper mapper)
+        public SourceChangesApplier(ErmFactInfo factInfo, IQuery sourceQuery, IQuery destQuery, IRepository<TFact> repository)
         {
             _sourceMapSpecification = ((ErmFactInfo.ErmFactInfoImpl<TFact>)factInfo).MapSpecification;
             _dependentAggregates = factInfo.DependencyInfos;
             _sourceQuery = sourceQuery;
             _destQuery = destQuery;
-            _mapper = mapper;
+            _repository = repository;
         }
 
-        public IReadOnlyCollection<AggregateOperation> ApplyChanges(MergeTool.MergeResult<long> changes)
+        public IReadOnlyCollection<AggregateOperation> ApplyChanges(IMergeResult<long> changes)
         {
             var idsToCreate = changes.Difference.ToArray();
             var idsToUpdate = changes.Intersection.ToArray();
@@ -48,7 +44,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private IEnumerable<AggregateOperation> CreateFact(IReadOnlyCollection<long> factIds)
         {
             var sourceQueryable = _sourceMapSpecification.Map(_sourceQuery).Where(Specs.Find.ByIds<TFact>(factIds));
-            _mapper.InsertAll<TFact>(sourceQueryable);
+            _repository.AddRange(sourceQueryable);
+            _repository.Save();
 
             var processor = new FactDependencyProcessor(_destQuery, _dependentAggregates);
             return processor.ProcessOnCreateFact(factIds);
@@ -60,7 +57,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var before = beforeProcessor.ProcessOnUpdateFact(factIds);
 
             var sourceQueryable = _sourceMapSpecification.Map(_sourceQuery).Where(Specs.Find.ByIds<TFact>(factIds));
-            _mapper.UpdateAll(sourceQueryable);
+            foreach (var fact in sourceQueryable)
+            {
+                _repository.Update(fact);
+            }
+            
+            _repository.Save();
 
             var afterProcessor = new FactDependencyProcessor(_destQuery, _dependentAggregates);
             var after = afterProcessor.ProcessOnUpdateFact(factIds);
@@ -74,7 +76,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var result = processor.ProcessOnDeleteFact(factIds);
 
             var sourceQueryable = _destQuery.For(Specs.Find.ByIds<TFact>(factIds));
-            _mapper.DeleteAll(sourceQueryable);
+            _repository.DeleteRange(sourceQueryable);
+            _repository.Save();
 
             return result;
         }

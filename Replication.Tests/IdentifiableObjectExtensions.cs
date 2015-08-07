@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {

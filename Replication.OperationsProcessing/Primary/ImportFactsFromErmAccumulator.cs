@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsTracking.API.Changes;

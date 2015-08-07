@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public abstract class FactDependencyInfo
     {

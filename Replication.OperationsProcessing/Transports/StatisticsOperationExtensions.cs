@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.Model.Common.Entities;
-using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 
 namespace NuClear.Replication.OperationsProcessing.Transports

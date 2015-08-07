@@ -6,11 +6,14 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
@@ -251,7 +254,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                   c.Resolve<IManagedConnectionStateScopeFactory>(),
                                                   ResolveMappingSchema(scope),
                                                   transactionOptions,
-                                                  c.Resolve<IPendingChangesHandlingStrategy>())));
+                                                  c.Resolve<IPendingChangesHandlingStrategy>())))
+
+                .RegisterType<ISourceChangesDetectorFactory, SourceChangesDetectorFactory>(Lifetime.PerScope)
+                .RegisterType<ISourceChangesApplierFactory, UnitySourceChangesApplierFactory>(Lifetime.PerScope)
+                .RegisterTypeWithDependencies(typeof(ISourceChangesApplier<>), typeof(SourceChangesApplier<>), Lifetime.PerScope, scope);
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)

@@ -4,18 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using LinqToDB;
+using LinqToDB.Data;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Replication.API;
+using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.AdvancedSearch.Replication.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
+using NuClear.Storage.Writings;
 
 using NUnit.Framework;
 
@@ -859,61 +860,61 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         private TestCaseData CaseToVerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+            where TFactElement : class, IIdentifiable, new()
         {
             return Case(() => VerifyElementInsertion<TErmElement, TFactElement>(source))
                 .SetName(string.Format("Should process and insert {0} element.", typeof(TFactElement).Name));
         }
 
         private TestCaseData CaseToVerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+            where TFactElement : class, IIdentifiable, new()
         {
             return Case(() => VerifyElementUpdate(source, target))
                 .SetName(string.Format("Should process and update {0} element.", typeof(TFactElement).Name));
         }
 
-        private TestCaseData CaseToVerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiable, new()
+        private TestCaseData CaseToVerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : class, IIdentifiable, new()
         {
             return Case(() => VerifyElementDeletion(target))
                 .SetName(string.Format("Should process and delete {0} element.", typeof(TFactElement).Name));
         }
 
         private void VerifyElementInsertion<TErmElement, TFactElement>(TErmElement source) where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+            where TFactElement : class, IIdentifiable, new()
         {
             var entityId = source.Id;
             ErmDb.Has(source);
 
             Transformation.Create(ErmQuery, FactsQuery)
                           .Transform(Fact.Operation<TFactElement>(entityId))
-                          .Verify(
-                              x => x.Insert(It.Is(Predicate.ById<TFactElement>(entityId))),
+                          .Verify<TFactElement>(
+                              x => x.AddRange(It.Is(Predicate.ByIds<TFactElement>(new[] { entityId }))),
                               Times.Once,
                               string.Format("The {0} element was not inserted.", typeof(TFactElement).Name));
         }
 
         private void VerifyElementUpdate<TErmElement, TFactElement>(TErmElement source, TFactElement target) where TErmElement : IIdentifiable, new()
-            where TFactElement : IIdentifiable, new()
+            where TFactElement : class, IIdentifiable, new()
         {
             ErmDb.Has(source);
             FactsDb.Has(target);
 
             Transformation.Create(ErmQuery, FactsQuery)
                           .Transform(Fact.Operation<TFactElement>(target.Id))
-                          .Verify(
+                          .Verify<TFactElement>(
                               x => x.Update(It.Is(Predicate.ById<TFactElement>(target.Id))),
                               Times.Once,
                               string.Format("The {0} element was not updated.", typeof(TFactElement).Name));
         }
 
-        private void VerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : IIdentifiable, new()
+        private void VerifyElementDeletion<TFactElement>(TFactElement target) where TFactElement : class, IIdentifiable, new()
         {
             FactsDb.Has(target);
 
             Transformation.Create(ErmQuery, FactsQuery)
                           .Transform(Fact.Operation<TFactElement>(target.Id))
-                          .Verify(
-                              x => x.Delete(It.Is(Predicate.ById<TFactElement>(target.Id))),
+                          .Verify<TFactElement>(
+                              x => x.DeleteRange(It.Is(Predicate.ByIds<TFactElement>(new[] { target.Id }))),
                               Times.Once,
                               string.Format("The {0} element was not deleted.", typeof(TFactElement).Name));
         }
@@ -922,25 +923,37 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
         private class Transformation
         {
+            private static IRepository _repositoryToVerify;
+            
             private readonly ErmFactsTransformation _transformation;
-            private readonly IDataMapper _mapper;
-            private readonly List<IOperation> _operations;
+            private readonly List<IOperation> _operations = new List<IOperation>();
 
-            private Transformation(IQuery source, IQuery target, IDataMapper mapper)
+            private Transformation(
+                IQuery source,
+                IQuery target,
+                ISourceChangesDetectorFactory sourceChangesDetectorFactory,
+                ISourceChangesApplierFactory sourceChangesApplierFactory)
             {
-                _mapper = mapper ?? Mock.Of<IDataMapper>();
-                _transformation = new ErmFactsTransformation(source, target, _mapper, Mock.Of<ITransactionManager>());
-                _operations = new List<IOperation>();
+                _transformation = new ErmFactsTransformation(source, target, sourceChangesDetectorFactory, sourceChangesApplierFactory);
             }
 
-            public static Transformation Create(IQuery source = null, IQuery target = null, IDataMapper mapper = null)
+            private Transformation(IQuery source, IQuery target)
+                : this(source, target, new SourceChangesDetectorFactory(), new VerifiableSourceChangesApplierFactory(OnRepositoryCreated))
             {
-                return new Transformation(source ?? new Mock<IQuery>().Object, target ?? new Mock<IQuery>().Object, mapper);
             }
 
-            public static Transformation Create(IQuery source, IQuery target, IDataContext dataContext)
+            public static Transformation Create(IQuery source, IQuery target)
             {
-                return new Transformation(source, target, new DataMapper(dataContext));
+                return new Transformation(source, target);
+            }
+
+            public static Transformation Create(IQuery source, IQuery target, DataConnection dataConnection)
+            {
+                return new Transformation(
+                    source,
+                    target,
+                    new SourceChangesDetectorFactory(),
+                    new StubSourceChangesApplierFactory(dataConnection.Connection, dataConnection));
             }
 
             public Transformation Transform(params FactOperation[] operations)
@@ -949,9 +962,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return this;
             }
 
-            public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times = null, string failMessage = null)
+            public Transformation Verify<T>(Expression<Action<IRepository<T>>> action, Func<Times> times = null, string failMessage = null) where T : class
             {
-                Mock.Get(_mapper)
+                var repository = (IRepository<T>)_repositoryToVerify;
+                Mock.Get(repository)
                     .Verify(action, times ?? Times.AtLeastOnce, failMessage);
                 return this;
             }
@@ -966,6 +980,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
                 Assert.That(operations.ToArray(), Is.EqualTo(expected.ToArray()));
                 return this;
+            }
+
+            private static void OnRepositoryCreated(IRepository repository)
+            {
+                _repositoryToVerify = repository;
             }
         }
 

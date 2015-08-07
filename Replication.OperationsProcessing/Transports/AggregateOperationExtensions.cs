@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Model.Common.Entities;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 using NuClear.Replication.OperationsProcessing.Metadata.Operations;

@@ -272,6 +272,7 @@
     <Compile Include="Factories\Messaging\Receiver\FinalReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Receiver\ServiceBusReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
+    <Compile Include="Factories\Replication\UnitySourceChangesApplierFactory.cs" />
     <Compile Include="Factories\UnityCorporateBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Jobs\ReportingJob.cs" />
@@ -314,6 +315,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Replication.API\Replication.API.csproj">
+      <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
+      <Name>Replication.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8e3d39d6-6bee-4edc-ace0-8c24ca929164}</Project>
       <Name>Replication.OperationsProcessing</Name>

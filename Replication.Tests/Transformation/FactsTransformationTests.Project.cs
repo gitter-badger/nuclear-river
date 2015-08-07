@@ -1,7 +1,7 @@
 ﻿using Moq;
 
+using NuClear.AdvancedSearch.Replication.API;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.AdvancedSearch.Replication.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 

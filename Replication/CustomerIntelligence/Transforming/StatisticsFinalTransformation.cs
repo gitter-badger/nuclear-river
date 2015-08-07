@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
+using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.Telemetry.Probing;
 
@@ -51,7 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return x => x.ProjectId == projectId && categoryIds.Contains(x.CategoryId);
         }
 
-        private MergeTool.MergeResult<CI.FirmCategoryStatistics> DetectChanges(Expression<Func<CI.FirmCategoryStatistics, bool>> filter)
+        private IMergeResult<CI.FirmCategoryStatistics> DetectChanges(Expression<Func<CI.FirmCategoryStatistics, bool>> filter)
         {
             return MergeTool.Merge(
                 _source.FirmCategoryStatistics.Where(filter).AsEnumerable(),

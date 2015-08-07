@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace NuClear.AdvancedSearch.Replication.Model
+namespace NuClear.AdvancedSearch.Replication.API.Model
 {
-    internal sealed class IdentifiableObjectEqualityComparer<T> : IEqualityComparer<T>
+    public sealed class IdentifiableObjectEqualityComparer<T> : IEqualityComparer<T>
         where T : IIdentifiable
     {
-        private static volatile IdentifiableObjectEqualityComparer<T> defaultComparer;
+        private static volatile IdentifiableObjectEqualityComparer<T> _defaultComparer;
 
         public static IdentifiableObjectEqualityComparer<T> Default
         {
             get
             {
-                var equalityComparer = defaultComparer;
+                var equalityComparer = _defaultComparer;
                 if (equalityComparer == null)
                 {
-                    defaultComparer = equalityComparer = new IdentifiableObjectEqualityComparer<T>();
+                    _defaultComparer = equalityComparer = new IdentifiableObjectEqualityComparer<T>();
                 }
+
                 return equalityComparer;
             }
         }
@@ -27,27 +28,32 @@ namespace NuClear.AdvancedSearch.Replication.Model
             {
                 return true;
             }
+            
             if (ReferenceEquals(x, null))
             {
                 return false;
             }
+            
             if (ReferenceEquals(y, null))
             {
                 return false;
             }
+            
             if (x.GetType() != y.GetType())
             {
                 return false;
             }
+
             return x.Id == y.Id;
         }
 
         public int GetHashCode(T obj)
         {
-            if (obj == null)
+            if (obj.Equals(default(T)))
             {
                 throw new ArgumentNullException("obj");
             }
+
             return obj.Id.GetHashCode();
         }
     }

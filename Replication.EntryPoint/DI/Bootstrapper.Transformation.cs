@@ -6,6 +6,7 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -53,8 +54,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<IQuery>(Scope.Erm),
                                                        new ResolvedParameter<IQuery>(Scope.Facts),
-                                                       new ResolvedParameter<IDataMapper>(Scope.Facts),
-                                                       ResolvedTransactionManager(container, Scope.Erm, Scope.Facts)))
+                                                       new ResolvedParameter<ISourceChangesDetectorFactory>(),
+                                                       new ResolvedParameter<ISourceChangesApplierFactory>()))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(

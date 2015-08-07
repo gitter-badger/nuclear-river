@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 using LinqToDB;
 
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.Data
 {

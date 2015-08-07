@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
+namespace NuClear.AdvancedSearch.Replication.API.Operations
 {
     public sealed class RecalculateAggregate : AggregateOperation
     {

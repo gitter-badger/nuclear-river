@@ -63,6 +63,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\SourceChangesDetectorFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
@@ -109,8 +111,8 @@
     <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfoBuilder.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ChangesApplier.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ChangesDetector.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\SourceChangesApplier.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\SourceChangesDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformationMetadata.cs" />
@@ -120,29 +122,16 @@
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FirmStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\IStatisticsContext.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\MergeTool.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ICorporateBusDto.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\CalculateStatisticsOperation.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\TransactionManagerExtensions.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\DataMapperFactory.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\FactDependencyInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ErmFactInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\DestroyAggregate.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\InitializeAggregate.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\RecalculateAggregate.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />
     <Compile Include="Data\ITransactionManager.cs" />
-    <Compile Include="Model\IBitFactObject.cs" />
-    <Compile Include="Model\ICustomerIntelligenceObject.cs" />
-    <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
-    <Compile Include="Model\IErmFactObject.cs" />
-    <Compile Include="Model\IErmObject.cs" />
-    <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
     <Compile Include="CustomerIntelligence\Model\Client.cs" />
@@ -161,17 +150,13 @@
     <Compile Include="CustomerIntelligence\Model\Facts\Client.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\Contact.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\Firm.cs" />
-    <Compile Include="Model\IObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Specifications\Specs.cs" />
     <Compile Include="Specifications\Specs.Facts.cs" />
     <Compile Include="Specifications\Specs.Erm.cs" />
     <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />
-    <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />
   </ItemGroup>
@@ -180,6 +165,13 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Replication.API\Replication.API.csproj">
+      <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
+      <Name>Replication.API</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

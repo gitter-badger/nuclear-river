@@ -8,7 +8,7 @@ using System.Reflection;
 
 using LinqToDB.Expressions;
 
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.Data

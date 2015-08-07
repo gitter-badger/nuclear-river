@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public delegate MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> CalculateStatisticsSpecProvider(IEnumerable<long> ids);
 

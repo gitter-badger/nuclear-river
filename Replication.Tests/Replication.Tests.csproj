@@ -77,7 +77,9 @@
     <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoadingOfFacts.cs" />
+    <Compile Include="StubModifiableDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
+    <Compile Include="StubSourceChangesApplierFactory.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
     <Compile Include="IdentifiableObjectExtensions.cs" />
+    <Compile Include="VerifiableSourceChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -112,6 +115,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Replication.API\Replication.API.csproj">
+      <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
+      <Name>Replication.API</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Replication\Replication.csproj">
       <Project>{d3cf7e9e-4a8e-4583-a951-50ca940bd353}</Project>
       <Name>Replication</Name>

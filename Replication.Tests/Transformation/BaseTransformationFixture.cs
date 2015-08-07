@@ -1,4 +1,4 @@
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.API.Operations;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {

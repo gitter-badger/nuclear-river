@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.AdvancedSearch.Replication.Data;
-using NuClear.AdvancedSearch.Replication.Transforming;
+using NuClear.AdvancedSearch.Replication.API;
+using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
 
@@ -14,10 +15,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IQuery _sourceQuery;
         private readonly IQuery _destQuery;
-        private readonly IDataMapper _mapper;
-        private readonly ITransactionManager _transactionManager;
+        private readonly ISourceChangesDetectorFactory _sourceChangesDetectorFactory;
+        private readonly ISourceChangesApplierFactory _sourceChangesApplierFactory;
 
-        public ErmFactsTransformation(IQuery sourceQuery, IQuery destQuery, IDataMapper mapper, ITransactionManager transactionManager)
+        public ErmFactsTransformation(
+            IQuery sourceQuery,
+            IQuery destQuery,
+            ISourceChangesDetectorFactory sourceChangesDetectorFactory,
+            ISourceChangesApplierFactory sourceChangesApplierFactory)
         {
             if (sourceQuery == null)
             {
@@ -29,67 +34,67 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("destQuery");
             }
 
+            if (sourceChangesDetectorFactory == null)
+            {
+                throw new ArgumentNullException("sourceChangesDetectorFactory");
+            }
+
+            if (sourceChangesApplierFactory == null)
+            {
+                throw new ArgumentNullException("sourceChangesApplierFactory");
+            }
+
             _sourceQuery = sourceQuery;
             _destQuery = destQuery;
-            _mapper = mapper;
-            _transactionManager = transactionManager;
+            _sourceChangesDetectorFactory = sourceChangesDetectorFactory;
+            _sourceChangesApplierFactory = sourceChangesApplierFactory;
         }
 
         public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)
         {
             using (Probe.Create("ETL1 Transforming"))
             {
-                return _transactionManager.WithinTransaction(() => DoTransform(operations));
-            }
-        }
-
-        private IReadOnlyCollection<IOperation> DoTransform(IEnumerable<FactOperation> operations)
-        {
-            var result = Enumerable.Empty<IOperation>();
-
-            var slices = operations.GroupBy(operation => new { operation.FactType })
-                                   .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
-
-            foreach (var slice in slices)
-            {
-                var factType = slice.Key.FactType;
-                var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
-
-                ErmFactInfo factInfo;
-                if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
+                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
+                                                              new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
                 {
-                    throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
-                }
+                    var result = Enumerable.Empty<IOperation>();
 
-                using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
-                {
-                    var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _destQuery);
-                    var changesDetector = CreateChangesDetector(factInfo);
-                    var changesApplier = CreateChangesApplier(factInfo);
+                    var slices = operations.GroupBy(operation => new { operation.FactType })
+                                           .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
 
-                    var changes = changesDetector.DetectChanges(factIds);
+                    foreach (var slice in slices)
+                    {
+                        var factType = slice.Key.FactType;
+                        var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
-                    var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(factIds);
-                    var aggregateOperations = changesApplier.ApplyChanges(changes);
-                    var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(factIds);
+                        ErmFactInfo factInfo;
+                        if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
+                        {
+                            throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
+                        }
 
-                    result = result.Union(statisticsOperationsBeforeChanges)
-                                   .Union(aggregateOperations)
-                                   .Union(statisticsOperationsAfterChanges);
+                        using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
+                        {
+                            var changesDetector = _sourceChangesDetectorFactory.Create(factInfo, _sourceQuery, _destQuery);
+                            var changesApplier = _sourceChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
+                            var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _destQuery);
+
+                            var changes = changesDetector.DetectChanges(factIds);
+
+                            var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(factIds);
+                            var aggregateOperations = changesApplier.ApplyChanges(changes);
+                            var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(factIds);
+
+                            result = result.Union(statisticsOperationsBeforeChanges)
+                                           .Union(aggregateOperations)
+                                           .Union(statisticsOperationsAfterChanges);
+                        }
+                    }
+
+                    transaction.Complete();
+                    return result.ToList();
                 }
             }
-
-            return result.ToList();
-        }
-
-        private IChangesDetector CreateChangesDetector(ErmFactInfo factInfo)
-        {
-            return (IChangesDetector)Activator.CreateInstance(typeof(ChangesDetector<>).MakeGenericType(factInfo.FactType), factInfo, _sourceQuery, _destQuery);
-        }
-
-        private IChangesApplier CreateChangesApplier(ErmFactInfo factInfo)
-        {
-            return (IChangesApplier)Activator.CreateInstance(typeof(ChangesApplier<>).MakeGenericType(factInfo.FactType), factInfo, _sourceQuery, _destQuery, _mapper);
         }
     }
 }

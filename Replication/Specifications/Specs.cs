@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
-using NuClear.AdvancedSearch.Replication.Model;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.Specifications
