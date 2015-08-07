@@ -4,34 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
     internal class IdentifiableInfo<T> : IIdentifiableInfo
     {
-        private readonly Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<T>> _queryByIds;
+        private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _queryByIds;
 
         // сделать чтобы сюда приходил только queryprovider и самим тут накручитьвать всё что нужно
-        public IdentifiableInfo(Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<T>> queryByIds)
+        public IdentifiableInfo(Func<IQuery, IEnumerable<long>, IQueryable<T>> queryByIds)
         {
             _queryByIds = queryByIds;
         }
 
-        public Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<T>> QueryByIds { get { return _queryByIds; } }
+        public Func<IQuery, IEnumerable<long>, IQueryable<T>> QueryByIds { get { return _queryByIds; } }
 
         public Type Type { get { return typeof(T); } }
-        IEnumerable IIdentifiableInfo.QueryByIds(ICustomerIntelligenceContext context, IReadOnlyCollection<long> ids)
+        IEnumerable IIdentifiableInfo.QueryByIds(IQuery query, IReadOnlyCollection<long> ids)
         {
             if (!ids.Any())
             {
                 return Enumerable.Empty<T>();
             }
 
-            return QueryByIds(context, ids);
+            return QueryByIds(query, ids);
         }
 
-        IEnumerable<long> IIdentifiableInfo.QueryIdsByIds(ICustomerIntelligenceContext context, IReadOnlyCollection<long> ids)
+        IEnumerable<long> IIdentifiableInfo.QueryIdsByIds(IQuery context, IReadOnlyCollection<long> ids)
         {
             if (!ids.Any())
             {

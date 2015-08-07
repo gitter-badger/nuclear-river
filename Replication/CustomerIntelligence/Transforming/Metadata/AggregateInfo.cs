@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
@@ -11,7 +11,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
         private readonly IEnumerable<IValueObjectInfo> _valueObjects;
 
         public AggregateInfo(
-            Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<T>> queryByIds,
+            Func<IQuery, IEnumerable<long>, IQueryable<T>> queryByIds,
             IEnumerable<IValueObjectInfo> valueObjects = null) : base(queryByIds)
         {
             _valueObjects = valueObjects ?? Enumerable.Empty<IValueObjectInfo>();

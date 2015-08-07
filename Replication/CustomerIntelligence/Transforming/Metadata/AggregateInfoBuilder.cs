@@ -4,7 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
@@ -20,8 +21,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
     internal class AggregateInfoBuilder<TAggregate>
         where TAggregate : ICustomerIntelligenceObject, IIdentifiable
     {
-        private Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<TAggregate>> _queryByIds;
         private readonly List<IValueObjectInfo> _valueObjects;
+        private Func<IQuery, IEnumerable<long>, IQueryable<TAggregate>> _queryByIds;
 
         public AggregateInfoBuilder()
         {
@@ -33,26 +34,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
             return new AggregateInfo<TAggregate>(_queryByIds, _valueObjects);
         }
 
-        public AggregateInfoBuilder<TAggregate> HasSource(Func<ICustomerIntelligenceContext, IQueryable<TAggregate>> queryProvider)
+        public AggregateInfoBuilder<TAggregate> HasSource(Func<IQuery, IQueryable<TAggregate>> queryProvider)
         {
             _queryByIds = CreateFilteredQueryProvider(queryProvider, CreateKeyAccessor<TAggregate>());
             return this;
         }
 
-        public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(Func<ICustomerIntelligenceContext, IQueryable<TValueObject>> queryProvider, Expression<Func<TValueObject, long>> parentIdSelector)
+        public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(MapSpecification<IQuery, IQueryable<TValueObject>> queryProvider, Expression<Func<TValueObject, long>> parentIdSelector)
         {
             var queryByParentIds = CreateFilteredQueryProvider(queryProvider, parentIdSelector);
             _valueObjects.Add(new ValueObjectInfo<TValueObject>(queryByParentIds));
             return this;
         }
 
-        private static Func<ICustomerIntelligenceContext, IEnumerable<long>, IQueryable<T>> CreateFilteredQueryProvider<T>(Func<ICustomerIntelligenceContext, IQueryable<T>> queryProvider, Expression<Func<T, long>> idSelector)
+        private static Func<IQuery, IEnumerable<long>, IQueryable<T>> CreateFilteredQueryProvider<T>(Func<IQuery, IQueryable<T>> queryProvider, Expression<Func<T, long>> idSelector)
         {
-            return (context, ids) =>
+            return (query, ids) =>
             {
-                var query = queryProvider(context);
+                var queryable = queryProvider(query);
                 var filterExpression = CreateFilterExpression(ids, idSelector);
-                return query.Where(filterExpression);
+                return queryable.Where(filterExpression);
             };
         }
 

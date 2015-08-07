@@ -4,23 +4,23 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.DataMappers;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Mergers;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class CustomerIntelligenceTransformation
     {
-        private readonly ICustomerIntelligenceContext _source;
-        private readonly ICustomerIntelligenceContext _target;
+        private readonly IQuery _source;
+        private readonly IQuery _target;
         private readonly IDataMapper _mapper;
         private readonly ITransactionManager _transactionManager;
 
-        public CustomerIntelligenceTransformation(ICustomerIntelligenceContext source, ICustomerIntelligenceContext target, IDataMapper mapper, ITransactionManager transactionManager)
+        public CustomerIntelligenceTransformation(IQuery source, IQuery target, IDataMapper mapper, ITransactionManager transactionManager)
         {
             if (source == null)
             {
