@@ -157,7 +157,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                      Id = firmContact.Id,
                                      HasPhone = firmContact.ContactType == ContactType.Phone,
                                      HasWebsite = firmContact.ContactType == ContactType.Website,
-                                     FirmAddressId = (long)firmContact.FirmAddressId,
+                                     FirmAddressId = firmContact.FirmAddressId.Value,
                                  });
                     }
 
@@ -169,7 +169,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  select new LegalPerson
                                  {
                                      Id = legalPerson.Id,
-                                     ClientId = (long)legalPerson.ClientId,
+                                     ClientId = legalPerson.ClientId.Value,
                                  });
                     }
 
@@ -190,11 +190,12 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     {
                         return new MapSpecification<IQuery, IQueryable<Project>>(
                             q => from project in q.For(Find.Projects())
+                                 where project.OrganizationUnitId != null
                                  select new Project
                                  {
                                      Id = project.Id,
                                      Name = project.Name,
-                                     OrganizationUnitId = project.OrganizationUnitId
+                                     OrganizationUnitId = project.OrganizationUnitId.Value
                                  });
                     }
 

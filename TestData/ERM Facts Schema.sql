@@ -179,7 +179,7 @@ go
 create table ERM.Project(
 	Id bigint not null
     , Name nvarchar(256) not null
-    , OrganizationUnitId bigint null
+    , OrganizationUnitId bigint not null
     , constraint PK_Projects primary key (Id)
 )
 go

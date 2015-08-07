@@ -104,7 +104,7 @@ function Create-Tables {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
-	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql'
+	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql' | Sort-Object
 	foreach($sqlScript in $sqlScripts){
 		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
@@ -126,6 +126,10 @@ function Exec-Command ($connection, [string]$command){
 		try{
 			$commandInfo = New-Object LinqToDB.Data.CommandInfo($connection, $command)
 			[void]$commandInfo.Execute()
+		}
+		catch [System.Data.SqlClient.SqlException]
+		{
+		   throw
 		}
 		catch {
 			throw "Error executing command $command"

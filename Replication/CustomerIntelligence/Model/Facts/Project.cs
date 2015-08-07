@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 
         public string Name { get; set; }
 
-        public long? OrganizationUnitId { get; set; }
+        public long OrganizationUnitId { get; set; }
 
         public override bool Equals(object obj)
         {
