@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
@@ -24,17 +25,18 @@ namespace NuClear.Replication.OperationsProcessing.Final
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value));
         }
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
             try
             {
-                var operations = messages.OfType<StatisticsAggregatableMessage>().Single().Operations;
-
-                _statisticsTransformation.Recalculate(operations);
-                _telemetryPublisher.Publish<StatisticsProcessedOperationCountIdentity>(operations.Count());
+                foreach (var message in messages.OfType<OperationAggregatableMessage<CalculateStatisticsOperation>>())
+                {
+                    _statisticsTransformation.Recalculate(message.Operations);
+                    _telemetryPublisher.Publish<StatisticsProcessedOperationCountIdentity>(message.Operations.Count);
+                }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

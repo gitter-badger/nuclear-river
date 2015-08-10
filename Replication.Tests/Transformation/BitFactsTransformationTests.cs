@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     internal class BitFactsTransformationTests
     {
         [Test]
-        public void ShouldProduceRecalulateOperationsBothForExistedAndNewFirmStatistics()
+        public void ShouldProduceCalculateStatisticsOperationForFirmStatisticsDto()
         {
             var dto = new FirmStatisticsDto
                       {
@@ -48,15 +48,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var operations = transformation.Transform(dto).ToArray();
 
-            Assert.That(operations.Count(), Is.EqualTo(2));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(), Is.EqualTo(2));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Firm)), Is.EqualTo(2));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 2), Is.EqualTo(1));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 7), Is.EqualTo(1));
+            Assert.That(operations.Count(), Is.EqualTo(1));
+            Assert.That(operations.OfType<CalculateStatisticsOperation>().Count(), Is.EqualTo(1));
         }
 
         [Test]
-        public void ShouldProduceRecalulateOperationsForReceivedProject()
+        public void ShouldProduceCalculateStatisticsOperationForCategoryStatisticsDto()
         {
             var dto = new CategoryStatisticsDto
             {
@@ -77,9 +74,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var operations = transformation.Transform(dto).ToArray();
 
             Assert.That(operations.Count(), Is.EqualTo(1));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(), Is.EqualTo(1));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateType == typeof(CI.Project)), Is.EqualTo(1));
-            Assert.That(operations.OfType<RecalculateAggregate>().Count(x => x.AggregateId == 1), Is.EqualTo(1));
+            Assert.That(operations.OfType<CalculateStatisticsOperation>().Count(), Is.EqualTo(1));
         }
     }
 }

@@ -32,25 +32,26 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value));
         }
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
             try
             {
-                var operations = messages.OfType<FactOperationAggregatableMessage>().Single().Operations;
+                foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>())
+                {
+                    var result = _transformation.Transform(message.Operations);
+                    _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
 
-                var result = _transformation.Transform(operations);
-                _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count());
+                    var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
+                    _sender.Push(statisticOperations, StatisticsFlow.Instance);
+                    _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
 
-                var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
-                _sender.Push(statisticOperations, StatisticsFlow.Instance);
-                _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
-
-                var aggregateOperations = result.OfType<AggregateOperation>().ToList();
-                _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+                    var aggregateOperations = result.OfType<AggregateOperation>().ToList();
+                    _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+                    _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+                }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

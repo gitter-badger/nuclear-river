@@ -6,7 +6,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         public long ProjectId { get; set; }
 
-        public IEnumerable<CategoryDto> Categories { get; set; }
+        public IReadOnlyCollection<CategoryDto> Categories { get; set; }
 
         public class CategoryDto
         {

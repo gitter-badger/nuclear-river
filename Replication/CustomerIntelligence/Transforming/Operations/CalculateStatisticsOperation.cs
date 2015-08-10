@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations
 {
-    public class CalculateStatisticsOperation : IOperation
+    public sealed class CalculateStatisticsOperation : IOperation
     {
         public long ProjectId { get; set; }
         public long? CategoryId { get; set; }

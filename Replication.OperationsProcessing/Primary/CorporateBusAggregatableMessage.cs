@@ -6,18 +6,13 @@ using NuClear.Messaging.API;
 using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing;
 
-namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
+namespace NuClear.Replication.OperationsProcessing.Primary
 {
-    public sealed class CorporateBusDtoMessage : IAggregatableMessage
+    public sealed class CorporateBusAggregatableMessage : MessageBase, IAggregatableMessage
     {
-        public Guid Id { get; set; }
+        public override Guid Id { get { return Guid.Empty; } }
         public IMessageFlow TargetFlow { get; set; }
 
         public IReadOnlyCollection<ICorporateBusDto> Dtos { get; set; }
-
-        public bool Equals(IMessage other)
-        {
-            return ReferenceEquals(this, other);
-        }
     }
 }

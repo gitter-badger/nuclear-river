@@ -21,14 +21,14 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Flows
                                                       .Strategy<ImportFactsFromErmAccumulator>()
                                                       .Handler<ImportFactsFromErmHandler>()
                                                       .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
-                                                      .To.Final().Flow<AggregatesFlow>().Connect(),
+                                                      .To.Final().Flow<AggregatesFlow>().Connect()
+                                                      .To.Final().Flow<StatisticsFlow>().Connect(),
 
                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
                                                       .Strategy<ImportFactsFromBitAccumulator>()
                                                       .Handler<ImportFactsFromBitHandler>()
                                                       .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
-                                                      .To.Final().Flow<AggregatesFlow>().Connect()
-
+                                                      .To.Final().Flow<StatisticsFlow>().Connect()
                 )
                                .Final(
 

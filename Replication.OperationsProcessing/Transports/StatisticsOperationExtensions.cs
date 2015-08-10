@@ -4,9 +4,6 @@ using System.Linq;
 using System.Xml.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
-using NuClear.Model.Common.Entities;
-using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 
 namespace NuClear.Replication.OperationsProcessing.Transports
@@ -24,13 +21,11 @@ namespace NuClear.Replication.OperationsProcessing.Transports
 
         public static CalculateStatisticsOperation DeserializeStatisticsOperation(this XElement context)
         {
-            var projectAttribute = context.Attribute("Project");
-            var categoryAttribute = context.Attribute("Category");
             return new CalculateStatisticsOperation
-                   {
-                       ProjectId = long.Parse(projectAttribute.Value),
-                       CategoryId = categoryAttribute != null ? (long?)long.Parse(categoryAttribute.Value) : null,
-                   };
+            {
+                ProjectId = (long)context.Attribute("Project"),
+                CategoryId = (long?)context.Attribute("Category"),
+            };
         }
 
         public static XElement Serialize(this CalculateStatisticsOperation operation)
