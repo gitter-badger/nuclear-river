@@ -11,18 +11,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
 {
     internal static class AggregateInfoBuilder
     {
-        public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>()
-            where TAggregate : ICustomerIntelligenceObject, IIdentifiable
+        public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>() where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
         {
             return new AggregateInfoBuilder<TAggregate>();
         }
     }
 
-    internal class AggregateInfoBuilder<TAggregate>
-        where TAggregate : ICustomerIntelligenceObject, IIdentifiable
+    internal class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
     {
         private readonly List<IValueObjectInfo> _valueObjects;
-        private Func<IQuery, IEnumerable<long>, IQueryable<TAggregate>> _queryByIds;
+        private readonly Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToTargetSpecProvider =
+            ids => new MapSpecification<IQuery, IQueryable<TAggregate>>(q => q.For(new FindSpecification<TAggregate>(x => ids.Contains(x.Id))));
+        
+        private Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToSourceSpecProvider;
 
         public AggregateInfoBuilder()
         {
@@ -31,12 +32,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
 
         public IAggregateInfo Build()
         {
-            return new AggregateInfo<TAggregate>(_queryByIds, _valueObjects);
+            return new AggregateInfo<TAggregate>(_mapToSourceSpecProvider, _mapToTargetSpecProvider, _valueObjects);
         }
 
-        public AggregateInfoBuilder<TAggregate> HasSource(Func<IQuery, IQueryable<TAggregate>> queryProvider)
+        public AggregateInfoBuilder<TAggregate> HasSource(Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> mapToSourceSpecProvider)
         {
-            _queryByIds = CreateFilteredQueryProvider(queryProvider, CreateKeyAccessor<TAggregate>());
+            _mapToSourceSpecProvider = mapToSourceSpecProvider;
             return this;
         }
 

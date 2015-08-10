@@ -83,10 +83,10 @@
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
-    <Compile Include="Transformation\CustomerIntelligenceTransformationContextTests.cs" />
+    <Compile Include="Transformation\FactsMapToCISpecsTests.cs" />
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
     <Compile Include="Transformation\ErmContextFilteringTests.cs" />
-    <Compile Include="Transformation\FactsTransformationContextTests.cs" />
+    <Compile Include="Transformation\ErmMapToFactsSpecsTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />

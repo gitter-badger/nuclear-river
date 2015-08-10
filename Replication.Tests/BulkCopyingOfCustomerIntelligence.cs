@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.Storage.Readings;
 
@@ -17,66 +16,65 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadFirms()
         {
-            Reload(ctx => ctx.Firms);
+            Reload(query => Specs.Facts.Map.ToCI.Firms(null).Map(query));
         }
 
         [Test]
         public void ReloadFirmBalances()
         {
-            Reload(ctx => ctx.FirmBalances);
+            Reload(query => Specs.Facts.Map.ToCI.FirmBalances().Map(query));
         }
 
         [Test]
         public void ReloadFirmCategories()
         {
-            Reload(ctx => ctx.FirmCategories);
+            Reload(query => Specs.Facts.Map.ToCI.FirmCategories().Map(query));
         }
 
         [Test]
         public void ReloadCategoryGroups()
         {
-            Reload(ctx => ctx.CategoryGroups);
+            Reload(query => Specs.Facts.Map.ToCI.CategoryGroups(null).Map(query));
         }
 
         [Test]
         public void ReloadClients()
         {
-            Reload(ctx => ctx.Clients);
+            Reload(query => Specs.Facts.Map.ToCI.Clients(null).Map(query));
         }
 
         [Test]
         public void ReloadClientContacts()
         {
-            Reload(ctx => ctx.ClientContacts);
+            Reload(query => Specs.Facts.Map.ToCI.ClientContacts().Map(query));
         }
 
         [Test]
         public void ReloadProjects()
         {
-            Reload(ctx => ctx.Projects);
+            Reload(query => Specs.Facts.Map.ToCI.Projects(null).Map(query));
         }
 
         [Test]
         public void ReloadProjectCategories()
         {
-            Reload(ctx => ctx.ProjectCategories);
+            Reload(query => Specs.Facts.Map.ToCI.ProjectCategories().Map(query));
         }
 
         [Test]
         public void ReloadTerritories()
         {
-            Reload(ctx => ctx.Territories);
+            Reload(query => Specs.Facts.Map.ToCI.Territories(null).Map(query));
         }
 
-        private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
+        private void Reload<T>(Func<IQuery, IEnumerable<T>> loader)
             where T : class
         {
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
                 var query = new Query(new StubReadableDomainContextProvider(factsDb.Connection, factsDb));
-                var context = new CustomerIntelligenceTransformationContext(query);
-                ciDb.Reload(loader(context));
+                ciDb.Reload(loader(query));
             }
         }
     }

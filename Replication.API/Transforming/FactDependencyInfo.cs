@@ -14,21 +14,21 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
         public abstract Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider { get; }
 
-        public static FactDependencyInfo Create<T>()
+        public static FactDependencyInfo Create<TAggregate>()
         {
-            return new DirectAggregateDependencyInfo<T>();
+            return new DirectAggregateDependencyInfo<TAggregate>();
         }
 
-        public static FactDependencyInfo Create<T>(Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
+        public static FactDependencyInfo Create<TAggregate>(Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
         {
-            return new AggregateDependencyInfo<T>(dependentAggregateSpecProvider);
+            return new AggregateDependencyInfo<TAggregate>(dependentAggregateSpecProvider);
         }
 
-        private class DirectAggregateDependencyInfo<T> : FactDependencyInfo
+        private class DirectAggregateDependencyInfo<TAggregate> : FactDependencyInfo
         {
             public override Type AggregateType
             {
-                get { return typeof(T); }
+                get { return typeof(TAggregate); }
             }
 
             public override bool IsDirectDependency
@@ -42,7 +42,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             }
         }
 
-        private class AggregateDependencyInfo<T> : FactDependencyInfo
+        private class AggregateDependencyInfo<TAggregate> : FactDependencyInfo
         {
             private readonly Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> _dependentAggregateSpecProvider;
 
@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
             public override Type AggregateType
             {
-                get { return typeof(T); }
+                get { return typeof(TAggregate); }
             }
 
             public override bool IsDirectDependency

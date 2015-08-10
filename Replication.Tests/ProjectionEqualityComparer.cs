@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 using Newtonsoft.Json;
 
@@ -16,6 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             {
                 throw new ArgumentNullException("projector");
             }
+
             _projector = projector;
         }
 
@@ -25,42 +25,46 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             {
                 return true;
             }
+            
             if (ReferenceEquals(x, null))
             {
                 return false;
             }
+            
             if (ReferenceEquals(y, null))
             {
                 return false;
             }
+
             if (x.GetType() != y.GetType())
             {
                 return false;
             }
 
-            var strX = ToSrting(x);
-            var strY = ToSrting(y);
+            var strX = ToString(x);
+            var strY = ToString(y);
 
-            return String.CompareOrdinal(strX, strY) == 0;
+            return string.CompareOrdinal(strX, strY) == 0;
         }
 
         public int GetHashCode(T obj)
         {
-            if (obj == null)
+            if (obj.Equals(default(T)))
             {
                 throw new ArgumentNullException("obj");
             }
-            return obj.GetHashCode();
-        }
 
-        private string ToSrting(T value)
-        {
-            return Serialize(_projector(value));
+            return obj.GetHashCode();
         }
 
         private static string Serialize(TProjection obj)
         {
             return JsonConvert.SerializeObject(obj, Formatting.Indented);
+        }
+
+        private string ToString(T value)
+        {
+            return Serialize(_projector(value));
         }
     }
 }
