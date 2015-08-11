@@ -289,7 +289,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 case Scope.Facts:
                     return Schema.Facts;
                 case Scope.CustomerIntelligence:
-                    return Schema.Facts;
+                    return Schema.CustomerIntelligence;
                 default:
                     throw new IndexOutOfRangeException("Specified scope is unknown");
             }
