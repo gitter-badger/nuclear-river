@@ -14,18 +14,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
               {
                   AggregateInfoBuilder.OfType<Firm>()
                                .HasSource(Specs.Facts.Map.ToCI.Firms)
-                               .HasValueObject(Specs.Facts.Map.ToCI.FirmBalances(), x => x.FirmId)
-                               .HasValueObject(Specs.Facts.Map.ToCI.FirmCategories(), x => x.FirmId)
+                               .HasValueObject(Specs.Facts.Map.ToCI.FirmBalances, Specs.CI.Map.FirmBalances)
+                               .HasValueObject(Specs.Facts.Map.ToCI.FirmCategories, Specs.CI.Map.FirmCategories)
                                .Build(),
 
                   AggregateInfoBuilder.OfType<Client>()
                                .HasSource(Specs.Facts.Map.ToCI.Clients)
-                               .HasValueObject(Specs.Facts.Map.ToCI.ClientContacts(), x => x.ClientId)
+                               .HasValueObject(Specs.Facts.Map.ToCI.ClientContacts, Specs.CI.Map.ClientContacts)
                                .Build(),
 
                   AggregateInfoBuilder.OfType<Project>()
                                .HasSource(Specs.Facts.Map.ToCI.Projects)
-                               .HasValueObject(Specs.Facts.Map.ToCI.ProjectCategories(), x => x.ProjectId)
+                               .HasValueObject(Specs.Facts.Map.ToCI.ProjectCategories, Specs.CI.Map.ProjectCategories)
                                .Build(),
 
                   AggregateInfoBuilder.OfType<Territory>()

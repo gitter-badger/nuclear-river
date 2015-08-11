@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.DataMappers;
@@ -87,19 +88,22 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
         }
 
-        private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
+        private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
-            var sourceActualIds = aggregateInfo.GetMapToSourceIdsSpec(ids).Map(_source);
-            var targetActualIds = aggregateInfo.GetMapToTargetIdsSpec(ids).Map(_target);
-            var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
+            var sourceAggregates = aggregateInfo.MapToSourceSpecProvider(aggregateIds).Map(_source).Cast<IIdentifiable>().ToArray();
+            
+            var sourceAggregateIds = sourceAggregates.Select(x => x.Id);
+            var targetAggregateIds = aggregateInfo.MapToTargetSpecProvider(aggregateIds).Map(_target).Cast<IIdentifiable>().Select(x => x.Id).ToArray();
+            
+            var mergeResult = MergeTool.Merge(sourceAggregateIds, targetAggregateIds);
 
             var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
-            aggregateDataMapper.Insert(aggregateInfo.GetMapToSourceSpec(mergeResult.Difference.ToList()).Map(_source));
+            aggregateDataMapper.Insert(sourceAggregates.Where(x => mergeResult.Difference.Contains(x.Id)));
 
             foreach (var valueObject in aggregateInfo.ValueObjects)
             {
-                var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
-                var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
+                var sourceValueObjects = valueObject.MapToSourceSpecProvider(aggregateIds).Map(_source);
+                var targetValueObjects = valueObject.MapToTargetSpecProvider(aggregateIds).Map(_target);
 
                 var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
                 var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
@@ -109,12 +113,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             }
         }
 
-        private void RecalculateAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
+        private void RecalculateAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
             foreach (var valueObject in aggregateInfo.ValueObjects)
             {
-                var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
-                var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
+                var sourceValueObjects = valueObject.MapToSourceSpecProvider(aggregateIds).Map(_source);
+                var targetValueObjects = valueObject.MapToTargetSpecProvider(aggregateIds).Map(_target);
 
                 var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
                 var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
@@ -125,22 +129,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 valueObjectDataMapper.Update(valueObjectMergeResult.Intersection);
             }
 
-            var sourceActualIds = aggregateInfo.GetMapToSourceIdsSpec(ids).Map(_source);
-            var targetActualIds = aggregateInfo.GetMapToTargetIdsSpec(ids).Map(_target);
-            var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
+            var sourceAggregates = aggregateInfo.MapToSourceSpecProvider(aggregateIds).Map(_source).Cast<IIdentifiable>().ToArray();
+            var targetAggregates = aggregateInfo.MapToTargetSpecProvider(aggregateIds).Map(_target).Cast<IIdentifiable>().ToArray();
+
+            var sourceAggregateIds = sourceAggregates.Select(x => x.Id);
+            var targetAggregateIds = targetAggregates.Select(x => x.Id);
+
+            var mergeResult = MergeTool.Merge(sourceAggregateIds, targetAggregateIds);
 
             var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
-            aggregateDataMapper.Delete(aggregateInfo.GetMapToTargetSpec(mergeResult.Complement.ToArray()).Map(_target));
-            aggregateDataMapper.Insert(aggregateInfo.GetMapToSourceSpec(mergeResult.Difference.ToList()).Map(_source));
-            aggregateDataMapper.Update(aggregateInfo.GetMapToSourceSpec(mergeResult.Intersection.ToList()).Map(_source));
+            aggregateDataMapper.Delete(targetAggregates.Where(x => mergeResult.Complement.Contains(x.Id)));
+            aggregateDataMapper.Insert(sourceAggregates.Where(x => mergeResult.Difference.Contains(x.Id)));
+            aggregateDataMapper.Update(sourceAggregates.Where(x => mergeResult.Intersection.Contains(x.Id)));
         }
 
-        private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
+        private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
             foreach (var valueObject in aggregateInfo.ValueObjects)
             {
-                var sourceValueObjects = valueObject.QueryByParentIds(_source, ids);
-                var targetValueObjects = valueObject.QueryByParentIds(_target, ids);
+                var sourceValueObjects = valueObject.MapToSourceSpecProvider(aggregateIds).Map(_source);
+                var targetValueObjects = valueObject.MapToTargetSpecProvider(aggregateIds).Map(_target);
 
                 var valueObjectMerger = MergerFactory.CreateValueObjectMerger(valueObject);
                 var valueObjectMergeResult = valueObjectMerger.Merge(sourceValueObjects, targetValueObjects);
@@ -149,12 +157,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 valueObjectDataMapper.Delete(valueObjectMergeResult.Complement);
             }
 
-            var sourceActualIds = aggregateInfo.GetMapToSourceIdsSpec(ids).Map(_source);
-            var targetActualIds = aggregateInfo.GetMapToTargetIdsSpec(ids).Map(_target);
-            var mergeResult = MergeTool.Merge(sourceActualIds, targetActualIds);
+            var targetAggregates = aggregateInfo.MapToTargetSpecProvider(aggregateIds).Map(_target).Cast<IIdentifiable>().ToArray();
+            var sourceAggregateIds = aggregateInfo.MapToSourceSpecProvider(aggregateIds).Map(_source).Cast<IIdentifiable>().Select(x => x.Id).ToArray();
+            var targetAggregateIds = targetAggregates.Select(x => x.Id);
+            
+            var mergeResult = MergeTool.Merge(sourceAggregateIds, targetAggregateIds);
 
             var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
-            aggregateDataMapper.Delete(aggregateInfo.GetMapToTargetSpec(mergeResult.Complement.ToList()).Map(_target));
+            aggregateDataMapper.Delete(targetAggregates.Where(x => mergeResult.Complement.Contains(x.Id)));
         }
     }
 }

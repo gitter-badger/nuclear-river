@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Storage.Readings;
@@ -9,6 +9,7 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     internal static class AggregateInfoBuilder
     {
         public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>() where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
@@ -17,17 +18,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
         }
     }
 
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     internal class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
     {
-        private readonly List<IValueObjectInfo> _valueObjects;
-        private readonly Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToTargetSpecProvider =
+        private readonly List<IMetadataInfo> _valueObjects;
+        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToTargetSpecProvider =
             ids => new MapSpecification<IQuery, IQueryable<TAggregate>>(q => q.For(new FindSpecification<TAggregate>(x => ids.Contains(x.Id))));
-        
-        private Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToSourceSpecProvider;
+
+        private Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToSourceSpecProvider;
 
         public AggregateInfoBuilder()
         {
-            _valueObjects = new List<IValueObjectInfo>();
+            _valueObjects = new List<IMetadataInfo>();
         }
 
         public IAggregateInfo Build()
@@ -35,44 +37,18 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
             return new AggregateInfo<TAggregate>(_mapToSourceSpecProvider, _mapToTargetSpecProvider, _valueObjects);
         }
 
-        public AggregateInfoBuilder<TAggregate> HasSource(Func<IEnumerable<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> mapToSourceSpecProvider)
+        public AggregateInfoBuilder<TAggregate> HasSource(Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> mapToSourceSpecProvider)
         {
             _mapToSourceSpecProvider = mapToSourceSpecProvider;
             return this;
         }
 
-        public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(MapSpecification<IQuery, IQueryable<TValueObject>> queryProvider, Expression<Func<TValueObject, long>> parentIdSelector)
+        public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(
+            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToSourceSpecProvider,
+            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToTargetSpecProvider)
         {
-            var queryByParentIds = CreateFilteredQueryProvider(queryProvider, parentIdSelector);
-            _valueObjects.Add(new ValueObjectInfo<TValueObject>(queryByParentIds));
+            _valueObjects.Add(new ValueObjectInfo<TValueObject>(mapToSourceSpecProvider, mapToTargetSpecProvider));
             return this;
-        }
-
-        private static Func<IQuery, IEnumerable<long>, IQueryable<T>> CreateFilteredQueryProvider<T>(Func<IQuery, IQueryable<T>> queryProvider, Expression<Func<T, long>> idSelector)
-        {
-            return (query, ids) =>
-            {
-                var queryable = queryProvider(query);
-                var filterExpression = CreateFilterExpression(ids, idSelector);
-                return queryable.Where(filterExpression);
-            };
-        }
-
-        private static Expression<Func<T, long>> CreateKeyAccessor<T>()
-        {
-            // Если написать (TAggregate x) => x.Id, то в этом выражении свойство Id будет получено не у типа TAggregate, а у типа IIdentifiable
-            // В большинстве случаев нам это пофиг, но вот когда имеем дело с linq2db - это становится важным, ибо остальной запрос построен 
-            // вокруг типа TAggregate и он просто не знает, что такое IIdentifiable.Id
-            var param = Expression.Parameter(typeof(T));
-            return Expression.Lambda<Func<T, long>>(Expression.Property(param, "Id"), param);
-        }
-
-        private static Expression<Func<T, bool>> CreateFilterExpression<T>(IEnumerable<long> ids, Expression<Func<T, long>> idSelector)
-        {
-            Expression<Func<T, bool>> example = foo => ids.Contains(0);
-            var exampleMethodCall = (MethodCallExpression)example.Body;
-            var methodCall = exampleMethodCall.Update(null, new[] { exampleMethodCall.Arguments[0], idSelector.Body });
-            return Expression.Lambda<Func<T, bool>>(methodCall, idSelector.Parameters);
         }
     }
 }

@@ -4,36 +4,60 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
-    internal sealed class ValueObjectInfo<T> : IValueObjectInfo
+    internal sealed class ValueObjectInfo<TValueObject> : IMetadataInfo
     {
-        private readonly Func<IQuery, IEnumerable<long>, IQueryable<T>> _queryByParentIds;
+        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> _mapToSourceSpecProvider;
+        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> _mapToTargetSpecProvider;
 
-        public ValueObjectInfo(Func<IQuery, IEnumerable<long>, IQueryable<T>> queryByParentIds)
+        public ValueObjectInfo(
+            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToSourceSpecProvider,
+            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToTargetSpecProvider)
         {
-            _queryByParentIds = queryByParentIds;
-        }
-
-        public Func<IQuery, IEnumerable<long>, IQueryable<T>> QueryByParentIds
-        {
-            get { return _queryByParentIds; }
+            _mapToSourceSpecProvider = mapToSourceSpecProvider;
+            _mapToTargetSpecProvider = mapToTargetSpecProvider;
         }
 
         public Type Type
         {
-            get { return typeof(T); }
+            get { return typeof(TValueObject); }
         }
 
-        IEnumerable IValueObjectInfo.QueryByParentIds(IQuery context, IReadOnlyCollection<long> parentIds)
+        public MapToObjectsSpecProvider MapToSourceSpecProvider
         {
-            if (!parentIds.Any())
+            get
             {
-                return Enumerable.Empty<long>();
-            }
+                return ids =>
+                {
+                    if (!ids.Any())
+                    {
+                        return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<TValueObject>());
+                    }
 
-            return QueryByParentIds(context, parentIds);
+                    var mapToSourceSpec = _mapToSourceSpecProvider(ids);
+                    return new MapSpecification<IQuery, IEnumerable>(mapToSourceSpec);
+                };
+            }
+        }
+
+        public MapToObjectsSpecProvider MapToTargetSpecProvider
+        {
+            get
+            {
+                return ids =>
+                {
+                    if (!ids.Any())
+                    {
+                        return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<TValueObject>());
+                    }
+
+                    var mapToTargetSpec = _mapToTargetSpecProvider(ids);
+                    return new MapSpecification<IQuery, IEnumerable>(mapToTargetSpec);
+                };
+            }
         }
     }
 }

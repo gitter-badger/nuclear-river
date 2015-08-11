@@ -22,13 +22,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadFirmBalances()
         {
-            Reload(query => Specs.Facts.Map.ToCI.FirmBalances().Map(query));
+            Reload(query => Specs.Facts.Map.ToCI.FirmBalances(null).Map(query));
         }
 
         [Test]
         public void ReloadFirmCategories()
         {
-            Reload(query => Specs.Facts.Map.ToCI.FirmCategories().Map(query));
+            Reload(query => Specs.Facts.Map.ToCI.FirmCategories(null).Map(query));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadClientContacts()
         {
-            Reload(query => Specs.Facts.Map.ToCI.ClientContacts().Map(query));
+            Reload(query => Specs.Facts.Map.ToCI.ClientContacts(null).Map(query));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadProjectCategories()
         {
-            Reload(query => Specs.Facts.Map.ToCI.ProjectCategories().Map(query));
+            Reload(query => Specs.Facts.Map.ToCI.ProjectCategories(null).Map(query));
         }
 
         [Test]

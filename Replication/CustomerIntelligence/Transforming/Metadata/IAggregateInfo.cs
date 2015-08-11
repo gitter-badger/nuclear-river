@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
 {
-    internal interface IAggregateInfo : IIdentifiableInfo
+    internal interface IAggregateInfo : IMetadataInfo
     {
-        IEnumerable<IValueObjectInfo> ValueObjects { get; }
+        IEnumerable<IMetadataInfo> ValueObjects { get; }
     }
 }

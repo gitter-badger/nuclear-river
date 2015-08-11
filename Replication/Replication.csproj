@@ -102,10 +102,7 @@
     <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IAggregateInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IdentifiableInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IIdentifiableInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\IMetadataInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfoBuilder.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
@@ -151,6 +148,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
+    <Compile Include="Specifications\Specs.CI.cs" />
     <Compile Include="Specifications\Specs.Facts.CI.cs" />
     <Compile Include="Specifications\Specs.Erm.Facts.cs" />
     <Compile Include="Specifications\Specs.cs" />
