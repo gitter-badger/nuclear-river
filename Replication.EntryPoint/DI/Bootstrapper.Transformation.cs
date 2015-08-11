@@ -41,10 +41,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
 
-                .RegisterType<CustomerIntelligenceContext>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<CustomerIntelligenceTransformationContext>(Lifetime.PerScope, 
-                                                   new InjectionConstructor(new ResolvedParameter<IQuery>(Scope.Facts)))
-
                 .RegisterType<StatisticsContext>(Lifetime.PerScope, 
                     new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
                 .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
@@ -59,8 +55,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<CustomerIntelligenceTransformationContext>(),
-                                                       new ResolvedParameter<CustomerIntelligenceContext>(),
+                                                       new ResolvedParameter<IQuery>(Scope.Facts),
+                                                       new ResolvedParameter<IQuery>(Scope.CustomerIntelligence),
                                                        new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence),
                                                        ResolvedTransactionManager(container, Scope.Facts, Scope.CustomerIntelligence)))
 

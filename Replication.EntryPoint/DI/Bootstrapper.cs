@@ -104,6 +104,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureWcf()
                      .ConfigureStorage(Scope.Erm, EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureStorage(Scope.Facts, EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureStorage(Scope.CustomerIntelligence, EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureReadWriteModels()
                      .ConfigureLinq2Db();
 
