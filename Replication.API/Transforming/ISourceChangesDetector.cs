@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public interface ISourceChangesDetector
     {
-        IMergeResult<long> DetectChanges(IReadOnlyCollection<long> ids); 
-    }
-
-    public interface ISourceChangesDetector<T> : ISourceChangesDetector where T : class, IIdentifiable
-    {
+        IMergeResult<T> DetectChanges<T>(MapSpecification<IEnumerable, IEnumerable<T>> mapSpec, IReadOnlyCollection<long> ids);
     }
 }

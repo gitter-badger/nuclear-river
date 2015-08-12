@@ -97,7 +97,6 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\SourceChangesDetectorFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />

@@ -93,7 +93,6 @@
     <Compile Include="Transforming\ISourceChangesApplier.cs" />
     <Compile Include="Transforming\ISourceChangesApplierFactory.cs" />
     <Compile Include="Transforming\ISourceChangesDetector.cs" />
-    <Compile Include="Transforming\ISourceChangesDetectorFactory.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
     <Compile Include="Transforming\ValueObjectInfo.cs" />
   </ItemGroup>

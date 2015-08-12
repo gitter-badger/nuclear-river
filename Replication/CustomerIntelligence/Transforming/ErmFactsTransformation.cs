@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 
 using NuClear.AdvancedSearch.Replication.API;
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
@@ -15,13 +18,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IQuery _sourceQuery;
         private readonly IQuery _destQuery;
-        private readonly ISourceChangesDetectorFactory _sourceChangesDetectorFactory;
         private readonly ISourceChangesApplierFactory _sourceChangesApplierFactory;
+        private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec; 
 
         public ErmFactsTransformation(
             IQuery sourceQuery,
             IQuery destQuery,
-            ISourceChangesDetectorFactory sourceChangesDetectorFactory,
             ISourceChangesApplierFactory sourceChangesApplierFactory)
         {
             if (sourceQuery == null)
@@ -34,11 +36,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("destQuery");
             }
 
-            if (sourceChangesDetectorFactory == null)
-            {
-                throw new ArgumentNullException("sourceChangesDetectorFactory");
-            }
-
             if (sourceChangesApplierFactory == null)
             {
                 throw new ArgumentNullException("sourceChangesApplierFactory");
@@ -46,8 +43,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _sourceQuery = sourceQuery;
             _destQuery = destQuery;
-            _sourceChangesDetectorFactory = sourceChangesDetectorFactory;
             _sourceChangesApplierFactory = sourceChangesApplierFactory;
+
+            _changesDetectionMapSpec = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
         }
 
         public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)
@@ -75,11 +73,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                         using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
                         {
-                            var changesDetector = _sourceChangesDetectorFactory.Create(factInfo, _sourceQuery, _destQuery);
-                            var changesApplier = _sourceChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
+                            var changesDetector = new SourceChangesDetector(factInfo, _sourceQuery, _destQuery);
                             var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _destQuery);
-
-                            var changes = changesDetector.DetectChanges(factIds);
+                            var changesApplier = _sourceChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
+                            
+                            var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, factIds);
 
                             var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(factIds);
                             var aggregateOperations = changesApplier.ApplyChanges(changes);

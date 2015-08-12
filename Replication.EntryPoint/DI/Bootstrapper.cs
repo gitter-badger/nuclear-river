@@ -257,7 +257,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                   transactionOptions,
                                                   c.Resolve<IPendingChangesHandlingStrategy>())))
 
-                .RegisterType<ISourceChangesDetectorFactory, SourceChangesDetectorFactory>(Lifetime.PerScope)
                 .RegisterType<ISourceChangesApplierFactory, UnitySourceChangesApplierFactory>(Lifetime.PerScope)
                 .RegisterTypeWithDependencies(typeof(ISourceChangesApplier<>), typeof(SourceChangesApplier<>), Lifetime.PerScope, scope);
         }
