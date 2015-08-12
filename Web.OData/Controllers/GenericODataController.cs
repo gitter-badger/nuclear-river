@@ -1,4 +1,8 @@
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Controllers;
 using System.Web.OData;
 using System.Web.OData.Query;
 
@@ -6,6 +10,7 @@ using NuClear.AdvancedSearch.Web.OData.DataAccess;
 
 namespace NuClear.AdvancedSearch.Web.OData.Controllers
 {
+
     public abstract class GenericODataController<TEntity> : ODataController where TEntity : class
     {
         private readonly IFinder _finder;
@@ -34,6 +39,16 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
         {
             var entities = _finder.FindAll<TEntity>().GetById(key).SelectManyProperties<TEntity, TContainedEntity>(propertyName);
             return Ok(entities);
+        }
+
+        public override Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
+        {
+            var response = base.ExecuteAsync(controllerContext, cancellationToken);
+            response.Wait(cancellationToken);
+
+            this.MakeCompatibleResponse(response.Result);
+
+            return response;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,14 +21,6 @@ namespace NuClear.AdvancedSearch.Replication.Data
         private static readonly ConcurrentDictionary<Type, MethodInfo> InsertMethods = new ConcurrentDictionary<Type, MethodInfo>();
         private static readonly ConcurrentDictionary<Type, MethodInfo> UpdateMethods = new ConcurrentDictionary<Type, MethodInfo>();
         private static readonly ConcurrentDictionary<Type, MethodInfo> DeleteMethods = new ConcurrentDictionary<Type, MethodInfo>();
-
-        public static void InsertAll<T>(this IDataMapper mapper, IEnumerable<T> items)
-        {
-            foreach (var item in items)
-            {
-                mapper.Insert(item);
-            }
-        }
 
         public static void InsertAll(this IDataMapper mapper, IQueryable query)
         {

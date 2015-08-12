@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.OperationsProcessing.Performance;
-using NuClear.Replication.OperationsProcessing.Primary;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
@@ -28,17 +28,18 @@ namespace NuClear.Replication.OperationsProcessing.Final
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value)).ToArray();
+            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value));
         }
 
         private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
         {
             try
             {
-                var operations = messages.OfType<AggregateOperationAggregatableMessage>().Single().Operations;
-
-                _customerIntelligenceTransformation.Transform(operations);
-                _telemetryPublisher.Publish<AggregateProcessedOperationCountIdentity>(operations.Count());
+                foreach (var message in messages.OfType<OperationAggregatableMessage<AggregateOperation>>())
+                {
+                    _customerIntelligenceTransformation.Transform(message.Operations);
+                    _telemetryPublisher.Publish<AggregateProcessedOperationCountIdentity>(message.Operations.Count);
+                }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

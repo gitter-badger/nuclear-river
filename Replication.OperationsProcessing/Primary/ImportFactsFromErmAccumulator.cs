@@ -18,7 +18,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     /// <summary>
     /// Стратегия выполняет фильтрацию операций, приехавших в TUC, и преобразование этих операций в операции над фактами.
     /// </summary>
-    public sealed class ImportFactsFromErmAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromErmFlow, TrackedUseCase, FactOperationAggregatableMessage>
+    public sealed class ImportFactsFromErmAccumulator : MessageProcessingContextAccumulatorBase<ImportFactsFromErmFlow, TrackedUseCase, OperationAggregatableMessage<FactOperation>>
     {
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
@@ -29,7 +29,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _telemetryPublisher = telemetryPublisher;
         }
 
-        protected override FactOperationAggregatableMessage Process(TrackedUseCase message)
+        protected override OperationAggregatableMessage<FactOperation> Process(TrackedUseCase message)
         {
             _tracer.DebugFormat("Processing TUC {0}", message.Id);
 
@@ -45,15 +45,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             var transformableChanges = Convert(plainChanges).ToList();
             _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(transformableChanges.Count);
 
-            return new FactOperationAggregatableMessage
-                   {
-                       Id = message.Id,
+            return new OperationAggregatableMessage<FactOperation>
+            {
                        TargetFlow = MessageFlow,
                        Operations = transformableChanges,
                    };
         }
 
-        private IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> operations)
+        private static IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> operations)
         {
             return from operation in operations
                    where !(operation.EntityType is UnknownEntityType)

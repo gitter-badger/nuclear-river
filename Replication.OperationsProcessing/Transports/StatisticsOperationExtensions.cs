@@ -21,12 +21,10 @@ namespace NuClear.Replication.OperationsProcessing.Transports
 
         public static CalculateStatisticsOperation DeserializeStatisticsOperation(this XElement context)
         {
-            var projectAttribute = context.Attribute("Project");
-            var categoryAttribute = context.Attribute("Category");
             return new CalculateStatisticsOperation
                    {
-                       ProjectId = long.Parse(projectAttribute.Value),
-                       CategoryId = categoryAttribute != null ? (long?)long.Parse(categoryAttribute.Value) : null,
+                ProjectId = (long)context.Attribute("Project"),
+                CategoryId = (long?)context.Attribute("Category"),
                    };
         }
 

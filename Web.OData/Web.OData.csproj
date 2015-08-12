@@ -183,6 +183,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ODataControllerExtensions.cs" />
     <Compile Include="DataAccess\DataAccessExtensions.cs" />
     <Compile Include="DataAccess\ODataDbConfiguration.cs" />
     <Compile Include="DI\ConfigureHttpRequest.cs" />

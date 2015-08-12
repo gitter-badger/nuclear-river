@@ -50,14 +50,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private void DoTransform(IEnumerable<AggregateOperation> operations)
         {
-            var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType, x.AggregateId })
+            var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
                                    .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
 
             foreach (var slice in slices)
             {
                 var operation = slice.Key.Operation;
                 var aggregateType = slice.Key.AggregateType;
-                var aggregateIds = slice.Select(x => x.AggregateId).ToList();
+                var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToList();
 
                 IAggregateInfo aggregateInfo;
                 if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))

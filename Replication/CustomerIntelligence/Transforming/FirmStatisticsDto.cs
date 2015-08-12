@@ -6,13 +6,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         public long ProjectId { get; set; }
 
-        public IEnumerable<FirmDto> Firms { get; set; }
+        public IReadOnlyCollection<FirmDto> Firms { get; set; }
 
         public class FirmDto
         {
             public long FirmId { get; set; }
 
-            public IEnumerable<CategoryDto> Categories { get; set; }
+            public IReadOnlyCollection<CategoryDto> Categories { get; set; }
 
             public class CategoryDto
             {

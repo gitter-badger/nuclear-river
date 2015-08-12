@@ -2,14 +2,12 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    using CI = CustomerIntelligence.Model;
 
     public sealed class BitFactsTransformation
     {
@@ -24,38 +22,34 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _transactionManager = transactionManager;
         }
 
-        public IEnumerable<AggregateOperation> Transform(FirmStatisticsDto dto)
+        public IEnumerable<CalculateStatisticsOperation> Transform(FirmStatisticsDto dto)
         {
             return _transactionManager.WithinTransaction(() => DoTransform(dto));
         }
 
-        public IEnumerable<AggregateOperation> Transform(CategoryStatisticsDto dto)
+        public IEnumerable<CalculateStatisticsOperation> Transform(CategoryStatisticsDto dto)
         {
             return _transactionManager.WithinTransaction(() => DoTransform(dto));
         }
 
-        private IEnumerable<AggregateOperation> DoTransform(FirmStatisticsDto dto)
+        private IEnumerable<CalculateStatisticsOperation> DoTransform(FirmStatisticsDto dto)
         {
-            var firmCategoryStatistics = dto.ToFirmCategoryStatistics();
-
-            var firmsBefore = _query.For(Specs.Find.FirmStatistics.ByProjectId(dto.ProjectId)).Select(stat => stat.FirmId).Distinct().ToArray();
-
             _mapper.DeleteAll(_query.For(Specs.Find.FirmStatistics.ByProjectId(dto.ProjectId)));
-            _mapper.InsertAll<FirmCategoryStatistics>(firmCategoryStatistics.AsQueryable());
 
-            var firmsAfter = firmCategoryStatistics.Where(stat => stat.ProjectId == dto.ProjectId).Select(stat => stat.FirmId).Distinct().ToArray();
+            var firmCategoryStatistics = dto.ToFirmCategoryStatistics();
+            _mapper.InsertAll(firmCategoryStatistics.AsQueryable());
 
-            return firmsBefore.Union(firmsAfter).Select(id => new RecalculateAggregate(typeof(CI.Firm), id));
+            return new[] { new CalculateStatisticsOperation { ProjectId = dto.ProjectId } };
         }
 
-        private IEnumerable<AggregateOperation> DoTransform(CategoryStatisticsDto dto)
+        private IEnumerable<CalculateStatisticsOperation> DoTransform(CategoryStatisticsDto dto)
         {
-            var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
-
             _mapper.DeleteAll(_query.For(Specs.Find.ProjectStatistics.ByProjectId(dto.ProjectId)));
-            _mapper.InsertAll<ProjectCategoryStatistics>(projectCategoryStatistics.AsQueryable());
 
-            return new[] { new RecalculateAggregate(typeof(CI.Project), dto.ProjectId) };
+            var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
+            _mapper.InsertAll(projectCategoryStatistics.AsQueryable());
+
+            return new[] { new CalculateStatisticsOperation { ProjectId = dto.ProjectId } };
         }
     }
 }
