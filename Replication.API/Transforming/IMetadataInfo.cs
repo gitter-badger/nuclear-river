@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
+namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public delegate MapSpecification<IQuery, IEnumerable> MapToObjectsSpecProvider(IReadOnlyCollection<long> ids);
 
-    internal interface IMetadataInfo
+    public interface IMetadataInfo
     {
         Type Type { get; }
         MapToObjectsSpecProvider MapToSourceSpecProvider { get; }

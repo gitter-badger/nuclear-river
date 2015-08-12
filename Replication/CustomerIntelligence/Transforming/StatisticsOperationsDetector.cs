@@ -9,10 +9,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public class StatisticsOperationsDetector
     {
-        private readonly ErmFactInfo _factInfo;
+        private readonly IFactInfo _factInfo;
         private readonly IQuery _query;
 
-        public StatisticsOperationsDetector(ErmFactInfo factInfo, IQuery query)
+        public StatisticsOperationsDetector(IFactInfo factInfo, IQuery query)
         {
             _factInfo = factInfo;
             _query = query;

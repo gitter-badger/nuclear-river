@@ -4,32 +4,30 @@ using System.Transactions;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
-using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal class SourceChangesDetector<TFact> : ISourceChangesDetector<TFact> where TFact : class, IErmFactObject
+    internal class SourceChangesDetector<T> : ISourceChangesDetector<T> where T : class, IIdentifiable
     {
-        private readonly MapSpecification<IQuery, IQueryable<TFact>> _sourceMapSpecification;
-        private readonly IQuery _ermQuery;
-        private readonly IQuery _factsQuery;
+        private readonly IMetadataInfo _metadataInfo;
+        private readonly IQuery _source;
+        private readonly IQuery _target;
 
-        public SourceChangesDetector(ErmFactInfo factInfo, IQuery ermQuery, IQuery factsQuery)
+        public SourceChangesDetector(IMetadataInfo metadataInfo, IQuery source, IQuery target)
         {
-            _sourceMapSpecification = ((ErmFactInfo.ErmFactInfoImpl<TFact>)factInfo).MapSpecification;
-            _ermQuery = ermQuery;
-            _factsQuery = factsQuery;
+            _metadataInfo = metadataInfo;
+            _source = source;
+            _target = target;
         }
 
-        public IMergeResult<long> DetectChanges(IReadOnlyCollection<long> factIds)
+        public IMergeResult<long> DetectChanges(IReadOnlyCollection<long> ids)
         {
             using (new TransactionScope(TransactionScopeOption.Suppress))
             {
-                var ermData = _sourceMapSpecification.Map(_ermQuery).Select(fact => fact.Id).Where(Specs.Find.ByIds(factIds)).ToArray();
-                var factsData = _factsQuery.For(Specs.Find.ByIds<TFact>(factIds)).Select(fact => fact.Id).ToArray();
-                var result = MergeTool.Merge(ermData, factsData);
+                var sourceIds = _metadataInfo.MapToSourceSpecProvider(ids).Map(_source).Cast<IIdentifiable>().Select(x => x.Id).ToArray();
+                var targetIds = _metadataInfo.MapToTargetSpecProvider(ids).Map(_target).Cast<IIdentifiable>().Select(x => x.Id).ToArray();
+                var result = MergeTool.Merge(sourceIds, targetIds);
 
                 return result;
             }

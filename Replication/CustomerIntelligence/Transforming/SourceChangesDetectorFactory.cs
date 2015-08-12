@@ -7,10 +7,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public class SourceChangesDetectorFactory : ISourceChangesDetectorFactory
     {
-        public ISourceChangesDetector Create(ErmFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
+        public ISourceChangesDetector Create(IFactInfo factInfo, IQuery source, IQuery target)
         {
-            var genericType = typeof(SourceChangesDetector<>).MakeGenericType(factInfo.FactType);
-            return (ISourceChangesDetector)Activator.CreateInstance(genericType, factInfo, sourceQuery, destQuery);
+            var genericType = typeof(SourceChangesDetector<>).MakeGenericType(factInfo.Type);
+            return (ISourceChangesDetector)Activator.CreateInstance(genericType, factInfo, source, target);
         }
     }
 }

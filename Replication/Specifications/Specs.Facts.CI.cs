@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
@@ -23,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     public static MapSpecification<IQuery, IQueryable<CategoryGroup>> CategoryGroups(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<CategoryGroup>>(
-                            q => from categoryGroup in EvaluateQueryable<Facts::CategoryGroup>(q, ids)
+                            q => from categoryGroup in q.For(API.Specifications.Specs.Find.ByIds<Facts::CategoryGroup>(ids))
                                  select new CategoryGroup
                                         {
                                             Id = categoryGroup.Id,
@@ -48,7 +47,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                   into categoryGroups
                                                   select new { ClientId = categoryGroups.Key, CategoryGroupId = categoryGroups.Min(x => x.Id) };
 
-                                return from client in EvaluateQueryable<Facts::Client>(q, ids)
+                                return from client in q.For(API.Specifications.Specs.Find.ByIds<Facts::Client>(ids))
                                        from rate in clientRates.Where(x => x.ClientId == client.Id).DefaultIfEmpty()
                                        select new Client
                                               {
@@ -94,7 +93,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                          select firmAddress.FirmId;
 
                                 // TODO {all, 02.04.2015}: CategoryGroupId processing
-                                return from firm in EvaluateQueryable<Facts::Firm>(q, ids)
+                                return from firm in q.For(API.Specifications.Specs.Find.ByIds<Facts::Firm>(ids))
                                        join project in q.For<Facts::Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
                                        let firmClient = q.For<Facts::Client>().SingleOrDefault(client => client.Id == firm.ClientId)
                                        let rates = from firmAddress in q.For<Facts::FirmAddress>().Where(firmAddress => firmAddress.FirmId == firm.Id)
@@ -186,7 +185,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     public static MapSpecification<IQuery, IQueryable<Project>> Projects(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Project>>(
-                            q => from project in EvaluateQueryable<Facts::Project>(q, ids)
+                            q => from project in q.For(API.Specifications.Specs.Find.ByIds<Facts::Project>(ids))
                                  select new Project
                                         {
                                             Id = project.Id,
@@ -214,7 +213,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     public static MapSpecification<IQuery, IQueryable<Territory>> Territories(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Territory>>(
-                            q => from territory in EvaluateQueryable<Facts::Territory>(q, ids)
+                            q => from territory in q.For(API.Specifications.Specs.Find.ByIds<Facts::Territory>(ids))
                                  join project in q.For<Facts::Project>() on territory.OrganizationUnitId equals project.OrganizationUnitId
                                  select new Territory
                                         {
@@ -222,21 +221,6 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                             Name = territory.Name,
                                             ProjectId = project.Id
                                         });
-                    }
-
-                    private static IQueryable<T> EvaluateQueryable<T>(IQuery query, IReadOnlyCollection<long> ids) where T : class, IIdentifiable
-                    {
-                        IQueryable<T> queryable;
-                        if (ids == null || !ids.Any())
-                        {
-                            queryable = query.For<T>();
-                        }
-                        else
-                        {
-                            queryable = query.For(Find.ByIds<T>(ids));
-                        }
-
-                        return queryable;
                     }
                 }
             }

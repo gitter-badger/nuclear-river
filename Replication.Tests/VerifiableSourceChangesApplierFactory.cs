@@ -19,14 +19,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _onRepositoryCreated = onRepositoryCreated;
         }
 
-        public ISourceChangesApplier Create(ErmFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
+        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
         {
-            var repositoryType = typeof(IRepository<>).MakeGenericType(factInfo.FactType);
+            var repositoryType = typeof(IRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)DynamicMock(repositoryType);
 
             _onRepositoryCreated(repositoryInstance);
 
-            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.FactType);
+            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.Type);
             return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, destQuery, repositoryInstance);
         }
 

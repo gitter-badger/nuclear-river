@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.Storage.Readings;
@@ -14,10 +15,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
             {
                 public static class ToFacts
                 {
-                    public static MapSpecification<IQuery, IQueryable<Account>> Accounts()
+                    public static MapSpecification<IQuery, IQueryable<Account>> Accounts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Account>>(
-                            q => from account in q.For(Find.Accounts())
+                            q => from account in q.For(Find.Accounts(ids))
                                  select new Account
                                  {
                                      Id = account.Id,
@@ -27,10 +28,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<BranchOfficeOrganizationUnit>> BranchOfficeOrganizationUnits()
+                    public static MapSpecification<IQuery, IQueryable<BranchOfficeOrganizationUnit>> BranchOfficeOrganizationUnits(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<BranchOfficeOrganizationUnit>>(
-                            q => from branchOfficeOrganizationUnit in q.For(Find.BranchOfficeOrganizationUnits())
+                            q => from branchOfficeOrganizationUnit in q.For(Find.BranchOfficeOrganizationUnits(ids))
                                  select new BranchOfficeOrganizationUnit
                                  {
                                      Id = branchOfficeOrganizationUnit.Id,
@@ -38,10 +39,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Category>> Categories()
+                    public static MapSpecification<IQuery, IQueryable<Category>> Categories(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Category>>(
-                            q => from category in q.For(Find.Categories())
+                            q => from category in q.For(Find.Categories(ids))
                                  select new Category
                                  {
                                      Id = category.Id,
@@ -51,10 +52,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<CategoryGroup>> CategoryGroups()
+                    public static MapSpecification<IQuery, IQueryable<CategoryGroup>> CategoryGroups(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<CategoryGroup>>(
-                            q => from categoryGroup in q.For(Find.CategoryGroups())
+                            q => from categoryGroup in q.For(Find.CategoryGroups(ids))
                                  select new CategoryGroup
                                  {
                                      Id = categoryGroup.Id,
@@ -63,10 +64,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<CategoryFirmAddress>> CategoryFirmAddresses()
+                    public static MapSpecification<IQuery, IQueryable<CategoryFirmAddress>> CategoryFirmAddresses(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<CategoryFirmAddress>>(
-                            q => from categoryFirmAddress in q.For(Find.CategoryFirmAddresses())
+                            q => from categoryFirmAddress in q.For(Find.CategoryFirmAddresses(ids))
                                  select new CategoryFirmAddress
                                  {
                                      Id = categoryFirmAddress.Id,
@@ -75,10 +76,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<CategoryOrganizationUnit>> CategoryOrganizationUnits()
+                    public static MapSpecification<IQuery, IQueryable<CategoryOrganizationUnit>> CategoryOrganizationUnits(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<CategoryOrganizationUnit>>(
-                            q => from categoryOrganizationUnit in q.For(Find.CategoryOrganizationUnits())
+                            q => from categoryOrganizationUnit in q.For(Find.CategoryOrganizationUnits(ids))
                                  select new CategoryOrganizationUnit
                                  {
                                      Id = categoryOrganizationUnit.Id,
@@ -88,10 +89,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Client>> Clients()
+                    public static MapSpecification<IQuery, IQueryable<Client>> Clients(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Client>>(
-                            q => from client in q.For(Find.Clients())
+                            q => from client in q.For(Find.Clients(ids))
                                  select new Client
                                  {
                                      Id = client.Id,
@@ -102,10 +103,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Contact>> Contacts()
+                    public static MapSpecification<IQuery, IQueryable<Contact>> Contacts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Contact>>(
-                            q => from contact in q.For(Find.Contacts())
+                            q => from contact in q.For(Find.Contacts(ids))
                                  select new Contact
                                  {
                                      Id = contact.Id,
@@ -117,10 +118,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Firm>> Firms()
+                    public static MapSpecification<IQuery, IQueryable<Firm>> Firms(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Firm>>(
-                            q => from firm in q.For(Find.Firms())
+                            q => from firm in q.For(Find.Firms(ids))
                                  select new Firm
                                  {
                                      Id = firm.Id,
@@ -134,10 +135,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<FirmAddress>> FirmAddresses()
+                    public static MapSpecification<IQuery, IQueryable<FirmAddress>> FirmAddresses(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<FirmAddress>>(
-                            q => from firmAddress in q.For(Find.FirmAddresses())
+                            q => from firmAddress in q.For(Find.FirmAddresses(ids))
                                  select new FirmAddress
                                  {
                                      Id = firmAddress.Id,
@@ -145,10 +146,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<FirmContact>> FirmContacts()
+                    public static MapSpecification<IQuery, IQueryable<FirmContact>> FirmContacts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<FirmContact>>(
-                            q => from firmContact in q.For(Find.FirmContacts())
+                            q => from firmContact in q.For(Find.FirmContacts(ids))
                                  where firmContact.FirmAddressId != null && (firmContact.ContactType == ContactType.Phone || firmContact.ContactType == ContactType.Website)
                                  select new FirmContact
                                  {
@@ -159,10 +160,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<LegalPerson>> LegalPersons()
+                    public static MapSpecification<IQuery, IQueryable<LegalPerson>> LegalPersons(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<LegalPerson>>(
-                            q => from legalPerson in q.For(Find.LegalPersons())
+                            q => from legalPerson in q.For(Find.LegalPersons(ids))
                                  where legalPerson.ClientId != null
                                  select new LegalPerson
                                  {
@@ -171,10 +172,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Order>> Orders()
+                    public static MapSpecification<IQuery, IQueryable<Order>> Orders(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Order>>(
-                            q => from order in q.For(Find.Orders())
+                            q => from order in q.For(Find.Orders(ids))
                                  where new[] { OrderState.OnTermination, OrderState.Archive }.Contains(order.WorkflowStepId)
                                  select new Order
                                  {
@@ -184,10 +185,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Project>> Projects()
+                    public static MapSpecification<IQuery, IQueryable<Project>> Projects(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Project>>(
-                            q => from project in q.For(Find.Projects())
+                            q => from project in q.For(Find.Projects(ids))
                                  where project.OrganizationUnitId != null
                                  select new Project
                                  {
@@ -197,10 +198,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  });
                     }
 
-                    public static MapSpecification<IQuery, IQueryable<Territory>> Territories()
+                    public static MapSpecification<IQuery, IQueryable<Territory>> Territories(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Territory>>(
-                            q => from territory in q.For(Find.Territories())
+                            q => from territory in q.For(Find.Territories(ids))
                                  select new Territory
                                  {
                                      Id = territory.Id,

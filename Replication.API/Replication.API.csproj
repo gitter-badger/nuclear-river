@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Aggregates">
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.3.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Model.Common">
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.5\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
     </Reference>
@@ -60,6 +63,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AggregateServices\IInitializeAggregateService.cs" />
     <Compile Include="IOperation.cs" />
     <Compile Include="Model\IBitFactObject.cs" />
     <Compile Include="Model\ICustomerIntelligenceObject.cs" />
@@ -73,15 +77,25 @@
     <Compile Include="Operations\DestroyAggregate.cs" />
     <Compile Include="Operations\FactOperation.cs" />
     <Compile Include="Operations\InitializeAggregate.cs" />
+    <Compile Include="Operations\Identities\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Operations\RecalculateAggregate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Transforming\ErmFactInfo.cs" />
+    <Compile Include="Specifications\Specs.cs" />
+    <Compile Include="Transforming\AggregateInfo.cs" />
+    <Compile Include="Transforming\AggregateInfoBuilder.cs" />
+    <Compile Include="Transforming\FactInfo.cs" />
     <Compile Include="Transforming\FactDependencyInfo.cs" />
+    <Compile Include="Transforming\FactInfoBuilder.cs" />
+    <Compile Include="Transforming\IAggregateInfo.cs" />
+    <Compile Include="Transforming\IFactDependencyInfo.cs" />
+    <Compile Include="Transforming\IFactInfo.cs" />
+    <Compile Include="Transforming\IMetadataInfo.cs" />
     <Compile Include="Transforming\ISourceChangesApplier.cs" />
     <Compile Include="Transforming\ISourceChangesApplierFactory.cs" />
     <Compile Include="Transforming\ISourceChangesDetector.cs" />
     <Compile Include="Transforming\ISourceChangesDetectorFactory.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
+    <Compile Include="Transforming\ValueObjectInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

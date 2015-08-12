@@ -16,36 +16,36 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
             {
                 public static class ToClientAggregate
                 {
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirm(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirm(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from firm in q.For(Find.ByIds<Firm>(ids))
+                            q => from firm in q.For(API.Specifications.Specs.Find.ByIds<Firm>(ids))
                                     where firm.ClientId != null
                                     select firm.ClientId.Value);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByContacts(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByContacts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from client in q.For<Client>()
-                                    join contact in q.For(Find.ByIds<Contact>(ids)) on client.Id equals contact.ClientId
+                                    join contact in q.For(API.Specifications.Specs.Find.ByIds<Contact>(ids)) on client.Id equals contact.ClientId
                                     select client.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddress(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddress(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from categoryFirmAddress in q.For(Find.ByIds<CategoryFirmAddress>(ids))
+                            q => from categoryFirmAddress in q.For(API.Specifications.Specs.Find.ByIds<CategoryFirmAddress>(ids))
                                  join firmAddress in q.For<FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                                  join firm in q.For<Firm>() on firmAddress.FirmId equals firm.Id
                                  where firm.ClientId.HasValue
                                  select firm.ClientId.Value);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryGroup(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryGroup(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => (from categoryGroup in q.For(Find.ByIds<CategoryGroup>(ids))
+                            q => (from categoryGroup in q.For(API.Specifications.Specs.Find.ByIds<CategoryGroup>(ids))
                                   join categoryOrganizationUnit in q.For<CategoryOrganizationUnit>() on categoryGroup.Id equals categoryOrganizationUnit.CategoryId
                                   join categoryFirmAddress in q.For<CategoryFirmAddress>() on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
                                   join firmAddress in q.For<FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
@@ -55,10 +55,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                   select firm.ClientId.Value).Distinct());
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from categoryOrganizationUnit in q.For(Find.ByIds<CategoryOrganizationUnit>(ids))
+                            q => from categoryOrganizationUnit in q.For(API.Specifications.Specs.Find.ByIds<CategoryOrganizationUnit>(ids))
                                  join categoryFirmAddress in q.For<CategoryFirmAddress>() on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
                                  join firmAddress in q.For<FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                                  join firm in q.For<Firm>()
@@ -67,10 +67,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  select firm.ClientId.Value);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddress(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddress(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from firmAddress in q.For(Find.ByIds<FirmAddress>(ids))
+                            q => from firmAddress in q.For(API.Specifications.Specs.Find.ByIds<FirmAddress>(ids))
                                  join firm in q.For<Firm>() on firmAddress.FirmId equals firm.Id
                                  where firm.ClientId.HasValue
                                  select firm.ClientId.Value);
@@ -79,10 +79,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                 public static class ToFirmAggregate
                 {
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByAccount(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByAccount(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from account in q.For(Find.ByIds<Account>(ids))
+                            q => from account in q.For(API.Specifications.Specs.Find.ByIds<Account>(ids))
                                  join legalPerson in q.For<LegalPerson>() on account.LegalPersonId equals legalPerson.Id
                                  join client in q.For<Client>() on legalPerson.ClientId equals client.Id
                                  join branchOfficeOrganizationUnit in q.For<BranchOfficeOrganizationUnit>()
@@ -92,15 +92,15 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  select firm.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByBranchOfficeOrganizationUnit(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByBranchOfficeOrganizationUnit(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from branchOfficeOrganizationUnit in q.For(Find.ByIds<BranchOfficeOrganizationUnit>(ids))
+                            q => from branchOfficeOrganizationUnit in q.For(API.Specifications.Specs.Find.ByIds<BranchOfficeOrganizationUnit>(ids))
                                  join firm in q.For<Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
                                  select firm.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategory(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategory(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q =>
@@ -134,22 +134,22 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddress(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddress(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from categoryFirmAddress in q.For(Find.ByIds<CategoryFirmAddress>(ids))
+                            q => from categoryFirmAddress in q.For(API.Specifications.Specs.Find.ByIds<CategoryFirmAddress>(ids))
                                  join firmAddress in q.For<FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                                  select firmAddress.FirmId);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddressForStatistics(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryFirmAddressForStatistics(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q =>
                             {
                                 var changeKeys = from firm in q.For<Firm>()
                                                  join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                                 join firmAddressCategory in q.For(Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                                 join firmAddressCategory in q.For(API.Specifications.Specs.Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
                                 var query = from firm in q.For<Firm>()
@@ -163,19 +163,19 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => (from firm in q.For<Firm>()
                                   join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
                                   join categoryFirmAddress in q.For<CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                  join categoryOrganizationUnit in q.For(Find.ByIds<CategoryOrganizationUnit>(ids))
+                                  join categoryOrganizationUnit in q.For(API.Specifications.Specs.Find.ByIds<CategoryOrganizationUnit>(ids))
                                   on categoryFirmAddress.CategoryId equals categoryOrganizationUnit.CategoryId
                                   where firm.OrganizationUnitId == categoryOrganizationUnit.OrganizationUnitId
                                   select firmAddress.FirmId).Distinct());
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByClient(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByClient(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from firm in q.For(new FindSpecification<Firm>(x => ids.Contains(x.ClientId.Value)))
@@ -183,21 +183,21 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  select firm.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByContacts(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByContacts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from firm in q.For<Firm>()
                                  join client in q.For<Client>() on firm.ClientId equals client.Id
-                                 join contact in q.For(Find.ByIds<Contact>(ids)) on client.Id equals contact.ClientId
+                                 join contact in q.For(API.Specifications.Specs.Find.ByIds<Contact>(ids)) on client.Id equals contact.ClientId
                                  select firm.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmForStatistics(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmForStatistics(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q =>
                             {
-                                var changeKeys = from firm in q.For(Find.ByIds<Firm>(ids))
+                                var changeKeys = from firm in q.For(API.Specifications.Specs.Find.ByIds<Firm>(ids))
                                                  join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
                                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
@@ -213,30 +213,30 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryGroup(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryGroup(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => (from categoryGroup in q.For(Find.ByIds<CategoryGroup>(ids))
+                            q => (from categoryGroup in q.For(API.Specifications.Specs.Find.ByIds<CategoryGroup>(ids))
                                   join categoryOrganizationUnit in q.For<CategoryOrganizationUnit>() on categoryGroup.Id equals categoryOrganizationUnit.CategoryId
                                   join categoryFirmAddress in q.For<CategoryFirmAddress>() on categoryOrganizationUnit.CategoryId equals categoryFirmAddress.CategoryId
                                   join firmAddress in q.For<FirmAddress>() on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                                   select firmAddress.FirmId).Distinct());
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddress(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddress(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from firmAddress in q.For(Find.ByIds<FirmAddress>(ids))
+                            q => from firmAddress in q.For(API.Specifications.Specs.Find.ByIds<FirmAddress>(ids))
                                  select firmAddress.FirmId);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddressForStatistics(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmAddressForStatistics(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q =>
                             {
                                 var changeKeys = from firm in q.For<Firm>()
-                                                 join firmAddress in q.For(Find.ByIds<FirmAddress>(ids)) on firm.Id equals firmAddress.FirmId
+                                                 join firmAddress in q.For(API.Specifications.Specs.Find.ByIds<FirmAddress>(ids)) on firm.Id equals firmAddress.FirmId
                                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                                  select new { firm.OrganizationUnitId, firmAddressCategory.CategoryId };
 
@@ -251,19 +251,19 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmContacts(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByFirmContacts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from firmAddress in q.For<FirmAddress>()
-                                 join firmContact in q.For(Find.ByIds<FirmContact>(ids)) on firmAddress.Id equals firmContact.FirmAddressId
+                                 join firmContact in q.For(API.Specifications.Specs.Find.ByIds<FirmContact>(ids)) on firmAddress.Id equals firmContact.FirmAddressId
                                  select firmAddress.FirmId);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByLegalPerson(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByLegalPerson(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from account in q.For<Account>()
-                                 join legalPerson in q.For(Find.ByIds<LegalPerson>(ids)) on account.LegalPersonId equals legalPerson.Id
+                                 join legalPerson in q.For(API.Specifications.Specs.Find.ByIds<LegalPerson>(ids)) on account.LegalPersonId equals legalPerson.Id
                                  join client in q.For<Client>() on legalPerson.ClientId equals client.Id
                                  join branchOfficeOrganizationUnit in q.For<BranchOfficeOrganizationUnit>()
                                      on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id
@@ -272,17 +272,17 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  select firm.Id);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByOrder(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByOrder(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from order in q.For(Find.ByIds<Order>(ids))
+                            q => from order in q.For(API.Specifications.Specs.Find.ByIds<Order>(ids))
                                  select order.FirmId);
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByProject(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByProject(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from project in q.For(Find.ByIds<Project>(ids))
+                            q => from project in q.For(API.Specifications.Specs.Find.ByIds<Project>(ids))
                                  join firm in q.For<Firm>() on project.OrganizationUnitId equals firm.OrganizationUnitId
                                  select firm.Id);
                     }
@@ -290,10 +290,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                 public static class ToProjectAggregate
                 {
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from categoryOrganizationUnit in q.For(Find.ByIds<CategoryOrganizationUnit>(ids))
+                            q => from categoryOrganizationUnit in q.For(API.Specifications.Specs.Find.ByIds<CategoryOrganizationUnit>(ids))
                                  join project in q.For<Project>() on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
                                  select project.Id);
                     }
@@ -301,10 +301,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                 public static class ToTerritoryAggregate
                 {
-                    public static MapSpecification<IQuery, IEnumerable<long>> ByProject(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByProject(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from project in q.For(Find.ByIds<Project>(ids))
+                            q => from project in q.For(API.Specifications.Specs.Find.ByIds<Project>(ids))
                                  join territory in q.For<Territory>() on project.OrganizationUnitId equals territory.OrganizationUnitId
                                  select territory.Id);
                     }
@@ -312,37 +312,37 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                 public static class ToStatistics
                 {
-                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirm(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirm(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
-                            q => from firm in q.For(Find.ByIds<Firm>(ids))
+                            q => from firm in q.For(API.Specifications.Specs.Find.ByIds<Firm>(ids))
                                  join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
                                  join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                  select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddress(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddress(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
                             q => from firm in q.For<Firm>()
                                  join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
-                                 join firmAddress in q.For(Find.ByIds<FirmAddress>(ids)) on firm.Id equals firmAddress.FirmId
+                                 join firmAddress in q.For(API.Specifications.Specs.Find.ByIds<FirmAddress>(ids)) on firm.Id equals firmAddress.FirmId
                                  join firmAddressCategory in q.For<CategoryFirmAddress>() on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                  select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddressCategory(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByFirmAddressCategory(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
                             q => from firm in q.For<Firm>()
                                  join project in q.For<Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
                                  join firmAddress in q.For<FirmAddress>() on firm.Id equals firmAddress.FirmId
-                                 join firmAddressCategory in q.For(Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
+                                 join firmAddressCategory in q.For(API.Specifications.Specs.Find.ByIds<CategoryFirmAddress>(ids)) on firmAddress.Id equals firmAddressCategory.FirmAddressId
                                  select new CalculateStatisticsOperation { CategoryId = firmAddressCategory.CategoryId, ProjectId = project.Id });
                     }
 
-                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByProject(IEnumerable<long> ids)
+                    public static MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> ByProject(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>>(
                             q => from projectId in ids

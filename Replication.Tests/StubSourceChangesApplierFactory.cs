@@ -22,12 +22,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _dataContext = dataContext;
         }
 
-        public ISourceChangesApplier Create(ErmFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
+        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
         {
-            var repositoryType = typeof(LinqToDBRepository<>).MakeGenericType(factInfo.FactType);
+            var repositoryType = typeof(LinqToDBRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)Activator.CreateInstance(repositoryType, new StubModifiableDomainContextProvider(_connection, _dataContext));
 
-            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.FactType);
+            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.Type);
             return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, destQuery, repositoryInstance);
         }
     }

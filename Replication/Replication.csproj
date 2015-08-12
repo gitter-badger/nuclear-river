@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2GIS.NuClear.Aggregates">
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.3.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+    </Reference>
     <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
       <Private>True</Private>
@@ -69,7 +72,6 @@
     <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
-    <Compile Include="CustomerIntelligence\Data\Context\ICustomerIntelligenceContext.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Territory.cs" />
@@ -100,10 +102,6 @@
     <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IAggregateInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\IMetadataInfo.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\AggregateInfoBuilder.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\SourceChangesApplier.cs" />
@@ -121,7 +119,6 @@
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsTransformationContext.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Metadata\ValueObjectInfo.cs" />
     <Compile Include="CustomerIntelligence\Transforming\TransactionManagerExtensions.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\DataMapperFactory.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />

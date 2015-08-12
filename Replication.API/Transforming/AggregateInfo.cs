@@ -1,15 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
+namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    internal sealed class AggregateInfo<T> : IAggregateInfo where T : class, IIdentifiable
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
+    public static class AggregateInfo
+    {
+        public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>() where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
+        {
+            return new AggregateInfoBuilder<TAggregate>();
+        }
+    }
+
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
+    public sealed class AggregateInfo<T> : IAggregateInfo where T : class, IIdentifiable
     {
         private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> _mapToSourceSpecProvider;
         private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> _mapToTargetSpecProvider;

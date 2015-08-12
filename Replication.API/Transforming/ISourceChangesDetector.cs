@@ -6,10 +6,10 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public interface ISourceChangesDetector
     {
-        IMergeResult<long> DetectChanges(IReadOnlyCollection<long> factIds); 
+        IMergeResult<long> DetectChanges(IReadOnlyCollection<long> ids); 
     }
 
-    public interface ISourceChangesDetector<TFact> : ISourceChangesDetector where TFact : class, IErmFactObject
+    public interface ISourceChangesDetector<T> : ISourceChangesDetector where T : class, IIdentifiable
     {
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Mergers
 {

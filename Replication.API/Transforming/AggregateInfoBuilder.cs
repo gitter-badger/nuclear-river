@@ -1,25 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Metadata
+namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    internal static class AggregateInfoBuilder
-    {
-        public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>() where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
-        {
-            return new AggregateInfoBuilder<TAggregate>();
-        }
-    }
-
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    internal class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
+    public class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
     {
         private readonly List<IMetadataInfo> _valueObjects;
         private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToTargetSpecProvider =
@@ -44,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.M
         }
 
         public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToSourceSpecProvider,
+            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToSourceSpecProvider, 
             Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToTargetSpecProvider)
         {
             _valueObjects.Add(new ValueObjectInfo<TValueObject>(mapToSourceSpecProvider, mapToTargetSpecProvider));

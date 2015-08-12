@@ -16,91 +16,91 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         [Test]
         public void ReloadAccounts()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Accounts().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Accounts(null).Map(query));
         }
 
         [Test]
         public void ReloadBranchOfficeOrganizationUnits()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits(null).Map(query));
         }
 
         [Test]
         public void ReloadCategories()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Categories().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Categories(null).Map(query));
         }
 
         [Test]
         public void ReloadCategoryGroups()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.CategoryGroups().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryGroups(null).Map(query));
         }
 
         [Test]
         public void ReloadCategoryFirmAddresses()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.CategoryFirmAddresses().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryFirmAddresses(null).Map(query));
         }
 
         [Test]
         public void ReloadCategoryOrganizationUnits()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.CategoryOrganizationUnits().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.CategoryOrganizationUnits(null).Map(query));
         }
 
         [Test]
         public void ReloadClients()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Clients().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Clients(null).Map(query));
         }
 
         [Test]
         public void ReloadContacts()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Contacts().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Contacts(null).Map(query));
         }
 
         [Test]
         public void ReloadFirms()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Firms().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Firms(null).Map(query));
         }
 
         [Test]
         public void ReloadFirmAddresses()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.FirmAddresses().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.FirmAddresses(null).Map(query));
         }
 
         [Test]
         public void ReloadFirmContacts()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.FirmContacts().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.FirmContacts(null).Map(query));
         }
 
         [Test]
         public void ReloadLegalPersons()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.LegalPersons().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.LegalPersons(null).Map(query));
         }
 
         [Test]
         public void ReloadOrders()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Orders().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Orders(null).Map(query));
         }
 
         [Test]
         public void ReloadProjects()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Projects().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Projects(null).Map(query));
         }
 
         [Test]
         public void ReloadTerritories()
         {
-            Reload(query => Specs.Erm.Map.ToFacts.Territories().Map(query));
+            Reload(query => Specs.Erm.Map.ToFacts.Territories(null).Map(query));
         }
 
         private void Reload<T>(Func<IQuery, IQueryable<T>> loader)

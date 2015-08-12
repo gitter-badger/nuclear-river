@@ -322,10 +322,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Updated()
         {
-            var source = Mock.Of<IQuery>(query =>
-                query.For(It.IsAny<FindSpecification<Erm::Firm>>()) == Inquire(new Erm::Firm { Id = 1 })
-                && query.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()) == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 1 })
-                && query.For(It.IsAny<FindSpecification<Erm::Category>>()) == Inquire(new Erm::Category { Id = 1, Level = 1 }, new Erm::Category { Id = 2, Level = 2, ParentId = 1 }, new Erm::Category { Id = 3, Level = 3, ParentId = 2 }));
+            var source = new Mock<IQuery>();
+            source.Setup(q => q.For(It.IsAny<FindSpecification<Erm::Firm>>()), new Erm::Firm { Id = 1 })
+                  .Setup(q => q.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()), new Erm::FirmAddress { Id = 1, FirmId = 1 })
+                  .Setup(q => q.For(It.IsAny<FindSpecification<Erm::Category>>()),
+                         new Erm::Category { Id = 1, Level = 1 },
+                         new Erm::Category { Id = 2, Level = 2, ParentId = 1 },
+                         new Erm::Category { Id = 3, Level = 3, ParentId = 2 });
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -334,7 +337,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(source.Object, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Category>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }
@@ -342,10 +345,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Updated()
         {
-            var source = Mock.Of<IQuery>(query =>
-                query.For(It.IsAny<FindSpecification<Erm::Firm>>()) == Inquire(new Erm::Firm { Id = 1 })
-                && query.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()) == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 1 })
-                && query.For(It.IsAny<FindSpecification<Erm::Category>>()) == Inquire(new Erm::Category { Id = 1, Level = 1 }, new Erm::Category { Id = 2, Level = 2, ParentId = 1 }));
+            var source = new Mock<IQuery>();
+            source.Setup(q => q.For(It.IsAny<FindSpecification<Erm::Firm>>()), new Erm::Firm { Id = 1 })
+                  .Setup(q => q.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()), new Erm::FirmAddress { Id = 1, FirmId = 1 })
+                  .Setup(q => q.For(It.IsAny<FindSpecification<Erm::Category>>()),
+                         new Erm::Category { Id = 1, Level = 1 },
+                         new Erm::Category { Id = 2, Level = 2, ParentId = 1 });
 
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
@@ -354,7 +359,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(source.Object, FactsQuery, FactsDb)
                           .Transform(Fact.Operation<Facts::Category>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1)));
         }

@@ -105,7 +105,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="IdentifiableObjectExtensions.cs" />
     <Compile Include="VerifiableSourceChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>

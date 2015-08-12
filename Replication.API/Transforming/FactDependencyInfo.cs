@@ -12,14 +12,14 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
         public abstract bool IsDirectDependency { get; }
 
-        public abstract Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider { get; }
+        public abstract Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider { get; }
 
         public static FactDependencyInfo Create<TAggregate>()
         {
             return new DirectAggregateDependencyInfo<TAggregate>();
         }
 
-        public static FactDependencyInfo Create<TAggregate>(Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
+        public static FactDependencyInfo Create<TAggregate>(Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
         {
             return new AggregateDependencyInfo<TAggregate>(dependentAggregateSpecProvider);
         }
@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
                 get { return true; }
             }
 
-            public override Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider
+            public override Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider
             {
                 get { return ids => new MapSpecification<IQuery, IEnumerable<long>>(q => ids); }
             }
@@ -44,9 +44,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
         private class AggregateDependencyInfo<TAggregate> : FactDependencyInfo
         {
-            private readonly Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> _dependentAggregateSpecProvider;
+            private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> _dependentAggregateSpecProvider;
 
-            public AggregateDependencyInfo(Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
+            public AggregateDependencyInfo(Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
             {
                 _dependentAggregateSpecProvider = dependentAggregateSpecProvider;
             }
@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
                 get { return false; }
             }
 
-            public override Func<IEnumerable<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider
+            public override Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> DependentAggregateSpecProvider
             {
                 get { return _dependentAggregateSpecProvider; }
             }

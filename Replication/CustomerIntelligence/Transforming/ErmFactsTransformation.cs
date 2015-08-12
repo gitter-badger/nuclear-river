@@ -67,13 +67,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                         var factType = slice.Key.FactType;
                         var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
-                        ErmFactInfo factInfo;
+                        IFactInfo factInfo;
                         if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
                         {
                             throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                         }
 
-                        using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
+                        using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
                         {
                             var changesDetector = _sourceChangesDetectorFactory.Create(factInfo, _sourceQuery, _destQuery);
                             var changesApplier = _sourceChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
