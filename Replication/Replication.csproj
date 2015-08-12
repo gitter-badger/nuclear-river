@@ -98,9 +98,6 @@
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\SourceChangesApplier.cs" />
