@@ -53,8 +53,9 @@
     <Reference Include="2GIS.NuClear.Telemetry">
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.11.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
     </Reference>
-    <Reference Include="linq2db">
-      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
