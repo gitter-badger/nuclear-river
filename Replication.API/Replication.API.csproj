@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -90,8 +91,8 @@
     <Compile Include="Transforming\IFactDependencyInfo.cs" />
     <Compile Include="Transforming\IFactInfo.cs" />
     <Compile Include="Transforming\IMetadataInfo.cs" />
-    <Compile Include="Transforming\ISourceChangesApplier.cs" />
-    <Compile Include="Transforming\ISourceChangesApplierFactory.cs" />
+    <Compile Include="Transforming\IFactChangesApplier.cs" />
+    <Compile Include="Transforming\IFactChangesApplierFactory.cs" />
     <Compile Include="Transforming\ISourceChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
     <Compile Include="Transforming\ValueObjectInfo.cs" />

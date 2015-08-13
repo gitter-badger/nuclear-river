@@ -79,7 +79,7 @@
     <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="StubModifiableDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
-    <Compile Include="StubSourceChangesApplierFactory.cs" />
+    <Compile Include="StubFactChangesApplierFactory.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
@@ -105,7 +105,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="VerifiableSourceChangesApplierFactory.cs" />
+    <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -936,13 +936,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private Transformation(
                 IQuery source,
                 IQuery target,
-                ISourceChangesApplierFactory sourceChangesApplierFactory)
+                IFactChangesApplierFactory factChangesApplierFactory)
             {
-                _transformation = new ErmFactsTransformation(source, target, sourceChangesApplierFactory);
+                _transformation = new ErmFactsTransformation(source, target, factChangesApplierFactory);
             }
 
             private Transformation(IQuery source, IQuery target)
-                : this(source, target, new VerifiableSourceChangesApplierFactory(OnRepositoryCreated))
+                : this(source, target, new VerifiableFactChangesApplierFactory(OnRepositoryCreated))
             {
             }
 
@@ -956,7 +956,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return new Transformation(
                     source,
                     target,
-                    new StubSourceChangesApplierFactory(dataConnection.Connection, dataConnection));
+                    new StubFactChangesApplierFactory(dataConnection.Connection, dataConnection));
             }
 
             public Transformation Transform(params FactOperation[] operations)

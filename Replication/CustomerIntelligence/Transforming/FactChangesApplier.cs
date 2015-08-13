@@ -9,14 +9,14 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public class SourceChangesApplier<TFact> : ISourceChangesApplier<TFact> where TFact : class, IErmFactObject
+    public class FactChangesApplier<TFact> : IFactChangesApplier<TFact> where TFact : class, IErmFactObject
     {
         private readonly IFactInfo _factInfo;
         private readonly IQuery _source;
         private readonly IQuery _target;
         private readonly IRepository<TFact> _repository;
 
-        public SourceChangesApplier(IFactInfo factInfo, IQuery source, IQuery target, IRepository<TFact> repository)
+        public FactChangesApplier(IFactInfo factInfo, IQuery source, IQuery target, IRepository<TFact> repository)
         {
             _factInfo = factInfo;
             _source = source;

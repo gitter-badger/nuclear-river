@@ -11,12 +11,12 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    public class StubSourceChangesApplierFactory : ISourceChangesApplierFactory
+    public class StubFactChangesApplierFactory : IFactChangesApplierFactory
     {
         private readonly IDbConnection _connection;
         private readonly DataConnection _dataContext;
 
-        public StubSourceChangesApplierFactory(IDbConnection connection, DataConnection dataContext)
+        public StubFactChangesApplierFactory(IDbConnection connection, DataConnection dataContext)
         {
             _connection = connection;
             _dataContext = dataContext;
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             var repositoryType = typeof(LinqToDBRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)Activator.CreateInstance(repositoryType, new StubModifiableDomainContextProvider(_connection, _dataContext));
 
-            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.Type);
+            var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
             return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, destQuery, repositoryInstance);
         }
     }

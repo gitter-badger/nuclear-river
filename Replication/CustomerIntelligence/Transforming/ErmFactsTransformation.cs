@@ -18,13 +18,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IQuery _sourceQuery;
         private readonly IQuery _destQuery;
-        private readonly ISourceChangesApplierFactory _sourceChangesApplierFactory;
+        private readonly IFactChangesApplierFactory _factChangesApplierFactory;
         private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec; 
 
         public ErmFactsTransformation(
             IQuery sourceQuery,
             IQuery destQuery,
-            ISourceChangesApplierFactory sourceChangesApplierFactory)
+            IFactChangesApplierFactory factChangesApplierFactory)
         {
             if (sourceQuery == null)
             {
@@ -36,14 +36,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("destQuery");
             }
 
-            if (sourceChangesApplierFactory == null)
+            if (factChangesApplierFactory == null)
             {
-                throw new ArgumentNullException("sourceChangesApplierFactory");
+                throw new ArgumentNullException("factChangesApplierFactory");
             }
 
             _sourceQuery = sourceQuery;
             _destQuery = destQuery;
-            _sourceChangesApplierFactory = sourceChangesApplierFactory;
+            _factChangesApplierFactory = factChangesApplierFactory;
 
             _changesDetectionMapSpec = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
         }
@@ -75,7 +75,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                         {
                             var changesDetector = new SourceChangesDetector(factInfo, _sourceQuery, _destQuery);
                             var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _destQuery);
-                            var changesApplier = _sourceChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
+                            var changesApplier = _factChangesApplierFactory.Create(factInfo, _sourceQuery, _destQuery);
                             
                             var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, factIds);
 
