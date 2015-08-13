@@ -50,7 +50,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<IQuery>(Scope.Erm),
                                                        new ResolvedParameter<IQuery>(Scope.Facts),
-                                                       new ResolvedParameter<ISourceChangesApplierFactory>()))
+                                                       new ResolvedParameter<IFactChangesApplierFactory>()))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(

@@ -257,8 +257,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                   transactionOptions,
                                                   c.Resolve<IPendingChangesHandlingStrategy>())))
 
-                .RegisterType<ISourceChangesApplierFactory, UnitySourceChangesApplierFactory>(Lifetime.PerScope)
-                .RegisterTypeWithDependencies(typeof(ISourceChangesApplier<>), typeof(SourceChangesApplier<>), Lifetime.PerScope, scope);
+                .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(Lifetime.PerScope)
+                .RegisterTypeWithDependencies(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), Lifetime.PerScope, scope);
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)

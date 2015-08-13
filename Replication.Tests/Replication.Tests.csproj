@@ -48,8 +48,8 @@
       <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.1\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
@@ -79,7 +79,7 @@
     <Compile Include="BulkLoadingOfFacts.cs" />
     <Compile Include="StubModifiableDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
-    <Compile Include="StubSourceChangesApplierFactory.cs" />
+    <Compile Include="StubFactChangesApplierFactory.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
@@ -105,7 +105,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\BaseTransformationFixture.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="VerifiableSourceChangesApplierFactory.cs" />
+    <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -123,7 +123,6 @@
       <Name>Replication</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.96.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.96.0\build\net451\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

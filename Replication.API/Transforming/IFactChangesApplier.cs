@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
         IReadOnlyCollection<AggregateOperation> ApplyChanges(IMergeResult<long> changes);
     }
 
-    public interface ISourceChangesApplier<TFact> : ISourceChangesApplier where TFact : class, IErmFactObject
+    public interface IFactChangesApplier<TFact> : ISourceChangesApplier where TFact : class, IErmFactObject
     {
     }
 }

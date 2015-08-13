@@ -10,11 +10,11 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    public class VerifiableSourceChangesApplierFactory : ISourceChangesApplierFactory
+    public class VerifiableFactChangesApplierFactory : IFactChangesApplierFactory
     {
         private readonly Action<IRepository> _onRepositoryCreated;
 
-        public VerifiableSourceChangesApplierFactory(Action<IRepository> onRepositoryCreated)
+        public VerifiableFactChangesApplierFactory(Action<IRepository> onRepositoryCreated)
         {
             _onRepositoryCreated = onRepositoryCreated;
         }
@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
             _onRepositoryCreated(repositoryInstance);
 
-            var applierType = typeof(SourceChangesApplier<>).MakeGenericType(factInfo.Type);
+            var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
             return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, destQuery, repositoryInstance);
         }
 

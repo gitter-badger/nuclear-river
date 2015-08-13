@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    public interface ISourceChangesApplierFactory
+    public interface IFactChangesApplierFactory
     {
         ISourceChangesApplier Create(IFactInfo factInfo, IQuery source, IQuery target);
     }
