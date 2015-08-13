@@ -9,7 +9,7 @@ Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 
 Task Build-ConvertUseCasesService {
 	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
-	$toolsDir = Join-Path $packageInfo.VersionedDir 'tools'
+	$toolsDir = $packageInfo.VersionedDir
 
 	$commonMetadata = Get-Metadata 'Common'
 	$tempDir = Join-Path $commonMetadata.Dir.Temp 'ConvertUseCasesService'
