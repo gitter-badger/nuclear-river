@@ -9,6 +9,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 {
     public sealed class ErmContext : IErmContext
     {
+        private const int ActivityStatusCompleted = 2;
+        private const int RegardingObjectReference = 1;
+        private const long FirmTypeId = 146;
+        private const long ClientTypeId = 200;
+
         private readonly IDataContext _context;
 
         public ErmContext(IDataContext context)
@@ -166,6 +171,127 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 return from territory in _context.GetTable<Territory>()
                        where territory.IsActive
                        select territory;
+            }
+        }
+
+        public IQueryable<ActivityBase<Appointment>> Appointments
+        {
+            get
+            {
+                return from appointment in _context.GetTable<ActivityBase<Appointment>>()
+                       where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
+                       select appointment;
+            }
+        }
+
+        public IQueryable<ActivityReference<Appointment>> AppointmentClients
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Appointment>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityReference<Appointment>> AppointmentFirms
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Appointment>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
+                       select reference;
+            }
+        }
+
+
+        public IQueryable<ActivityBase<Phonecall>> Phonecalls
+        {
+            get
+            {
+                return from appointment in _context.GetTable<ActivityBase<Phonecall>>()
+                       where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
+                       select appointment;
+            }
+        }
+
+        public IQueryable<ActivityReference<Phonecall>> PhonecallClients
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Phonecall>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityReference<Phonecall>> PhonecallFirms
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Phonecall>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityBase<Task>> Tasks
+        {
+            get
+            {
+                return from appointment in _context.GetTable<ActivityBase<Task>>()
+                       where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
+                       select appointment;
+            }
+        }
+
+        public IQueryable<ActivityReference<Task>> TaskClients
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Task>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityReference<Task>> TaskFirms
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Task>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityBase<Letter>> Letter
+        {
+            get
+            {
+                return from appointment in _context.GetTable<ActivityBase<Letter>>()
+                       where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
+                       select appointment;
+            }
+        }
+
+        public IQueryable<ActivityReference<Letter>> LetterClients
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Letter>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
+                       select reference;
+            }
+        }
+
+        public IQueryable<ActivityReference<Letter>> LetterFirms
+        {
+            get
+            {
+                return from reference in _context.GetTable<ActivityReference<Letter>>()
+                       where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
+                       select reference;
             }
         }
     }

@@ -34,6 +34,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<Activity> Activities
+        {
+            get
+            {
+                var appointmentActivities = MapToActivity(_context.Appointments, _context.AppointmentFirms, _context.AppointmentClients);
+                var phonecallActivities = MapToActivity(_context.Phonecalls, _context.PhonecallFirms, _context.PhonecallClients);
+                var taskActivities = MapToActivity(_context.Tasks, _context.TaskFirms, _context.TaskClients);
+                var letterActivities = MapToActivity(_context.Letter, _context.LetterFirms, _context.LetterClients);
+
+                return appointmentActivities.Union(phonecallActivities).Union(taskActivities).Union(letterActivities);
+            }
+        }
+
         public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
         {
             get
@@ -248,6 +261,23 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                            OrganizationUnitId = territory.OrganizationUnitId
                        };
             }
+        }
+
+        private static IQueryable<Activity> MapToActivity<T>(
+            IQueryable<Model.Erm.ActivityBase<T>> activities,
+            IQueryable<Model.Erm.ActivityReference<T>> firmReferences,
+            IQueryable<Model.Erm.ActivityReference<T>> clientReferences)
+        {
+            return from activity in activities
+                   join firmReference in firmReferences.DefaultIfEmpty() on activity.Id equals firmReference.AppointmentId
+                   join clientReference in clientReferences.DefaultIfEmpty() on activity.Id equals clientReference.AppointmentId
+                   select new Activity
+                   {
+                       Id = activity.Id,
+                       ModifiedOn = activity.ModifiedOn,
+                       FirmId = firmReference != null ? firmReference.ReferencedObjectId : (long?)null,
+                       ClientId = clientReference != null ? clientReference.ReferencedObjectId : (long?)null
+                   };
         }
 
         private static int ConvertAccountRole(int value)

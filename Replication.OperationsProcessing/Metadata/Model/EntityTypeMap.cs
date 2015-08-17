@@ -19,6 +19,10 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
         private static readonly Dictionary<IEntityType, Type> ErmTypeMap
             = new[]
                 {
+                    CreateMapping<EntityTypeAppointment, Erm.ActivityBase<Erm.Appointment>>(),
+                    CreateMapping<EntityTypePhonecall, Erm.ActivityBase<Erm.Phonecall>>(),
+                    CreateMapping<EntityTypeTask, Erm.ActivityBase<Erm.Task>>(),
+                    CreateMapping<EntityTypeLetter, Erm.ActivityBase<Erm.Letter>>(),
                     CreateMapping<EntityTypeAccount, Erm.Account>(),
                     CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Erm.BranchOfficeOrganizationUnit>(),
                     CreateMapping<EntityTypeCategory, Erm.Category>(),
@@ -39,6 +43,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
         private static readonly Dictionary<IEntityType, Type> FactsTypeMap
             = new[]
                 {
+                    CreateMapping<EntityTypeActivity, Facts.Activity>(),
                     CreateMapping<EntityTypeAccount, Facts.Account>(),
                     CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Facts.BranchOfficeOrganizationUnit>(),
                     CreateMapping<EntityTypeCategory, Facts.Category>(),

@@ -17,6 +17,12 @@
         public const int Project = 158;
         public const int Territory = 191;
 
+        public const int Activity = 500;
+        public const int Appointment = 501;
+        public const int Phonecall = 502;
+        public const int Task = 503;
+        public const int Letter = 504;
+
         // Значения, первоисточником которых является CI
         public const int BranchOfficeOrganizationUnit = 10001;
         public const int Category = 10002;

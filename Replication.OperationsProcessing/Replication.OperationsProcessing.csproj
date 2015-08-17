@@ -153,6 +153,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Final\StatisticsOperationAccumulator.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeActivity.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeAppointment.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeLetter.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypePhonecall.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeTask.cs" />
     <Compile Include="OperationAggregatableMessage.cs" />
     <Compile Include="Final\StatisticsAggregatableMessageHandler.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />

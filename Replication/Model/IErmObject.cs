@@ -3,4 +3,8 @@
     public interface IErmObject : IObject, IIdentifiable
     {
     }
+
+    public interface IErmValueObject : IObject
+    {
+    }
 }

@@ -62,6 +62,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\Activity.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\ActivityBase.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\ActivityReference.cs" />
+    <Compile Include="CustomerIntelligence\Model\Facts\Activity.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />

@@ -16,6 +16,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private static readonly Dictionary<Type, ErmFactInfo> Facts
             = new ErmFactInfo[]
               {
+                  ErmFactInfo.OfType<Activity>()
+                          .HasSource(context => context.Activities),
+
                   ErmFactInfo.OfType<Account>()
                           .HasSource(context => context.Accounts)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByAccount),
