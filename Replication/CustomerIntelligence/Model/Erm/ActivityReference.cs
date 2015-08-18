@@ -4,7 +4,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
     public sealed class ActivityReference<T> : IErmValueObject
     {
-        public long AppointmentId { get; set; }
+        public long ActivityId { get; set; }
         public int Reference { get; set; }
         public int ReferencedType { get; set; }
         public long ReferencedObjectId { get; set; }
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
         {
             unchecked
             {
-                var hashCode = AppointmentId.GetHashCode();
+                var hashCode = ActivityId.GetHashCode();
                 hashCode = (hashCode * 397) ^ Reference;
                 hashCode = (hashCode * 397) ^ ReferencedType;
                 hashCode = (hashCode * 397) ^ ReferencedObjectId.GetHashCode();
@@ -38,7 +38,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         private bool Equals(ActivityReference<T> other)
         {
-            return AppointmentId == other.AppointmentId && Reference == other.Reference && ReferencedType == other.ReferencedType && ReferencedObjectId == other.ReferencedObjectId;
+            return ActivityId == other.ActivityId && Reference == other.Reference && ReferencedType == other.ReferencedType && ReferencedObjectId == other.ReferencedObjectId;
         }
     }
 }
