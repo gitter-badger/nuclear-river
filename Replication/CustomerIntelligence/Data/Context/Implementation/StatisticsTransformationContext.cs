@@ -22,7 +22,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var firmCounts = _bitContext.GetTable<Facts.FirmCategory>().GroupBy(x => new { x.ProjectId, x.CategoryId }).Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
+                var firmCounts = _bitContext.GetTable<Facts.FirmCategory>()
+                                            .GroupBy(x => new { x.ProjectId, x.CategoryId })
+                                            .Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
 
                 return from firm in _bitContext.GetTable<Facts.FirmCategory>()
                        from firmStatistics in _bitContext.GetTable<Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
