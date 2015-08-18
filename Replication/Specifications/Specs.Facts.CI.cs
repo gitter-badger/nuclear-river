@@ -60,9 +60,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static MapSpecification<IQuery, IQueryable<ClientContact>> ClientContacts(IReadOnlyCollection<long> aggregateIds)
                     {
+                        var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();
                         return new MapSpecification<IQuery, IQueryable<ClientContact>>(
                             q => from contact in q.For<Facts::Contact>()
-                                 where (aggregateIds == null && !aggregateIds.Any()) || aggregateIds.Contains(contact.ClientId)
+                                 where shouldBeFiltered || aggregateIds.Contains(contact.ClientId)
                                  select new ClientContact
                                         {
                                             ClientId = contact.ClientId,
@@ -124,6 +125,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static MapSpecification<IQuery, IQueryable<FirmBalance>> FirmBalances(IReadOnlyCollection<long> aggregateIds)
                     {
+                        var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();
                         return new MapSpecification<IQuery, IQueryable<FirmBalance>>(
                             q => from account in q.For<Facts::Account>()
                                  join legalPerson in q.For<Facts::LegalPerson>() on account.LegalPersonId equals legalPerson.Id
@@ -131,12 +133,13 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  join branchOfficeOrganizationUnit in q.For<Facts::BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals
                                      branchOfficeOrganizationUnit.Id
                                  join firm in q.For<Facts::Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
-                                 where (aggregateIds == null && !aggregateIds.Any()) || (aggregateIds.Contains(firm.Id) && firm.ClientId == client.Id)
+                                 where shouldBeFiltered || (aggregateIds.Contains(firm.Id) && firm.ClientId == client.Id)
                                  select new FirmBalance { AccountId = account.Id, FirmId = firm.Id, Balance = account.Balance });
                     }
 
                     public static MapSpecification<IQuery, IQueryable<FirmCategory>> FirmCategories(IReadOnlyCollection<long> aggregateIds)
                     {
+                        var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();
                         return new MapSpecification<IQuery, IQueryable<FirmCategory>>(
                             q =>
                             {
@@ -147,7 +150,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                 var level3 = from firmAddress in q.For<Facts::FirmAddress>()
                                              join categoryFirmAddress in q.For<Facts::CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
-                                             where (aggregateIds == null && !aggregateIds.Any()) || aggregateIds.Contains(firmAddress.FirmId)
+                                             where shouldBeFiltered || aggregateIds.Contains(firmAddress.FirmId)
                                              select new FirmCategory
                                              {
                                                  FirmId = firmAddress.FirmId,
@@ -158,7 +161,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                              join categoryFirmAddress in q.For<Facts::CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                                              join category2 in categories2 on category3.ParentId equals category2.Id
-                                             where (aggregateIds == null && !aggregateIds.Any()) || aggregateIds.Contains(firmAddress.FirmId)
+                                             where shouldBeFiltered || aggregateIds.Contains(firmAddress.FirmId)
                                              select new FirmCategory
                                              {
                                                  FirmId = firmAddress.FirmId,
@@ -170,7 +173,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                              join category3 in categories3 on categoryFirmAddress.CategoryId equals category3.Id
                                              join category2 in categories2 on category3.ParentId equals category2.Id
                                              join category1 in categories1 on category2.ParentId equals category1.Id
-                                             where (aggregateIds == null && !aggregateIds.Any()) || aggregateIds.Contains(firmAddress.FirmId)
+                                             where shouldBeFiltered || aggregateIds.Contains(firmAddress.FirmId)
                                              select new FirmCategory
                                              {
                                                  FirmId = firmAddress.FirmId,
@@ -195,11 +198,12 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static MapSpecification<IQuery, IQueryable<ProjectCategory>> ProjectCategories(IReadOnlyCollection<long> aggregateIds)
                     {
+                        var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();
                         return new MapSpecification<IQuery, IQueryable<ProjectCategory>>(
                             q => from project in q.For<Facts::Project>()
                                  join categoryOrganizationUnit in q.For<Facts::CategoryOrganizationUnit>() on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                                  join category in q.For<Facts::Category>() on categoryOrganizationUnit.CategoryId equals category.Id
-                                 where (aggregateIds == null && !aggregateIds.Any()) || aggregateIds.Contains(project.Id)
+                                 where shouldBeFiltered || aggregateIds.Contains(project.Id)
                                  select new ProjectCategory
                                  {
                                      ProjectId = project.Id,

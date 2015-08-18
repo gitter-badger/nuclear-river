@@ -3,16 +3,9 @@ using System.Collections.Concurrent;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
-using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.Expressions;
 using LinqToDB.Mapping;
-using LinqToDB.SqlQuery;
-
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
@@ -20,24 +13,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
 {
     public class BulkLoadingFixtureBase
     {
-        private static readonly MethodInfo CreateTableMethodInfo =
-            MemberHelper.MethodOf(() => default(IDataContext).CreateTable<object>(default(string),
-                                                                                  default(string),
-                                                                                  default(string),
-                                                                                  default(string),
-                                                                                  default(string),
-                                                                                  DefaulNullable.None))
-                        .GetGenericMethodDefinition();
-
-        private static readonly Lazy<Type[]> Tables = new Lazy<Type[]>(
-            () =>
-            {
-                var accessor = typeof(Firm);
-                return accessor.Assembly.GetTypes()
-                               .Where(t => t.IsClass && (t.Namespace ?? string.Empty).Contains(accessor.Namespace ?? string.Empty))
-                               .ToArray();
-            });
-
         static BulkLoadingFixtureBase()
         {
 #if DEBUG
@@ -73,7 +48,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
                 settings =>
                 {
                     var provider = DataConnection.GetDataProvider(settings.Name);
-
                     var connection = provider.CreateConnection(settings.ConnectionString);
                     connection.Open();
 
@@ -83,38 +57,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
                         dataConnection.CommandTimeout = Settings.SqlCommandTimeout.Value;
                     }
 
-                    return TuneConnectionIfSqlite(dataConnection);
+                    return dataConnection;
                 });
-        }
-
-        private static DataConnection TuneConnectionIfSqlite(DataConnection db)
-        {
-            if (db.DataProvider.Name == ProviderName.SQLite)
-            {
-                using (new NoSqlTrace())
-                {
-                    var schema = db.MappingSchema;
-                    foreach (var table in Tables.Value)
-                    {
-                        var attributes = schema.GetAttributes<TableAttribute>(table);
-                        if (attributes != null && attributes.Length > 0)
-                        {
-                            // SQLite does not support schemas
-                            Array.ForEach(attributes, attr => attr.Schema = null);
-
-                            // create empty table
-                            CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
-                        }
-                    }
-
-                    /*
-                    // SQLite does not support schemas
-                    Tables.Value.SelectMany(table => db.MappingSchema.GetAttributes<TableAttribute>(table)).ToList().ForEach(x => x.Schema = null);
-                     */
-                }
-            }
-
-            return db;
         }
     }
 }
