@@ -61,6 +61,8 @@
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="MockExtensions.cs" />
+    <Compile Include="Transformation\FactsTransformationContextTests.Activity.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Activity.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />

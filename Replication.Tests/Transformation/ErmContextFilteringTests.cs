@@ -33,6 +33,24 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldReadAllActivityTypes()
+        {
+            ShouldReadActivity(x => x.Appointments);
+            ShouldReadActivity(x => x.Phonecalls);
+            ShouldReadActivity(x => x.Tasks);
+            ShouldReadActivity(x => x.Letters);
+        }
+
+        [Test]
+        public void ShouldReadAllActivityReferenceTypes()
+        {
+            ShouldReadActivityReference(x => x.AppointmentClients, x => x.AppointmentFirms);
+            ShouldReadActivityReference(x => x.PhonecallClients, x => x.PhonecallFirms);
+            ShouldReadActivityReference(x => x.TaskClients, x => x.TaskFirms);
+            ShouldReadActivityReference(x => x.LetterClients, x => x.LetterFirms); 
+        }
+
+        [Test]
         public void ShouldReadBranchOfficeOrganizationUnit()
         {
             ErmDb.Has(new BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 123 })
@@ -274,6 +292,42 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Reader.Create(ErmDb)
                   .VerifyRead(x => x.Territories.ById(1), Inquire(new Territory { Id = 1, Name = "name", OrganizationUnitId = 2 }))
                   .VerifyRead(x => x.Territories.ById(2), Inquire<Territory>());
+        }
+
+        private void ShouldReadActivity<T>(Func<IErmContext, IEnumerable<T>> func)
+            where T : ActivityBase, new()
+        {
+            const int ActivityStatusCompleted = 2;
+
+            ErmDb.Has(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 2, IsActive = false, IsDeleted = false, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 3, IsActive = true, IsDeleted = true, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 4, IsActive = true, IsDeleted = false, Status = 0 });
+
+            Reader.Create(ErmDb)
+                .VerifyRead(x => func(x).ById(1), Inquire(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted }))
+                .VerifyRead(x => func(x).ById(2), Inquire<T>())
+                .VerifyRead(x => func(x).ById(3), Inquire<T>())
+                .VerifyRead(x => func(x).ById(4), Inquire<T>());
+        }
+
+        private void ShouldReadActivityReference<TReference>(Func<IErmContext, IEnumerable<TReference>> clients, Func<IErmContext, IEnumerable<TReference>> firms)
+            where TReference : ActivityReference, new()
+        {
+            const int ReferenceRegardingObject = 1;
+            const int FirmEntityType = 146;
+            const int ClientEntityType = 200;
+
+            ErmDb.Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = FirmEntityType })
+                 .Has(new TReference { Reference = 0, ReferencedType = FirmEntityType })
+                 .Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = ClientEntityType })
+                 .Has(new TReference { Reference = 0, ReferencedType = ClientEntityType })
+                 .Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = 0 })
+                 .Has(new TReference { Reference = 0, ReferencedType = 0 });
+
+            Reader.Create(ErmDb)
+                  .VerifyRead(clients, Inquire(new TReference { Reference = ReferenceRegardingObject, ReferencedType = ClientEntityType }))
+                  .VerifyRead(firms, Inquire(new TReference { Reference = ReferenceRegardingObject, ReferencedType = FirmEntityType }));
         }
 
         #region Reader
