@@ -275,8 +275,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                    {
                        Id = activity.Id,
                        ModifiedOn = activity.ModifiedOn,
-                       FirmId = firmReference.ReferencedObjectId,
-                       ClientId = clientReference.ReferencedObjectId
+                       FirmId = firmReference != null ? firmReference.ReferencedObjectId : (long?)null,
+                       ClientId = clientReference != null ? clientReference.ReferencedObjectId : (long?)null
                    };
         }
 
