@@ -75,6 +75,15 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                     CreateMapping<EntityTypeTerritory, CI.Territory>(),
                 }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
+        private static readonly Dictionary<IEntityType, IEntityType> ErmToFactsTypeMapping
+            = new[]
+              {
+                  CreateTypeMapping<EntityTypeAppointment, EntityTypeActivity>(),
+                  CreateTypeMapping<EntityTypePhonecall, EntityTypeActivity>(),
+                  CreateTypeMapping<EntityTypeTask, EntityTypeActivity>(),
+                  CreateTypeMapping<EntityTypeLetter, EntityTypeActivity>(),
+              }.ToDictionary(pair => pair.Key, pair => pair.Value);
+
         public static void Initialize()
         {
             EntityTypeMappingRegistry.Initialize<ErmContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
@@ -87,10 +96,23 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
             EntityTypeMappingRegistry.AddMappings<FactsContext>(FactsTypeMap);
         }
 
+        public static IEntityType MapErmToFacts(IEntityType entityType)
+        {
+            ErmToFactsTypeMapping.TryGetValue(entityType, out entityType);
+            return entityType;
+        }
+
         private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()
             where TEntityType : IdentityBase<TEntityType>, IEntityType, new()
         {
             return new KeyValuePair<IEntityType, Type>(IdentityBase<TEntityType>.Instance, typeof(TAggregateType));
+        }
+
+        private static KeyValuePair<IEntityType, IEntityType> CreateTypeMapping<TFrom, TTo>()
+            where TFrom : IdentityBase<TFrom>, IEntityType, new()
+            where TTo : IdentityBase<TTo>, IEntityType, new()
+        {
+            return new KeyValuePair<IEntityType, IEntityType>(IdentityBase<TFrom>.Instance, IdentityBase<TTo>.Instance);
         }
     }
 }

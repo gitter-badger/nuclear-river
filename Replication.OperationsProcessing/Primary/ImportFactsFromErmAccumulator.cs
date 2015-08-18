@@ -56,8 +56,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             return from operation in operations
                    where !(operation.EntityType is UnknownEntityType)
-                   let entityType = EntityTypeMap<FactsContext>.AsEntityType(operation.EntityType)
-                   select new FactOperation(entityType, operation.EntityId);
+                   let factEntityName = Metadata.Model.EntityTypeMap.MapErmToFacts(operation.EntityType)
+                   let ermEntityType = EntityTypeMap<FactsContext>.AsEntityType(factEntityName)
+                   select new FactOperation(ermEntityType, operation.EntityId);
         }
 
         private class ErmOperation
