@@ -269,14 +269,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             IQueryable<Model.Erm.ActivityReference<T>> clientReferences)
         {
             return from activity in activities
-                   join firmReference in firmReferences.DefaultIfEmpty() on activity.Id equals firmReference.AppointmentId
-                   join clientReference in clientReferences.DefaultIfEmpty() on activity.Id equals clientReference.AppointmentId
+                   from firmReference in firmReferences.Where(x => x.ActivityId == activity.Id).DefaultIfEmpty()
+                   from clientReference in clientReferences.Where(x => x.ActivityId == activity.Id).DefaultIfEmpty()
                    select new Activity
                    {
                        Id = activity.Id,
                        ModifiedOn = activity.ModifiedOn,
-                       FirmId = firmReference != null ? firmReference.ReferencedObjectId : (long?)null,
-                       ClientId = clientReference != null ? clientReference.ReferencedObjectId : (long?)null
+                       FirmId = firmReference.ReferencedObjectId,
+                       ClientId = clientReference.ReferencedObjectId
                    };
         }
 
