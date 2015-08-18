@@ -110,6 +110,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   CreatedOn = firm.CreatedOn,
                                   LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
                                   LastDistributedOn = _ermContext.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
+                                  LastActivityOn = _ermContext.Activities.Where(x => x.FirmId == firm.Id || x.ClientId == firm.ClientId).Select(x => x.ModifiedOn).Cast<DateTimeOffset?>().Max(),
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _ermContext.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
