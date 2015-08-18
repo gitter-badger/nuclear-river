@@ -133,7 +133,8 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  join branchOfficeOrganizationUnit in q.For<Facts::BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals
                                      branchOfficeOrganizationUnit.Id
                                  join firm in q.For<Facts::Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
-                                 where shouldBeFiltered || (aggregateIds.Contains(firm.Id) && firm.ClientId == client.Id)
+                                 where shouldBeFiltered || aggregateIds.Contains(firm.Id)
+                                 where firm.ClientId == client.Id
                                  select new FirmBalance { AccountId = account.Id, FirmId = firm.Id, Balance = account.Balance });
                     }
 
