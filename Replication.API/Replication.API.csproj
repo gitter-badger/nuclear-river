@@ -66,6 +66,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregateServices\IInitializeAggregateService.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Transforming\IFactChangesApplierFactory.cs" />
     <Compile Include="Transforming\ISourceChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
+    <Compile Include="Transforming\TransactionScopeExtensions.cs" />
     <Compile Include="Transforming\ValueObjectInfo.cs" />
   </ItemGroup>
   <ItemGroup>
