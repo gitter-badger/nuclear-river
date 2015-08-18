@@ -265,7 +265,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<ActivityBase<Letter>> Letter
+        public IQueryable<ActivityBase<Letter>> Letters
         {
             get
             {

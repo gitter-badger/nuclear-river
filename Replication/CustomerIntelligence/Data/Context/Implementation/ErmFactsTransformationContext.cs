@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                 var appointmentActivities = MapToActivity(_context.Appointments, _context.AppointmentFirms, _context.AppointmentClients);
                 var phonecallActivities = MapToActivity(_context.Phonecalls, _context.PhonecallFirms, _context.PhonecallClients);
                 var taskActivities = MapToActivity(_context.Tasks, _context.TaskFirms, _context.TaskClients);
-                var letterActivities = MapToActivity(_context.Letter, _context.LetterFirms, _context.LetterClients);
+                var letterActivities = MapToActivity(_context.Letters, _context.LetterFirms, _context.LetterClients);
 
                 return appointmentActivities.Union(phonecallActivities).Union(taskActivities).Union(letterActivities);
             }

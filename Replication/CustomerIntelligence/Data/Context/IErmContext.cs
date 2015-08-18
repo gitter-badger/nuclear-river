@@ -54,7 +54,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
         
         IQueryable<ActivityReference<Task>> TaskFirms { get; }
         
-        IQueryable<ActivityBase<Letter>> Letter { get; }
+        IQueryable<ActivityBase<Letter>> Letters { get; }
         
         IQueryable<ActivityReference<Letter>> LetterClients { get; }
         
