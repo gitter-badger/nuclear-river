@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<Account>().HasSchemaName(BillingSchema).HasTableName("Accounts").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<BranchOfficeOrganizationUnit>().HasSchemaName(BillingSchema).HasTableName("BranchOfficeOrganizationUnits").Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Category>().HasSchemaName(BusinessDirectorySchema).HasTableName("Categories").Property(x => x.Id).IsPrimaryKey();
-                config.Entity<CategoryGroup>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryGroup")
+                config.Entity<CategoryGroup>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryGroups")
                     .Property(x => x.Id).IsPrimaryKey()
                     .Property(x => x.Rate).HasColumnName("GroupRate");
                 config.Entity<CategoryFirmAddress>().HasSchemaName(BusinessDirectorySchema).HasTableName("CategoryFirmAddresses").Property(x => x.Id).IsPrimaryKey();
