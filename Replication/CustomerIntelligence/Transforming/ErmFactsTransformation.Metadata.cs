@@ -17,7 +17,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             = new ErmFactInfo[]
               {
                   ErmFactInfo.OfType<Activity>()
-                          .HasSource(context => context.Activities),
+                          .HasSource(context => context.Activities)
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByActivity)
+                          .HasDependentAggregate<CI.Client>(Find.Client.ByActivity),
 
                   ErmFactInfo.OfType<Account>()
                           .HasSource(context => context.Accounts)
@@ -152,6 +154,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                 new { firm.OrganizationUnitId, FirmId = firm.Id }
                             where ids.Contains(categoryGroup.Id) && firm.ClientId.HasValue
                             select firm.ClientId.Value).Distinct();
+                }
+
+                public static IEnumerable<long> ByActivity(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    return from activity in context.Activities
+                           where ids.Contains(activity.Id) && activity.ClientId.HasValue
+                           select activity.ClientId.Value;
                 }
             }
 
@@ -339,6 +348,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                             join firmAddress in context.FirmAddresses on categoryFirmAddress.FirmAddressId equals firmAddress.Id
                             where ids.Contains(categoryGroup.Id)
                             select firmAddress.FirmId).Distinct();
+                }
+
+                public static IEnumerable<long> ByActivity(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    return from activity in context.Activities
+                           where ids.Contains(activity.Id) && activity.FirmId.HasValue
+                           select activity.FirmId.Value;
                 }
             }
 
