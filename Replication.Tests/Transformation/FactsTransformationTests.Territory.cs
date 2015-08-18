@@ -1,10 +1,4 @@
-﻿using Moq;
-
-using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
@@ -19,9 +13,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeTerritoryIfTerritoryCreated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Territory>>()) == Inquire(new Erm::Territory { Id = 1, OrganizationUnitId = 2 }));
+            ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsQuery)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Territory>(1)));
         }
@@ -29,11 +23,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyTerritoryIfTerritoryDeleted()
         {
-            var source = Mock.Of<IQuery>();
-
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Territory>(1)));
         }
@@ -41,11 +33,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateTerritoryIfTerritoryUpdated()
         {
-            var source = Mock.Of<IQuery>(ctx => ctx.For(It.IsAny<FindSpecification<Erm::Territory>>()) == Inquire(new Erm::Territory { Id = 1, OrganizationUnitId = 2 }));
-
+            ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1)));
         }

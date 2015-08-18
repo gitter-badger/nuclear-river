@@ -40,6 +40,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,8 +54,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="2GIS.NuClear.Aggregates.Storage.DI.Unity, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.Storage.DI.Unity.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.4.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.Storage.DI.Unity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Assembling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -158,17 +159,17 @@
     <Reference Include="2GIS.NuClear.Settings.Unity">
       <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
     </Reference>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.4.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0-TypedMet-b25579-42\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.3.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.dll</HintPath>
-    </Reference>
-    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
@@ -264,7 +265,6 @@
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
     <Compile Include="DI\Bootstrapper.Transformation.cs" />
-    <Compile Include="DI\DefaultEntityContainerNameResolver.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />
@@ -290,9 +290,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CorporateBusSettingsAspect.cs" />
-    <Compile Include="Settings\CustomerIntelligenceConnectionStringIdentity.cs" />
-    <Compile Include="Settings\ErmConnectionStringIdentity.cs" />
-    <Compile Include="Settings\FactsConnectionStringIdentity.cs" />
     <Compile Include="Settings\PersistentStoreAspect.cs" />
     <Compile Include="Settings\ReplicationServiceSettings.cs" />
     <Compile Include="Settings\TaskServiceProcessingSettingsAspect.cs" />

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 
+using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Settings.API;

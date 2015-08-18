@@ -55,7 +55,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var aggregateOperations = new List<AggregateOperation>();
             foreach (var dependency in _dependencies)
             {
-                var mapSpec = dependency.DependentAggregateSpecProvider(factIds);
+                var mapSpec = dependency.MapToDependentAggregateSpecProvider(factIds);
 
                 IEnumerable<long> dependencyIds;
                 using (Probe.Create("Querying dependent aggregates"))

@@ -1,10 +1,4 @@
-﻿using Moq;
-
-using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
@@ -19,16 +13,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientAndFirmIfFirmAddressUpdated()
         {
-            var source = Mock.Of<IQuery>(query =>
-                query.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()) == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 1 }) &&
-                query.For(It.IsAny<FindSpecification<Erm::Firm>>()) == Inquire(new Erm::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 }) &&
-                query.For(It.IsAny<FindSpecification<Erm::Client>>()) == Inquire(new Erm::Client { Id = 1 }));
+            ErmDb.Has(new Erm::FirmAddress { Id = 1, FirmId = 1 })
+                .Has(new Erm::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 })
+                .Has(new Erm::Client { Id = 1 });
 
             FactsDb.Has(new Facts::FirmAddress { Id = 1, FirmId = 1 });
             FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::FirmAddress>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1)));

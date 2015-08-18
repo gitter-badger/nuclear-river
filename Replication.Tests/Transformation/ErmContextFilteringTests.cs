@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using LinqToDB.Data;
-
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
 using NuClear.AdvancedSearch.Replication.Specifications;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.Storage.Readings;
 
 using NUnit.Framework;
@@ -14,7 +11,7 @@ using NUnit.Framework;
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
     [TestFixture]
-    internal class ErmContextFilteringTests : BaseTransformationFixture
+    internal class ErmContextFilteringTests : TransformationFixtureBase
     {
         private static readonly DateTimeOffset Date = new DateTimeOffset(2015, 04, 03, 12, 30, 00, new TimeSpan());
 
@@ -34,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 2L })), Inquire<Account>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 3L })), Inquire<Account>())
@@ -57,7 +54,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.BranchOfficeOrganizationUnits(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.BranchOfficeOrganizationUnits(new[] { 2L })), Inquire<BranchOfficeOrganizationUnit>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.BranchOfficeOrganizationUnits(new[] { 3L })), Inquire<BranchOfficeOrganizationUnit>())
@@ -80,7 +77,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Categories(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Categories(new[] { 2L })), Inquire<Category>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Categories(new[] { 3L })), Inquire<Category>())
@@ -103,7 +100,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses(new[] { 2L })), Inquire<CategoryFirmAddress>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses(new[] { 3L })), Inquire<CategoryFirmAddress>())
@@ -126,7 +123,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups(new[] { 2L })), Inquire<CategoryGroup>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups(new[] { 3L })), Inquire<CategoryGroup>())
@@ -149,7 +146,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits(new[] { 2L })), Inquire<CategoryOrganizationUnit>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits(new[] { 3L })), Inquire<CategoryOrganizationUnit>())
@@ -181,7 +178,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Clients(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Clients(new[] { 2L })), Inquire<Client>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Clients(new[] { 3L })), Inquire<Client>())
@@ -215,7 +212,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Contacts(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Contacts(new[] { 2L })), Inquire<Contact>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Contacts(new[] { 3L })), Inquire<Contact>())
@@ -240,7 +237,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3])
                  .Has(data[4]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Firms(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Firms(new[] { 2L })), Inquire<Firm>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Firms(new[] { 3L })), Inquire<Firm>())
@@ -266,7 +263,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3])
                  .Has(data[4]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses(new[] { 2L })), Inquire<FirmAddress>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses(new[] { 3L })), Inquire<FirmAddress>())
@@ -288,7 +285,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[1])
                  .Has(data[2]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts(new[] { 2L })), Inquire(data[1]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts(new[] { 3L })), Inquire(data[2]));
@@ -310,7 +307,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[2])
                  .Has(data[3]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons(new[] { 2L })), Inquire<LegalPerson>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons(new[] { 3L })), Inquire<LegalPerson>())
@@ -335,7 +332,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3])
                  .Has(data[4]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Orders(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Orders(new[] { 2L })), Inquire<Order>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Orders(new[] { 3L })), Inquire<Order>())
@@ -355,7 +352,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(data[0])
                  .Has(data[1]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Projects(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Projects(new[] { 2L })), Inquire<Project>());
         }
@@ -372,7 +369,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(data[0])
                  .Has(data[1]);
 
-            Reader.Create(ErmDb)
+            Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Territories(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Territories(new[] { 2L })), Inquire<Territory>());
         }
@@ -383,14 +380,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly IQuery _query;
 
-            private Reader(DataConnection source)
+            private Reader(IQuery query)
             {
-                _query = new Query(new StubReadableDomainContextProvider(source.Connection, source));
+                _query = query;
             }
 
-            public static Reader Create(DataConnection source)
+            public static Reader Create(IQuery query)
             {
-                return new Reader(source);
+                return new Reader(query);
             }
 
             public Reader VerifyRead<T>(Func<IQuery, IEnumerable<T>> reader, IEnumerable<T> expected, string message = null)
@@ -401,7 +398,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             private Reader VerifyRead<T, TProjection>(Func<IQuery, IEnumerable<T>> reader, IEnumerable<T> expected, Func<T, TProjection> projector, string message = null)
             {
-                Assert.That(reader(_query), Is.EqualTo(expected.ToArray()).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
+                Assert.That(reader(_query).ToArray(), Is.EqualTo(expected.ToArray()).Using(new ProjectionEqualityComparer<T, TProjection>(projector)), message);
                 return this;
             }
         }

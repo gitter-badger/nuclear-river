@@ -1,7 +1,7 @@
 ﻿using NuClear.Model.Common;
 using NuClear.Storage.ConnectionStrings;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.AdvancedSearch.Replication.API.Identitites.Connections
 {
     public class ErmConnectionStringIdentity : IdentityBase<ErmConnectionStringIdentity>, IConnectionStringIdentity
     {

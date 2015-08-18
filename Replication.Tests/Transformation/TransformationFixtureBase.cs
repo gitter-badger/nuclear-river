@@ -2,7 +2,7 @@ using NuClear.AdvancedSearch.Replication.API.Operations;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
-    internal abstract class BaseTransformationFixture : BaseDataFixture
+    internal abstract class TransformationFixtureBase : DataFixtureBase
     {
         protected static class Fact
         {

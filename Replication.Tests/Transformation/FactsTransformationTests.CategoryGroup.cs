@@ -1,6 +1,5 @@
 ﻿using Moq;
 
-using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
@@ -19,9 +18,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryGroupIfCategoryGroupCreated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()) == Inquire(new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 }));
+            // Erm
+            var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()) == Inquire(new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 }));
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(query)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::CategoryGroup>(1)));
         }
@@ -29,11 +29,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryGroupIfCategoryGroupDeleted()
         {
-            var source = Mock.Of<IQuery>();
+            // Facts
+            var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Facts::CategoryGroup>>()) == Inquire(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 }));
 
-            FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
-
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(query)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::CategoryGroup>(1)));
         }
@@ -41,11 +40,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryGroupIfCategoryGroupUpdated()
         {
-            var source = Mock.Of<IQuery>(ctx => ctx.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()) == Inquire(new Erm::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 }));
+            var query = new Mock<IQuery>();
 
-            FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
+            // Erm
+            query.Setup(q => q.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()), new Erm::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            // Facts
+            query.Setup(q => q.For(It.IsAny<FindSpecification<Facts::CategoryGroup>>()), new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
+
+            Transformation.Create(query.Object)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::CategoryGroup>(1)));
         }
@@ -53,22 +56,25 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientAndFirmIfCategoryGroupUpdated()
         {
-            var source = Mock.Of<IQuery>(ctx =>
-                ctx.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()) == Inquire(new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 }) &&
-                ctx.For(It.IsAny<FindSpecification<Erm::CategoryOrganizationUnit>>()) == Inquire(new Erm::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1 }) &&
-                ctx.For(It.IsAny<FindSpecification<Erm::CategoryFirmAddress>>()) == Inquire(new Erm::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 }) &&
-                ctx.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()) == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 1 }) &&
-                ctx.For(It.IsAny<FindSpecification<Erm::Firm>>()) == Inquire(new Erm::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 }) &&
-                ctx.For(It.IsAny<FindSpecification<Erm::Client>>()) == Inquire(new Erm::Client { Id = 1 }));
+            var query = new Mock<IQuery>();
 
-            FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
-            FactsDb.Has(new Facts::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1});
-            FactsDb.Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 });
-            FactsDb.Has(new Facts::FirmAddress { Id = 1, FirmId = 1 });
-            FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 });
-            FactsDb.Has(new Facts::Client { Id = 1 });
+            // Erm
+            query.Setup(q => q.For(It.IsAny<FindSpecification<Erm::CategoryGroup>>()), new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
+                 .Setup(q => q.For(It.IsAny<FindSpecification<Erm::CategoryOrganizationUnit>>()), new Erm::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1 })
+                 .Setup(q => q.For(It.IsAny<FindSpecification<Erm::CategoryFirmAddress>>()), new Erm::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 })
+                 .Setup(q => q.For(It.IsAny<FindSpecification<Erm::FirmAddress>>()), new Erm::FirmAddress { Id = 1, FirmId = 1 })
+                 .Setup(q => q.For(It.IsAny<FindSpecification<Erm::Firm>>()), new Erm::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 })
+                 .Setup(q => q.For(It.IsAny<FindSpecification<Erm::Client>>()), new Erm::Client { Id = 1 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            // Facts
+            query.Setup(q => q.For(It.IsAny<FindSpecification<Facts::CategoryGroup>>()), new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
+                 .Setup(q => q.For<Facts::CategoryOrganizationUnit>(), new Facts::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1 })
+                 .Setup(q => q.For<Facts::CategoryFirmAddress>(), new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 })
+                 .Setup(q => q.For<Facts::FirmAddress>(), new Facts::FirmAddress { Id = 1, FirmId = 1 })
+                 .Setup(q => q.For<Facts::Firm>(), new Facts::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 })
+                 .Setup(q => q.For<Facts::Client>(), new Facts::Client { Id = 1 });
+
+            Transformation.Create(query.Object)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1),

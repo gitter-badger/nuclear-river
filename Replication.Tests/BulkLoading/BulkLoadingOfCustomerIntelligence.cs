@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.Specifications;
@@ -8,10 +9,10 @@ using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
-    internal class BulkCopyingOfCustomerIntelligence : BaseDataFixture
+    internal class BulkLoadingOfCustomerIntelligence : BulkLoadingFixtureBase
     {
         [Test]
         public void ReloadFirms()
@@ -73,7 +74,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var query = new Query(new StubReadableDomainContextProvider(factsDb.Connection, factsDb));
+                var query = new Query(new StubReadableDomainContextProvider((DbConnection)factsDb.Connection, factsDb));
                 ciDb.Reload(loader(query));
             }
         }

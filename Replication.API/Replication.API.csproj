@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="2GIS.NuClear.Aggregates">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.3.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Aggregates, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.4.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common">
       <HintPath>..\packages\2GIS.NuClear.Model.Common.1.1.5\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
@@ -44,11 +45,13 @@
     <Reference Include="2GIS.NuClear.Settings.API">
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
     </Reference>
-    <Reference Include="2GIS.NuClear.Storage">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Storage.LinqToDB">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry">
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.11.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
@@ -66,6 +69,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregateServices\IInitializeAggregateService.cs" />
+    <Compile Include="Identitites\Connections\CustomerIntelligenceConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\ErmConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\FactsConnectionStringIdentity.cs" />
     <Compile Include="IOperation.cs" />
     <Compile Include="Model\IBitFactObject.cs" />
     <Compile Include="Model\ICustomerIntelligenceObject.cs" />

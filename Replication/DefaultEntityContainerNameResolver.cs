@@ -2,7 +2,7 @@
 
 using NuClear.Storage.Core;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
+namespace NuClear.AdvancedSearch.Replication
 {
     public class DefaultEntityContainerNameResolver : IEntityContainerNameResolver
     {

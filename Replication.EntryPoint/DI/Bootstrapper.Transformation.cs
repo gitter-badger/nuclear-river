@@ -46,16 +46,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
                     new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
 
-                .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,
-                                                   new InjectionConstructor(
-                                                       new ResolvedParameter<IQuery>(Scope.Erm),
-                                                       new ResolvedParameter<IQuery>(Scope.Facts),
-                                                       new ResolvedParameter<IFactChangesApplierFactory>()))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<IQuery>(Scope.Facts),
-                                                       new ResolvedParameter<IQuery>(Scope.CustomerIntelligence),
+                                                       new ResolvedParameter<IQuery>(),
+                                                       new ResolvedParameter<IQuery>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence),
                                                        ResolvedTransactionManager(container, Scope.Facts, Scope.CustomerIntelligence)))
 

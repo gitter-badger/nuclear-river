@@ -6,6 +6,7 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -14,7 +15,6 @@ using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processo
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
@@ -102,10 +102,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureWcf()
-                     .ConfigureStorage(Scope.Erm, EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureStorage(Scope.Facts, EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureStorage(Scope.CustomerIntelligence, EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureReadWriteModels()
+                     .ConfigureStorage(EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -218,7 +215,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureStorage(
             this IUnityContainer container,
-            string scope,
             Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
             var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
@@ -229,69 +225,44 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IEntityContainerNameResolver, DefaultEntityContainerNameResolver>(Lifetime.Singleton)
                 .RegisterType<IManagedConnectionStateScopeFactory, ManagedConnectionStateScopeFactory>(Lifetime.Singleton)
                 .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterTypeWithDependencies<IQuery, Query>(scope, Lifetime.PerResolve, scope)
-                .RegisterTypeWithDependencies(typeof(IRepository<>), typeof(LinqToDBRepository<>), scope, Lifetime.PerResolve, scope)
-                .RegisterTypeWithDependencies<IDomainContextScope, DomainContextScope>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
-                .RegisterTypeWithDependencies<IReadableDomainContextProvider, ReadableDomainContextProvider>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
-                .RegisterTypeWithDependencies<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
-                .RegisterTypeWithDependencies(typeof(ScopedDomainContextsStore), scope, entryPointSpecificLifetimeManagerFactory(), scope)
-                .RegisterTypeWithDependencies<IReadableDomainContext, CachingReadableDomainContext>(scope, entryPointSpecificLifetimeManagerFactory(), scope)
-                .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(
-                    scope,
-                    entryPointSpecificLifetimeManagerFactory(),
-                    new InjectionFactory(c => new LinqToDBDomainContextFactory(
-                                                  c.Resolve<IStorageMappingDescriptorProvider>(),
-                                                  c.Resolve<IConnectionStringSettings>(),
-                                                  c.Resolve<IManagedConnectionStateScopeFactory>(),
-                                                  ResolveMappingSchema(scope),
-                                                  transactionOptions,
-                                                  c.Resolve<IPendingChangesHandlingStrategy>())))
-                .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(
-                    scope,
-                    entryPointSpecificLifetimeManagerFactory(),
-                    new InjectionFactory(c => new LinqToDBDomainContextFactory(
-                                                  c.Resolve<IStorageMappingDescriptorProvider>(),
-                                                  c.Resolve<IConnectionStringSettings>(),
-                                                  c.Resolve<IManagedConnectionStateScopeFactory>(),
-                                                  ResolveMappingSchema(scope),
-                                                  transactionOptions,
-                                                  c.Resolve<IPendingChangesHandlingStrategy>())))
-
-                .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(Lifetime.PerScope)
-                .RegisterTypeWithDependencies(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), Lifetime.PerScope, scope);
+                .RegisterInstance<ILinqToDbModelFactory>(new LinqToDbModelFactory(new Dictionary<string, MappingSchema>
+                                                                                  {
+                                                                                      { Scope.Erm, Schema.Erm },
+                                                                                      { Scope.Facts, Schema.Facts },
+                                                                                      { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
+                                                                                  },
+                                                                                  transactionOptions),
+                                                         Lifetime.Singleton)
+                .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IQuery, Query>(Lifetime.PerResolve)
+                .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), Lifetime.PerResolve)
+                .RegisterType<IDomainContextScope, DomainContextScope>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(ScopedDomainContextsStore), entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
+                .ConfigureReadWriteModels();
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
         {
             var readConnectionStringNameMap = new Dictionary<string, IConnectionStringIdentity>
                 {
-                    { "Erm", ErmConnectionStringIdentity.Instance },
-                    { "Facts", FactsConnectionStringIdentity.Instance },
-                    { "CustomerIntelligence", CustomerIntelligenceConnectionStringIdentity.Instance }
+                    { Scope.Erm, ErmConnectionStringIdentity.Instance },
+                    { Scope.Facts, FactsConnectionStringIdentity.Instance },
+                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance }
                 };
 
             var writeConnectionStringNameMap = new Dictionary<string, IConnectionStringIdentity>
                 {
-                    { "Facts", FactsConnectionStringIdentity.Instance },
-                    { "CustomerIntelligence", CustomerIntelligenceConnectionStringIdentity.Instance }
+                    { Scope.Facts, FactsConnectionStringIdentity.Instance },
+                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance }
                 };
 
             return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));
-        }
-
-        private static MappingSchema ResolveMappingSchema(string scope)
-        {
-            switch (scope)
-            {
-                case Scope.Erm:
-                    return Schema.Erm;
-                case Scope.Facts:
-                    return Schema.Facts;
-                case Scope.CustomerIntelligence:
-                    return Schema.CustomerIntelligence;
-                default:
-                    throw new IndexOutOfRangeException("Specified scope is unknown");
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
@@ -8,10 +9,10 @@ using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
-    internal class BulkLoadingOfFacts : BaseDataFixture
+    internal class BulkLoadingOfFacts : BulkLoadingFixtureBase
     {
         [Test]
         public void ReloadAccounts()
@@ -109,7 +110,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
-                var query = new Query(new StubReadableDomainContextProvider(ermDb.Connection, ermDb));
+                var query = new Query(new StubReadableDomainContextProvider((DbConnection)ermDb.Connection, ermDb));
                 factDb.Reload(loader(query));
             }
         }

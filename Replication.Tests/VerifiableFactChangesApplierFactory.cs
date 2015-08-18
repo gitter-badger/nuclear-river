@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _onRepositoryCreated = onRepositoryCreated;
         }
 
-        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery, IQuery destQuery)
+        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
         {
             var repositoryType = typeof(IRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)DynamicMock(repositoryType);
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _onRepositoryCreated(repositoryInstance);
 
             var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, destQuery, repositoryInstance);
+            return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
         }
 
         private static object DynamicMock(Type type)

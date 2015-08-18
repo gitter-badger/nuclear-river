@@ -9,13 +9,8 @@ using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    internal abstract class BaseFixture
+    internal abstract class FixtureBase
     {
-        protected static TestCaseData Case(Action action)
-        {
-            return new TestCaseData(action);
-        }
-
         protected static class Predicate
         {
             public static Expression<Func<T, bool>> ById<T>(long id) where T : IIdentifiable

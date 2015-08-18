@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Configuration;
 using System.Diagnostics;
@@ -11,19 +11,15 @@ using LinqToDB.Expressions;
 using LinqToDB.Mapping;
 using LinqToDB.SqlQuery;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
 {
-    internal abstract class BaseDataFixture : BaseFixture
+    public class BulkLoadingFixtureBase
     {
-        private static readonly ConcurrentDictionary<ConnectionStringSettings, DataConnection> Connections = new ConcurrentDictionary<ConnectionStringSettings, DataConnection>();
-
         private static readonly MethodInfo CreateTableMethodInfo =
             MemberHelper.MethodOf(() => default(IDataContext).CreateTable<object>(default(string),
                                                                                   default(string),
@@ -42,7 +38,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                                .ToArray();
             });
 
-        static BaseDataFixture()
+        static BulkLoadingFixtureBase()
         {
 #if DEBUG
             //LinqToDB.Common.Configuration.Linq.GenerateExpressionTest = true;
@@ -51,50 +47,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 #endif
         }
 
-        protected IQuery ErmQuery
-        {
-            get { return new Query(new StubReadableDomainContextProvider(ErmDb.Connection, ErmDb)); }
-        }
-
-        protected IQuery FactsQuery
-        {
-            get { return new Query(new StubReadableDomainContextProvider(FactsDb.Connection, FactsDb)); }
-        }
-
-        protected IQuery CustomerIntelligenceQuery
-        {
-            get { return new Query(new StubReadableDomainContextProvider(CustomerIntelligenceDb.Connection, CustomerIntelligenceDb)); }
-        }
-        
-        protected DataConnection ErmDb
-        {
-            get { return CreateConnection("Erm", Schema.Erm); }
-        }
-
-        protected DataConnection FactsDb
-        {
-            get { return CreateConnection("Facts", Schema.Facts); }
-        }
-
-        protected DataConnection CustomerIntelligenceDb
-        {
-            get { return CreateConnection("CustomerIntelligence", Schema.CustomerIntelligence); }
-        }
+        private readonly ConcurrentDictionary<ConnectionStringSettings, DataConnection> _connections = new ConcurrentDictionary<ConnectionStringSettings, DataConnection>();
 
         [TearDown]
         public void FixtureTearDown()
         {
-            foreach (var connection in Connections.Values.Select(x => x.Connection))
+            foreach (var connection in _connections.Values.Select(x => x.Connection))
             {
                 connection.Close();
             }
-            
-            Connections.Clear();
-        }
 
-        protected static IQueryable<T> Inquire<T>(params T[] elements)
-        {
-            return elements.AsQueryable();
+            _connections.Clear();
         }
 
         protected DataConnection CreateConnection(string connectionStringName, MappingSchema schema)
@@ -105,12 +68,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                 throw new ArgumentException("The connection settings was not found.", "connectionStringName");
             }
 
-            return Connections.GetOrAdd(
+            return _connections.GetOrAdd(
                 connectionSettings,
                 settings =>
                 {
                     var provider = DataConnection.GetDataProvider(settings.Name);
-                    
+
                     var connection = provider.CreateConnection(settings.ConnectionString);
                     connection.Open();
 
@@ -119,7 +82,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                     {
                         dataConnection.CommandTimeout = Settings.SqlCommandTimeout.Value;
                     }
-                    
+
                     return TuneConnectionIfSqlite(dataConnection);
                 });
         }

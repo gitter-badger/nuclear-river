@@ -8,10 +8,10 @@ using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
-    internal class BulkCopyingOfStatistics : BaseDataFixture
+    internal class BulkLoadingOfStatistics : BulkLoadingFixtureBase
     {
         [Test]
         public void ReloadFirmCategoryStatistics()

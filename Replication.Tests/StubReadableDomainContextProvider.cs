@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.Data.Common;
 using System.Transactions;
 
 using LinqToDB.Data;
@@ -8,15 +8,13 @@ using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
 
-using IsolationLevel = System.Transactions.IsolationLevel;
-
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
     public class StubReadableDomainContextProvider : IReadableDomainContextProvider
     {
         private readonly IReadableDomainContext _readableDomainContext;
 
-        public StubReadableDomainContextProvider(IDbConnection connection, DataConnection dataContext)
+        public StubReadableDomainContextProvider(DbConnection connection, DataConnection dataContext)
         {
             _readableDomainContext = CreateReadableDomainContext(connection, dataContext);
         }
@@ -26,7 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             return _readableDomainContext;
         }
 
-        private static IReadableDomainContext CreateReadableDomainContext(IDbConnection connection, DataConnection dataContext)
+        private static IReadableDomainContext CreateReadableDomainContext(DbConnection connection, DataConnection dataContext)
         {
             return new LinqToDBDomainContext(connection,
                                              dataContext,

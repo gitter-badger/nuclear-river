@@ -20,8 +20,8 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
                             q => from firm in q.For(API.Specifications.Specs.Find.ByIds<Firm>(ids))
-                                    where firm.ClientId != null
-                                    select firm.ClientId.Value);
+                                 where firm.ClientId != null
+                                 select firm.ClientId.Value);
                     }
 
                     public static MapSpecification<IQuery, IEnumerable<long>> ByContacts(IReadOnlyCollection<long> ids)

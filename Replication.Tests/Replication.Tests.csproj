@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,12 +41,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.3.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
@@ -72,14 +73,17 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BulkCopyingOfStatistics.cs" />
+    <Compile Include="BulkLoading\BulkLoadingOfStatistics.cs" />
+    <Compile Include="BulkLoading\BulkLoadingFixtureBase.cs" />
+    <Compile Include="MockLinqToDbDataBuilder.cs" />
+    <Compile Include="SqliteDomainContextFactory.cs" />
     <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
     <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
-    <Compile Include="BulkCopyingOfCustomerIntelligence.cs" />
-    <Compile Include="BulkLoadingOfFacts.cs" />
-    <Compile Include="StubModifiableDomainContextProvider.cs" />
-    <Compile Include="StubReadableDomainContextProvider.cs" />
+    <Compile Include="BulkLoading\BulkLoadingOfCustomerIntelligence.cs" />
+    <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
+    <Compile Include="StubDomainContextProvider.cs" />
     <Compile Include="StubFactChangesApplierFactory.cs" />
+    <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="QueryMockExtensions.cs" />
@@ -96,14 +100,13 @@
     <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Project.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
-    <Compile Include="BaseFixture.cs" />
+    <Compile Include="FixtureBase.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />
-    <Compile Include="BaseDataFixture.cs" />
+    <Compile Include="DataFixtureBase.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\DataContextExtensions.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Transformation\BaseTransformationFixture.cs" />
+    <Compile Include="Transformation\TransformationFixtureBase.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
     <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>

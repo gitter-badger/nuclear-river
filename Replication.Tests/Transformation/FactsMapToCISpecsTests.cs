@@ -16,7 +16,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture, SetCulture("")]
-    internal class FactsMapToCISpecsTests : BaseTransformationFixture
+    internal class FactsMapToCISpecsTests : TransformationFixtureBase
     {
         [Test]
         public void ShouldTransformCategoryGroup()

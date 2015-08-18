@@ -1,9 +1,4 @@
-﻿using Moq;
-
-using NuClear.AdvancedSearch.Replication.API;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
+﻿using NuClear.AdvancedSearch.Replication.API;
 
 using NUnit.Framework;
 
@@ -20,9 +15,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Project>>()) == Inquire(new Erm::Project { Id = 1, OrganizationUnitId = 2 }));
+            ErmDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsQuery)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Initialize<CI::Project>(1)));
         }
@@ -30,11 +25,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyProjectIfProjectDeleted()
         {
-            var source = Mock.Of<IQuery>();
-
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Destroy<CI::Project>(1)));
         }
@@ -42,7 +35,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDependentAggregatesIfProjectUpdated()
         {
-            var source = Mock.Of<IQuery>(query => query.For(It.IsAny<FindSpecification<Erm::Project>>()) == Inquire(new Erm::Project { Id = 1, OrganizationUnitId = 2 }));
+            ErmDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 })
@@ -50,7 +43,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 });
 
-            Transformation.Create(source, FactsQuery, FactsDb)
+            Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Project>(1))
                           .Verify(Inquire<IOperation>(Statistics.Operation(1),
                                                       Aggregate.Recalculate<CI::Territory>(1),
