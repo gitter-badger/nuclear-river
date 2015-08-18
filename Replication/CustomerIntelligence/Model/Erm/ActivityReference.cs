@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class ActivityReference<T> : IErmValueObject
+    public abstract class ActivityReference : IErmValueObject
     {
         public long ActivityId { get; set; }
         public int Reference { get; set; }
@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
                 return true;
             }
 
-            return obj is ActivityReference<T> && Equals((ActivityReference<T>)obj);
+            return obj != null && obj.GetType() == this.GetType() && Equals((ActivityReference)obj);
         }
 
         public override int GetHashCode()
@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
             }
         }
 
-        private bool Equals(ActivityReference<T> other)
+        private bool Equals(ActivityReference other)
         {
             return ActivityId == other.ActivityId && Reference == other.Reference && ReferencedType == other.ReferencedType && ReferencedObjectId == other.ReferencedObjectId;
         }

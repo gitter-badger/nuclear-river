@@ -263,10 +263,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        private static IQueryable<Activity> MapToActivity<T>(
-            IQueryable<Model.Erm.ActivityBase<T>> activities,
-            IQueryable<Model.Erm.ActivityReference<T>> firmReferences,
-            IQueryable<Model.Erm.ActivityReference<T>> clientReferences)
+        private static IQueryable<Activity> MapToActivity(
+            IQueryable<Model.Erm.ActivityBase> activities,
+            IQueryable<Model.Erm.ActivityReference> firmReferences,
+            IQueryable<Model.Erm.ActivityReference> clientReferences)
         {
             return from activity in activities
                    from firmReference in firmReferences.Where(x => x.ActivityId == activity.Id).DefaultIfEmpty()

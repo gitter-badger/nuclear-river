@@ -19,10 +19,10 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
         private static readonly Dictionary<IEntityType, Type> ErmTypeMap
             = new[]
                 {
-                    CreateMapping<EntityTypeAppointment, Erm.ActivityBase<Erm.Appointment>>(),
-                    CreateMapping<EntityTypePhonecall, Erm.ActivityBase<Erm.Phonecall>>(),
-                    CreateMapping<EntityTypeTask, Erm.ActivityBase<Erm.Task>>(),
-                    CreateMapping<EntityTypeLetter, Erm.ActivityBase<Erm.Letter>>(),
+                    CreateMapping<EntityTypeAppointment, Erm.Appointment>(),
+                    CreateMapping<EntityTypePhonecall, Erm.Phonecall>(),
+                    CreateMapping<EntityTypeTask, Erm.Task>(),
+                    CreateMapping<EntityTypeLetter, Erm.Letter>(),
                     CreateMapping<EntityTypeAccount, Erm.Account>(),
                     CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Erm.BranchOfficeOrganizationUnit>(),
                     CreateMapping<EntityTypeCategory, Erm.Category>(),

@@ -4,7 +4,7 @@ using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
-    public sealed class ActivityBase<T> : IErmObject
+    public abstract class ActivityBase : IErmObject
     {
         public long Id { get; set; }
         public int Status { get; set; }
@@ -14,12 +14,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public override bool Equals(object obj)
         {
-            return obj is ActivityBase<T> && IdentifiableObjectEqualityComparer<ActivityBase<T>>.Default.Equals(this, (ActivityBase<T>)obj);
+            return obj != null && obj.GetType() == this.GetType() && IdentifiableObjectEqualityComparer<ActivityBase>.Default.Equals(this, (ActivityBase)obj);
         }
 
         public override int GetHashCode()
         {
-            return IdentifiableObjectEqualityComparer<ActivityBase<T>>.Default.GetHashCode(this);
+            return IdentifiableObjectEqualityComparer<ActivityBase>.Default.GetHashCode(this);
         }
     }
 }

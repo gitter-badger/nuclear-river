@@ -36,28 +36,28 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 
         IQueryable<Territory> Territories { get; }
 
-        IQueryable<ActivityBase<Appointment>> Appointments { get; }
+        IQueryable<Appointment> Appointments { get; }
 
-        IQueryable<ActivityReference<Appointment>> AppointmentClients { get; }
+        IQueryable<AppointmentReference> AppointmentClients { get; }
+
+        IQueryable<AppointmentReference> AppointmentFirms { get; }
         
-        IQueryable<ActivityReference<Appointment>> AppointmentFirms { get; }
+        IQueryable<Phonecall> Phonecalls { get; }
         
-        IQueryable<ActivityBase<Phonecall>> Phonecalls { get; }
+        IQueryable<PhonecallReference> PhonecallClients { get; }
         
-        IQueryable<ActivityReference<Phonecall>> PhonecallClients { get; }
+        IQueryable<PhonecallReference> PhonecallFirms { get; }
         
-        IQueryable<ActivityReference<Phonecall>> PhonecallFirms { get; }
+        IQueryable<Task> Tasks { get; }
         
-        IQueryable<ActivityBase<Task>> Tasks { get; }
+        IQueryable<TaskReference> TaskClients { get; }
         
-        IQueryable<ActivityReference<Task>> TaskClients { get; }
+        IQueryable<TaskReference> TaskFirms { get; }
         
-        IQueryable<ActivityReference<Task>> TaskFirms { get; }
+        IQueryable<Letter> Letters { get; }
         
-        IQueryable<ActivityBase<Letter>> Letters { get; }
+        IQueryable<LetterReference> LetterClients { get; }
         
-        IQueryable<ActivityReference<Letter>> LetterClients { get; }
-        
-        IQueryable<ActivityReference<Letter>> LetterFirms { get; }
+        IQueryable<LetterReference> LetterFirms { get; }
     }
 }

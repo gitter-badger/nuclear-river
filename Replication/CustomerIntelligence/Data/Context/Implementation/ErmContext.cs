@@ -174,122 +174,122 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        public IQueryable<ActivityBase<Appointment>> Appointments
+        public IQueryable<Appointment> Appointments
         {
             get
             {
-                return from appointment in _context.GetTable<ActivityBase<Appointment>>()
+                return from appointment in _context.GetTable<Appointment>()
                        where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
                        select appointment;
             }
         }
 
-        public IQueryable<ActivityReference<Appointment>> AppointmentClients
+        public IQueryable<AppointmentReference> AppointmentClients
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Appointment>>()
+                return from reference in _context.GetTable<AppointmentReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityReference<Appointment>> AppointmentFirms
+        public IQueryable<AppointmentReference> AppointmentFirms
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Appointment>>()
+                return from reference in _context.GetTable<AppointmentReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
                        select reference;
             }
         }
 
 
-        public IQueryable<ActivityBase<Phonecall>> Phonecalls
+        public IQueryable<Phonecall> Phonecalls
         {
             get
             {
-                return from appointment in _context.GetTable<ActivityBase<Phonecall>>()
+                return from appointment in _context.GetTable<Phonecall>()
                        where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
                        select appointment;
             }
         }
 
-        public IQueryable<ActivityReference<Phonecall>> PhonecallClients
+        public IQueryable<PhonecallReference> PhonecallClients
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Phonecall>>()
+                return from reference in _context.GetTable<PhonecallReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityReference<Phonecall>> PhonecallFirms
+        public IQueryable<PhonecallReference> PhonecallFirms
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Phonecall>>()
+                return from reference in _context.GetTable<PhonecallReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityBase<Task>> Tasks
+        public IQueryable<Task> Tasks
         {
             get
             {
-                return from appointment in _context.GetTable<ActivityBase<Task>>()
+                return from appointment in _context.GetTable<Task>()
                        where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
                        select appointment;
             }
         }
 
-        public IQueryable<ActivityReference<Task>> TaskClients
+        public IQueryable<TaskReference> TaskClients
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Task>>()
+                return from reference in _context.GetTable<TaskReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityReference<Task>> TaskFirms
+        public IQueryable<TaskReference> TaskFirms
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Task>>()
+                return from reference in _context.GetTable<TaskReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityBase<Letter>> Letters
+        public IQueryable<Letter> Letters
         {
             get
             {
-                return from appointment in _context.GetTable<ActivityBase<Letter>>()
+                return from appointment in _context.GetTable<Letter>()
                        where appointment.IsActive && !appointment.IsDeleted && appointment.Status == ActivityStatusCompleted
                        select appointment;
             }
         }
 
-        public IQueryable<ActivityReference<Letter>> LetterClients
+        public IQueryable<LetterReference> LetterClients
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Letter>>()
+                return from reference in _context.GetTable<LetterReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == ClientTypeId
                        select reference;
             }
         }
 
-        public IQueryable<ActivityReference<Letter>> LetterFirms
+        public IQueryable<LetterReference> LetterFirms
         {
             get
             {
-                return from reference in _context.GetTable<ActivityReference<Letter>>()
+                return from reference in _context.GetTable<LetterReference>()
                        where reference.Reference == RegardingObjectReference && reference.ReferencedType == FirmTypeId
                        select reference;
             }
