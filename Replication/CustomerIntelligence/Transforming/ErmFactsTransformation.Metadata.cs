@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                   ErmFactInfo.OfType<Activity>()
                           .HasSource(context => context.Activities)
                           .HasDependentAggregate<CI.Firm>(Find.Firm.ByActivity)
-                          .HasDependentAggregate<CI.Client>(Find.Client.ByActivity),
+                          .HasDependentAggregate<CI.Firm>(Find.Firm.ByClientActivity),
 
                   ErmFactInfo.OfType<Account>()
                           .HasSource(context => context.Accounts)
@@ -154,13 +154,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                 new { firm.OrganizationUnitId, FirmId = firm.Id }
                             where ids.Contains(categoryGroup.Id) && firm.ClientId.HasValue
                             select firm.ClientId.Value).Distinct();
-                }
-
-                public static IEnumerable<long> ByActivity(IErmFactsContext context, IEnumerable<long> ids)
-                {
-                    return from activity in context.Activities
-                           where ids.Contains(activity.Id) && activity.ClientId.HasValue
-                           select activity.ClientId.Value;
                 }
             }
 
@@ -355,6 +348,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     return from activity in context.Activities
                            where ids.Contains(activity.Id) && activity.FirmId.HasValue
                            select activity.FirmId.Value;
+                }
+
+                public static IEnumerable<long> ByClientActivity(IErmFactsContext context, IEnumerable<long> ids)
+                {
+                    return from activity in context.Activities
+                           join firm in context.Firms on activity.ClientId equals firm.ClientId
+                           where ids.Contains(activity.Id) && activity.ClientId.HasValue
+                           select firm.Id;
                 }
             }
 
