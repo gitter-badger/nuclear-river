@@ -10,6 +10,7 @@ if object_id('CustomerIntelligence.ProjectCategory') is not null drop table Cust
 if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIntelligence.Territory;
 if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm;
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
+if object_id('CustomerIntelligence.FirmActivity') is not null drop table CustomerIntelligence.FirmActivity;
 if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
@@ -62,8 +63,6 @@ create table CustomerIntelligence.Firm(
     , Name nvarchar(256) not null
     , CreatedOn datetimeoffset(2) not null
     , LastDisqualifiedOn datetimeoffset(2) null
-    , LastDistributedOn datetimeoffset(2) null
-    , LastActivityOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Firms_HasPhone default 0
     , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
     , AddressCount int not null constraint DF_Firms_AddressCount default 0
@@ -73,6 +72,15 @@ create table CustomerIntelligence.Firm(
     , OwnerId bigint not null
     , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
+)
+go
+
+-- FirmActivity
+create table CustomerIntelligence.FirmActivity(
+	FirmId bigint not null
+    , LastDistributedOn datetimeoffset(2) null
+    , LastActivityOn datetimeoffset(2) null
+    , constraint PK_FirmActivities primary key (FirmId)
 )
 go
 

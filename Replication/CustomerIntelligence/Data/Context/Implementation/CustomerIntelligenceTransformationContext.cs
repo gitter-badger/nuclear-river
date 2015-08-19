@@ -109,8 +109,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Name = firm.Name,
                                   CreatedOn = firm.CreatedOn,
                                   LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
-                                  LastDistributedOn = _ermContext.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
-                                  LastActivityOn = _ermContext.Activities.Where(x => x.FirmId == firm.Id || x.ClientId == firm.ClientId).Select(x => x.ModifiedOn).Cast<DateTimeOffset?>().Max(),
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
                                   AddressCount = _ermContext.FirmAddresses.Count(fa => fa.FirmId == firm.Id),
@@ -119,6 +117,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
                                   TerritoryId = firm.TerritoryId
+                              };
+            }
+        }
+
+        public IQueryable<FirmActivity> FirmActivities
+        {
+            get
+            {
+                var orders = _ermContext.Orders.GroupBy(order => order.FirmId).Select(group => new { FirmId = group.Key, EndDistributionDateFact = group.Max(x => x.EndDistributionDateFact) });
+                var firmActivities = _ermContext.Activities.GroupBy(x => x.FirmId).Select(group => new { FirmId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+                var clientActivities = _ermContext.Activities.GroupBy(x => x.ClientId).Select(group => new { ClientId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+
+                return from firm in _ermContext.Firms
+                       from order in orders.Where(x => x.FirmId == firm.Id).DefaultIfEmpty()
+                       from firmActivity in firmActivities.Where(x => x.FirmId == firm.Id).DefaultIfEmpty()
+                       from clientActivity in clientActivities.Where(x => x.ClientId == firm.ClientId).DefaultIfEmpty()
+                       select new FirmActivity
+                              {
+                                  FirmId = firm.Id,
+                                  LastDistributedOn = order.EndDistributionDateFact,
+                                  LastActivityOn = firmActivity.LastActivityOn > clientActivity.LastActivityOn ? firmActivity.LastActivityOn : clientActivity.LastActivityOn
                               };
             }
         }

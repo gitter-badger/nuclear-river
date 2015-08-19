@@ -13,6 +13,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
               {
                   AggregateInfoBuilder.OfType<Firm>()
                                .HasSource(context => context.Firms)
+                               .HasValueObject(context => context.FirmActivities, x => x.FirmId)
                                .HasValueObject(context => context.FirmBalances, x => x.FirmId)
                                .HasValueObject(context => context.FirmCategories, x => x.FirmId)
                                .Build(),

@@ -97,10 +97,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Firm { LastDisqualifiedOn = now }
                     ), x => new { x.LastDisqualifiedOn }, "The disqualifiedOn should be processed.")
                 .VerifyTransform(x => x.Firms.ById(1,2), Inquire(
-                    new CI::Firm { LastDistributedOn = dayAgo },
-                    new CI::Firm { LastDistributedOn = null }
-                    ), x => new { x.LastDistributedOn }, "The distributedOn should be processed.")
-                .VerifyTransform(x => x.Firms.ById(1,2), Inquire(
                     new CI::Firm { AddressCount = 2 },
                     new CI::Firm { AddressCount = 0 }
                     ), x => new { x.AddressCount }, "The address count should be processed.")

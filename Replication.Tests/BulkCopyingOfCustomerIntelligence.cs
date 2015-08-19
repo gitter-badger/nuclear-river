@@ -20,6 +20,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
+        public void ReloadFirmActivities()
+        {
+            Reload(ctx => ctx.FirmActivities);
+        }
+
+        [Test]
         public void ReloadFirmBalances()
         {
             Reload(ctx => ctx.FirmBalances);
