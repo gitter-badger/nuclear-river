@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="2GIS.NuClear.Aggregates, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.4.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.5.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common">
@@ -46,11 +46,11 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.0\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.4.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.0\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry">
@@ -101,7 +101,7 @@
     <Compile Include="Transforming\IMetadataInfo.cs" />
     <Compile Include="Transforming\IFactChangesApplier.cs" />
     <Compile Include="Transforming\IFactChangesApplierFactory.cs" />
-    <Compile Include="Transforming\ISourceChangesDetector.cs" />
+    <Compile Include="Transforming\IDataChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
     <Compile Include="Transforming\TransactionScopeExtensions.cs" />
     <Compile Include="Transforming\ValueObjectInfo.cs" />

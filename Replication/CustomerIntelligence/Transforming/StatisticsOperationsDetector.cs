@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
@@ -22,11 +23,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             if (_factInfo.CalculateStatisticsSpecProvider == null)
             {
-                return new List<CalculateStatisticsOperation>();
+                return new CalculateStatisticsOperation[0];
             }
 
-            var mapSpec = _factInfo.CalculateStatisticsSpecProvider(factIds);
-            return mapSpec.Map(_query).ToList();
+            using (new TransactionScope(TransactionScopeOption.Suppress))
+            {
+                var mapSpec = _factInfo.CalculateStatisticsSpecProvider(factIds);
+                return mapSpec.Map(_query).ToArray();
+            }
         }
     }
 }

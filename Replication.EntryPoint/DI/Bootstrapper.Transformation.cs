@@ -6,7 +6,6 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -33,9 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             var sqlSettings = container.Resolve<ISqlSettingsAspect>();
 
             return container
-                .RegisterDataContext(Scope.Erm, ConnectionStringName.Erm, Schema.Erm, sqlSettings.SqlCommandTimeout)
                 .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts, sqlSettings.SqlCommandTimeout)
-                .RegisterDataContext(Scope.CustomerIntelligence, ConnectionStringName.CustomerIntelligence, Schema.CustomerIntelligence, sqlSettings.SqlCommandTimeout)
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport, sqlSettings.SqlCommandTimeout)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))

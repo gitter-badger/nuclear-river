@@ -9,12 +9,12 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    internal class SourceChangesDetector : ISourceChangesDetector
+    internal class DataChangesDetector : IDataChangesDetector
     {
         private readonly IMetadataInfo _metadataInfo;
         private readonly IQuery _query;
 
-        public SourceChangesDetector(IMetadataInfo metadataInfo, IQuery query)
+        public DataChangesDetector(IMetadataInfo metadataInfo, IQuery query)
         {
             _metadataInfo = metadataInfo;
             _query = query;

@@ -89,7 +89,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
-            var aggregateChangesDetector = new SourceChangesDetector(aggregateInfo, _query);
+            var aggregateChangesDetector = new DataChangesDetector(aggregateInfo, _query);
             var mergeResult = aggregateChangesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
 
             var sourceAggregates = aggregateInfo.MapToSourceSpecProvider(aggregateIds).Map(_query).Cast<IIdentifiable>().ToArray();
@@ -98,7 +98,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                var valueObjectChangesDetector = new SourceChangesDetector(valueObjectInfo, _query);
+                var valueObjectChangesDetector = new DataChangesDetector(valueObjectInfo, _query);
                 var valueObjectMergeResult = valueObjectChangesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
 
                 var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObjectInfo);
@@ -110,7 +110,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                var valueObjectChangesDetector = new SourceChangesDetector(valueObjectInfo, _query);
+                var valueObjectChangesDetector = new DataChangesDetector(valueObjectInfo, _query);
                 var valueObjectMergeResult = valueObjectChangesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
 
                 var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObjectInfo);
@@ -119,7 +119,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 valueObjectDataMapper.Update(valueObjectMergeResult.Intersection);
             }
 
-            var aggregateChangesDetector = new SourceChangesDetector(aggregateInfo, _query);
+            var aggregateChangesDetector = new DataChangesDetector(aggregateInfo, _query);
             var mergeResult = aggregateChangesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
 
             var sourceAggregates = aggregateInfo.MapToSourceSpecProvider(aggregateIds).Map(_query).Cast<IIdentifiable>().ToArray();
@@ -135,14 +135,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             foreach (var valueObjectInfo in aggregateInfo.ValueObjects)
             {
-                var valueObjectChangesDetector = new SourceChangesDetector(valueObjectInfo, _query);
+                var valueObjectChangesDetector = new DataChangesDetector(valueObjectInfo, _query);
                 var valueObjectMergeResult = valueObjectChangesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
                 
                 var valueObjectDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, valueObjectInfo);
                 valueObjectDataMapper.Delete(valueObjectMergeResult.Complement);
             }
 
-            var aggregateChangesDetector = new SourceChangesDetector(aggregateInfo, _query);
+            var aggregateChangesDetector = new DataChangesDetector(aggregateInfo, _query);
             var mergeResult = aggregateChangesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
 
             var targetAggregates = aggregateInfo.MapToTargetSpecProvider(aggregateIds).Map(_query).Cast<IIdentifiable>().ToArray();

@@ -15,6 +15,7 @@ using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processo
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
+using NuClear.AdvancedSearch.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
@@ -92,6 +93,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                  {
                                      new TaskServiceJobsMassProcessor(container),
                                  };
+            var storageSettings = settingsContainer.AsSettings<ISqlSettingsAspect>();
 
             container.AttachQueryableContainerExtension()
                      .UseParameterResolvers(ParameterResolvers.Defaults)
@@ -102,7 +104,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureQuartz()
                      .ConfigureOperationsProcessing()
                      .ConfigureWcf()
-                     .ConfigureStorage(EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -213,9 +215,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
 
-        private static IUnityContainer ConfigureStorage(
-            this IUnityContainer container,
-            Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        private static IUnityContainer ConfigureStorage(this IUnityContainer container, ISqlSettingsAspect storageSettings, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
             var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
 
@@ -231,7 +231,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                                                       { Scope.Facts, Schema.Facts },
                                                                                       { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
                                                                                   },
-                                                                                  transactionOptions),
+                                                                                  transactionOptions,
+                                                                                  storageSettings.SqlCommandTimeout),
                                                          Lifetime.Singleton)
                 .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())

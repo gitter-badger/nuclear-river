@@ -63,7 +63,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                         using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
                         {
-                            var changesDetector = new SourceChangesDetector(factInfo, _query);
+                            var changesDetector = new DataChangesDetector(factInfo, _query);
                             var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
                             var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
                             
@@ -73,14 +73,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                             var aggregateOperations = changesApplier.ApplyChanges(changes);
                             var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(factIds);
 
-                            result = result.Union(statisticsOperationsBeforeChanges)
-                                           .Union(aggregateOperations)
-                                           .Union(statisticsOperationsAfterChanges);
+                            result = result.Concat(statisticsOperationsBeforeChanges)
+                                           .Concat(aggregateOperations)
+                                           .Concat(statisticsOperationsAfterChanges);
                         }
                     }
 
+                    var uniqueOperations = result.Distinct().ToArray();
                     transaction.Complete();
-                    return result.ToList();
+
+                    return uniqueOperations;
                 }
             }
         }
