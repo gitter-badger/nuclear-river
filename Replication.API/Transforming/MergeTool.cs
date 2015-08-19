@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
                 var intersection = set1.Where(x => set2.Contains(x));
                 var complement = set2.Where(x => !set1.Contains(x));
 
-                return new MergeResult<T> { Difference = difference, Intersection = intersection, Complement = complement };
+                return new MergeResult<T>(difference, intersection, complement);
             }
         }
     }
@@ -44,9 +44,23 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public class MergeResult<T> : IMergeResult, IMergeResult<T>
     {
-        public IEnumerable<T> Difference { get; set; }
-        public IEnumerable<T> Intersection { get; set; }
-        public IEnumerable<T> Complement { get; set; }
+        public IEnumerable<T> Difference { get; private set; }
+        public IEnumerable<T> Intersection { get; private set; }
+        public IEnumerable<T> Complement { get; private set; }
+
+        public MergeResult(IEnumerable<T> difference, IEnumerable<T> intersection, IEnumerable<T> complement)
+        {
+            Difference = difference;
+            Intersection = intersection;
+            Complement = complement;
+        }
+
+        public MergeResult(IMergeResult<T> mergeResult)
+        {
+            Difference = mergeResult.Difference;
+            Intersection = mergeResult.Intersection;
+            Complement = mergeResult.Complement;
+        }
 
         IEnumerable IMergeResult.Difference
         {

@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 
 using Moq;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
-using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
+using NuClear.Storage.Writings;
 
 using NUnit.Framework;
 
@@ -29,8 +30,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                          new Facts::Client { Id = 1 });
 
             Transformation.Create(query.Object)
-                .Transform(Aggregate.Initialize<CI::Client>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::Client>(1))
+                          .Verify<CI::Client>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 } }))));
         }
 
         [Test]
@@ -45,9 +46,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                          new Facts::Contact { Id = 1, ClientId = 1 });
 
             Transformation.Create(query.Object)
-                 .Transform(Aggregate.Initialize<CI::Client>(1))
-                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
-                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::Client>(1))
+                          .Verify<CI::Client>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 } }))))
+                          .Verify<CI::ClientContact>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::ClientContact { ClientId = 1, ContactId = 1 } }))));
         }
 
         [Test]
@@ -64,7 +65,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::Client>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1, Name = "new name" }))));
+                .Verify<CI::Client>(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1, Name = "new name" }))));
         }
 
         [Test]
@@ -94,12 +95,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Transform(Aggregate.Recalculate<CI::Client>(1),
                                      Aggregate.Recalculate<CI::Client>(2),
                                      Aggregate.Recalculate<CI::Client>(3))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 2 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 3 }))))
-                          .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 2, ContactId = 2 }))))
-                          .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 3, ContactId = 3 }))));
+                          .Verify<CI::Client>(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
+                          .Verify<CI::Client>(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 2 }))))
+                          .Verify<CI::Client>(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 3 }))))
+                          .Verify<CI::ClientContact>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::ClientContact { ClientId = 1, ContactId = 1 } }))))
+                          .Verify<CI::ClientContact>(m => m.Update(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 2, ContactId = 2 }))))
+                          .Verify<CI::ClientContact>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::ClientContact { ClientId = 3, ContactId = 3 } }))));
         }
 
         [Test]
@@ -109,8 +110,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<CI::Client>>()) == Inquire(new CI::Client { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Client>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::Client>(1))
+                          .Verify<CI::Client>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 } }))));
         }
 
         [Test]
@@ -123,8 +124,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query)
                 .Transform(Aggregate.Destroy<CI::Client>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::ClientContact { ClientId = 1, ContactId = 1 }))));
+                .Verify<CI::Client>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 }}))))
+                .Verify<CI::ClientContact>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::ClientContact { ClientId = 1, ContactId = 1 }}))));
         }
 
         [Test]
@@ -140,7 +141,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                           .Transform(Aggregate.Initialize<CI::Firm>(1))
-                          .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
+                          .Verify<CI::Firm>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1 } }))));
         }
 
         [Test]
@@ -164,9 +165,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                          new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(query.Object)
-                .Transform(Aggregate.Initialize<CI::Firm>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123.45m }))));
+                          .Transform(Aggregate.Initialize<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1, ClientId = 1 } }))))
+                          .Verify<CI::FirmBalance>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmBalance { FirmId = 1, Balance = 123.45m } }))));
         }
 
         [Test]
@@ -189,9 +190,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                          new Facts::Firm { Id = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(query.Object)
-                .Transform(Aggregate.Initialize<CI::Firm>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, AddressCount = 1 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1, AddressCount = 1 } }))))
+                          .Verify<CI::FirmCategory>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmCategory { FirmId = 1, CategoryId = 1 } }))));
         }
 
         [Test]
@@ -210,9 +211,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                          new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(query.Object)
-                 .Transform(Aggregate.Initialize<CI::Firm>(1))
-                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                 .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
+                          .Transform(Aggregate.Initialize<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1, ClientId = 1 } }))))
+                          .Verify<CI::Client>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 } }))), Times.Never);
         }
 
         [Test]
@@ -232,7 +233,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::Firm>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
+                .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
         }
 
         [Test]
@@ -273,12 +274,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Transform(Aggregate.Recalculate<CI::Firm>(1),
                                      Aggregate.Recalculate<CI::Firm>(2),
                                      Aggregate.Recalculate<CI::Firm>(3))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
-                          .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
-                          .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
+                          .Verify<CI::FirmBalance>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmBalance { FirmId = 1, Balance = 123 } }))))
+                          .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
+                          .Verify<CI::FirmBalance>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmBalance { FirmId = 3, Balance = 123 } }))));
         }
 
         [Test]
@@ -311,8 +312,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                         new CI::Firm { Id = 1 },
                         new CI::Firm { Id = 2 },
                         new CI::Firm { Id = 3 })
-                 .Setup(q =>
-                        q.For<CI::FirmCategory>(),
+                 .Setup(q => q.For<CI::FirmCategory>(),
                         new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
                         new CI::FirmCategory { FirmId = 3, CategoryId = 1 });
 
@@ -320,13 +320,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Transform(Aggregate.Recalculate<CI::Firm>(1),
                                      Aggregate.Recalculate<CI::Firm>(2),
                                      Aggregate.Recalculate<CI::Firm>(3))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, AddressCount = 1 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, AddressCount = 1 }))))
-                          .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
-                          .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))))
-                          .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 2 }))))
-                          .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 2, CategoryId = 1 }))))
-                          .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 3, CategoryId = 1 }))));
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, AddressCount = 1 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, AddressCount = 1 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3 }))))
+                          .Verify<CI::FirmCategory>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[]
+                                                                                                    {
+                                                                                                        new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
+                                                                                                        new CI::FirmCategory { FirmId = 2, CategoryId = 2 }
+                                                                                                    }))))
+                          .Verify<CI::FirmCategory>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[]
+                                                                                                       {
+                                                                                                           new CI::FirmCategory { FirmId = 2, CategoryId = 1 },
+                                                                                                           new CI::FirmCategory { FirmId = 3, CategoryId = 1 }
+                                                                                                       }))));
         }
 
         [Test]
@@ -351,8 +357,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::Firm>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
+                .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
+                .Verify<CI::Client>(m => m.Update(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
         }
 
         [Test]
@@ -362,8 +368,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<CI::Firm>>()) == Inquire(new CI::Firm { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1 } }))));
         }
 
         [Test]
@@ -375,9 +381,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                      q.For<CI::FirmBalance>() == Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))));
+                          .Transform(Aggregate.Destroy<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1 } }))))
+                          .Verify<CI::FirmBalance>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmBalance { FirmId = 1, Balance = 123 } }))));
         }
 
         [Test]
@@ -389,9 +395,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                      q.For<CI::FirmCategory>() == Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmCategory { FirmId = 1, CategoryId = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1 } }))))
+                          .Verify<CI::FirmCategory>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::FirmCategory { FirmId = 1, CategoryId = 1 } }))));
         }
 
         [Test]
@@ -403,9 +409,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                      q.For(It.IsAny<FindSpecification<CI::Client>>()) == Inquire(new CI::Client { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Client { Id = 1 }))), Times.Never);
+                          .Transform(Aggregate.Destroy<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1, ClientId = 1 } }))))
+                          .Verify<CI::Client>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Client { Id = 1 } }))), Times.Never);
         }
 
         [Test]
@@ -415,8 +421,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Facts::Project>>()) == Inquire(new Facts::Project { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Initialize<CI::Project>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Project { Id = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::Project>(1))
+                          .Verify<CI::Project>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Project { Id = 1 } }))));
         }
 
         [Test]
@@ -434,7 +440,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::Project>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Project { Id = 1, Name = "new name" }))));
+                .Verify<CI::Project>(m => m.Update(It.Is(Predicate.Match(new CI::Project { Id = 1, Name = "new name" }))));
         }
 
         [Test]
@@ -444,8 +450,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<CI::Project>>()) == Inquire(new CI::Project { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Project>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Project { Id = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::Project>(1))
+                          .Verify<CI::Project>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Project { Id = 1 } }))));
         }
 
         [Test]
@@ -457,8 +463,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                      q.For(It.IsAny<FindSpecification<Facts::Territory>>()) == Inquire(new Facts::Territory { Id = 1, OrganizationUnitId = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Initialize<CI::Territory>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::Territory { Id = 1, ProjectId = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::Territory>(1))
+                          .Verify<CI::Territory>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Territory { Id = 1, ProjectId = 1 } }))));
         }
 
         [Test]
@@ -475,7 +481,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::Territory>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::Territory { Id = 1, ProjectId = 1, Name = "new name" }))));
+                .Verify<CI::Territory>(m => m.Update(It.Is(Predicate.Match(new CI::Territory { Id = 1, ProjectId = 1, Name = "new name" }))));
         }
 
         [Test]
@@ -485,8 +491,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<CI::Territory>>()) == Inquire(new CI::Territory { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::Territory>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::Territory { Id = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::Territory>(1))
+                          .Verify<CI::Territory>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Territory { Id = 1 } }))));
         }
 
         [Test]
@@ -496,8 +502,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<Facts::CategoryGroup>>()) == Inquire(new Facts::CategoryGroup { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Initialize<CI::CategoryGroup>(1))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1 }))));
+                          .Transform(Aggregate.Initialize<CI::CategoryGroup>(1))
+                          .Verify<CI::CategoryGroup>(m => m.AddRange(It.Is(Predicate.SequentialMatch(new[] { new CI::CategoryGroup { Id = 1 } }))));
         }
 
         [Test]
@@ -513,7 +519,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(query.Object)
                 .Transform(Aggregate.Recalculate<CI::CategoryGroup>(1))
-                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1, Name = "new name" }))));
+                .Verify<CI::CategoryGroup>(m => m.Update(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1, Name = "new name" }))));
         }
 
         [Test]
@@ -523,21 +529,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = Mock.Of<IQuery>(q => q.For(It.IsAny<FindSpecification<CI::CategoryGroup>>()) == Inquire(new CI::CategoryGroup { Id = 1 }));
 
             Transformation.Create(query)
-                .Transform(Aggregate.Destroy<CI::CategoryGroup>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::CategoryGroup { Id = 1 }))));
+                          .Transform(Aggregate.Destroy<CI::CategoryGroup>(1))
+                          .Verify<CI::CategoryGroup>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::CategoryGroup { Id = 1 } }))));
         }
 
         #region Transformation
 
         private class Transformation
         {
+            private static readonly IDictionary<Type, IRepository> RepositoriesToVerify = new Dictionary<Type, IRepository>();
             private readonly CustomerIntelligenceTransformation _transformation;
-            private readonly Mock<IDataMapper> _mapper;
-
+            
             private Transformation(IQuery source)
             {
-                _mapper = new Mock<IDataMapper>();
-                _transformation = new CustomerIntelligenceTransformation(source, _mapper.Object, Mock.Of<ITransactionManager>());
+                RepositoriesToVerify.Clear();
+                _transformation = new CustomerIntelligenceTransformation(source, new VerifiableDataChangesApplierFactory(OnRepositoryCreated));
             }
 
             public static Transformation Create(IQuery source)
@@ -551,10 +557,26 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return this;
             }
 
-            public Transformation Verify(Expression<Action<IDataMapper>> action, Func<Times> times = null, string failMessage = null)
+            public Transformation Verify<T>(Expression<Action<IRepository<T>>> action, Func<Times> times = null, string failMessage = null) where T : class
             {
-                _mapper.Verify(action, times ?? Times.AtLeastOnce, failMessage);
+                if (times != null && times == Times.Never)
+                {
+                    if (RepositoriesToVerify.ContainsKey(typeof(T)))
+                    {
+                        throw new AssertionException(failMessage);
+                    }
+
+                    return this;
+                }
+
+                var repository = (IRepository<T>)RepositoriesToVerify[typeof(T)];
+                Mock.Get(repository).Verify(action, times ?? Times.AtLeastOnce, failMessage);
                 return this;
+            }
+
+            private static void OnRepositoryCreated(Type type, IRepository repository)
+            {
+                RepositoriesToVerify.Add(type, repository);
             }
         }
 

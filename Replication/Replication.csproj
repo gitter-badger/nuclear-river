@@ -97,8 +97,7 @@
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryOrganizationUnit.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\DataChangesApplier.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
@@ -118,7 +117,6 @@
     <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.cs" />
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\StatisticsTransformationContext.cs" />
     <Compile Include="CustomerIntelligence\Transforming\TransactionManagerExtensions.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\DataMappers\DataMapperFactory.cs" />
     <Compile Include="Data\DataMapperExtensions.cs" />
     <Compile Include="Data\ITransactionManager.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />

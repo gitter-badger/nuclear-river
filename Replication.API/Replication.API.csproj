@@ -92,6 +92,7 @@
     <Compile Include="Specifications\Specs.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfo.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfoBuilder.cs" />
+    <Compile Include="Transforming\Aggregates\IAggregateChangesApplier.cs" />
     <Compile Include="Transforming\Aggregates\IAggregateInfo.cs" />
     <Compile Include="Transforming\Aggregates\ValueObjectInfo.cs" />
     <Compile Include="Transforming\Facts\AggregateDependencyInfo.cs" />
@@ -103,6 +104,8 @@
     <Compile Include="Transforming\Facts\IFactChangesApplierFactory.cs" />
     <Compile Include="Transforming\Facts\IFactDependencyInfo.cs" />
     <Compile Include="Transforming\Facts\IFactInfo.cs" />
+    <Compile Include="Transforming\IDataChangesApplier.cs" />
+    <Compile Include="Transforming\IDataChangesApplierFactory.cs" />
     <Compile Include="Transforming\IMetadataInfo.cs" />
     <Compile Include="Transforming\IDataChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />

@@ -7,6 +7,7 @@ using LinqToDB.Mapping;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -230,6 +231,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                                                       { Scope.Erm, Schema.Erm },
                                                                                       { Scope.Facts, Schema.Facts },
                                                                                       { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
+                                                                                      { Scope.Transport, NuClear.Replication.OperationsProcessing.Transports.SQLStore.Schema.Transport },
                                                                                   },
                                                                                   transactionOptions,
                                                                                   storageSettings.SqlCommandTimeout),
@@ -245,6 +247,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IDataChangesApplierFactory, UnityDataChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IDataChangesApplier<>), typeof(DataChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
                 .ConfigureReadWriteModels();
         }
 

@@ -35,19 +35,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport, sqlSettings.SqlCommandTimeout)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
-                .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
 
                 .RegisterType<StatisticsContext>(Lifetime.PerScope, 
                     new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
                 .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
                     new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
-
-
-                .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
-                                                   new InjectionConstructor(
-                                                       new ResolvedParameter<IQuery>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence),
-                                                       ResolvedTransactionManager(container, Scope.Facts, Scope.CustomerIntelligence)))
 
                 .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(

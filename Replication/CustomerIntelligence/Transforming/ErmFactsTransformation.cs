@@ -16,10 +16,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed class ErmFactsTransformation
     {
+        private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec
+            = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
+
         private readonly IQuery _query;
         private readonly IFactChangesApplierFactory _factChangesApplierFactory;
-        private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec; 
-
+        
         public ErmFactsTransformation(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
         {
             if (query == null)
@@ -34,8 +36,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _query = query;
             _factChangesApplierFactory = factChangesApplierFactory;
-
-            _changesDetectionMapSpec = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
         }
 
         public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)

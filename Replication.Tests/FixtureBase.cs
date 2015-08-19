@@ -5,8 +5,6 @@ using System.Linq.Expressions;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 
-using NUnit.Framework;
-
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
     internal abstract class FixtureBase
@@ -26,6 +24,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             public static Expression<Func<T, bool>> Match<T>(T expected)
             {
                 return Match(expected, x => x);
+            }
+
+            public static Expression<Func<IEnumerable<T>, bool>> SequentialMatch<T>(IEnumerable<T> expected)
+            {
+                return items => items.ToArray().Zip(expected, (item1, item2) => new ProjectionEqualityComparer<T, T>(x => x).Equals(item1, item2)).All(x => x);
             }
 
             public static Expression<Func<T, bool>> Match<T, TProjection>(T expected, Func<T, TProjection> projector)

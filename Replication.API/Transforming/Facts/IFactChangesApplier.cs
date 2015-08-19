@@ -5,12 +5,12 @@ using NuClear.AdvancedSearch.Replication.API.Operations;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
-    public interface ISourceChangesApplier
+    public interface IFactChangesApplier
     {
         IReadOnlyCollection<AggregateOperation> ApplyChanges(IMergeResult<long> changes);
     }
 
-    public interface IFactChangesApplier<TFact> : ISourceChangesApplier where TFact : class, IErmFactObject
+    public interface IFactChangesApplier<TFact> : IFactChangesApplier where TFact : class, IErmFactObject
     {
     }
 }

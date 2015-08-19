@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-
-using Moq;
 
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -19,21 +16,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _onRepositoryCreated = onRepositoryCreated;
         }
 
-        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
+        public IFactChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
         {
             var repositoryType = typeof(IRepository<>).MakeGenericType(factInfo.Type);
-            var repositoryInstance = (IRepository)DynamicMock(repositoryType);
+            var repositoryInstance = (IRepository)DynamicMock.Of(repositoryType);
 
             _onRepositoryCreated(repositoryInstance);
 
             var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
-        }
-
-        private static object DynamicMock(Type type)
-        {
-            var mock = typeof(Mock<>).MakeGenericType(type).GetConstructor(Type.EmptyTypes).Invoke(new object[] { });
-            return mock.GetType().GetProperties().Single(f => f.Name == "Object" && f.PropertyType == type).GetValue(mock, new object[] { });
+            return (IFactChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
         }
     }
 }

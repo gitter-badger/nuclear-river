@@ -14,10 +14,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery query)
+        public IFactChangesApplier Create(IFactInfo factInfo, IQuery query)
         {
             var applierType = typeof(IFactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (ISourceChangesApplier)_unityContainer.Resolve(
+            return (IFactChangesApplier)_unityContainer.Resolve(
                 applierType,
                 new DependencyOverride(typeof(IFactInfo), factInfo),
                 new DependencyOverride(typeof(IQuery), query));

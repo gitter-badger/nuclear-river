@@ -18,13 +18,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             _modifiableDomainContextProvider = modifiableDomainContextProvider;
         }
 
-        public ISourceChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
+        public IFactChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
         {
             var repositoryType = typeof(LinqToDBRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)Activator.CreateInstance(repositoryType, _modifiableDomainContextProvider);
 
             var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (ISourceChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
+            return (IFactChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
         }
     }
 }

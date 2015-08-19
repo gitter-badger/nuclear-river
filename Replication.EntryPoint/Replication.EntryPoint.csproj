@@ -274,6 +274,7 @@
     <Compile Include="Factories\Messaging\Receiver\ServiceBusReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
     <Compile Include="Factories\Replication\UnityFactChangesApplierFactory.cs" />
+    <Compile Include="Factories\Replication\UnityDataChangesApplierFactory.cs" />
     <Compile Include="Factories\UnityCorporateBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Jobs\ReportingJob.cs" />
