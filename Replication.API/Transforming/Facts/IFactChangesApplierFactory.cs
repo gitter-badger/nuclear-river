@@ -1,6 +1,6 @@
 ﻿using NuClear.Storage.Readings;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
     public interface IFactChangesApplierFactory
     {

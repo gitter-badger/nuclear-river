@@ -6,7 +6,7 @@ using System.Linq;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     internal sealed class ValueObjectInfo<TValueObject> : IMetadataInfo
     {

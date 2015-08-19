@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.AdvancedSearch.Replication.Specifications;
 

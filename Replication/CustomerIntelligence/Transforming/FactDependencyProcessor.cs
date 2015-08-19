@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
 
@@ -11,25 +11,25 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     internal class FactDependencyProcessor
     {
-         private static readonly Func<FactDependencyInfo, long, AggregateOperation> OperationsFactoryOnCreateFact =
+         private static readonly Func<IFactDependencyInfo, long, AggregateOperation> OperationsFactoryOnCreateFact =
             (dependency, id) =>
             dependency.IsDirectDependency
                 ? (AggregateOperation)new InitializeAggregate(dependency.AggregateType, id)
                 : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id);
 
-        private static readonly Func<FactDependencyInfo, long, AggregateOperation> OperationsFactoryOnUpdateFact =
+        private static readonly Func<IFactDependencyInfo, long, AggregateOperation> OperationsFactoryOnUpdateFact =
             (dependency, id) => new RecalculateAggregate(dependency.AggregateType, id);
 
-        private static readonly Func<FactDependencyInfo, long, AggregateOperation> OperationsFactoryOnDeleteFact =
+        private static readonly Func<IFactDependencyInfo, long, AggregateOperation> OperationsFactoryOnDeleteFact =
             (dependency, id) =>
             dependency.IsDirectDependency
                 ? (AggregateOperation)new DestroyAggregate(dependency.AggregateType, id)
                 : (AggregateOperation)new RecalculateAggregate(dependency.AggregateType, id);
 
         private readonly IQuery _query;
-        private readonly IEnumerable<FactDependencyInfo> _dependencies;
+        private readonly IEnumerable<IFactDependencyInfo> _dependencies;
 
-        public FactDependencyProcessor(IQuery query, IEnumerable<FactDependencyInfo> dependencies)
+        public FactDependencyProcessor(IQuery query, IEnumerable<IFactDependencyInfo> dependencies)
         {
             _query = query;
             _dependencies = dependencies;
@@ -50,7 +50,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             return ProcessDependencies(factIds, OperationsFactoryOnDeleteFact);
         }
 
-        private IEnumerable<AggregateOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, Func<FactDependencyInfo, long, AggregateOperation> operationFactory)
+        private IEnumerable<AggregateOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, Func<IFactDependencyInfo, long, AggregateOperation> operationFactory)
         {
             var aggregateOperations = new List<AggregateOperation>();
             foreach (var dependency in _dependencies)

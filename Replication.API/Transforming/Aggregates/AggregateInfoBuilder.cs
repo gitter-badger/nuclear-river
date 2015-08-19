@@ -6,7 +6,7 @@ using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     public class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
     {

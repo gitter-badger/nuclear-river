@@ -90,21 +90,23 @@
     <Compile Include="Operations\RecalculateAggregate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Specifications\Specs.cs" />
-    <Compile Include="Transforming\AggregateInfo.cs" />
-    <Compile Include="Transforming\AggregateInfoBuilder.cs" />
-    <Compile Include="Transforming\FactInfo.cs" />
-    <Compile Include="Transforming\FactDependencyInfo.cs" />
-    <Compile Include="Transforming\FactInfoBuilder.cs" />
-    <Compile Include="Transforming\IAggregateInfo.cs" />
-    <Compile Include="Transforming\IFactDependencyInfo.cs" />
-    <Compile Include="Transforming\IFactInfo.cs" />
+    <Compile Include="Transforming\Aggregates\AggregateInfo.cs" />
+    <Compile Include="Transforming\Aggregates\AggregateInfoBuilder.cs" />
+    <Compile Include="Transforming\Aggregates\IAggregateInfo.cs" />
+    <Compile Include="Transforming\Aggregates\ValueObjectInfo.cs" />
+    <Compile Include="Transforming\Facts\AggregateDependencyInfo.cs" />
+    <Compile Include="Transforming\Facts\DirectAggregateDependencyInfo.cs" />
+    <Compile Include="Transforming\Facts\FactDependencyInfoBuilder.cs" />
+    <Compile Include="Transforming\Facts\FactInfo.cs" />
+    <Compile Include="Transforming\Facts\FactInfoBuilder.cs" />
+    <Compile Include="Transforming\Facts\IFactChangesApplier.cs" />
+    <Compile Include="Transforming\Facts\IFactChangesApplierFactory.cs" />
+    <Compile Include="Transforming\Facts\IFactDependencyInfo.cs" />
+    <Compile Include="Transforming\Facts\IFactInfo.cs" />
     <Compile Include="Transforming\IMetadataInfo.cs" />
-    <Compile Include="Transforming\IFactChangesApplier.cs" />
-    <Compile Include="Transforming\IFactChangesApplierFactory.cs" />
     <Compile Include="Transforming\IDataChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
     <Compile Include="Transforming\TransactionScopeExtensions.cs" />
-    <Compile Include="Transforming\ValueObjectInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

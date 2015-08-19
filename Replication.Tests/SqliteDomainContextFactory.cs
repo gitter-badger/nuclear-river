@@ -26,6 +26,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 {
     public class SqliteDomainContextFactory: IReadableDomainContextFactory, IModifiableDomainContextFactory, IStorageMappingDescriptorProvider, IDisposable
     {
+        private const int DefaultQueryExecutionTimeout = 60;
+
         private static class ConnectionStringNames
         {
             public const string Erm = "Erm";
@@ -68,7 +70,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         {
             _storageMappingDescriptorProvider = new StorageMappingDescriptorProvider(new DefaultEntityContainerNameResolver(), CreateConnectionStringIdentityResolver());
             _connectionStringSettings = CreateConnectionStringSettings();
-            _linqToDbModelFactory = new LinqToDbModelFactory(schemaMap, _transactionOptions);
+            _linqToDbModelFactory = new LinqToDbModelFactory(schemaMap, _transactionOptions, DefaultQueryExecutionTimeout);
         }
 
         public IReadableDomainContext Create(StorageMappingDescriptor storageMappingDescriptor)

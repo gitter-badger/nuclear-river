@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     public interface IAggregateInfo : IMetadataInfo
     {

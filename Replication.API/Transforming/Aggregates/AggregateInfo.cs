@@ -8,7 +8,7 @@ using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public static class AggregateInfo

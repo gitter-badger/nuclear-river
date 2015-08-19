@@ -3,7 +3,7 @@ using System.Linq;
 
 using LinqToDB.Data;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 
 using NUnit.Framework;

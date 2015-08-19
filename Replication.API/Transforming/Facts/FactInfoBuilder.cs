@@ -7,11 +7,11 @@ using NuClear.AdvancedSearch.Replication.API.Specifications;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.API.Transforming
+namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
     public class FactInfoBuilder<TFact> where TFact : class, IErmFactObject, IIdentifiable
     {
-        private readonly List<FactDependencyInfo> _dependencies = new List<FactDependencyInfo>();
+        private readonly List<IFactDependencyInfo> _dependencies = new List<IFactDependencyInfo>();
         private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TFact>>> _mapToTargetSpecProvider =
             ids => new MapSpecification<IQuery, IQueryable<TFact>>(q => q.For(Specs.Find.ByIds<TFact>(ids)));
 
@@ -29,10 +29,10 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             return this;
         }
 
-        public FactInfoBuilder<TFact> HasDependentAggregate<TAggregate>(Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IEnumerable<long>>> dependentAggregateSpecProvider)
+        public FactInfoBuilder<TFact> HasDependentAggregate<TAggregate>(MapToDependentAggregateSpecProvider dependentAggregateSpecProvider)
             where TAggregate : ICustomerIntelligenceObject
         {
-            _dependencies.Add(FactDependencyInfo.Create<TAggregate>(dependentAggregateSpecProvider));
+            _dependencies.Add(FactDependencyInfoBuilder.Create<TAggregate>(dependentAggregateSpecProvider));
             return this;
         }
 
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
         public FactInfoBuilder<TFact> HasMatchedAggregate<TAggregate>()
         {
-            _dependencies.Add(FactDependencyInfo.Create<TAggregate>());
+            _dependencies.Add(FactDependencyInfoBuilder.Create<TAggregate>());
             return this;
         }
     }

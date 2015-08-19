@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 
 using LinqToDB;
+using LinqToDB.Common;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
@@ -16,23 +17,21 @@ using NuClear.OperationsProcessing.API.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Storage.Readings;
 
-using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
-
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
-    using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLStore.Schema;
+    using TransportSchema = Schema;
 
     public static partial class Bootstrapper
     {
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
         {
             // разрешаем update на таблицу состоящую только из Primary Keys
-            LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;
+            Configuration.Linq.IgnoreEmptyUpdate = true;
 
             var sqlSettings = container.Resolve<ISqlSettingsAspect>();
 
             return container
-                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts, sqlSettings.SqlCommandTimeout)
+                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, CustomerIntelligence.Data.Schema.Facts, sqlSettings.SqlCommandTimeout)
                 .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport, sqlSettings.SqlCommandTimeout)
 
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))

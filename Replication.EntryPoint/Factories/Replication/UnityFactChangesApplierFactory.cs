@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication

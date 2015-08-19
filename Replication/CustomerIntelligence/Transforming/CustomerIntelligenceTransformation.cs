@@ -5,7 +5,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.DataMappers;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.Storage.Readings;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
