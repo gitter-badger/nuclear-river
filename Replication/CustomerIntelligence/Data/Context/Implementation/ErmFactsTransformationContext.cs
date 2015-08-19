@@ -263,21 +263,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
-        private static IQueryable<Activity> MapToActivity(
-            IQueryable<Model.Erm.ActivityBase> activities,
-            IQueryable<Model.Erm.ActivityReference> firmReferences,
-            IQueryable<Model.Erm.ActivityReference> clientReferences)
+        private static IQueryable<Activity> MapToActivity<T, TReference>(
+            IQueryable<T> activities,
+            IQueryable<TReference> firmReferences,
+            IQueryable<TReference> clientReferences)
+            where T : Model.Erm.ActivityBase
+            where TReference : Model.Erm.ActivityReference
         {
+            // TODO {all, 19.08.2015}: Используется FirstOrDefault вместо DefaultIdEmpty из-за бага в данных Erm
+            // В Erm есть Activity, у которых более одного клиента/фирмы в RegardingObjects. Вероятно, во время миграции.
+            // UI отображает первого из многих, а какой из них реальный - сейчас уже не выяснить.
+            // Если найдётся кто-нибудь, кто удалит лишние данные из erm - можно заменить на left join.
             return from activity in activities
-                   from firmReference in firmReferences.Where(x => x.ActivityId == activity.Id).DefaultIfEmpty()
-                   from clientReference in clientReferences.Where(x => x.ActivityId == activity.Id).DefaultIfEmpty()
+                   let firmReference = firmReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
+                   let clientReference = clientReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
                    select new Activity
-                   {
-                       Id = activity.Id,
-                       ModifiedOn = activity.ModifiedOn,
-                       FirmId = firmReference != null ? firmReference.ReferencedObjectId : (long?)null,
-                       ClientId = clientReference != null ? clientReference.ReferencedObjectId : (long?)null
-                   };
+                          {
+                              Id = activity.Id,
+                              ModifiedOn = activity.ModifiedOn,
+                              FirmId = firmReference,
+                              ClientId = clientReference
+                          };
         }
 
         private static int ConvertAccountRole(int value)
