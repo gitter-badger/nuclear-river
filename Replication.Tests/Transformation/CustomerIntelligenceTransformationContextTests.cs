@@ -111,6 +111,25 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldTransformFirmActivity()
+        {
+            var context = new Mock<IErmFactsContext>();
+            context.SetupGet(x => x.Firms).Returns(Inquire(
+                new Facts::Firm { Id = 1, Name = "1st firm" },
+                new Facts::Firm { Id = 2, Name = "2nd firm", ClientId = 2 },
+                new Facts::Firm { Id = 3, Name = "3rd firm" }
+                ));
+            context.SetupGet(x => x.Activities).Returns(Inquire(
+                new Facts::Activity { Id = 1, FirmId = 1 },
+                new Facts::Activity { Id = 2, ClientId = 2 }
+                ));
+
+            // TODO: split into several tests
+            Transformation.Create(context.Object)
+                .VerifyTransform(x => x.FirmActivities.Where(a => a.FirmId == 1), Inquire(new CI::FirmActivity { FirmId = 1 }), x => x.FirmId, "");
+        }
+
+        [Test]
         public void ShouldTransformFirmContactInfoFromClient()
         {
             var context = new Mock<IErmFactsContext>();
