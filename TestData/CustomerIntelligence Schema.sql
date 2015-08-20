@@ -63,6 +63,7 @@ create table CustomerIntelligence.Firm(
     , Name nvarchar(256) not null
     , CreatedOn datetimeoffset(2) not null
     , LastDisqualifiedOn datetimeoffset(2) null
+	, LastDistributedOn datetimeoffset(2) null
     , HasPhone bit not null constraint DF_Firms_HasPhone default 0
     , HasWebsite bit not null constraint DF_Firms_HasWebsite default 0
     , AddressCount int not null constraint DF_Firms_AddressCount default 0
@@ -78,7 +79,6 @@ go
 -- FirmActivity
 create table CustomerIntelligence.FirmActivity(
 	FirmId bigint not null
-    , LastDistributedOn datetimeoffset(2) null
     , LastActivityOn datetimeoffset(2) null
     , constraint PK_FirmActivities primary key (FirmId)
 )

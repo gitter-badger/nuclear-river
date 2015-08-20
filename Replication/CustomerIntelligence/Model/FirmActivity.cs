@@ -8,8 +8,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
     {
         public long FirmId { get; set; }
 
-        public DateTimeOffset? LastDistributedOn { get; set; }
-
         public DateTimeOffset? LastActivityOn { get; set; }
 
         public override bool Equals(object obj)

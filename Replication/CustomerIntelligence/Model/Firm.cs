@@ -14,6 +14,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public DateTimeOffset? LastDisqualifiedOn { get; set; }
 
+        public DateTimeOffset? LastDistributedOn { get; set; }
+
         public bool HasPhone { get; set; }
 
         public bool HasWebsite { get; set; }
