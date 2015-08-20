@@ -68,7 +68,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         public SqliteDomainContextFactory(IReadOnlyDictionary<string, MappingSchema> schemaMap)
         {
-            _storageMappingDescriptorProvider = new StorageMappingDescriptorProvider(new DefaultEntityContainerNameResolver(), CreateConnectionStringIdentityResolver());
+            _storageMappingDescriptorProvider = new StorageMappingDescriptorProvider(new SqliteEntityContainerNameResolver(), CreateConnectionStringIdentityResolver());
             _connectionStringSettings = CreateConnectionStringSettings();
             _linqToDbModelFactory = new LinqToDbModelFactory(schemaMap, _transactionOptions, DefaultQueryExecutionTimeout);
         }

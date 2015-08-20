@@ -16,7 +16,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class CustomerIntelligenceTransformation
     {
-        private static readonly MapSpecification<IEnumerable, IEnumerable<long>> AggregateChangesDetectionMapSpec = 
+        private static readonly MapSpecification<IEnumerable, IEnumerable<long>> AggregateChangesDetectionMapSpec =
             new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
 
         private static readonly MapSpecification<IEnumerable, IEnumerable<IObject>> ValueObjectsChangesDetectionMapSpec =
@@ -44,14 +44,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required,
-                                                          new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+            using (Probe.Create("ETL2 Transforming"))
             {
-                using (Probe.Create("ETL2 Transforming"))
-                {
-                    var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
-                                           .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
+                var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
+                                       .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
 
+                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
+                                                          new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                {
                     foreach (var slice in slices)
                     {
                         var operation = slice.Key.Operation;
@@ -84,10 +84,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                 continue;
                             }
                         }
+
+                        transaction.Complete();
                     }
                 }
-
-                transaction.Complete();
             }
         }
 
@@ -148,6 +148,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var mergeResult = changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
 
                 var changesApplier = _dataChangesApplierFactory.Create(valueObjectInfo.Type);
+                
                 changesApplier.Delete(mergeResult.Complement);
                 changesApplier.Create(mergeResult.Difference);
                 changesApplier.Update(mergeResult.Intersection);

@@ -7,12 +7,14 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
     {
         public static IEnumerable<T> AsUntransactional<T>(this IEnumerable<T> enumerable)
         {
-            using (new TransactionScope(TransactionScopeOption.Suppress))
+            using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
                 foreach (var item in enumerable)
                 {
                     yield return item;
                 }
+
+                scope.Complete();
             }
         }
     }

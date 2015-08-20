@@ -39,6 +39,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
                                                                    CustomerIntelligenceConnectionStringIdentity.Instance,
                                                                    ConfigurationManager.ConnectionStrings["CustomerIntelligence"].ConnectionString
                                                                },
+                                                               {
+                                                                   TransportConnectionStringIdentity.Instance,
+                                                                   ConfigurationManager.ConnectionStrings["Transport"].ConnectionString
+                                                               }
                                                            }));
         }
     }

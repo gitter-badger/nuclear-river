@@ -11,12 +11,12 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class SqlStoreReceiverTelemetryWrapper : IMessageReceiver
+    public sealed class SqlStoreReceiverTelemetryDecorator : IMessageReceiver
     {
         private readonly IMessageReceiver _receiver;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public SqlStoreReceiverTelemetryWrapper(SqlStoreReceiver receiver, ITelemetryPublisher telemetryPublisher)
+        public SqlStoreReceiverTelemetryDecorator(SqlStoreReceiver receiver, ITelemetryPublisher telemetryPublisher)
         {
             _receiver = receiver;
             _telemetryPublisher = telemetryPublisher;

@@ -23,8 +23,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports
         {
             return new CalculateStatisticsOperation
                    {
-                ProjectId = (long)context.Attribute("Project"),
-                CategoryId = (long?)context.Attribute("Category"),
+                       ProjectId = (long)context.Attribute("Project"),
+                       CategoryId = (long?)context.Attribute("Category"),
                    };
         }
 

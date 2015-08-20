@@ -9,7 +9,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Rece
     public sealed class ServiceBusReceiverResolveStrategy : MessageFlowReceiverResolveStrategyBase
     {
         public ServiceBusReceiverResolveStrategy(IMetadataProvider metadataProvider)
-            : base(metadataProvider, typeof(ServiceBusOperationsReceiverTelemetryWrapper), metadata => metadata.IsPerformedOperationsPrimarySource() && Equals(metadata.MessageFlow, ImportFactsFromErmFlow.Instance))
+            : base(metadataProvider, typeof(ServiceBusOperationsReceiverTelemetryDecorator), metadata => metadata.IsPerformedOperationsPrimarySource() && Equals(metadata.MessageFlow, ImportFactsFromErmFlow.Instance))
         {
         }
     }

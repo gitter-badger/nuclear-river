@@ -9,13 +9,13 @@ using Microsoft.Practices.Unity;
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
+using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
@@ -80,6 +80,8 @@ using NuClear.WCF.Client;
 using NuClear.WCF.Client.Config;
 
 using Quartz.Spi;
+
+using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
@@ -179,15 +181,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 #endif
 
             // primary
-            container
-                     .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
-                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryWrapper), Lifetime.PerScope, null)
+            container.RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
+                     .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryDecorator), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
-            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverTelemetryWrapper), Lifetime.PerScope, null)
+            container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverTelemetryDecorator), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(AggregateOperationAggregatableMessageHandler), Lifetime.PerResolve, null);
 
 
@@ -225,6 +226,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
                 .RegisterType<IEntityContainerNameResolver, DefaultEntityContainerNameResolver>(Lifetime.Singleton)
                 .RegisterType<IManagedConnectionStateScopeFactory, ManagedConnectionStateScopeFactory>(Lifetime.Singleton)
+                .RegisterType<IDomainContextScope, DomainContextScope>(Lifetime.Singleton)
+                .RegisterType<ScopedDomainContextsStore>(Lifetime.Singleton)
+                .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(Lifetime.Singleton)
                 .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterInstance<ILinqToDbModelFactory>(new LinqToDbModelFactory(new Dictionary<string, MappingSchema>
                                                                                   {
@@ -238,13 +242,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                          Lifetime.Singleton)
                 .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IQuery, Query>(Lifetime.PerResolve)
-                .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), Lifetime.PerResolve)
-                .RegisterType<IDomainContextScope, DomainContextScope>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IQuery, Query>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(ScopedDomainContextsStore), entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IDataChangesApplierFactory, UnityDataChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
@@ -258,13 +259,15 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 {
                     { Scope.Erm, ErmConnectionStringIdentity.Instance },
                     { Scope.Facts, FactsConnectionStringIdentity.Instance },
-                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance }
+                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance },
+                    { Scope.Transport, TransportConnectionStringIdentity.Instance }
                 };
 
             var writeConnectionStringNameMap = new Dictionary<string, IConnectionStringIdentity>
                 {
                     { Scope.Facts, FactsConnectionStringIdentity.Instance },
-                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance }
+                    { Scope.CustomerIntelligence, CustomerIntelligenceConnectionStringIdentity.Instance },
+                    { Scope.Transport, TransportConnectionStringIdentity.Instance }
                 };
 
             return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));

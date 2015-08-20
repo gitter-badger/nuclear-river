@@ -10,12 +10,12 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class ServiceBusOperationsReceiverTelemetryWrapper : IMessageReceiver
+    public sealed class ServiceBusOperationsReceiverTelemetryDecorator : IMessageReceiver
     {
         private readonly IMessageReceiver _receiver;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ServiceBusOperationsReceiverTelemetryWrapper(ServiceBusOperationsReceiver receiver, ITelemetryPublisher telemetryPublisher)
+        public ServiceBusOperationsReceiverTelemetryDecorator(ServiceBusOperationsReceiver receiver, ITelemetryPublisher telemetryPublisher)
         {
             _receiver = receiver;
             _telemetryPublisher = telemetryPublisher;

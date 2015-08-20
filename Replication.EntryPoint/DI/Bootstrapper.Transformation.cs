@@ -7,20 +7,16 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.DI.Unity.Config;
-using NuClear.Messaging.API.Flows.Metadata;
-using NuClear.OperationsProcessing.API.Final;
-using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
-    using TransportSchema = Schema;
-
     public static partial class Bootstrapper
     {
         private static IUnityContainer ConfigureLinq2Db(this IUnityContainer container)
@@ -31,9 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             var sqlSettings = container.Resolve<ISqlSettingsAspect>();
 
             return container
-                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, CustomerIntelligence.Data.Schema.Facts, sqlSettings.SqlCommandTimeout)
-                .RegisterDataContext(Scope.Transport, ConnectionStringName.CustomerIntelligence, TransportSchema.Transport, sqlSettings.SqlCommandTimeout)
-
+                .RegisterDataContext(Scope.Facts, ConnectionStringName.CustomerIntelligence, Schema.Facts, sqlSettings.SqlCommandTimeout)
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
 
                 .RegisterType<StatisticsContext>(Lifetime.PerScope, 
@@ -51,10 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<StatisticsTransformationContext>(),
                                                        new ResolvedParameter<StatisticsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)))
-
-                .RegisterType<SqlStoreSender>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Transport)))
-                .RegisterType<SqlStoreReceiver>(Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<MessageFlowMetadata>(), new ResolvedParameter<IFinalProcessingQueueReceiverSettings>(), new ResolvedParameter<IDataContext>(Scope.Transport)));
+                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)));
         }
 
         private static ResolvedParameter ResolvedTransactionManager(IUnityContainer container, params string[] contexts)

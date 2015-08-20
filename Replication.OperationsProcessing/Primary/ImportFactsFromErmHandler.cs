@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -39,18 +40,38 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>())
+                var statisticsOperations = new List<CalculateStatisticsOperation>();
+                var aggregateOperations = new List<AggregateOperation>();
+
+                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
+                                                              new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
                 {
-                    var result = _transformation.Transform(message.Operations);
-                    _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
+                    foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>())
+                    {
+                        var result = _transformation.Transform(message.Operations);
+                        _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
 
-                    var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
-                    _sender.Push(statisticOperations, StatisticsFlow.Instance);
-                    _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
+                        var statistics = result.OfType<CalculateStatisticsOperation>().ToArray();
+                        statisticsOperations.AddRange(statistics);
 
-                    var aggregateOperations = result.OfType<AggregateOperation>().ToList();
-                    _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                    _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+                        var aggregates = result.OfType<AggregateOperation>().ToArray();
+                        aggregateOperations.AddRange(aggregates);
+
+                        _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statistics.Length);
+                        _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregates.Length);
+                    }
+
+                    // We need to use different transaction scope to operate with operation sender because it has its own store
+                    using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,
+                                                                      new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                    {
+                        _sender.Push(statisticsOperations, StatisticsFlow.Instance);
+                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
+
+                        pushTransaction.Complete();
+                    }
+
+                    transaction.Complete();
                 }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

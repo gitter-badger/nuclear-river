@@ -95,6 +95,14 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.1\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.1\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0-TypedMet-b25579-42\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
       <Private>True</Private>
@@ -116,7 +124,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -148,6 +156,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -201,8 +210,8 @@
     <Compile Include="Performance\FinalProcessingAggregateQueueLengthIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
-    <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
-    <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
+    <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryDecorator.cs" />
+    <Compile Include="Performance\SqlStoreReceiverTelemetryDecorator.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromBitHandler.cs" />
