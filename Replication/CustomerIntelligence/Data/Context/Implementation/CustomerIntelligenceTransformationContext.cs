@@ -126,8 +126,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
         {
             get
             {
-                var firmActivities = _ermContext.Activities.GroupBy(x => x.FirmId).Select(group => new { FirmId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
-                var clientActivities = _ermContext.Activities.GroupBy(x => x.ClientId).Select(group => new { ClientId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+                var firmActivities = _ermContext.Activities.Where(x => x.FirmId.HasValue).GroupBy(x => x.FirmId).Select(group => new { FirmId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+                var clientActivities = _ermContext.Activities.Where(x => x.ClientId.HasValue).GroupBy(x => x.ClientId).Select(group => new { ClientId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
 
                 return from firm in _ermContext.Firms
                        from lastFirmActivity in firmActivities.Where(x => x.FirmId == firm.Id).Select(x => (DateTimeOffset?)x.LastActivityOn).DefaultIfEmpty()
@@ -135,8 +135,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        select new FirmActivity
                               {
                                   FirmId = firm.Id,
-                                  LastActivityOn = lastFirmActivity > lastClientActivity ? lastFirmActivity : lastClientActivity
-                              };
+                                  LastActivityOn = lastFirmActivity != null && lastClientActivity != null
+                                    ? (lastFirmActivity < lastClientActivity ? lastClientActivity : lastFirmActivity)
+                                    : (lastClientActivity ?? lastFirmActivity),
+                       };
             }
         }
 

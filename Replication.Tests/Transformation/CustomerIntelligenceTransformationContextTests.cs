@@ -113,6 +113,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmActivity()
         {
+            var sampleDate = DateTimeOffset.Parse("2015-01-01");
+            var oldSampleDate = DateTimeOffset.Parse("2014-01-01");
+
             var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, Name = "1st firm" },
@@ -120,13 +123,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Firm { Id = 3, Name = "3rd firm" }
                 ));
             context.SetupGet(x => x.Activities).Returns(Inquire(
-                new Facts::Activity { Id = 1, FirmId = 1 },
-                new Facts::Activity { Id = 2, ClientId = 2 }
+                new Facts::Activity { Id = 1, FirmId = 1, ModifiedOn = sampleDate },
+                new Facts::Activity { Id = 2, ClientId = 2, ModifiedOn = sampleDate },
+                new Facts::Activity { Id = 3, FirmId = 1, ClientId = 2, ModifiedOn = oldSampleDate }
                 ));
 
-            // TODO: split into several tests
             Transformation.Create(context.Object)
-                .VerifyTransform(x => x.FirmActivities.Where(a => a.FirmId == 1), Inquire(new CI::FirmActivity { FirmId = 1 }), x => x.FirmId, "");
+                .VerifyTransform(x => x.FirmActivities.Where(a => a.FirmId == 1), Inquire(new CI::FirmActivity { LastActivityOn = sampleDate }), x => x.LastActivityOn, "should be taken by firm reference")
+                .VerifyTransform(x => x.FirmActivities.Where(a => a.FirmId == 2), Inquire(new CI::FirmActivity { LastActivityOn = sampleDate }), x => x.LastActivityOn, "should be taken by client reference")
+                .VerifyTransform(x => x.FirmActivities.Where(a => a.FirmId == 3), Inquire(new CI::FirmActivity { LastActivityOn = null }), x => x.LastActivityOn, "no source");
         }
 
         [Test]

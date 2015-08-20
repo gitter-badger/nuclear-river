@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 
         public override string Description
         {
-            get { return "Account"; }
+            get { return "Appointment"; }
         }
     }
 }

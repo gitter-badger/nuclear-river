@@ -149,6 +149,7 @@
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
     <Compile Include="Model\IErmFactObject.cs" />
     <Compile Include="Model\IErmObject.cs" />
+    <Compile Include="Model\IErmValueObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />
