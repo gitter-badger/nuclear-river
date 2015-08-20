@@ -226,9 +226,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
                 .RegisterType<IEntityContainerNameResolver, DefaultEntityContainerNameResolver>(Lifetime.Singleton)
                 .RegisterType<IManagedConnectionStateScopeFactory, ManagedConnectionStateScopeFactory>(Lifetime.Singleton)
-                .RegisterType<IDomainContextScope, DomainContextScope>(Lifetime.Singleton)
-                .RegisterType<ScopedDomainContextsStore>(Lifetime.Singleton)
-                .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(Lifetime.Singleton)
+                .RegisterType<IDomainContextScope, DomainContextScope>(EntryPointSpecificLifetimeManagerFactory())
+                .RegisterType<ScopedDomainContextsStore>(EntryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(EntryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterInstance<ILinqToDbModelFactory>(new LinqToDbModelFactory(new Dictionary<string, MappingSchema>
                                                                                   {
