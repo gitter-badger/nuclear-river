@@ -20,11 +20,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
     [DisallowConcurrentExecution]
     public class OperationsPrimaryProcessingJob : TaskServiceJobBase
     {
-        private readonly object _sync = new object();
         private readonly IMetadataProvider _metadataProvider;
         private readonly IMessageFlowProcessorFactory _messageFlowProcessorFactory;
-
-        private IAsyncMessageFlowProcessor _performedOperationsProcessor;
 
         public OperationsPrimaryProcessingJob(
             IMetadataProvider metadataProvider,
@@ -41,33 +38,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         public int BatchSize { get; set; }
         public string Flow { get; set; }
         public int? TimeSafetyOffsetHours { get; set; }
-
-        private IAsyncMessageFlowProcessor MessageFlowProcessor
-        {
-            get
-            {
-                lock (_sync)
-                {
-                    return _performedOperationsProcessor;
-                }
-            }
-            set
-            {
-                lock (_sync)
-                {
-                    _performedOperationsProcessor = value;
-                }
-            }
-        }
-
-        public void Interrupt()
-        {
-            var flowProcessor = MessageFlowProcessor;
-            if (flowProcessor != null)
-            {
-                flowProcessor.Stop();
-            }
-        }
 
         protected override void ExecuteInternal(IJobExecutionContext context)
         {
