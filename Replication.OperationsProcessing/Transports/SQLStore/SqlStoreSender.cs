@@ -14,6 +14,8 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
+        private static readonly Random Random = new Random();
+
         private readonly IRepository<PerformedOperationFinalProcessing> _repository;
 
         public SqlStoreSender(IRepository<PerformedOperationFinalProcessing> repository)
@@ -47,11 +49,9 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         private static PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
         {
-
-            var random = new Random();
             return new PerformedOperationFinalProcessing
                    {
-                       Id = random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       Id = Random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
                        CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        Context = operation.Serialize().ToString(),
@@ -62,10 +62,9 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
         {
             var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
-            var random = new Random();
             return new PerformedOperationFinalProcessing
                    {
-                       Id = random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       Id = Random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
                        CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,
