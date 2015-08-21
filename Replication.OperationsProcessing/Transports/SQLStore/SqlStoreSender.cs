@@ -47,11 +47,12 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 
         private static PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
         {
-            var now = DateTime.UtcNow;
+
+            var random = new Random();
             return new PerformedOperationFinalProcessing
                    {
-                       Id = now.Ticks, // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
-                       CreatedOn = now,
+                       Id = random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        Context = operation.Serialize().ToString(),
                        OperationId = operation.GetIdentity(),
@@ -61,11 +62,11 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
         {
             var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
-            var now = DateTime.UtcNow;
+            var random = new Random();
             return new PerformedOperationFinalProcessing
                    {
-                       Id = now.Ticks, // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
-                       CreatedOn = now,
+                       Id = random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,
                        EntityTypeId = entityType.Id,
