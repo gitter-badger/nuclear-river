@@ -61,10 +61,11 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
         {
             var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
+            var now = DateTime.UtcNow;
             return new PerformedOperationFinalProcessing
                    {
-                       Id = operation.AggregateId, // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
-                       CreatedOn = DateTime.UtcNow,
+                       Id = now.Ticks, // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       CreatedOn = now,
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,
                        EntityTypeId = entityType.Id,
