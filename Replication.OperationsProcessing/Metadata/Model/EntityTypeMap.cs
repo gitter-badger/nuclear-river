@@ -98,7 +98,12 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
 
         public static IEntityType MapErmToFacts(IEntityType entityType)
         {
-            ErmToFactsTypeMapping.TryGetValue(entityType, out entityType);
+            IEntityType mappedEntityType;
+            if (ErmToFactsTypeMapping.TryGetValue(entityType, out mappedEntityType))
+            {
+                return mappedEntityType;
+            }
+
             return entityType;
         }
 
