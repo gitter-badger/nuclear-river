@@ -14,12 +14,12 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
 {
     public sealed class SqlStoreSender
     {
-        private static readonly Random Random = new Random();
-
+        private readonly IIdentityGenerator _identityGenerator;
         private readonly IRepository<PerformedOperationFinalProcessing> _repository;
 
-        public SqlStoreSender(IRepository<PerformedOperationFinalProcessing> repository)
+        public SqlStoreSender(IIdentityGenerator identityGenerator, IRepository<PerformedOperationFinalProcessing> repository)
         {
+            _identityGenerator = identityGenerator;
             _repository = repository;
         }
 
@@ -47,11 +47,11 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
             _repository.Save();
         }
 
-        private static PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
+        private PerformedOperationFinalProcessing SerializeMessage(CalculateStatisticsOperation operation, IMessageFlow targetFlow)
         {
             return new PerformedOperationFinalProcessing
                    {
-                       Id = Random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       Id = _identityGenerator.Next(),
                        CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        Context = operation.Serialize().ToString(),
@@ -59,12 +59,12 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
                    };
         }
 
-        private static PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
+        private PerformedOperationFinalProcessing SerializeMessage(AggregateOperation operation, IMessageFlow targetFlow)
         {
             var entityType = EntityTypeMap<CustomerIntelligenceContext>.AsEntityName(operation.AggregateType);
             return new PerformedOperationFinalProcessing
                    {
-                       Id = Random.Next(), // PerformedOperationFinalProcessing type has incorrect implementation if Equals and GetHashCode
+                       Id = _identityGenerator.Next(),
                        CreatedOn = DateTime.UtcNow,
                        MessageFlowId = targetFlow.Id,
                        EntityId = operation.AggregateId,

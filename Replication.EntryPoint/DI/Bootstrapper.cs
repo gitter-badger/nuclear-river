@@ -21,6 +21,7 @@ using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
+using NuClear.IdentityService.Client.Interaction;
 using NuClear.Jobs.Schedulers;
 using NuClear.Jobs.Unity;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
@@ -61,6 +62,7 @@ using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
@@ -105,8 +107,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureTracing(tracer, tracerContextManager)
                      .ConfigureSecurityAspects()
                      .ConfigureQuartz()
-                     .ConfigureOperationsProcessing()
+                     .ConfigureIdentityInfrastructure()
                      .ConfigureWcf()
+                     .ConfigureOperationsProcessing()
                      .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
@@ -169,6 +172,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container
                 .RegisterType<IServiceClientSettingsProvider, ServiceClientSettingsProvider>(Lifetime.Singleton)
                 .RegisterType<IClientProxyFactory, ClientProxyFactory>(Lifetime.Singleton);
+        }
+
+        private static IUnityContainer ConfigureIdentityInfrastructure(this IUnityContainer container)
+        {
+            return container.RegisterType<IIdentityGenerator, IdentityGenerator>(Lifetime.Singleton)
+                            .RegisterType<IIdentityServiceClient, IdentityServiceClient>(Lifetime.Singleton);
         }
 
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)

@@ -35,6 +35,10 @@
       <HintPath>..\packages\2GIS.NuClear.Assembling.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="2GIS.NuClear.IdentityService.Client, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b743d84006fae806, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.IdentityService.Client.1.0.5\lib\net451\2GIS.NuClear.IdentityService.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Messaging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.7\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
@@ -228,6 +232,8 @@
     <Compile Include="Transports\ServiceBus\UnknownEntityTypeSurrogate.cs" />
     <Compile Include="Transports\ServiceBus\UnknownOperationIdentity.cs" />
     <Compile Include="Transports\ServiceBus\UnknownOperationIdentitySurrogate.cs" />
+    <Compile Include="Transports\SQLStore\IdentityGenerator.cs" />
+    <Compile Include="Transports\SQLStore\IIdentityGenerator.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreReceiver.cs" />
     <Compile Include="Transports\SQLStore\Schema.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />
