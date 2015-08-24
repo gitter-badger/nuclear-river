@@ -32,3 +32,11 @@ from ERM.Firm
   inner join ERM.FirmAddress on ERM.FirmAddress.FirmId = ERM.Firm.Id 
   inner join ERM.CategoryFirmAddress on ERM.CategoryFirmAddress.FirmAddressId = ERM.FirmAddress.Id
 go
+
+-- Firm
+create view CustomerIntelligence.Firm
+as
+select FirmBase.*, FirmActivity.LastActivityOn
+from CustomerIntelligence.FirmBase
+	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = FirmBase.Id
+go

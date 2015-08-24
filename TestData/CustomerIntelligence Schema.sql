@@ -17,6 +17,7 @@ if object_id('CustomerIntelligence.Contact') is not null drop table CustomerInte
 if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact;
 if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
+if object_id('CustomerIntelligence.FirmBase') is not null drop table CustomerIntelligence.FirmBase;
 go
 
 
@@ -58,7 +59,7 @@ create table CustomerIntelligence.Territory(
 go
 
 -- Firm
-create table CustomerIntelligence.Firm(
+create table CustomerIntelligence.FirmBase(
 	Id bigint not null
     , Name nvarchar(256) not null
     , CreatedOn datetimeoffset(2) not null
