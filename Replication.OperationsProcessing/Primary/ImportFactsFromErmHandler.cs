@@ -51,6 +51,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                     var aggregateOperations = result.OfType<AggregateOperation>().ToList();
                     _sender.Push(aggregateOperations, AggregatesFlow.Instance);
                     _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+
+                    _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
                 }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

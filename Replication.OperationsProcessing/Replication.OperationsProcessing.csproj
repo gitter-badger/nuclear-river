@@ -196,13 +196,14 @@
     <Compile Include="Performance\ErmEnquiedOperationCountIdentity.cs" />
     <Compile Include="Performance\ErmReceivedOperationCountIdentity.cs" />
     <Compile Include="Performance\ErmProcessedOperationCountIdentity.cs" />
-    <Compile Include="Performance\FinalProcessingDelayIdentity.cs" />
+    <Compile Include="Performance\AggregateProcessingDelayIdentity.cs" />
     <Compile Include="Performance\FinalProcessingStatisticsQueueLengthIdentity.cs" />
     <Compile Include="Performance\FinalProcessingAggregateQueueLengthIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Performance\PrimaryProcessingQueueLengthIdentity.cs" />
     <Compile Include="Performance\ServiceBusOperationsReceiverTelemetryWrapper.cs" />
     <Compile Include="Performance\SqlStoreReceiverTelemetryWrapper.cs" />
+    <Compile Include="Performance\StatisticsProcessingDelayIdentity.cs" />
     <Compile Include="Primary\ImportFactsFromBitAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromBitHandler.cs" />
