@@ -46,9 +46,10 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(transformableChanges.Count);
 
             return new OperationAggregatableMessage<FactOperation>
-            {
+                   {
                        TargetFlow = MessageFlow,
                        Operations = transformableChanges,
+                       OperationTime = message.Context.Finished.UtcDateTime,
                    };
         }
 
