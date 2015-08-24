@@ -34,7 +34,7 @@ from ERM.Firm
 go
 
 -- Firm
-create view CustomerIntelligence.Firm
+create view CustomerIntelligence.FirmView
 as
 select FirmBase.*, FirmActivity.LastActivityOn
 from CustomerIntelligence.FirmBase
