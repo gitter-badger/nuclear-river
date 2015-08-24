@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Отставание обработки сообщений от генерации"; }
+            get { return "Интервал времени между завершением TUC в ERM и его обработкой в AS, мс"; }
         }
     }
 }

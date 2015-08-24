@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Отставание обработки сообщений пересчёта статистики"; }
+            get { return "Интервал времени между постановкой операции пересчёта статистики в очередь и до её обработки, мс"; }
         }
     }
 }

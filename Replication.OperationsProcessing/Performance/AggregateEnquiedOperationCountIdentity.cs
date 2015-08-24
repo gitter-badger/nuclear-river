@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Количество взятых на обработку операций над агрегатами"; }
+            get { return "Количество операций над агрегатами, добавленных в очередь на обработку"; }
         }
     }
 }

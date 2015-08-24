@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return " оличество обработанных операций на этапе primary"; }
+            get { return " оличество обработанных CUD операций"; }
         }
     }
 }
