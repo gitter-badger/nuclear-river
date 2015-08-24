@@ -84,9 +84,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                 continue;
                             }
                         }
-
-                        transaction.Complete();
                     }
+
+                    transaction.Complete();
                 }
             }
         }

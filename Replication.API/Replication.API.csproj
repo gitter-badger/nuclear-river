@@ -110,7 +110,6 @@
     <Compile Include="Transforming\IMetadataInfo.cs" />
     <Compile Include="Transforming\IDataChangesDetector.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
-    <Compile Include="Transforming\TransactionScopeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

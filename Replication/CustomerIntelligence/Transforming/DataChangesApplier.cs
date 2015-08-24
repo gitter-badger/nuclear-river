@@ -17,13 +17,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Create(IEnumerable objects)
         {
-            _repository.AddRange(objects.Cast<TTarget>().AsUntransactional());
+            _repository.AddRange(objects.Cast<TTarget>());
             _repository.Save();
         }
 
         public void Update(IEnumerable objects)
         {
-            foreach (var obj in objects.Cast<TTarget>().AsUntransactional())
+            foreach (var obj in objects.Cast<TTarget>())
             {
                 _repository.Update(obj);
             }
@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public void Delete(IEnumerable objects)
         {
-            _repository.DeleteRange(objects.Cast<TTarget>().AsUntransactional());
+            _repository.DeleteRange(objects.Cast<TTarget>());
             _repository.Save();
         }
     }

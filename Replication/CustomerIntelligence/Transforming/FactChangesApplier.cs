@@ -39,7 +39,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private IEnumerable<AggregateOperation> CreateFact(IReadOnlyCollection<long> factIds)
         {
             var sourceQueryable = _factInfo.MapToSourceSpecProvider(factIds).Map(_query).Cast<TFact>();
-            _repository.AddRange(sourceQueryable.AsUntransactional());
+            _repository.AddRange(sourceQueryable);
             _repository.Save();
 
             var processor = new FactDependencyProcessor(_query, _factInfo.DependencyInfos);
@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var before = beforeProcessor.ProcessOnUpdateFact(factIds);
 
             var sourceQueryable = _factInfo.MapToSourceSpecProvider(factIds).Map(_query).Cast<TFact>();
-            foreach (var fact in sourceQueryable.AsUntransactional())
+            foreach (var fact in sourceQueryable)
             {
                 _repository.Update(fact);
             }
@@ -71,7 +71,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var result = processor.ProcessOnDeleteFact(factIds);
 
             var targetQueryable = _factInfo.MapToTargetSpecProvider(factIds).Map(_query).Cast<TFact>();
-            _repository.DeleteRange(targetQueryable.AsUntransactional());
+            _repository.DeleteRange(targetQueryable);
             _repository.Save();
 
             return result;
