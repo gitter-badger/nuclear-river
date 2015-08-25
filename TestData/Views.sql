@@ -36,7 +36,7 @@ go
 -- Firm
 create view CustomerIntelligence.FirmView
 as
-select FirmBase.*, FirmActivity.LastActivityOn
-from CustomerIntelligence.FirmBase
-	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = FirmBase.Id
+select Firm.*, FirmActivity.LastActivityOn
+from CustomerIntelligence.Firm
+	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = Firm.Id
 go

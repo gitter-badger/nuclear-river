@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<ClientContact>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.ContactId).IsPrimaryKey()
                     .Property(x => x.ClientId).IsPrimaryKey();
-                config.Entity<Firm>().HasSchemaName(CustomerIntelligenceSchema).HasTableName("FirmBase").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Firm>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<FirmActivity>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.FirmId).IsPrimaryKey();
                 config.Entity<FirmBalance>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.AccountId).IsPrimaryKey()
