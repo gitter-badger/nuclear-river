@@ -11,6 +11,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
     {
         private const int ActivityStatusCompleted = 2;
         private const int RegardingObjectReference = 1;
+
+        // TODO {all, 24.08.2015}: Когда появится сервис идентификаторов сущностей - переиспользовать его
         private const long FirmTypeId = 146;
         private const long ClientTypeId = 200;
 
