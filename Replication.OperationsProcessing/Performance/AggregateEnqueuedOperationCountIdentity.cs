@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class StatisticsEnquiedOperationCountIdentity : TelemetryIdentityBase<StatisticsEnquiedOperationCountIdentity>
+    public sealed class AggregateEnqueuedOperationCountIdentity : TelemetryIdentityBase<AggregateEnqueuedOperationCountIdentity>
     {
         public override int Id
         {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return " оличество операций пересчЄта статистики, добавленных в очередь на обработку"; }
+            get { return " оличество операций над агрегатами, добавленных в очередь на обработку"; }
         }
     }
 }
