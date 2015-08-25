@@ -6,6 +6,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 {
     public interface IErmFactsContext
     {
+        IQueryable<Activity> Activities { get; }
+
         IQueryable<Account> Accounts { get; }
 
         IQueryable<Category> Categories { get; }

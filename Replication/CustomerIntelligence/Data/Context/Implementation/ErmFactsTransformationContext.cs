@@ -34,6 +34,19 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<Activity> Activities
+        {
+            get
+            {
+                var appointmentActivities = MapToActivity(_context.Appointments, _context.AppointmentFirms, _context.AppointmentClients);
+                var phonecallActivities = MapToActivity(_context.Phonecalls, _context.PhonecallFirms, _context.PhonecallClients);
+                var taskActivities = MapToActivity(_context.Tasks, _context.TaskFirms, _context.TaskClients);
+                var letterActivities = MapToActivity(_context.Letters, _context.LetterFirms, _context.LetterClients);
+
+                return appointmentActivities.Union(phonecallActivities).Union(taskActivities).Union(letterActivities);
+            }
+        }
+
         public IQueryable<BranchOfficeOrganizationUnit> BranchOfficeOrganizationUnits
         {
             get
@@ -248,6 +261,29 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                            OrganizationUnitId = territory.OrganizationUnitId
                        };
             }
+        }
+
+        private static IQueryable<Activity> MapToActivity<T, TReference>(
+            IQueryable<T> activities,
+            IQueryable<TReference> firmReferences,
+            IQueryable<TReference> clientReferences)
+            where T : Model.Erm.ActivityBase
+            where TReference : Model.Erm.ActivityReference
+        {
+            // TODO {all, 19.08.2015}: Используется FirstOrDefault вместо DefaultIdEmpty из-за бага в данных Erm
+            // В Erm есть Activity, у которых более одного клиента/фирмы в RegardingObjects. Вероятно, во время миграции.
+            // UI отображает первого из многих, а какой из них реальный - сейчас уже не выяснить.
+            // Если найдётся кто-нибудь, кто удалит лишние данные из erm - можно заменить на left join.
+            return from activity in activities
+                   let firmReference = firmReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
+                   let clientReference = clientReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
+                   select new Activity
+                          {
+                              Id = activity.Id,
+                              ModifiedOn = activity.ModifiedOn,
+                              FirmId = firmReference,
+                              ClientId = clientReference
+                          };
         }
 
         private static int ConvertAccountRole(int value)

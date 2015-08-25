@@ -40,6 +40,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [TestCase("Firm", "$filter=CreatedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.CreatedOn < 01/01/2015 00:00:00 +00:00))", Description = "Поиск по дате создания.")]
         [TestCase("Firm", "$filter=LastDisqualifiedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDisqualifiedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего возвращения в резерв.")]
         [TestCase("Firm", "$filter=LastDistributedOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastDistributedOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего размещения.")]
+        [TestCase("Firm", "$filter=LastActivityOn lt @date&@date=2015-01-01T00:00Z", Result = "Firm[].Where($it => ($it.LastActivityOn < Convert(01/01/2015 00:00:00 +00:00)))", Description = "Поиск по дате последнего действия.")]
         [TestCase("Firm", "$filter=HasPhone eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasPhone == True))", Description = "Поиск по наличию телефона.")]
         [TestCase("Firm", "$filter=HasWebsite eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasWebsite == True))", Description = "Поиск по наличию сайта.")]
         [TestCase("Firm", "$filter=AddressCount gt @amount&@amount=10", Result = "Firm[].Where($it => ($it.AddressCount > 10))", Description = "Поиск по количеству активных адресов.")]

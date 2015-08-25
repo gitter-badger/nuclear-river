@@ -122,6 +122,26 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<FirmActivity> FirmActivities
+        {
+            get
+            {
+                var firmActivities = _ermContext.Activities.Where(x => x.FirmId.HasValue).GroupBy(x => x.FirmId).Select(group => new { FirmId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+                var clientActivities = _ermContext.Activities.Where(x => x.ClientId.HasValue).GroupBy(x => x.ClientId).Select(group => new { ClientId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+
+                return from firm in _ermContext.Firms
+                       from lastFirmActivity in firmActivities.Where(x => x.FirmId == firm.Id).Select(x => (DateTimeOffset?)x.LastActivityOn).DefaultIfEmpty()
+                       from lastClientActivity in clientActivities.Where(x => x.ClientId == firm.ClientId).Select(x => (DateTimeOffset?)x.LastActivityOn).DefaultIfEmpty()
+                       select new FirmActivity
+                              {
+                                  FirmId = firm.Id,
+                                  LastActivityOn = lastFirmActivity != null && lastClientActivity != null
+                                    ? (lastFirmActivity < lastClientActivity ? lastClientActivity : lastFirmActivity)
+                                    : (lastClientActivity ?? lastFirmActivity),
+                       };
+            }
+        }
+
         public IQueryable<FirmBalance> FirmBalances
         {
             get

@@ -49,7 +49,7 @@
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.1-b\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -62,6 +62,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomerIntelligence\Data\Context\Implementation\BitFactsContext.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\Activity.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\ActivityBase.cs" />
+    <Compile Include="CustomerIntelligence\Model\Erm\ActivityReference.cs" />
+    <Compile Include="CustomerIntelligence\Model\Facts\Activity.cs" />
+    <Compile Include="CustomerIntelligence\Model\FirmActivity.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
@@ -144,6 +149,7 @@
     <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.cs" />
     <Compile Include="Model\IErmFactObject.cs" />
     <Compile Include="Model\IErmObject.cs" />
+    <Compile Include="Model\IErmValueObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Facts.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.CustomerIntelligence.cs" />

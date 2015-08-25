@@ -14,6 +14,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 
         IQueryable<Firm> Firms { get; }
 
+        IQueryable<FirmActivity> FirmActivities { get; }
+
         IQueryable<FirmBalance> FirmBalances { get; }
 
         IQueryable<FirmCategory> FirmCategories { get; }

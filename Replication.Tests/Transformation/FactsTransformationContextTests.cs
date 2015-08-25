@@ -14,7 +14,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture, SetCulture("")]
-    internal class FactsTransformationContextTests : BaseTransformationFixture
+    internal partial class FactsTransformationContextTests : BaseTransformationFixture
     {
         private static readonly DateTimeOffset Date = new DateTimeOffset(2015, 04, 03, 12, 30, 00, new TimeSpan());
 
