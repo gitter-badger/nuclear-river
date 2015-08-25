@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Размер очереди ETL1"; }
+            get { return "Размер очереди ETL1 (число TUC в SB)"; }
         }
     }
 }

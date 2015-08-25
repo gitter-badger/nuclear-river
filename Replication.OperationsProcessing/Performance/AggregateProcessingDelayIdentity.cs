@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class StatisticsEnquiedOperationCountIdentity : TelemetryIdentityBase<StatisticsEnquiedOperationCountIdentity>
+    public sealed class AggregateProcessingDelayIdentity : TelemetryIdentityBase<AggregateProcessingDelayIdentity>
     {
         public override int Id
         {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "Количество взятых на обработку операций пересчёта статистики"; }
+            get { return "Интервал времени между постановкой операции пересчёта агрегата в очередь и до её обработки, мс"; }
         }
     }
 }

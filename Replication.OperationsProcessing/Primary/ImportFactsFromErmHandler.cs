@@ -46,11 +46,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
                     var statisticOperations = result.OfType<CalculateStatisticsOperation>().ToList();
                     _sender.Push(statisticOperations, StatisticsFlow.Instance);
-                    _telemetryPublisher.Publish<StatisticsEnquiedOperationCountIdentity>(statisticOperations.Count());
+                    _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statisticOperations.Count());
 
                     var aggregateOperations = result.OfType<AggregateOperation>().ToList();
                     _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                    _telemetryPublisher.Publish<AggregateEnquiedOperationCountIdentity>(aggregateOperations.Count());
+                    _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregateOperations.Count());
+
+                    _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
                 }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();

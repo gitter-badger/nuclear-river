@@ -36,6 +36,8 @@ namespace NuClear.Replication.OperationsProcessing.Final
                 {
                     _statisticsTransformation.Recalculate(message.Operations);
                     _telemetryPublisher.Publish<StatisticsProcessedOperationCountIdentity>(message.Operations.Count);
+
+                    _telemetryPublisher.Publish<StatisticsProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
                 }
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
