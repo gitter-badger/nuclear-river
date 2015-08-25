@@ -7,6 +7,7 @@ using NuClear.Model.Common.Entities;
 using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
+using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
@@ -56,7 +57,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             return from operation in operations
                    where !(operation.EntityType is UnknownEntityType)
-                   let factEntityType = Metadata.Model.EntityTypeMap.MapErmToFacts(operation.EntityType)
+                   let factEntityType = operation.EntityType.MapErmToFacts()
                    let ermEntityType = EntityTypeMap<FactsContext>.AsEntityType(factEntityType)
                    select new FactOperation(ermEntityType, operation.EntityId);
         }
