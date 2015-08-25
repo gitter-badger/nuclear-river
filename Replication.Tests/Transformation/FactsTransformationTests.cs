@@ -14,6 +14,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.Settings;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
 
 using NUnit.Framework;
@@ -929,7 +930,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private Transformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper)
             {
                 _mapper = mapper ?? Mock.Of<IDataMapper>();
-                _transformation = new ErmFactsTransformation(source, target, _mapper, Mock.Of<ITransactionManager>());
+
+                var settings = new Mock<IReplicationSettings>();
+                settings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
+
+                _transformation = new ErmFactsTransformation(source, target, _mapper, Mock.Of<ITransactionManager>(), settings.Object);
                 _operations = new List<AggregateOperation>();
             }
 

@@ -103,6 +103,7 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\TypedDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataMappers\ITypedDataMapper.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\LinqExtensions.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\IValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\ValueObjectMerger.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Mergers\MergerFactory.cs" />
@@ -176,6 +177,8 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\AggregateOperation.cs" />
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />
+    <Compile Include="Settings\IReplicationSettings.cs" />
+    <Compile Include="Settings\ReplicationSettingsAspect.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />
