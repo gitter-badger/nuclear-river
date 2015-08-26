@@ -71,7 +71,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             var source = new Mock<IStatisticsContext>();
             source.SetupGet(x => x.FirmCategoryStatistics).Returns(Inquire(data));
             var target = new Mock<IStatisticsContext>();
-            target.SetupGet(x => x.FirmCategoryStatistics).Returns(Inquire(data));
+            var modifiedData = data.Select(x => new FirmCategoryStatistics { ProjectId = x.ProjectId, FirmId = x.FirmId, CategoryId = x.CategoryId, FirmCount = 1 }).ToArray();
+            target.SetupGet(x => x.FirmCategoryStatistics).Returns(Inquire(modifiedData));
             var mapper = new Mock<IDataMapper>();
             var transformation = new StatisticsFinalTransformation(source.Object, target.Object, mapper.Object);
 
