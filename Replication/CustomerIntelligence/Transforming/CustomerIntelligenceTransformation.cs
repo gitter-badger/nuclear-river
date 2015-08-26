@@ -131,7 +131,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             var aggregateDataMapper = DataMapperFactory.CreateTypedDataMapper(_mapper, aggregateInfo);
             aggregateDataMapper.Delete(aggregateInfo.QueryByIds(_target, mergeResult.Complement.ToList()));
             aggregateDataMapper.Insert(aggregateInfo.QueryByIds(_source, mergeResult.Difference.ToList()));
-            aggregateDataMapper.Update(aggregateInfo.QueryByIds(_source, mergeResult.Intersection.ToList()));
+            aggregateDataMapper.Update(aggregateInfo.QueryByIds(_source, mergeResult.IntersectionSource.ToList()));
         }
 
         private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> ids)
