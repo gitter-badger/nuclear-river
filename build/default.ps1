@@ -27,30 +27,31 @@ Task Run-UnitTests {
 	Run-UnitTests $projects
 }
 
-Task Build-OData {
+Properties { $OptionQuerying = $true }
+Task Build-OData -Precondition { $OptionQuerying } {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
 	Build-WebPackage $projectFileName 'Web.OData'
 }
-
-Task Deploy-OData -Depends Take-ODataOffline {
+Task Deploy-OData -Depends Take-ODataOffline -Precondition { $OptionQuerying } {
 	Deploy-WebPackage 'Web.OData'
 	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
 }
 
-Task Take-ODataOffline {
+Task Take-ODataOffline -Precondition { $OptionQuerying } {
 	Take-WebsiteOffline 'Web.OData'
 }
 
-Task Build-TaskService {
+Properties { $OptionReplication = $true }
+Task Build-TaskService -Precondition { $OptionReplication } {
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
 
-Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline {
+Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $OptionReplication } {
 	Deploy-WinService 'Replication.EntryPoint'
 }
 
-Task Take-TaskServiceOffline -Depends Import-WinServiceModule {
+Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $OptionReplication } {
 	Take-WinServiceOffline 'Replication.EntryPoint'
 }
 
