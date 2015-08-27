@@ -40,7 +40,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             var filteredOperations = Filter(message);
             var factOperations = Convert(filteredOperations).ToList();
 
-            _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(factOperations.Count);
+            _telemetryPublisher.Publish<ErmEnqueuedOperationCountIdentity>(factOperations.Count);
 
             return new OperationAggregatableMessage<FactOperation>
             {
