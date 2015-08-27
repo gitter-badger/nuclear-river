@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             {
                 return true;
             }
-            return obj is FirmBalance && Equals((FirmBalance)obj);
+            return obj is FirmActivity && Equals((FirmActivity)obj);
         }
 
         public override int GetHashCode()
@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
             }
         }
 
-        private bool Equals(FirmBalance other)
+        private bool Equals(FirmActivity other)
         {
             return FirmId == other.FirmId;
         }

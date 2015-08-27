@@ -93,7 +93,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata.Tests
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.CategoryGroup")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Client")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.ClientContact")]
-        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Firm")]
+        [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmView")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmBalance")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.FirmCategory")]
         [TestCase("CustomerIntelligence/StoreModel/CustomerIntelligence.Project")]

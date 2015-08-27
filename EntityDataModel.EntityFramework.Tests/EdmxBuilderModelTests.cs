@@ -97,7 +97,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             builder.Conventions.Remove<PluralizingEntitySetNameConvention>();
             builder.Conventions.Remove<PluralizingTableNameConvention>();
 
-            builder.Entity<Firm>();
+            builder.Entity<Firm>().ToTable("FirmView");
             builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId });
             builder.Entity<ClientContact>().HasKey(x => new { x.ContactId, x.ClientId });
