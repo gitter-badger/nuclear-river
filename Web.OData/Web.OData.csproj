@@ -183,6 +183,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Log4NetWebApiExceptionLogger.cs" />
     <Compile Include="Controllers\ODataControllerExtensions.cs" />
     <Compile Include="DataAccess\QueryableExtensions.cs" />
