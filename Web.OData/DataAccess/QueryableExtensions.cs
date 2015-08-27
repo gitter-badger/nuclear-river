@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace NuClear.AdvancedSearch.Web.OData.DataAccess
 {
-    public static class DataAccessExtensions
+    public static class QueryableExtensions
     {
         public static IQueryable<T> GetById<T>(this IQueryable<T> query, long id)
         {

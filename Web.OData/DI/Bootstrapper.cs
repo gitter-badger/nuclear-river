@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Web.Http.Dispatcher;
+using System.Web.Http.ExceptionHandling;
 using System.Web.OData.Extensions;
 
 using Microsoft.Practices.Unity;
@@ -33,7 +34,9 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
                 .ConfigureMetadata()
                 .ConfigureStoreModel()
                 .ConfigureWebApiOData()
-                .ConfigureTracer(settingsContainer.AsSettings<IEnvironmentSettings>(), settingsContainer.AsSettings<IConnectionStringSettings>());
+                .ConfigureTracer(settingsContainer.AsSettings<IEnvironmentSettings>(), settingsContainer.AsSettings<IConnectionStringSettings>())
+                .ConfigureWebApiTracer()
+                ;
 
             return container;
         }
@@ -63,6 +66,13 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             return container.RegisterInstance(tracer)
                             .RegisterInstance(tracerContextManager);
         }
+
+        public static IUnityContainer ConfigureWebApiTracer(this IUnityContainer container)
+        {
+            return container
+                .RegisterType<IExceptionLogger, Log4NetWebApiExceptionLogger>("log4net", Lifetime.Singleton);
+        }
+
 
         public static IUnityContainer ConfigureMetadata(this IUnityContainer container)
         {
