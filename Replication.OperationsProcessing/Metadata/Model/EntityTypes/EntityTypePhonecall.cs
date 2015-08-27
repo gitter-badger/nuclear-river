@@ -2,7 +2,7 @@
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypePhonecall : EntityTypeBase<EntityTypePhonecall>
+    public sealed class EntityTypePhonecall : EntityTypeBase<EntityTypePhonecall>
     {
         public override int Id
         {

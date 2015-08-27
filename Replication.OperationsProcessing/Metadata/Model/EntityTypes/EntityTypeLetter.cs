@@ -2,7 +2,7 @@
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeLetter : EntityTypeBase<EntityTypeLetter>
+    public sealed class EntityTypeLetter : EntityTypeBase<EntityTypeLetter>
     {
         public override int Id
         {

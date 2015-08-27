@@ -1,9 +1,8 @@
 using NuClear.Model.Common.Entities;
-using NuClear.Replication.OperationsProcessing.Metadata.Model;
 
-namespace NuClear.AdvancedSearch.Replication.Model.EntityTypes
+namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeFirm : EntityTypeBase<EntityTypeFirm>
+    public sealed class EntityTypeFirm : EntityTypeBase<EntityTypeFirm>
     {
         public override int Id
         {

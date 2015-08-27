@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.Model.EntityTypes;
 using NuClear.Model.Common;
 using NuClear.Model.Common.Entities;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;

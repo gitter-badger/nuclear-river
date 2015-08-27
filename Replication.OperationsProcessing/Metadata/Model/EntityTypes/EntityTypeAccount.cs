@@ -1,9 +1,8 @@
-﻿using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.Model.Common.Entities;
+﻿using NuClear.Model.Common.Entities;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeAccount : EntityTypeBase<EntityTypeAccount>
+    public sealed class EntityTypeAccount : EntityTypeBase<EntityTypeAccount>
     {
         public override int Id
         {

@@ -1,9 +1,8 @@
-﻿using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.Model.Common.Entities;
+﻿using NuClear.Model.Common.Entities;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeOrder : EntityTypeBase<EntityTypeOrder>
+    public sealed class EntityTypeOrder : EntityTypeBase<EntityTypeOrder>
     {
         public override int Id
         {

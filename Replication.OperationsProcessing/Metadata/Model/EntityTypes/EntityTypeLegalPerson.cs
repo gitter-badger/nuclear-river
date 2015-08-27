@@ -1,9 +1,8 @@
-﻿using NuClear.AdvancedSearch.Replication.Model;
-using NuClear.Model.Common.Entities;
+﻿using NuClear.Model.Common.Entities;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeLegalPerson : EntityTypeBase<EntityTypeLegalPerson>
+    public sealed class EntityTypeLegalPerson : EntityTypeBase<EntityTypeLegalPerson>
     {
         public override int Id
         {

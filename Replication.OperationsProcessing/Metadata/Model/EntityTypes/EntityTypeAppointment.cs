@@ -2,7 +2,7 @@
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeAppointment : EntityTypeBase<EntityTypeAppointment>
+    public sealed class EntityTypeAppointment : EntityTypeBase<EntityTypeAppointment>
     {
         public override int Id
         {

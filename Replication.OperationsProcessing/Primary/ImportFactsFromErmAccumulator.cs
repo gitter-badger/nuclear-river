@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Model.Common.Entities;
-using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Performance;
-using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
@@ -34,47 +34,74 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             _tracer.DebugFormat("Processing TUC {0}", message.Id);
 
-            var plainChanges =
-                message.Operations.SelectMany(scope => scope.AffectedEntities.Changes)
-                       .SelectMany(
-                           x => x.Value.SelectMany(
-                               y => y.Value.Select(
-                                   z => new ErmOperation(x.Key, y.Key, z.ChangeKind))))
-                       .ToList();
-            _telemetryPublisher.Publish<ErmReceivedOperationCountIdentity>(plainChanges.Count);
+            var receivedOperationCount = message.Operations.Sum(x => x.AffectedEntities.Changes.Sum(y => y.Value.Sum(z => z.Value.Count)));
+            _telemetryPublisher.Publish<ErmReceivedOperationCountIdentity>(receivedOperationCount);
 
-            var transformableChanges = Convert(plainChanges).ToList();
-            _telemetryPublisher.Publish<ErmEnqueuedOperationCountIdentity>(transformableChanges.Count);
+            var filteredOperations = Filter(message);
+            var factOperations = Convert(filteredOperations).ToList();
+
+            _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(factOperations.Count);
 
             return new OperationAggregatableMessage<FactOperation>
-                   {
+            {
                        TargetFlow = MessageFlow,
-                       Operations = transformableChanges,
+                       Operations = factOperations,
                        OperationTime = message.Context.Finished.UtcDateTime,
                    };
         }
 
-        private static IEnumerable<FactOperation> Convert(IEnumerable<ErmOperation> operations)
+        private static IEnumerable<OperationDescriptor> Filter(TrackedUseCase message)
         {
-            return from operation in operations
-                   where !(operation.EntityType is UnknownEntityType)
-                   let factEntityType = operation.EntityType.MapErmToFacts()
-                   let ermEntityType = EntityTypeMap<FactsContext>.AsEntityType(factEntityType)
-                   select new FactOperation(ermEntityType, operation.EntityId);
-        }
+            var operations = (IEnumerable<OperationDescriptor>)message.Operations;
 
-        private class ErmOperation
-        {
-            public ErmOperation(IEntityType entityType, long entityId, ChangeKind change)
+            var disallowedIds = new HashSet<Guid>();
+            var disallowedOperations = operations.Where(x => OperationIdentityMetadata.DisallowedOperationIdentities.Contains(x.OperationIdentity));
+            foreach (var disallowedOperation in disallowedOperations)
             {
-                EntityType = entityType;
-                EntityId = entityId;
-                Change = change;
+                disallowedIds.Add(disallowedOperation.Id);
+                disallowedIds.UnionWith(message.GetNestedOperations(disallowedOperation.Id).Select(x => x.Id));
             }
 
-            public IEntityType EntityType { get; private set; }
-            public long EntityId { get; private set; }
-            public ChangeKind Change { get; private set; }
+            if (disallowedIds.Any())
+            {
+                operations = operations.Where(x => !disallowedIds.Contains(x.Id));
+            }
+
+            return operations;
+        }
+
+        private IEnumerable<FactOperation> Convert(IEnumerable<OperationDescriptor> operations)
+        {
+            var factOperations = operations
+                .SelectMany(x =>
+                {
+
+                    var tuples = x.AffectedEntities.Changes
+                    .Select(y =>
+                    {
+                        var mappedKey = y.Key.MapErmToFacts();
+
+                        Type entityType;
+                        var parsed = EntityTypeMap<FactsContext>.TryGetEntityType(mappedKey, out entityType);
+                        return Tuple.Create(parsed, entityType, y);
+                    })
+                    .Where(y => y.Item1).ToList();
+
+                    if (tuples.Any())
+        {
+                        if (!OperationIdentityMetadata.AllowedOperationIdentities.Contains(x.OperationIdentity))
+            {
+                            var entitySet = new EntitySet(tuples.Select(y => y.Item3.Key).Distinct().ToArray());
+                            _tracer.WarnFormat("Received well-known entities '{0}' frow unknown ERM operation '{1}'", entitySet, x.OperationIdentity);
+                        }
+            }
+
+                    return tuples;
+                })
+                .GroupBy(x => x.Item2, x => x.Item3.Value.Keys)
+                .SelectMany(x => x.SelectMany(y => y).Distinct().Select(y => new FactOperation(x.Key, y)));
+
+            return factOperations;
         }
     }
 }

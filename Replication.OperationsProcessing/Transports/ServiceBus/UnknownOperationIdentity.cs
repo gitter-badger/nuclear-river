@@ -13,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 
         public override string Description
         {
-            get { return "Unknown OperationIdentity with Id=" + Id; }
+            get { return "Unknown OperationIdentity"; }
         }
 
         internal UnknownOperationIdentity SetId(int id)
