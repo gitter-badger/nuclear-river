@@ -178,7 +178,6 @@
     <Compile Include="CustomerIntelligence\Transforming\Operations\FactOperation.cs" />
     <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />
     <Compile Include="Settings\IReplicationSettings.cs" />
-    <Compile Include="Settings\ReplicationSettingsAspect.cs" />
     <Compile Include="Transforming\IOperation.cs" />
     <Compile Include="Data\IDataMapper.cs" />
     <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.cs" />

@@ -1,7 +1,8 @@
-﻿using NuClear.Settings;
+﻿using NuClear.AdvancedSearch.Replication.Settings;
+using NuClear.Settings;
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Replication.Settings
+namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
     public sealed class ReplicationSettingsAspect : ISettingsAspect, IReplicationSettings
     {
