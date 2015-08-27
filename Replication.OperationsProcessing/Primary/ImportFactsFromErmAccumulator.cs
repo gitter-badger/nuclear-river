@@ -3,11 +3,13 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
+using NuClear.Model.Common;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Telemetry;
@@ -43,12 +45,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _telemetryPublisher.Publish<ErmReceivedOperationCountIdentity>(plainChanges.Count);
 
             var transformableChanges = Convert(plainChanges).ToList();
-            _telemetryPublisher.Publish<ErmEnquiedOperationCountIdentity>(transformableChanges.Count);
+            _telemetryPublisher.Publish<ErmEnqueuedOperationCountIdentity>(transformableChanges.Count);
 
             return new OperationAggregatableMessage<FactOperation>
-            {
+                   {
                        TargetFlow = MessageFlow,
                        Operations = transformableChanges,
+                       OperationTime = message.Context.Finished.UtcDateTime,
                    };
         }
 
@@ -56,8 +59,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             return from operation in operations
                    where !(operation.EntityType is UnknownEntityType)
-                   let entityType = EntityTypeMap<FactsContext>.AsEntityType(operation.EntityType)
-                   select new FactOperation(entityType, operation.EntityId);
+                   let factEntityType = ErmToFactsTypeMap.MapErmToFacts(operation.EntityType)
+                   let ermEntityType = EntityTypeMap<FactsContext>.AsEntityType(factEntityType)
+                   select new FactOperation(ermEntityType, operation.EntityId);
         }
 
         private class ErmOperation
@@ -72,6 +76,36 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             public IEntityType EntityType { get; private set; }
             public long EntityId { get; private set; }
             public ChangeKind Change { get; private set; }
+        }
+
+        private static class ErmToFactsTypeMap
+        {
+            private static readonly Dictionary<IEntityType, IEntityType> ErmToFactsTypeMapping
+                = new[]
+                  {
+                      CreateTypeMapping<EntityTypeAppointment, EntityTypeActivity>(),
+                      CreateTypeMapping<EntityTypePhonecall, EntityTypeActivity>(),
+                      CreateTypeMapping<EntityTypeTask, EntityTypeActivity>(),
+                      CreateTypeMapping<EntityTypeLetter, EntityTypeActivity>(),
+                  }.ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            public static IEntityType MapErmToFacts(IEntityType entityType)
+            {
+                IEntityType mappedEntityType;
+                if (ErmToFactsTypeMapping.TryGetValue(entityType, out mappedEntityType))
+                {
+                    return mappedEntityType;
+                }
+
+                return entityType;
+            }
+
+            private static KeyValuePair<IEntityType, IEntityType> CreateTypeMapping<TFrom, TTo>()
+                where TFrom : IdentityBase<TFrom>, IEntityType, new()
+                where TTo : IdentityBase<TTo>, IEntityType, new()
+            {
+                return new KeyValuePair<IEntityType, IEntityType>(IdentityBase<TFrom>.Instance, IdentityBase<TTo>.Instance);
+            }
         }
     }
 }

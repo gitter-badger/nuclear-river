@@ -10,6 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
     {
         private const string BillingSchema = "Billing";
         private const string BusinessDirectorySchema = "BusinessDirectory";
+        private const string ActivitySchema = "Activity";
 
         public static MappingSchema Erm
         {
@@ -50,6 +51,44 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                     .Property(x => x.Id).IsPrimaryKey()
                     .Property(x => x.Name).HasColumnName("DisplayName");
                 config.Entity<Territory>().HasSchemaName(BusinessDirectorySchema).HasTableName("Territories").Property(x => x.Id).IsPrimaryKey();
+
+                config.Entity<Appointment>()
+                      .HasSchemaName(ActivitySchema).HasTableName("AppointmentBase")
+                      .Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Letter>()
+                      .HasSchemaName(ActivitySchema).HasTableName("LetterBase")
+                      .Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Phonecall>()
+                      .HasSchemaName(ActivitySchema).HasTableName("PhonecallBase")
+                      .Property(x => x.Id).IsPrimaryKey();
+                config.Entity<Task>()
+                      .HasSchemaName(ActivitySchema).HasTableName("TaskBase")
+                      .Property(x => x.Id).IsPrimaryKey();
+
+                config.Entity<AppointmentReference>()
+                      .HasSchemaName(ActivitySchema).HasTableName("AppointmentReferences")
+                      .Property(x => x.ActivityId).HasColumnName("AppointmentId").IsPrimaryKey()
+                      .Property(x => x.Reference).IsPrimaryKey()
+                      .Property(x => x.ReferencedObjectId).IsPrimaryKey()
+                      .Property(x => x.ReferencedType).IsPrimaryKey();
+                config.Entity<LetterReference>()
+                      .HasSchemaName(ActivitySchema).HasTableName("LetterReferences")
+                      .Property(x => x.ActivityId).HasColumnName("LetterId").IsPrimaryKey()
+                      .Property(x => x.Reference).IsPrimaryKey()
+                      .Property(x => x.ReferencedObjectId).IsPrimaryKey()
+                      .Property(x => x.ReferencedType).IsPrimaryKey();
+                config.Entity<PhonecallReference>()
+                      .HasSchemaName(ActivitySchema).HasTableName("PhonecallReferences")
+                      .Property(x => x.ActivityId).HasColumnName("PhonecallId").IsPrimaryKey()
+                      .Property(x => x.Reference).IsPrimaryKey()
+                      .Property(x => x.ReferencedObjectId).IsPrimaryKey()
+                      .Property(x => x.ReferencedType).IsPrimaryKey();
+                config.Entity<TaskReference>()
+                      .HasSchemaName(ActivitySchema).HasTableName("TaskReferences")
+                      .Property(x => x.ActivityId).HasColumnName("TaskId").IsPrimaryKey()
+                      .Property(x => x.Reference).IsPrimaryKey()
+                      .Property(x => x.ReferencedObjectId).IsPrimaryKey()
+                      .Property(x => x.ReferencedType).IsPrimaryKey();
 
                 return schema;
             }

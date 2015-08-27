@@ -286,6 +286,23 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  join firm in q.For<Firm>() on project.OrganizationUnitId equals firm.OrganizationUnitId
                                  select firm.Id);
                     }
+
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByActivity(IReadOnlyCollection<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<long>>(
+                            q => from activity in q.For(API.Specifications.Specs.Find.ByIds<Activity>(ids))
+                                 where activity.FirmId.HasValue
+                                 select activity.FirmId.Value);
+                    }
+
+                    public static MapSpecification<IQuery, IEnumerable<long>> ByClientActivity(IReadOnlyCollection<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<long>>(
+                            q => from activity in q.For(API.Specifications.Specs.Find.ByIds<Activity>(ids))
+                                 join firm in q.For<Firm>() on activity.ClientId equals firm.ClientId
+                                 where activity.ClientId.HasValue
+                                 select firm.Id);
+                    }
                 }
 
                 public static class ToProjectAggregate

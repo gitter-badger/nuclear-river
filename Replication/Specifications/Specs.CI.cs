@@ -21,6 +21,14 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                              select clientContact);
                 }
 
+                public static MapSpecification<IQuery, IQueryable<FirmActivity>> FirmActivities(IEnumerable<long> aggregateIds)
+                {
+                    return new MapSpecification<IQuery, IQueryable<FirmActivity>>(
+                        q => from firmBalance in q.For<FirmActivity>()
+                             where aggregateIds.Contains(firmBalance.FirmId)
+                             select firmBalance);
+                }
+
                 public static MapSpecification<IQuery, IQueryable<FirmBalance>> FirmBalances(IEnumerable<long> aggregateIds)
                 {
                     return new MapSpecification<IQuery, IQueryable<FirmBalance>>(

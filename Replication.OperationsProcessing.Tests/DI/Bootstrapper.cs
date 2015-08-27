@@ -1,5 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
 
+using Moq;
+
 using NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.Mocks.Receiver;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
@@ -35,7 +37,6 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
         public static IUnityContainer ConfigureUnity(this IUnityContainer container, MockMessageReceiver receiver, MessageProcessingStage[] stages)
         {
             EntityTypeMap.Initialize();
-
             var settings = new PerformedOperationsPrimaryFlowProcessorSettings { AppropriatedStages = stages };
 
             var metadataProvider = new MetadataProvider(new IMetadataSource[]
@@ -48,9 +49,9 @@ namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests.DI
             });
 
             return container
+                        .RegisterInstance(Mock.Of<ITelemetryPublisher>())
                         .RegisterType<ITracer, NullTracer>()
                         .RegisterInstance<IMetadataProvider>(metadataProvider)
-                        .RegisterType<ITelemetryPublisher, DebugTelemetryPublisher>(Lifetime.Singleton)
                         .RegisterInstance<IPerformedOperationsFlowProcessorSettings>(settings)
                         .RegisterInstance(receiver)
                         .RegisterType<IMessageReceiverFactory, UnityMessageReceiverFactory>(Lifetime.Singleton)

@@ -5,6 +5,7 @@ go
 
 -- drop tables
 if object_id('ERM.Account') is not null drop table ERM.Account;
+if object_id('ERM.Activity') is not null drop table ERM.Activity;
 if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
 if object_id('ERM.Category') is not null drop table ERM.Category;
 if object_id('ERM.CategoryGroup') is not null drop table ERM.CategoryGroup;
@@ -29,6 +30,16 @@ create table ERM.Account(
     , BranchOfficeOrganizationUnitId bigint not null
     , LegalPersonId bigint not null
     , constraint PK_Accounts primary key (Id)
+)
+go
+
+-- Activity
+create table ERM.Activity(
+	Id bigint not null
+    , ModifiedOn datetimeoffset(2) not null
+	, FirmId bigint null
+	, ClientId bigint null
+    , constraint PK_Activities primary key (Id)
 )
 go
 

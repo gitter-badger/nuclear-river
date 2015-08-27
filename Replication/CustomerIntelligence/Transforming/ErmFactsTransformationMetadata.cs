@@ -17,6 +17,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public static readonly Dictionary<Type, IFactInfo> Facts
             = new[]
               {
+                  FactInfo.OfType<Activity>()
+                          .HasSource(Specs.Erm.Map.ToFacts.Activities)
+                          .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByActivity)
+                          .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByClientActivity)
+                          .Build(),
+
                   FactInfo.OfType<Account>()
                           .HasSource(Specs.Erm.Map.ToFacts.Accounts)
                           .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByAccount)
@@ -36,7 +42,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(Specs.Erm.Map.ToFacts.CategoryFirmAddresses)
                           .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirmAddressCategory)
                           .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryFirmAddress)
-                          // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryFirmAddressForStatistics)
+                      // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Specs.Facts.Map.ToClientAggregate.ByCategoryFirmAddress)
                           .Build(),
 
@@ -70,7 +76,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(Specs.Erm.Map.ToFacts.Firms)
                           .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirm)
                           .HasMatchedAggregate<CI.Firm>()
-                          // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmForStatistics)
+                      // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmForStatistics)
                           .HasDependentAggregate<CI.Client>(Specs.Facts.Map.ToClientAggregate.ByFirm)
                           .Build(),
 
@@ -78,7 +84,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                           .HasSource(Specs.Erm.Map.ToFacts.FirmAddresses)
                           .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirmAddress)
                           .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmAddress)
-                          // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmAddressForStatistics)
+                      // .HasDependentAggregate<CI.Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmAddressForStatistics)
                           .HasDependentAggregate<CI.Client>(Specs.Facts.Map.ToClientAggregate.ByFirmAddress)
                           .Build(),
 

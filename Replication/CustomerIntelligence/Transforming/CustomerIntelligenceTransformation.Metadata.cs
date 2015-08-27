@@ -12,31 +12,32 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private static readonly Dictionary<Type, IAggregateInfo> Aggregates =
             new[]
-            {
+              {
                 AggregateInfo.OfType<Firm>()
                              .HasSource(Specs.Facts.Map.ToCI.Firms)
+                             .HasValueObject(Specs.Facts.Map.ToCI.FirmActivities, Specs.CI.Map.FirmActivities)
                              .HasValueObject(Specs.Facts.Map.ToCI.FirmBalances, Specs.CI.Map.FirmBalances)
                              .HasValueObject(Specs.Facts.Map.ToCI.FirmCategories, Specs.CI.Map.FirmCategories)
-                             .Build(), 
+                             .Build(),
 
                 AggregateInfo.OfType<Client>()
                              .HasSource(Specs.Facts.Map.ToCI.Clients)
                              .HasValueObject(Specs.Facts.Map.ToCI.ClientContacts, Specs.CI.Map.ClientContacts)
-                             .Build(), 
+                               .Build(),
 
                 AggregateInfo.OfType<Project>()
                              .HasSource(Specs.Facts.Map.ToCI.Projects)
                              .HasValueObject(Specs.Facts.Map.ToCI.ProjectCategories, 
                                              Specs.CI.Map.ProjectCategories)
-                             .Build(), 
+                               .Build(),
 
                 AggregateInfo.OfType<Territory>()
                              .HasSource(Specs.Facts.Map.ToCI.Territories)
-                             .Build(), 
+                               .Build(),
 
                 AggregateInfo.OfType<CategoryGroup>()
                              .HasSource(Specs.Facts.Map.ToCI.CategoryGroups)
                              .Build()
-            }.ToDictionary(x => x.Type);
+              }.ToDictionary(x => x.Type);
     }
 }

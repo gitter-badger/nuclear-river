@@ -15,11 +15,13 @@ namespace NuClear.Replication.OperationsProcessing.Final
         protected override OperationAggregatableMessage<CalculateStatisticsOperation> Process(PerformedOperationsFinalProcessingMessage message)
         {
             var operations = message.FinalProcessings.Select(x => XElement.Parse(x.Context).DeserializeStatisticsOperation()).ToList();
+            var oldestOperation = message.FinalProcessings.Min(x => x.CreatedOn);
 
             return new OperationAggregatableMessage<CalculateStatisticsOperation>
             {
                 TargetFlow = MessageFlow,
                 Operations = operations,
+                OperationTime = oldestOperation,
             };
         }
     }

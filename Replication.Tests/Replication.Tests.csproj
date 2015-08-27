@@ -49,8 +49,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
@@ -94,6 +94,8 @@
     <Compile Include="Transformation\ErmContextFilteringTests.cs" />
     <Compile Include="Transformation\ErmMapToFactsSpecsTests.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
+    <Compile Include="Transformation\ErmMapToFactsSpecsTests.Activity.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Activity.cs" />
     <Compile Include="Transformation\FactsTransformationTests.FirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.CategoryFirmAddress.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Contact.cs" />
@@ -117,7 +119,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Replication.API\Replication.API.csproj">

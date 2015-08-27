@@ -2,7 +2,7 @@ using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Performance
 {
-    public sealed class FinalProcessingDelayIdentity : TelemetryIdentityBase<FinalProcessingDelayIdentity>
+    public sealed class StatisticsEnqueuedOperationCountIdentity : TelemetryIdentityBase<StatisticsEnqueuedOperationCountIdentity>
     {
         public override int Id
         {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Performance
 
         public override string Description
         {
-            get { return "ќтставание обработки сообщений от генерации"; }
+            get { return " оличество операций пересчЄта статистики, добавленных в очередь на обработку"; }
         }
     }
 }

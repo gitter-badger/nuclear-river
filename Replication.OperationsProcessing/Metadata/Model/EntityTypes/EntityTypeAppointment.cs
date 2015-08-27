@@ -3,16 +3,16 @@ using NuClear.Model.Common.Entities;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeFirmAddress : EntityTypeBase<EntityTypeFirmAddress>
+    public class EntityTypeAppointment : EntityTypeBase<EntityTypeAppointment>
     {
         public override int Id
         {
-            get { return EntityTypeIds.FirmAddress; }
+            get { return EntityTypeIds.Appointment; }
         }
 
         public override string Description
         {
-            get { return "FirmAddress"; }
+            get { return "Appointment"; }
         }
     }
 }

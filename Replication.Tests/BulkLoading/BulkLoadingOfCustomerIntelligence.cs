@@ -21,6 +21,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
         }
 
         [Test]
+        public void ReloadFirmActivities()
+        {
+            Reload(query => Specs.Facts.Map.ToCI.FirmActivities(null).Map(query) );
+        }
+
+        [Test]
         public void ReloadFirmBalances()
         {
             Reload(query => Specs.Facts.Map.ToCI.FirmBalances(null).Map(query));

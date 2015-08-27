@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
 using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.Storage.Readings;
@@ -36,6 +37,24 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 2L })), Inquire<Account>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 3L })), Inquire<Account>())
                   .VerifyRead(x => x.For(Specs.Erm.Find.Accounts(new[] { 4L })), Inquire<Account>());
+        }
+
+        [Test]
+        public void ShouldReadAllActivityTypes()
+        {
+            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Appointments(ids)));
+            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Phonecalls(ids)));
+            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Tasks(ids)));
+            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Letters(ids)));
+        }
+
+        [Test]
+        public void ShouldReadAllActivityReferenceTypes()
+        {
+            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientAppointments()), q => q.For(Specs.Erm.Find.FirmAppointments()));
+            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientPhonecalls()), q => q.For(Specs.Erm.Find.FirmPhonecalls()));
+            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientTasks()), q => q.For(Specs.Erm.Find.FirmTasks()));
+            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientLetters()), q => q.For(Specs.Erm.Find.FirmLetters()));
         }
 
         [Test]
@@ -372,6 +391,40 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Reader.Create(Query)
                   .VerifyRead(x => x.For(Specs.Erm.Find.Territories(new[] { 1L })), Inquire(data[0]))
                   .VerifyRead(x => x.For(Specs.Erm.Find.Territories(new[] { 2L })), Inquire<Territory>());
+        }
+
+        private void ShouldReadActivity<T>(Func<IQuery, IReadOnlyCollection<long>,  IEnumerable<T>> func)
+            where T : ActivityBase, new()
+        {
+            const int ActivityStatusCompleted = 2;
+
+            ErmDb.Has(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 2, IsActive = false, IsDeleted = false, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 3, IsActive = true, IsDeleted = true, Status = ActivityStatusCompleted })
+                 .Has(new T { Id = 4, IsActive = true, IsDeleted = false, Status = 0 });
+
+            Reader.Create(Query)
+                .VerifyRead(x => func(x, new[] { 1L }), Inquire(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted }))
+                .VerifyRead(x => func(x, new[] { 2L }), Inquire<T>())
+                .VerifyRead(x => func(x, new[] { 3L }), Inquire<T>())
+                .VerifyRead(x => func(x, new[] { 4L }), Inquire<T>());
+        }
+
+        private void ShouldReadActivityReference<TReference>(Func<IQuery, IEnumerable<TReference>> clientsRefs, Func<IQuery, IEnumerable<TReference>> firmsRefs)
+            where TReference : ActivityReference, new()
+        {
+            const int ReferenceRegardingObject = 1;
+
+            ErmDb.Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Firm })
+                 .Has(new TReference { Reference = 0, ReferencedType = EntityTypeIds.Firm })
+                 .Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Client })
+                 .Has(new TReference { Reference = 0, ReferencedType = EntityTypeIds.Client })
+                 .Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = 0 })
+                 .Has(new TReference { Reference = 0, ReferencedType = 0 });
+
+            Reader.Create(Query)
+                  .VerifyRead(clientsRefs, Inquire(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Client }))
+                  .VerifyRead(firmsRefs, Inquire(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Firm }));
         }
 
         #region Reader

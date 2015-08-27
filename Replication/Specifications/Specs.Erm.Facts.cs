@@ -15,6 +15,20 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
             {
                 public static class ToFacts
                 {
+                    public static MapSpecification<IQuery, IQueryable<Activity>> Activities(IReadOnlyCollection<long> ids)
+                    {
+                        return new MapSpecification<IQuery, IQueryable<Activity>>(
+                            q =>
+                            {
+                                var appointmentActivities = MapToActivity(q.For(Find.Appointments(ids)), q.For(Find.FirmAppointments()), q.For(Find.ClientAppointments()));
+                                var phonecallActivities = MapToActivity(q.For(Find.Phonecalls(ids)), q.For(Find.FirmPhonecalls()), q.For(Find.ClientPhonecalls()));
+                                var taskActivities = MapToActivity(q.For(Find.Tasks(ids)), q.For(Find.FirmTasks()), q.For(Find.ClientTasks()));
+                                var letterActivities = MapToActivity(q.For(Find.Letters(ids)), q.For(Find.FirmLetters()), q.For(Find.ClientLetters()));
+
+                                return appointmentActivities.Union(phonecallActivities).Union(taskActivities).Union(letterActivities);
+                            });
+                    }
+
                     public static MapSpecification<IQuery, IQueryable<Account>> Accounts(IReadOnlyCollection<long> ids)
                     {
                         return new MapSpecification<IQuery, IQueryable<Account>>(
@@ -208,6 +222,29 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                      Name = territory.Name,
                                      OrganizationUnitId = territory.OrganizationUnitId
                                  });
+                    }
+
+                    private static IQueryable<Activity> MapToActivity<T, TReference>(
+                        IQueryable<T> activities,
+                        IQueryable<TReference> firmReferences,
+                        IQueryable<TReference> clientReferences)
+                        where T : CustomerIntelligence.Model.Erm.ActivityBase
+                        where TReference : CustomerIntelligence.Model.Erm.ActivityReference
+                    {
+                        // TODO {all, 19.08.2015}: Используется FirstOrDefault вместо DefaultIdEmpty из-за бага в данных Erm
+                        // В Erm есть Activity, у которых более одного клиента/фирмы в RegardingObjects. Вероятно, во время миграции.
+                        // UI отображает первого из многих, а какой из них реальный - сейчас уже не выяснить.
+                        // Если найдётся кто-нибудь, кто удалит лишние данные из erm - можно заменить на left join.
+                        return from activity in activities
+                               let firmReference = firmReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
+                               let clientReference = clientReferences.Where(x => x.ActivityId == activity.Id).Select(x => (long?)x.ReferencedObjectId).FirstOrDefault()
+                               select new Activity
+                                      {
+                                          Id = activity.Id,
+                                          ModifiedOn = activity.ModifiedOn,
+                                          FirmId = firmReference,
+                                          ClientId = clientReference
+                                      };
                     }
 
                     private static int ConvertAccountRole(int value)

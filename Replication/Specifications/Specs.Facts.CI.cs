@@ -123,6 +123,36 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                             });
                     }
 
+                    public static MapSpecification<IQuery, IQueryable<FirmActivity>> FirmActivities(IReadOnlyCollection<long> aggregateIds)
+                    {
+                        var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();
+                        return new MapSpecification<IQuery, IQueryable<FirmActivity>>(
+                            q =>
+                            {
+                                var firmActivities = q.For<Facts::Activity>()
+                                                      .Where(x => x.FirmId.HasValue)
+                                                      .GroupBy(x => x.FirmId)
+                                                      .Select(group => new { FirmId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+                                var clientActivities = q.For<Facts::Activity>()
+                                                        .Where(x => x.ClientId.HasValue)
+                                                        .GroupBy(x => x.ClientId)
+                                                        .Select(group => new { ClientId = group.Key, LastActivityOn = group.Max(x => x.ModifiedOn) });
+
+                                return from firm in q.For<Facts::Firm>()
+                                       from lastFirmActivity in firmActivities.Where(x => x.FirmId == firm.Id).Select(x => (DateTimeOffset?)x.LastActivityOn).DefaultIfEmpty()
+                                       from lastClientActivity in
+                                           clientActivities.Where(x => x.ClientId == firm.ClientId).Select(x => (DateTimeOffset?)x.LastActivityOn).DefaultIfEmpty()
+                                       where shouldBeFiltered || aggregateIds.Contains(firm.Id)
+                                       select new FirmActivity
+                                              {
+                                                  FirmId = firm.Id,
+                                                  LastActivityOn = lastFirmActivity != null && lastClientActivity != null
+                                                                       ? (lastFirmActivity < lastClientActivity ? lastClientActivity : lastFirmActivity)
+                                                                       : (lastClientActivity ?? lastFirmActivity),
+                                              };
+                            });
+                    }
+
                     public static MapSpecification<IQuery, IQueryable<FirmBalance>> FirmBalances(IReadOnlyCollection<long> aggregateIds)
                     {
                         var shouldBeFiltered = aggregateIds == null || !aggregateIds.Any();

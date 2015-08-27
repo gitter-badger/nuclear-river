@@ -1,5 +1,5 @@
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Model.Common.Entities;
-using NuClear.Replication.OperationsProcessing.Metadata.Model;
 
 namespace NuClear.AdvancedSearch.Replication.Model.EntityTypes
 {
