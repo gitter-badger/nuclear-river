@@ -21,6 +21,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
         }
 
         [Test]
+        public void ReloadActivities()
+        {
+            Reload(query => Specs.Erm.Map.ToFacts.Activities(null).Map(query));
+        }
+
+        [Test]
         public void ReloadBranchOfficeOrganizationUnits()
         {
             Reload(query => Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits(null).Map(query));
