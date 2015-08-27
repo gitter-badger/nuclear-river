@@ -1,9 +1,9 @@
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Model.Common.Entities;
 
-namespace NuClear.AdvancedSearch.Replication.Model.EntityTypes
+namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeClient : EntityTypeBase<EntityTypeClient>
+    public sealed class EntityTypeClient : EntityTypeBase<EntityTypeClient>
     {
         public override int Id
         {

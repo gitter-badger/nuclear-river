@@ -53,12 +53,13 @@ using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Metamodeling.Validators;
+using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
-using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf.Surrogates;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Metadata.Model;
+using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
@@ -182,7 +183,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureOperationsProcessing(this IUnityContainer container)
         {
-            IdentitySurrogate.SetResolver(x => container.Resolve(x));
+            container.RegisterType<IOperationIdentityRegistry, OperationIdentityRegistry>(Lifetime.Singleton,
+                new InjectionConstructor(OperationIdentityMetadata.AllOperationIdentities));
+
 #if DEBUG
             container.RegisterType<ITelemetryPublisher, DebugTelemetryPublisher>(Lifetime.Singleton);
 #else

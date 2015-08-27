@@ -13,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 
         public override string Description
         {
-            get { return "Unknown EntityType with Id=" + Id; }
+            get { return "Unknown EntityType"; }
         }
 
         public UnknownEntityType SetId(int id)

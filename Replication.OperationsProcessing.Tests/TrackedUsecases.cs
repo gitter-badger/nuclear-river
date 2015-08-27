@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.Model.EntityTypes;
 using NuClear.Model.Common.Entities;
 using NuClear.Model.Common.Operations.Identity;
 using NuClear.Model.Common.Operations.Identity.Generic;
 using NuClear.OperationsTracking.API.Changes;
 using NuClear.OperationsTracking.API.UseCases;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes;
 
 namespace NuClear.AdvancedSearch.Replication.OperationsProcessing.Tests
 {

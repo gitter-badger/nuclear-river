@@ -40,56 +40,56 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.7\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.API.1.0.9\lib\net451\2GIS.NuClear.Messaging.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging.Transports.CorporateBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.CorporateBus.1.0.7\lib\net451\2GIS.NuClear.Messaging.Transports.CorporateBus.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.CorporateBus.1.0.9\lib\net451\2GIS.NuClear.Messaging.Transports.CorporateBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Messaging.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.7\lib\net451\2GIS.NuClear.Messaging.Transports.ServiceBus.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.9\lib\net451\2GIS.NuClear.Messaging.Transports.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Metamodeling.1.6.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.2.0-Multiple-366a56-35\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Model.Common.1.2.1-Multiple-b1c461-54\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.7.1\lib\net451\2GIS.NuClear.OperationsLogging.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.9\lib\net451\2GIS.NuClear.OperationsLogging.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.1.0.7\lib\net451\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.1.0.9\lib\net451\2GIS.NuClear.OperationsLogging.Transports.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.Transports.SQLStore, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.7.1\lib\net451\2GIS.NuClear.OperationsLogging.Transports.SQLStore.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.9\lib\net451\2GIS.NuClear.OperationsLogging.Transports.SQLStore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.7.1\lib\net451\2GIS.NuClear.OperationsProcessing.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.9\lib\net451\2GIS.NuClear.OperationsProcessing.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.ServiceBus, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.1.0.7.1\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.1.0.9\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsProcessing.Transports.SQLStore, Version=0.0.0.0, Culture=neutral, PublicKeyToken=e30b8659b221afc8, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.7.1\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.1.0.9\lib\net451\2GIS.NuClear.OperationsProcessing.Transports.SQLStore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.1.0.7\lib\net451\2GIS.NuClear.OperationsTracking.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsTracking.1.0.9\lib\net451\2GIS.NuClear.OperationsTracking.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsTracking.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=7546e3dd2743b918, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.7.1\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.OperationsProcessing.API.1.0.9\lib\net451\2GIS.NuClear.OperationsTracking.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Settings.1.1.0\lib\net451\2GIS.NuClear.Settings.dll</HintPath>
@@ -124,7 +124,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.WCF.Client, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b3354850e43ac257, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.WCF.Client.1.0.5-local-000000-0\lib\net451\2GIS.NuClear.WCF.Client.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.WCF.Client.1.0.9\lib\net451\2GIS.NuClear.WCF.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
@@ -132,12 +132,12 @@
       <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.7\lib\net451\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.9\lib\net451\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.7\lib\net451\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Messaging.Transports.ServiceBus.1.0.9\lib\net451\Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ServiceBus, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\ServiceBus.v1_1.1.0.4.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
@@ -166,11 +166,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Final\StatisticsOperationAccumulator.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeBill.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeLegalPersonProfile.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeActivity.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeAppointment.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeLetter.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypePhonecall.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTask.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeDeal.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeBuilding.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeOrderPosition.cs" />
+    <Compile Include="Metadata\Operations\ActualizeOrderAmountToWithdrawIdentity.cs" />
+    <Compile Include="Metadata\Operations\ApplyOrderDiscountIdentity.cs" />
+    <Compile Include="Metadata\Operations\CalculateClientPromisingIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeDealIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeOrderAccountIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeOrderBargainIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeOrderLegalPersonIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeOrderLegalPersonProfileIdentity.cs" />
+    <Compile Include="Metadata\Operations\ChangeRequisitesIdentity.cs" />
+    <Compile Include="Metadata\Operations\ClearOrderBargainIdentity.cs" />
+    <Compile Include="Metadata\Operations\CreateOrderBillsIdentity.cs" />
+    <Compile Include="Metadata\Operations\DeleteOrderBillsIdentity.cs" />
+    <Compile Include="Metadata\Operations\ImportCategoryOrganizationUnitIdentity.cs" />
+    <Compile Include="Metadata\Operations\OperationIdentityIds.cs" />
+    <Compile Include="Metadata\Operations\CloseWithDenialIdentity.cs" />
+    <Compile Include="Metadata\Operations\CopyOrderIdentity.cs" />
+    <Compile Include="Metadata\Operations\CreateClientByFirmIdentity.cs" />
+    <Compile Include="Metadata\Operations\ImportCardForErmIdentity.cs" />
+    <Compile Include="Metadata\Operations\ImportCardIdentity.cs" />
+    <Compile Include="Metadata\Operations\ImportFirmIdentity.cs" />
+    <Compile Include="Metadata\Operations\ImportFirmPromisingIdentity.cs" />
+    <Compile Include="Metadata\Operations\OperationIdentityMetadata.cs" />
+    <Compile Include="Metadata\Operations\RepairOutdatedIdentity.cs" />
+    <Compile Include="Metadata\Operations\RevertWithdrawFromAccountsIdentity.cs" />
+    <Compile Include="Metadata\Operations\SetInspectorIdentity.cs" />
+    <Compile Include="Metadata\Operations\SetMainFirmIdentity.cs" />
+    <Compile Include="Metadata\Operations\TransferLocksToAccountIdentity.cs" />
+    <Compile Include="Metadata\Operations\UpdateOrderFinancialPerfomanceIdentity.cs" />
+    <Compile Include="Metadata\Operations\WithdrawFromAccountsIdentity.cs" />
     <Compile Include="OperationAggregatableMessage.cs" />
     <Compile Include="Final\StatisticsAggregatableMessageHandler.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
@@ -232,11 +266,12 @@
     <Compile Include="Primary\CorporateBusAggregatableMessage.cs" />
     <Compile Include="Transports\CorporateBus\CorporateBusMessage.cs" />
     <Compile Include="Transports\CorporateBus\CorporateBusOperationsReceiver.cs" />
+    <Compile Include="Transports\ServiceBus\SurrogateFactory.cs" />
     <Compile Include="Transports\ServiceBus\TrackedUseCaseConfigurator.cs" />
     <Compile Include="Transports\ServiceBus\UnknownEntityType.cs" />
-    <Compile Include="Transports\ServiceBus\UnknownEntityTypeSurrogate.cs" />
+    <Compile Include="Transports\ServiceBus\EntityTypeSurrogate.cs" />
     <Compile Include="Transports\ServiceBus\UnknownOperationIdentity.cs" />
-    <Compile Include="Transports\ServiceBus\UnknownOperationIdentitySurrogate.cs" />
+    <Compile Include="Transports\ServiceBus\OperationIdentitySurrogate.cs" />
     <Compile Include="Transports\SQLStore\IdentityGenerator.cs" />
     <Compile Include="Transports\SQLStore\IIdentityGenerator.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreReceiver.cs" />

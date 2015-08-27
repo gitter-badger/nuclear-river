@@ -23,6 +23,13 @@
         public const int Task = 503;
         public const int Letter = 504;
 
+        // TODO {all, 27.08.2015}: Сущности не имеет отношения к домену поиска, удалить после рефакторинга на стороне ERM
+        public const int Building = 241;
+        public const int Deal = 199;
+        public const int OrderPosition = 150;
+        public const int Bill = 188;
+        public const int LegalPersonProfile = 219;
+
         // Значения, первоисточником которых является CI
         public const int BranchOfficeOrganizationUnit = 10001;
         public const int Category = 10002;

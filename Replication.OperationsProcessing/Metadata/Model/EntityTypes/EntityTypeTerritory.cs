@@ -1,9 +1,9 @@
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Model.Common.Entities;
 
-namespace NuClear.AdvancedSearch.Replication.Model.EntityTypes
+namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeTerritory : EntityTypeBase<EntityTypeTerritory>
+    public sealed class EntityTypeTerritory : EntityTypeBase<EntityTypeTerritory>
     {
         public override int Id
         {

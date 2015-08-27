@@ -1,9 +1,9 @@
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.Model.Common.Entities;
 
-namespace NuClear.AdvancedSearch.Replication.Model.EntityTypes
+namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeBranchOfficeOrganizationUnit : EntityTypeBase<EntityTypeBranchOfficeOrganizationUnit>
+    public sealed class EntityTypeBranchOfficeOrganizationUnit : EntityTypeBase<EntityTypeBranchOfficeOrganizationUnit>
     {
         public override int Id
         {

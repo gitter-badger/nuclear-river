@@ -3,7 +3,7 @@ using NuClear.Model.Common.Entities;
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.EntityTypes
 {
-    public class EntityTypeCategoryOrganizationUnit : EntityTypeBase<EntityTypeCategoryOrganizationUnit>
+    public sealed class EntityTypeCategoryOrganizationUnit : EntityTypeBase<EntityTypeCategoryOrganizationUnit>
     {
         public override int Id
         {

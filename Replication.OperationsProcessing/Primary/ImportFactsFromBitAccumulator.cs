@@ -27,14 +27,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             var dtos = xmls.Select(x =>
             {
                 ICorporateBusDto dto;
-                return new
-                {
-                    Parsed = TryParseXml(x, out dto),
-                    Dto = dto,
-                };
+                var parsed = TryParseXml(x, out dto);
+                return Tuple.Create(parsed, dto);
             })
-            .Where(x => x.Parsed)
-            .Select(x => x.Dto)
+            .Where(x => x.Item1)
+            .Select(x => x.Item2)
             .ToList();
 
             return new CorporateBusAggregatableMessage
