@@ -131,7 +131,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("Role").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOne()),
-                    EntityElement.Config.Name(TableName.Firm)
+                    EntityElement.Config.Name(ViewName.Firm)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
@@ -151,7 +151,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .HasKey("FirmId", "AccountId")
                                  .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
-                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()),
+                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()),
                     EntityElement.Config.Name(TableName.FirmCategory)
                                  .HasKey("FirmId", "CategoryId")
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
@@ -159,7 +159,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64))
-                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(TableName.Firm)).AsOne()));
+                                 .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =
                 BoundedContextElement.Config.Name("CustomerIntelligence")
@@ -169,7 +169,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                     .Map(EntityName.Project, TableName.Project)
                     .Map(EntityName.ProjectCategory, TableName.ProjectCategory)
                     .Map(EntityName.ProjectTerritory, TableName.ProjectTerritory)
-                    .Map(EntityName.Firm, TableName.Firm)
+                    .Map(EntityName.Firm, ViewName.Firm)
                     .Map(EntityName.FirmBalance, TableName.FirmBalance)
                     .Map(EntityName.FirmCategory, TableName.FirmCategory)
                     .Map(EntityName.Client, TableName.Client)
@@ -199,13 +199,19 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                 public const string Project = TableSchema + "." + "Project";
                 public const string ProjectCategory = TableSchema + "." + "ProjectCategory";
                 public const string ProjectTerritory = TableSchema + "." + "Territory";
-                public const string Firm = TableSchema + "." + "Firm";
                 public const string FirmBalance = TableSchema + "." + "FirmBalance";
                 public const string FirmCategory = TableSchema + "." + "FirmCategory";
                 public const string Client = TableSchema + "." + "Client";
                 public const string ClientContact = TableSchema + "." + "ClientContact";
 
                 private const string TableSchema = "CustomerIntelligence";
+            }
+
+            private static class ViewName
+            {
+                public const string Firm = ViewSchema + "." + "FirmView";
+
+                private const string ViewSchema = "CustomerIntelligence";
             }
         }
     }
