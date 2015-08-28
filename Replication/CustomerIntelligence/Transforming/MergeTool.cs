@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     internal static class MergeTool
     {
-        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
+        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2, IEqualityComparer<T> comparer = null)
         {
             using (Probe.Create("Merging", typeof(T).Name))
             {
@@ -26,15 +26,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                 // NOTE: avoiding enumerable extensions to reuse hashset performance
                 var difference = set1.Where(x => !set2.Contains(x));
-                var intersectionSource = set1.Where(x => set2.Contains(x));
-                var intersectionTarget = set2.Where(x => set1.Contains(x));
+                var intersection = comparer == null ? set1.Where(x => set2.Contains(x)) : set1.Where(x => set2.Contains(x) && !set2.Contains(x, comparer));
                 var complement = set2.Where(x => !set1.Contains(x));
 
                 return new MergeResult<T>
                        {
                            Difference = difference,
-                           IntersectionSource = intersectionSource,
-                           IntersectionTarget = intersectionTarget,
+                           Intersection = intersection,
                            Complement = complement
                        };
             }
@@ -50,8 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         public class MergeResult<T> : IMergeResult
         {
             public IEnumerable<T> Difference { get; set; }
-            public IEnumerable<T> IntersectionSource { get; set; }
-            public IEnumerable<T> IntersectionTarget { get; set; }
+            public IEnumerable<T> Intersection { get; set; }
             public IEnumerable<T> Complement { get; set; }
 
             IEnumerable IMergeResult.Difference
@@ -61,7 +58,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             IEnumerable IMergeResult.Intersection
             {
-                get { return IntersectionSource; }
+                get { return Intersection; }
             }
 
             IEnumerable IMergeResult.Complement

@@ -89,7 +89,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             where T : IErmFactObject
         {
             var idsToCreate = changes.Difference.ToArray();
-            var idsToUpdate = changes.IntersectionSource.ToArray();
+            var idsToUpdate = changes.Intersection.ToArray();
             var idsToDelete = changes.Complement.ToArray();
             
             var createResult = CreateFact(idsToCreate, query, dependentAggregates);

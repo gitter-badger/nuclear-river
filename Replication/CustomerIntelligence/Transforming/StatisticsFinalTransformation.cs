@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                     // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
                     // Поэтому только обновление.
-                    _mapper.UpdateAll(changes.IntersectionSource.Except(changes.IntersectionTarget, new CI.FirmCategoryStatistics.FullEqualityComparer()).AsQueryable());
+                    _mapper.UpdateAll(changes.Intersection.AsQueryable());
                 }
             }
         }
@@ -55,7 +55,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             return MergeTool.Merge(
                 _source.FirmCategoryStatistics.Where(filter).AsEnumerable(),
-                _target.FirmCategoryStatistics.Where(filter).AsEnumerable());
+                _target.FirmCategoryStatistics.Where(filter).AsEnumerable(),
+                new CI.FirmCategoryStatistics.FullEqualityComparer());
         }
     }
 }
