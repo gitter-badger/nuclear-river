@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Moq;
 
@@ -10,6 +8,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.Settings;
 
 using NUnit.Framework;
 
@@ -63,7 +62,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             context.SetupGet(x => x.Firms).Returns(Inquire(new Firm { Id = 1, OrganizationUnitId = 5 }));
             context.SetupGet(x => x.FirmAddresses).Returns(Inquire(new FirmAddress { Id = 2, FirmId = 1 }));
             context.SetupGet(x => x.CategoryFirmAddresses).Returns(Inquire(new CategoryFirmAddress { Id = 3, FirmAddressId = 2, CategoryId = 4 }));
-            var transformation = new StatisticsPrimaryTransformation(context.Object);
+
+            var settings = new Mock<IReplicationSettings>();
+            settings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
+
+            var transformation = new StatisticsPrimaryTransformation(context.Object, settings.Object);
 
             return transformation;
         }

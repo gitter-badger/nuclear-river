@@ -10,6 +10,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.AdvancedSearch.Replication.Settings;
 using NuClear.AdvancedSearch.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Messaging.API.Flows.Metadata;
@@ -61,7 +62,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                        new ResolvedParameter<ErmFactsTransformationContext>(),
                                                        new ResolvedParameter<ErmFactsContext>(),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts),
-                                                       ResolvedTransactionManager(container, Scope.Erm, Scope.Facts)))
+                                                       ResolvedTransactionManager(container, Scope.Erm, Scope.Facts),
+                                                       new ResolvedParameter<IReplicationSettings>()))
 
                 .RegisterType<CustomerIntelligenceTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
@@ -78,7 +80,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
                 .RegisterType<StatisticsPrimaryTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
-                                                       new ResolvedParameter<ErmFactsContext>()))
+                                                       new ResolvedParameter<ErmFactsContext>(),
+                                                       new ResolvedParameter<IReplicationSettings>()))
                                                        
                 .RegisterType<StatisticsFinalTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(

@@ -3,6 +3,7 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
+using NuClear.AdvancedSearch.Replication.Settings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
@@ -10,10 +11,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     public partial class StatisticsPrimaryTransformation
     {
         private readonly IErmFactsContext _facts;
+        private readonly IReplicationSettings _settings;
 
-        public StatisticsPrimaryTransformation(IErmFactsContext facts)
+        public StatisticsPrimaryTransformation(IErmFactsContext facts, IReplicationSettings settings)
         {
             _facts = facts;
+            _settings = settings;
         }
 
         public IEnumerable<CalculateStatisticsOperation> DetectStatisticsOperations(IEnumerable<FactOperation> factOperations)
@@ -22,8 +25,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 var result = Enumerable.Empty<CalculateStatisticsOperation>();
 
-                var ops = factOperations.GroupBy(x => x.FactType, x => x.FactId);
-                foreach (var group in ops)
+                var groups = factOperations.GroupBy(x => x.FactType);
+
+                foreach (var group in groups)
                 {
                     Query query;
                     if (!Transformations.TryGetValue(group.Key, out query))
@@ -33,7 +37,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                     using (Probe.Create(group.Key.Name))
                     {
-                        result = result.Concat(query.Invoke(_facts, group).ToList());
+                        foreach (var batch in group.Select(x => x.FactId).Distinct().CreateBatches(_settings.ReplicationBatchSize))
+                        {
+                            var statisticsOperations = query.Invoke(_facts, batch);
+                            result = result.Concat(statisticsOperations);
+                        }
                     }
                 }
 

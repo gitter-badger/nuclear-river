@@ -6,6 +6,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Replication.Model;
+using NuClear.AdvancedSearch.Replication.Settings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
@@ -16,8 +17,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly IErmFactsContext _target;
         private readonly IDataMapper _mapper;
         private readonly ITransactionManager _transactionManager;
+        private readonly IReplicationSettings _settings;
 
-        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper, ITransactionManager transactionManager)
+        public ErmFactsTransformation(IErmFactsContext source, IErmFactsContext target, IDataMapper mapper, ITransactionManager transactionManager, IReplicationSettings settings)
         {
             if (source == null)
             {
@@ -33,6 +35,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _target = target;
             _mapper = mapper;
             _transactionManager = transactionManager;
+            _settings = settings;
         }
 
         public IEnumerable<AggregateOperation> Transform(IEnumerable<FactOperation> operations)
@@ -53,7 +56,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             foreach (var slice in slices)
             {
                 var factType = slice.Key.FactType;
-                var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
 
                 ErmFactInfo factInfo;
                 if (!Facts.TryGetValue(factType, out factInfo))
@@ -63,9 +65,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                 using (Probe.Create("ETL1 Transforming", factInfo.FactType.Name))
                 {
-                    var changes = factInfo.DetectChangesWith(this, factIds);
-                    var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
-                    result = result.Concat(aggregateOperations);
+                    foreach(var batch in slice.Select(x => x.FactId).Distinct().CreateBatches(_settings.ReplicationBatchSize))
+                    {
+                        var changes = factInfo.DetectChangesWith(this, batch);
+                        var aggregateOperations = factInfo.ApplyChangesWith(this, changes);
+
+                        result = result.Concat(aggregateOperations);
+                    }
                 }
             }
 
