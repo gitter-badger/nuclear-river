@@ -38,6 +38,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
+                // FIXME {d.ivanov, 31.08.2015}: All messages must be processed in a single transaction
                 foreach (var message in messages.OfType<CorporateBusAggregatableMessage>())
                 {
                     foreach (var dto in message.Dtos)

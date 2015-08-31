@@ -49,21 +49,21 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
                                        .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
 
-                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
-                                                          new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                foreach (var slice in slices)
                 {
-                    foreach (var slice in slices)
+                    var operation = slice.Key.Operation;
+                    var aggregateType = slice.Key.AggregateType;
+                    var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToList();
+
+                    IAggregateInfo aggregateInfo;
+                    if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))
                     {
-                        var operation = slice.Key.Operation;
-                        var aggregateType = slice.Key.AggregateType;
-                        var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToList();
+                        throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
+                    }
 
-                        IAggregateInfo aggregateInfo;
-                        if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))
-                        {
-                            throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
-                        }
-
+                    using (var transaction = new TransactionScope(TransactionScopeOption.Required,
+                                                                  new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                    {
                         using (Probe.Create("ETL2 Transforming", aggregateType.Name))
                         {
                             if (operation == typeof(InitializeAggregate))
@@ -84,9 +84,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                                 continue;
                             }
                         }
-                    }
 
-                    transaction.Complete();
+                        transaction.Complete();
+                    }
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 var mergeResult = changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
 
                 var changesApplier = _dataChangesApplierFactory.Create(valueObjectInfo.Type);
-                
+
                 changesApplier.Delete(mergeResult.Complement);
                 changesApplier.Create(mergeResult.Difference);
                 changesApplier.Update(mergeResult.Intersection);

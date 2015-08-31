@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 
 using NuClear.AdvancedSearch.Replication.API;
 using NuClear.AdvancedSearch.Replication.API.Model;
@@ -45,51 +44,44 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             using (Probe.Create("ETL1 Transforming"))
             {
-                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
-                                                              new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                var result = Enumerable.Empty<IOperation>();
+
+                var slices = operations.GroupBy(operation => new { operation.FactType })
+                                       .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
+
+                foreach (var slice in slices)
                 {
-                    var result = Enumerable.Empty<IOperation>();
+                    var factType = slice.Key.FactType;
+                    var factIds = slice.Select(x => x.FactId).Distinct();
 
-                    var slices = operations.GroupBy(operation => new { operation.FactType })
-                                           .OrderByDescending(slice => slice.Key.FactType, new FactTypePriorityComparer());
-
-                    foreach (var slice in slices)
+                    IFactInfo factInfo;
+                    if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
                     {
-                        var factType = slice.Key.FactType;
-                        var factIds = slice.Select(x => x.FactId).Distinct();
-
-                        IFactInfo factInfo;
-                        if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
-                        {
-                            throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
-                        }
-
-                        using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
-                        {
-                            foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
-                            {
-                                var changesDetector = new DataChangesDetector(factInfo, _query);
-                                var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
-                                var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
-
-                                var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, batch);
-
-                                var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(batch);
-                                var aggregateOperations = changesApplier.ApplyChanges(changes);
-                                var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(batch);
-
-                                result = result.Concat(statisticsOperationsBeforeChanges)
-                                               .Concat(aggregateOperations)
-                                               .Concat(statisticsOperationsAfterChanges);
-                            }
-                        }
+                        throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                     }
 
-                    var uniqueOperations = result.Distinct().ToArray();
-                    transaction.Complete();
+                    using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
+                    {
+                        foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
+                        {
+                            var changesDetector = new DataChangesDetector(factInfo, _query);
+                            var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
+                            var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
 
-                    return uniqueOperations;
+                            var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, batch);
+
+                            var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(batch);
+                            var aggregateOperations = changesApplier.ApplyChanges(changes);
+                            var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(batch);
+
+                            result = result.Concat(statisticsOperationsBeforeChanges)
+                                           .Concat(aggregateOperations)
+                                           .Concat(statisticsOperationsAfterChanges);
+                        }
+                    }
                 }
+
+                return result.Distinct().ToArray();
             }
         }
     }

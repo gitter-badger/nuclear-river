@@ -40,48 +40,30 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                var statisticsOperations = new List<CalculateStatisticsOperation>();
-                var aggregateOperations = new List<AggregateOperation>();
-                var minOperationTime = DateTime.UtcNow;
-
-                using (var transaction = new TransactionScope(TransactionScopeOption.Required,
-                                                              new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+                foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>().ToArray())
                 {
-                    foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>().ToArray())
-                    {
-                        var result = _transformation.Transform(message.Operations);
-                        _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
+                    var result = _transformation.Transform(message.Operations);
+                    _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
 
-                        var statistics = result.OfType<CalculateStatisticsOperation>().ToArray();
-                        statisticsOperations.AddRange(statistics);
+                    var statistics = result.OfType<CalculateStatisticsOperation>().ToArray();
+                    var aggregates = result.OfType<AggregateOperation>().ToArray();
 
-                        var aggregates = result.OfType<AggregateOperation>().ToArray();
-                        aggregateOperations.AddRange(aggregates);
-
-                        if (message.OperationTime < minOperationTime)
-                        {
-                            minOperationTime = message.OperationTime;
-                        }
-                    }
-
-                    // We need to use different transaction scope to operate with operation sender because it has its own store
+                    // We always need to use different transaction scope to operate with operation sender because it has its own store
                     using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,
                                                                       new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
                     {
-                        _sender.Push(statisticsOperations, StatisticsFlow.Instance);
-                        _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statisticsOperations.Count);
+                        _sender.Push(statistics, StatisticsFlow.Instance);
+                        _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statistics.Length);
 
-                        _sender.Push(aggregateOperations, AggregatesFlow.Instance);
-                        _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregateOperations.Count);
+                        _sender.Push(aggregates, AggregatesFlow.Instance);
+                        _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregates.Length);
 
                         pushTransaction.Complete();
                     }
 
-                    _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - minOperationTime).TotalMilliseconds);
-
-                    transaction.Complete();
+                    _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
                 }
-                
+
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }
             catch (Exception ex)
