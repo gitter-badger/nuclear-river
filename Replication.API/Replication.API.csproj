@@ -93,6 +93,7 @@
     <Compile Include="Operations\Identities\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Operations\RecalculateAggregate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\IReplicationSettings.cs" />
     <Compile Include="Specifications\Specs.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfo.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfoBuilder.cs" />

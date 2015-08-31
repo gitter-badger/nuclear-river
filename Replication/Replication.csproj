@@ -103,6 +103,7 @@
     <Compile Include="CustomerIntelligence\Model\Erm\FirmContact.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataChangesApplier.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\LinqExtensions.cs" />
     <Compile Include="CustomerIntelligence\Transforming\StatisticsOperationsDetector.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />

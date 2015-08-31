@@ -306,6 +306,7 @@
     <Compile Include="Settings\DefaultEntityContainerNameResolver.cs" />
     <Compile Include="Settings\PersistentStoreAspect.cs" />
     <Compile Include="Settings\ReplicationServiceSettings.cs" />
+    <Compile Include="Settings\ReplicationSettingsAspect.cs" />
     <Compile Include="Settings\TaskServiceProcessingSettingsAspect.cs" />
   </ItemGroup>
   <ItemGroup>

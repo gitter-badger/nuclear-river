@@ -7,6 +7,7 @@ using System.Transactions;
 using NuClear.AdvancedSearch.Replication.API;
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Settings;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
@@ -19,10 +20,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec
             = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
 
+        private readonly IReplicationSettings _replicationSettings;
         private readonly IQuery _query;
         private readonly IFactChangesApplierFactory _factChangesApplierFactory;
-        
-        public ErmFactsTransformation(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
+
+        public ErmFactsTransformation(IReplicationSettings replicationSettings, IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
         {
             if (query == null)
             {
@@ -34,6 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("factChangesApplierFactory");
             }
 
+            _replicationSettings = replicationSettings;
             _query = query;
             _factChangesApplierFactory = factChangesApplierFactory;
         }
@@ -53,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     foreach (var slice in slices)
                     {
                         var factType = slice.Key.FactType;
-                        var factIds = slice.Select(x => x.FactId).Distinct().ToArray();
+                        var factIds = slice.Select(x => x.FactId).Distinct();
 
                         IFactInfo factInfo;
                         if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
@@ -63,19 +66,22 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
                         using (Probe.Create("ETL1 Transforming", factInfo.Type.Name))
                         {
-                            var changesDetector = new DataChangesDetector(factInfo, _query);
-                            var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
-                            var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
-                            
-                            var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, factIds);
+                            foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
+                            {
+                                var changesDetector = new DataChangesDetector(factInfo, _query);
+                                var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
+                                var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
 
-                            var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(factIds);
-                            var aggregateOperations = changesApplier.ApplyChanges(changes);
-                            var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(factIds);
+                                var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, batch);
 
-                            result = result.Concat(statisticsOperationsBeforeChanges)
-                                           .Concat(aggregateOperations)
-                                           .Concat(statisticsOperationsAfterChanges);
+                                var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(batch);
+                                var aggregateOperations = changesApplier.ApplyChanges(changes);
+                                var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(batch);
+
+                                result = result.Concat(statisticsOperationsBeforeChanges)
+                                               .Concat(aggregateOperations)
+                                               .Concat(statisticsOperationsAfterChanges);
+                            }
                         }
                     }
 

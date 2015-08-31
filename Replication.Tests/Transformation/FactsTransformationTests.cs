@@ -9,6 +9,7 @@ using Moq;
 using NuClear.AdvancedSearch.Replication.API;
 using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Settings;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
@@ -41,7 +42,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             ErmDb.Has(new Client { Id = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
-            
+
             Transformation.Create(Query, FactChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1)));
@@ -895,8 +896,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             private Transformation(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
             {
-                
-                _transformation = new ErmFactsTransformation(query, factChangesApplierFactory);
+
+                var replicationSettings = new Mock<IReplicationSettings>();
+                replicationSettings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
+
+                _transformation = new ErmFactsTransformation(replicationSettings.Object, query, factChangesApplierFactory);
             }
 
             private Transformation(IQuery query)

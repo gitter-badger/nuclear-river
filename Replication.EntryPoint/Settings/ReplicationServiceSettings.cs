@@ -45,6 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
                                                                    ConfigurationManager.ConnectionStrings["Transport"].ConnectionString
                                                                }
                                                            }))
+                   .Use<ReplicationSettingsAspect>()
                    .Use<IdentityServiceClientSettingsAspect>();
         }
     }
