@@ -22,13 +22,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         public IMergeResult<TTarget> DetectChanges<TTarget>(MapSpecification<IEnumerable, IEnumerable<TTarget>> mapSpec, IReadOnlyCollection<long> ids)
         {
-            using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
+            //using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
                 var sourceObjects = mapSpec.Map(_metadataInfo.MapToSourceSpecProvider(ids).Map(_query)).ToArray();
                 var targetObjects = mapSpec.Map(_metadataInfo.MapToTargetSpecProvider(ids).Map(_query)).ToArray();
                 var result = MergeTool.Merge(sourceObjects, targetObjects);
 
-                scope.Complete();
+                //scope.Complete();
 
                 return result;
             }

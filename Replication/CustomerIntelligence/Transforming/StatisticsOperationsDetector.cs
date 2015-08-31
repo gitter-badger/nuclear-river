@@ -26,12 +26,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 return new CalculateStatisticsOperation[0];
             }
 
-            using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
+            //using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
                 var mapSpec = _factInfo.CalculateStatisticsSpecProvider(factIds);
                 var operations = mapSpec.Map(_query).ToArray();
 
-                scope.Complete();
+                //scope.Complete();
 
                 return operations;
             }
