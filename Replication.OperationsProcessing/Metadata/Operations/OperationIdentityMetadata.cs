@@ -29,6 +29,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Operations
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeFirm.Instance),
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeFirmAddress.Instance),
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeCategoryFirmAddress.Instance),
+            BulkCreateIdentity.Instance.SpecificFor(EntityTypeLock.Instance),
 
             UpdateIdentity.Instance.SpecificFor(EntityTypeOrder.Instance),
             UpdateIdentity.Instance.SpecificFor(EntityTypeAccount.Instance),
