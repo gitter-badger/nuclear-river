@@ -40,9 +40,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
+                _tracer.Debug("Handing fact operations started");
                 foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>().ToArray())
                 {
+                    _tracer.DebugFormat("Replicating operations from use case '{0}'", message.Id);
                     var result = _transformation.Transform(message.Operations);
+                    _tracer.DebugFormat("Operations from use case '{0}' successfully replicated", message.Id);
+
                     _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
 
                     var statistics = result.OfType<CalculateStatisticsOperation>().ToArray();
@@ -52,9 +56,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                     using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,
                                                                       new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
                     {
+                        _tracer.Debug("Pushing events for statistics recalculation");
                         _sender.Push(statistics, StatisticsFlow.Instance);
                         _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statistics.Length);
 
+                        _tracer.Debug("Pushing events for aggregates recalculation");
                         _sender.Push(aggregates, AggregatesFlow.Instance);
                         _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregates.Length);
 
@@ -63,6 +69,8 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 
                     _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
                 }
+
+                _tracer.Debug("Handing fact operations finished");
 
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
             }

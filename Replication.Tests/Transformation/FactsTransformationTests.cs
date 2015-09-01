@@ -15,6 +15,7 @@ using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Writings;
+using NuClear.Tracing.API;
 
 using NUnit.Framework;
 
@@ -896,11 +897,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             private Transformation(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
             {
-
+                var tracer = Mock.Of<ITracer>();
                 var replicationSettings = new Mock<IReplicationSettings>();
                 replicationSettings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
 
-                _transformation = new ErmFactsTransformation(replicationSettings.Object, query, factChangesApplierFactory);
+                _transformation = new ErmFactsTransformation(tracer, replicationSettings.Object, query, factChangesApplierFactory);
             }
 
             private Transformation(IQuery query)

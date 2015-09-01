@@ -11,6 +11,7 @@ using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 using NuClear.Telemetry.Probing;
+using NuClear.Tracing.API;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
@@ -19,11 +20,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec
             = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
 
+        private readonly ITracer _tracer;
         private readonly IReplicationSettings _replicationSettings;
         private readonly IQuery _query;
         private readonly IFactChangesApplierFactory _factChangesApplierFactory;
 
-        public ErmFactsTransformation(IReplicationSettings replicationSettings, IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
+        public ErmFactsTransformation(ITracer tracer, IReplicationSettings replicationSettings, IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
         {
             if (query == null)
             {
@@ -35,6 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("factChangesApplierFactory");
             }
 
+            _tracer = tracer;
             _replicationSettings = replicationSettings;
             _query = query;
             _factChangesApplierFactory = factChangesApplierFactory;
@@ -68,10 +71,16 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                             var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
                             var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
 
+                            _tracer.DebugFormat("Detecting changes between source and target storages for entity type '{0}'", factType.Name);
                             var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, batch);
 
+                            _tracer.Debug("Detecting statistics before changes applying");
                             var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(batch);
+
+                            _tracer.Debug("Apply changes to target facts storage");
                             var aggregateOperations = changesApplier.ApplyChanges(changes);
+
+                            _tracer.Debug("Detecting statistics before changes applying");
                             var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(batch);
 
                             result = result.Concat(statisticsOperationsBeforeChanges)
