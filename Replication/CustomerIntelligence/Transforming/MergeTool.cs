@@ -10,23 +10,28 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2, IEqualityComparer<T> comparer = null)
         {
+            if (comparer == null)
+            {
+                comparer = EqualityComparer<T>.Default;
+            }
+
             using (Probe.Create("Merging", typeof(T).Name))
             {
                 HashSet<T> set1;
                 using (Probe.Create("Query source"))
                 {
-                    set1 = new HashSet<T>(data1);
+                    set1 = new HashSet<T>(data1, comparer);
                 }
 
                 HashSet<T> set2;
                 using (Probe.Create("Query target"))
                 {
-                    set2 = new HashSet<T>(data2);
+                    set2 = new HashSet<T>(data2, comparer);
                 }
 
                 // NOTE: avoiding enumerable extensions to reuse hashset performance
                 var difference = set1.Where(x => !set2.Contains(x));
-                var intersection = comparer == null ? set1.Where(x => set2.Contains(x)) : set1.Where(x => set2.Contains(x) && !set2.Contains(x, comparer));
+                var intersection = set1.Where(x => set2.Contains(x));
                 var complement = set2.Where(x => !set1.Contains(x));
 
                 return new MergeResult<T>
