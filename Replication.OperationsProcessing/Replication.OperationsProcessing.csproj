@@ -168,6 +168,7 @@
     <Compile Include="Final\StatisticsOperationAccumulator.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeBill.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeLegalPersonProfile.cs" />
+    <Compile Include="Metadata\Model\EntityTypes\EntityTypeLock.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeActivity.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeAppointment.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeLetter.cs" />
