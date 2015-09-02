@@ -70,7 +70,7 @@ function Get-TargetHostsMetadata ($EnvType, $Country, $Index){
 
 	switch ($EnvType) {
 		'Production' {
-			return @{ 'TargetHosts' = @('uk-erm-sb02') }
+			return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
 		}
 		'Load' {
 			return @{ 'TargetHosts' = @('uk-erm-iis10', 'uk-erm-iis11', 'uk-erm-iis12') }
