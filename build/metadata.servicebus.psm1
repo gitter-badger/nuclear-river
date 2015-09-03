@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 $SharedAccessKeys = @{
-	'Production.Russia' = 'XPnmzI+uyfZtKpUo4Ys79Lr8cmlLftTjd5jxeYMAp0I='
+	'Production.Russia' = 'ekQp9UcnukDWwNK9ZCiHXU91ovxdXs/XMZ05fAsam+s='
 	'Load.Russia' = 'daOQn6EYUWbJPlfV1592+xCIQRTumxZzzEw2c1i1u0M='
 	'Test.01' = 'dxorbZPNw1/uiwnp86NfFOgRaJqe3IMzFfMLTG3omM4='
 	'Test.02' = '2t4kdp1F87nw01Gkjgy7s7gzblYCHgt6lzn/emeNNg8='
