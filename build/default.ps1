@@ -73,19 +73,20 @@ Task Build-ReplicationLibs {
 	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 }
 
-Properties { $OptionCreateEnvironment = $false }
-Task Create-Environment -Depends Build-ReplicationLibs -Precondition { $OptionCreateEnvironment } {
+Properties { $UpdateSchemas = '' }
+Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { ![string]::IsNullOrEmpty($UpdateSchemas) } {
 
 	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
 	$config = Get-ReplicationConfig
 
-	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'TestData'
+	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'Schemas'
 
 	& $scriptFilePath `
 	-LibDir $libDir `
 	-Config $config `
-	-SqlScriptsDir $sqlScriptsDir
+	-SqlScriptsDir $sqlScriptsDir `
+	-UpdateSchemas $UpdateSchemas
 }
 
 function Get-ReplicationConfig {
@@ -114,7 +115,7 @@ Build-TaskService
 Task Deploy-Packages -depends `
 Take-ODataOffline, `
 Take-TaskServiceOffline, `
-Create-Environment, `
+Update-Schemas, `
 Deploy-ConvertUseCasesService, `
 Deploy-OData, `
 Deploy-TaskService

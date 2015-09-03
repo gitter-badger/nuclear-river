@@ -1,25 +1,26 @@
 -- create schema
-if not exists (select * from sys.schemas where name = 'ERM')
-	exec('create schema ERM')
-go
+if not exists (select * from sys.schemas where name = 'ERM') exec('create schema ERM')
+
+-- drop views with schemabindings
+if object_id('ERM.ViewClient', 'view') is not null drop view ERM.ViewClient
 
 -- drop tables
-if object_id('ERM.Account') is not null drop table ERM.Account;
-if object_id('ERM.Activity') is not null drop table ERM.Activity;
-if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit;
-if object_id('ERM.Category') is not null drop table ERM.Category;
-if object_id('ERM.CategoryGroup') is not null drop table ERM.CategoryGroup;
-if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress;
-if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit;
-if object_id('ERM.Client') is not null drop table ERM.Client;
-if object_id('ERM.Contact') is not null drop table ERM.Contact;
-if object_id('ERM.Firm') is not null drop table ERM.Firm;
-if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress;
-if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact;
-if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson;
-if object_id('ERM.Order') is not null drop table ERM.[Order];
-if object_id('ERM.Project') is not null drop table ERM.Project;
-if object_id('ERM.Territory') is not null drop table ERM.Territory;
+if object_id('ERM.Account') is not null drop table ERM.Account
+if object_id('ERM.Activity') is not null drop table ERM.Activity
+if object_id('ERM.BranchOfficeOrganizationUnit') is not null drop table ERM.BranchOfficeOrganizationUnit
+if object_id('ERM.Category') is not null drop table ERM.Category
+if object_id('ERM.CategoryGroup') is not null drop table ERM.CategoryGroup
+if object_id('ERM.CategoryFirmAddress') is not null drop table ERM.CategoryFirmAddress
+if object_id('ERM.CategoryOrganizationUnit') is not null drop table ERM.CategoryOrganizationUnit
+if object_id('ERM.Client') is not null drop table ERM.Client
+if object_id('ERM.Contact') is not null drop table ERM.Contact
+if object_id('ERM.Firm') is not null drop table ERM.Firm
+if object_id('ERM.FirmAddress') is not null drop table ERM.FirmAddress
+if object_id('ERM.FirmContact') is not null drop table ERM.FirmContact
+if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson
+if object_id('ERM.Order') is not null drop table ERM.[Order]
+if object_id('ERM.Project') is not null drop table ERM.Project
+if object_id('ERM.Territory') is not null drop table ERM.Territory
 go
 
 
@@ -202,4 +203,29 @@ create table ERM.Territory(
     , OrganizationUnitId bigint not null
     , constraint PK_Territories primary key (Id)
 )
+go
+
+-- ViewClient, indexed view for query optimization
+create view ERM.ViewClient
+with schemabinding
+as
+select 
+	Firm.ClientId,
+	CategoryFirmAddress.FirmAddressId,
+	CategoryOrganizationUnit.CategoryId,
+	CategoryOrganizationUnit.CategoryGroupId,
+	CategoryGroup.Rate
+from ERM.Firm
+	inner join ERM.FirmAddress on Firm.Id = FirmAddress.FirmId
+	inner join ERM.CategoryFirmAddress on FirmAddress.Id = CategoryFirmAddress.FirmAddressId
+	inner join ERM.CategoryOrganizationUnit on CategoryFirmAddress.CategoryId = CategoryOrganizationUnit.CategoryId AND Firm.OrganizationUnitId = CategoryOrganizationUnit.OrganizationUnitId
+	inner join ERM.CategoryGroup on CategoryOrganizationUnit.CategoryGroupId = CategoryGroup.Id
+where Firm.ClientId is not null
+go
+create unique clustered index PK_ViewClient
+    on ERM.ViewClient (FirmAddressId, CategoryId)
+go
+create nonclustered index IX_ViewClient_ClientId_CategoryGroupId_Rate
+	on ERM.ViewClient (ClientId, Rate)
+	include (CategoryGroupId)
 go

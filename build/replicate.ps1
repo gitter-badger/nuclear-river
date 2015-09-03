@@ -1,11 +1,42 @@
-﻿param($LibDir, $Config, $SqlScriptsDir)
+﻿param($LibDir, $Config, $SqlScriptsDir, $UpdateSchemas)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
+# add custom types
+Add-Type -TypeDefinition @"
+[System.Flags]
+public enum SchemaEnum {
+	None = 0,
+
+	ERM = 1,
+	BIT = 2,
+	CustomerIntelligence = 4,
+	Transport = 8,
+}
+"@
+
+if (![string]::IsNullOrEmpty($UpdateSchemas)){
+	$schemaEnum = [SchemaEnum]$UpdateSchemas
+} else {
+	$schemaEnum = [SchemaEnum]::None
+}
+
+
 # load libraries
 Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($_.FullName)) }
+
+function Replicate-Data {
+
+	if($schemaEnum.HasFlag([SchemaEnum]::ERM)){
+		Replicate-ErmToFacts
+	}
+
+	if($schemaEnum -ne [SchemaEnum]::None){
+		Replicate-FactsToCI
+	}
+}
 
 function Replicate-ErmToFacts {
 
@@ -100,12 +131,13 @@ if (not exists(select * from sys.databases where name = '$initialCatalog'))
 	Exec-Command $connection $command
 }
 
-function Create-Tables {
+function Update-Schemas {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
-	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql' | Sort-Object
-	foreach($sqlScript in $sqlScripts){
+	$shemas = $schemaEnum.ToString().Split(',').Trim()
+	foreach ($shema in $shemas) {
+		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$shema.sql")
 		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
 	}
@@ -151,9 +183,8 @@ function Clear-ServiceBusTopic ($topicName) {
 }
 
 Create-Database
-Create-Tables
-Replicate-ErmToFacts
-Replicate-FactsToCI
+Update-Schemas
+Replicate-Data
 Clear-ServiceBusTopic 'topic.performedoperations'
 Clear-ServiceBusTopic $Config.AppSettings.TransportEntityPath
 
