@@ -82,6 +82,10 @@ create nonclustered index IX_CategoryFirmAddress_FirmAddressId
 on ERM.CategoryFirmAddress (FirmAddressId)
 include (CategoryId)
 go
+create nonclustered index IX_CategoryFirmAddress_CategoryId
+on ERM.CategoryFirmAddress (CategoryId)
+include (FirmAddressId)
+go
 
 -- CategoryOrganizationUnit
 create table ERM.CategoryOrganizationUnit(
