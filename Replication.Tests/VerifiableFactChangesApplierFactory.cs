@@ -7,24 +7,24 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    public class VerifiableFactChangesApplierFactory : IFactChangesApplierFactory
+    public class VerifiableFactProcessorFactory : IFactProcessorFactory
     {
         private readonly Action<IRepository> _onRepositoryCreated;
 
-        public VerifiableFactChangesApplierFactory(Action<IRepository> onRepositoryCreated)
+        public VerifiableFactProcessorFactory(Action<IRepository> onRepositoryCreated)
         {
             _onRepositoryCreated = onRepositoryCreated;
         }
 
-        public IFactChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
+        public IFactProcessor Create(IFactInfo factInfo, IQuery sourceQuery)
         {
             var repositoryType = typeof(IRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)DynamicMock.Of(repositoryType);
 
             _onRepositoryCreated(repositoryInstance);
 
-            var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (IFactChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
+            var applierType = typeof(FactProcessor<>).MakeGenericType(factInfo.Type);
+            return (IFactProcessor)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
         }
     }
 }

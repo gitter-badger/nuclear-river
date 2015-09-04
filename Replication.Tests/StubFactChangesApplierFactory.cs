@@ -9,22 +9,22 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    public class StubFactChangesApplierFactory : IFactChangesApplierFactory
+    public class StubFactProcessorFactory : IFactProcessorFactory
     {
         private readonly IModifiableDomainContextProvider _modifiableDomainContextProvider;
 
-        public StubFactChangesApplierFactory(IModifiableDomainContextProvider modifiableDomainContextProvider)
+        public StubFactProcessorFactory(IModifiableDomainContextProvider modifiableDomainContextProvider)
         {
             _modifiableDomainContextProvider = modifiableDomainContextProvider;
         }
 
-        public IFactChangesApplier Create(IFactInfo factInfo, IQuery sourceQuery)
+        public IFactProcessor Create(IFactInfo factInfo, IQuery sourceQuery)
         {
             var repositoryType = typeof(LinqToDBRepository<>).MakeGenericType(factInfo.Type);
             var repositoryInstance = (IRepository)Activator.CreateInstance(repositoryType, _modifiableDomainContextProvider);
 
-            var applierType = typeof(FactChangesApplier<>).MakeGenericType(factInfo.Type);
-            return (IFactChangesApplier)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
+            var applierType = typeof(FactProcessor<>).MakeGenericType(factInfo.Type);
+            return (IFactProcessor)Activator.CreateInstance(applierType, factInfo, sourceQuery, repositoryInstance);
         }
     }
 }

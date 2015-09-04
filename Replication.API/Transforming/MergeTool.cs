@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -7,13 +6,6 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    public interface IMergeResult
-    {
-        IEnumerable Difference { get; }
-        IEnumerable Intersection { get; }
-        IEnumerable Complement { get; }
-    }
-
     public interface IMergeResult<out T>
     {
         IEnumerable<T> Difference { get; }
@@ -42,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
     }
 
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public class MergeResult<T> : IMergeResult, IMergeResult<T>
+    public class MergeResult<T> : IMergeResult<T>
     {
         public IEnumerable<T> Difference { get; private set; }
         public IEnumerable<T> Intersection { get; private set; }
@@ -60,21 +52,6 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             Difference = mergeResult.Difference;
             Intersection = mergeResult.Intersection;
             Complement = mergeResult.Complement;
-        }
-
-        IEnumerable IMergeResult.Difference
-        {
-            get { return Difference; }
-        }
-
-        IEnumerable IMergeResult.Intersection
-        {
-            get { return Intersection; }
-        }
-
-        IEnumerable IMergeResult.Complement
-        {
-            get { return Complement; }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
@@ -24,6 +25,12 @@ namespace NuClear.AdvancedSearch.Replication.API.Specifications
             {
                 return new FindSpecification<long>(x => ids.Contains(x));
             }
+        }
+
+        public static class Map
+        {
+            public static readonly MapSpecification<IEnumerable, IEnumerable<long>> ToIds =
+                new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
         }
     }
 }

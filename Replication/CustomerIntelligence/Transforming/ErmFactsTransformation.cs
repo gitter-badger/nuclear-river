@@ -1,46 +1,48 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API;
-using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Settings;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
 using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class ErmFactsTransformation
+    public sealed partial class ErmFactsTransformation
     {
-        private readonly MapSpecification<IEnumerable, IEnumerable<long>> _changesDetectionMapSpec
-            = new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
-
+        private readonly IQuery _query;
         private readonly ITracer _tracer;
         private readonly IReplicationSettings _replicationSettings;
-        private readonly IQuery _query;
-        private readonly IFactChangesApplierFactory _factChangesApplierFactory;
+        private readonly IFactProcessorFactory _factProcessorFactory;
+        private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
 
-        public ErmFactsTransformation(ITracer tracer, IReplicationSettings replicationSettings, IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
+        public ErmFactsTransformation(
+            IQuery query,
+            IReplicationSettings replicationSettings,
+            IFactProcessorFactory factProcessorFactory, 
+            IDataChangesApplierFactory dataChangesApplierFactory,
+            ITracer tracer)
         {
             if (query == null)
             {
                 throw new ArgumentNullException("query");
             }
 
-            if (factChangesApplierFactory == null)
+            if (factProcessorFactory == null)
             {
-                throw new ArgumentNullException("factChangesApplierFactory");
+                throw new ArgumentNullException("factProcessorFactory");
             }
 
+            _query = query;
             _tracer = tracer;
             _replicationSettings = replicationSettings;
-            _query = query;
-            _factChangesApplierFactory = factChangesApplierFactory;
+            _factProcessorFactory = factProcessorFactory;
+            _dataChangesApplierFactory = dataChangesApplierFactory;
         }
 
         public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)
@@ -58,7 +60,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     var factIds = slice.Select(x => x.FactId).Distinct();
 
                     IFactInfo factInfo;
-                    if (!ErmFactsTransformationMetadata.Facts.TryGetValue(factType, out factInfo))
+                    if (!Facts.TryGetValue(factType, out factInfo))
                     {
                         throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                     }
@@ -67,30 +69,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     {
                         foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
                         {
-                            var changesDetector = new DataChangesDetector(factInfo, _query);
-                            var statisticsOperationsDetector = new StatisticsOperationsDetector(factInfo, _query);
-                            var changesApplier = _factChangesApplierFactory.Create(factInfo, _query);
-
-                            _tracer.DebugFormat("Detecting changes between source and target storages for entity type '{0}'", factType.Name);
-                            var changes = changesDetector.DetectChanges(_changesDetectionMapSpec, batch);
-
-                            _tracer.Debug("Detecting statistics before changes applying");
-                            var statisticsOperationsBeforeChanges = statisticsOperationsDetector.DetectOperations(batch);
+                            var processor = _factProcessorFactory.Create(factInfo, _query);
 
                             _tracer.Debug("Apply changes to target facts storage");
-                            var aggregateOperations = changesApplier.ApplyChanges(changes);
+                            var aggregateOperations = processor.ApplyChanges(_query, _dataChangesApplierFactory.Create(factInfo.Type), batch);
 
-                            _tracer.Debug("Detecting statistics before changes applying");
-                            var statisticsOperationsAfterChanges = statisticsOperationsDetector.DetectOperations(batch);
-
-                            result = result.Concat(statisticsOperationsBeforeChanges)
-                                           .Concat(aggregateOperations)
-                                           .Concat(statisticsOperationsAfterChanges);
+                            result = result.Concat(aggregateOperations);
                         }
                     }
                 }
 
-                return result.Distinct().ToArray();
+                return result.Distinct().ToList();
             }
         }
     }

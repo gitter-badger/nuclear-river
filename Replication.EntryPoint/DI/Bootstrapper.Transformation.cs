@@ -8,7 +8,6 @@ using LinqToDB.Mapping;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.Data;
 using NuClear.AdvancedSearch.Settings;
@@ -33,22 +32,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IDataMapper, DataMapper>(Scope.Facts, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
                 .RegisterType<IDataMapper, DataMapper>(Scope.CustomerIntelligence, Lifetime.PerScope, new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
 
-                .RegisterType<StatisticsContext>(Lifetime.PerScope, 
-                    new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
-                .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
-                    new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
-
                 .RegisterType<BitFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(
                                                        new ResolvedParameter<IQuery>(Scope.Facts),
                                                        new ResolvedParameter<IDataMapper>(Scope.Facts),
-                                                       ResolvedTransactionManager(container, Scope.Facts)))
-
-                .RegisterType<StatisticsFinalTransformation>(Lifetime.PerScope,
-                                                   new InjectionConstructor(
-                                                       new ResolvedParameter<StatisticsTransformationContext>(),
-                                                       new ResolvedParameter<StatisticsContext>(),
-                                                       new ResolvedParameter<IDataMapper>(Scope.CustomerIntelligence)));
+                                                       ResolvedTransactionManager(container, Scope.Facts)));
         }
 
         private static ResolvedParameter ResolvedTransactionManager(IUnityContainer container, params string[] contexts)

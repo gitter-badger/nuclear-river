@@ -1,29 +1,22 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 
-using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed partial class CustomerIntelligenceTransformation
     {
-        private static readonly MapSpecification<IEnumerable, IEnumerable<long>> AggregateChangesDetectionMapSpec =
-            new MapSpecification<IEnumerable, IEnumerable<long>>(x => x.Cast<IIdentifiable>().Select(y => y.Id));
-
-        private static readonly MapSpecification<IEnumerable, IEnumerable<IObject>> ValueObjectsChangesDetectionMapSpec =
-            new MapSpecification<IEnumerable, IEnumerable<IObject>>(x => x.Cast<IObject>());
-
         private readonly IQuery _query;
         private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
+        private readonly IAggregateProcessorFactory _aggregateProcessorFactory;
+        private readonly IValueObjectProcessorFactory _valueObjectProcessorFactory;
 
         public CustomerIntelligenceTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory)
         {
@@ -39,6 +32,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _query = query;
             _dataChangesApplierFactory = dataChangesApplierFactory;
+            _aggregateProcessorFactory = new AggregateProcessorFactory();
+            _valueObjectProcessorFactory = new ValueObjectProcessorFactory();
         }
 
 
@@ -93,14 +88,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
-            var changesDetector = new DataChangesDetector(aggregateInfo, _query);
-            var mergeResult = changesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
-
-            var aggregatesToCreateIds = aggregateIds.Where(x => mergeResult.Difference.Contains(x)).ToArray();
-            var aggregatesToCreate = aggregateInfo.MapToSourceSpecProvider(aggregatesToCreateIds).Map(_query);
-
             var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
-            changesApplier.Create(aggregatesToCreate);
+            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
+            processor.Initialize(_query, changesApplier, aggregateIds);
 
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
         }
@@ -109,49 +99,27 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
 
-            var aggregateChangesDetector = new DataChangesDetector(aggregateInfo, _query);
-            var mergeResult = aggregateChangesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
-
-            var aggregatesToCreateIds = aggregateIds.Where(x => mergeResult.Difference.Contains(x)).ToArray();
-            var aggregatesToUpdateIds = aggregateIds.Where(x => mergeResult.Intersection.Contains(x)).ToArray();
-            var aggregatesToDeleteIds = aggregateIds.Where(x => mergeResult.Complement.Contains(x)).ToArray();
-
-            var aggregatesToCreate = aggregateInfo.MapToSourceSpecProvider(aggregatesToCreateIds).Map(_query);
-            var aggregatesToUpdate = aggregateInfo.MapToSourceSpecProvider(aggregatesToUpdateIds).Map(_query);
-            var aggregatesToDelete = aggregateInfo.MapToTargetSpecProvider(aggregatesToDeleteIds).Map(_query);
-
             var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
-            changesApplier.Delete(aggregatesToDelete);
-            changesApplier.Create(aggregatesToCreate);
-            changesApplier.Update(aggregatesToUpdate);
+            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
+            processor.Recalculate(_query, changesApplier, aggregateIds);
         }
 
         private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
 
-            var aggregateChangesDetector = new DataChangesDetector(aggregateInfo, _query);
-            var mergeResult = aggregateChangesDetector.DetectChanges(AggregateChangesDetectionMapSpec, aggregateIds);
-
-            var aggregatesToDeleteIds = aggregateIds.Where(x => mergeResult.Difference.Contains(x)).ToArray();
-            var aggregatesToDelete = aggregateInfo.MapToTargetSpecProvider(aggregatesToDeleteIds).Map(_query).Cast<IIdentifiable>().ToArray();
-
             var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
-            changesApplier.Delete(aggregatesToDelete);
+            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
+            processor.Destroy(_query, changesApplier, aggregateIds);
         }
 
-        private void ApplyChangesToValueObjects(IEnumerable<IMetadataInfo> valueObjectInfos, IReadOnlyCollection<long> aggregateIds)
+        private void ApplyChangesToValueObjects(IEnumerable<IValueObjectInfo> valueObjectInfos, IReadOnlyCollection<long> aggregateIds)
         {
             foreach (var valueObjectInfo in valueObjectInfos)
             {
-                var changesDetector = new DataChangesDetector(valueObjectInfo, _query);
-                var mergeResult = changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, aggregateIds);
-
                 var changesApplier = _dataChangesApplierFactory.Create(valueObjectInfo.Type);
-
-                changesApplier.Delete(mergeResult.Complement);
-                changesApplier.Create(mergeResult.Difference);
-                changesApplier.Update(mergeResult.Intersection);
+                var transformation = _valueObjectProcessorFactory.Create(valueObjectInfo);
+                transformation.ApplyChanges(_query, changesApplier, aggregateIds);
             }
         }
     }

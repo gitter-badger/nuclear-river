@@ -258,8 +258,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IFactProcessor), typeof(FactProcessor<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IDataChangesApplierFactory, UnityDataChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType(typeof(IDataChangesApplier<>), typeof(DataChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
                 .ConfigureReadWriteModels();

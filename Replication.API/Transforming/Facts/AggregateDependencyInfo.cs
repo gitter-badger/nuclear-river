@@ -1,19 +1,34 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Specifications;
+using NuClear.Storage.Readings;
+using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
-    public sealed class AggregateDependencyInfo<TAggregate> : IFactDependencyInfo
+    public sealed class AggregateDependencyInfo<TFact> : IFactDependencyInfo, IFactDependencyInfo<TFact> 
+        where TFact : class, IIdentifiable
     {
-        private readonly MapToDependentAggregateSpecProvider _mapToDependentAggregateSpecProvider;
+        private readonly Type _aggregateType;
+        private readonly Func<IReadOnlyCollection<long>, FindSpecification<TFact>> _findSpecificationProvider;
+        private readonly Func<FindSpecification<TFact>, MapSpecification<IQuery, IEnumerable<long>>> _targetMappingSpecificationProvider;
 
-        public AggregateDependencyInfo(MapToDependentAggregateSpecProvider mapToDependentAggregateSpecProvider)
+        public AggregateDependencyInfo(Type aggregateType,
+                                       Func<FindSpecification<TFact>, MapSpecification<IQuery, IEnumerable<long>>> targetMappingSpecificationProvider)
         {
-            _mapToDependentAggregateSpecProvider = mapToDependentAggregateSpecProvider;
+            _aggregateType = aggregateType;
+            _findSpecificationProvider = Specs.Find.ByIds<TFact>;
+            _targetMappingSpecificationProvider = targetMappingSpecificationProvider;
         }
 
-        public Type AggregateType
+        public Type Type
         {
-            get { return typeof(TAggregate); }
+            get { return typeof(TFact); }
         }
 
         public bool IsDirectDependency
@@ -21,9 +36,24 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return false; }
         }
 
-        public MapToDependentAggregateSpecProvider MapToDependentAggregateSpecProvider
+        public MapToObjectsSpecProvider<TFact> CreationMappingSpecificationProvider
         {
-            get { return _mapToDependentAggregateSpecProvider; }
+            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecificationProvider.Invoke(specification).Map(q).Select(id => new RecalculateAggregate(_aggregateType, id))); }
+        }
+
+        public MapToObjectsSpecProvider<TFact> UpdatingMappingSpecificationProvider
+        {
+            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecificationProvider.Invoke(specification).Map(q).Select(id => new RecalculateAggregate(_aggregateType, id))); }
+        }
+
+        public MapToObjectsSpecProvider<TFact> DeletionMappingSpecificationProvider
+        {
+            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecificationProvider.Invoke(specification).Map(q).Select(id => new RecalculateAggregate(_aggregateType, id))); }
+        }
+
+        public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider
+        {
+            get { return _findSpecificationProvider; }
         }
     }
 }

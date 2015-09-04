@@ -4,6 +4,7 @@ using System.Linq;
 using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.Readings;
 
 using NUnit.Framework;
@@ -42,9 +43,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             get { return new Query(_stubDomainContextProvider); }
         }
 
-        protected IFactChangesApplierFactory FactChangesApplierFactory
+        protected IFactProcessorFactory FactChangesApplierFactory
         {
-            get { return new StubFactChangesApplierFactory(_stubDomainContextProvider); }
+            get { return new StubFactProcessorFactory(_stubDomainContextProvider); }
         }
 
         protected MockLinqToDbDataBuilder ErmDb

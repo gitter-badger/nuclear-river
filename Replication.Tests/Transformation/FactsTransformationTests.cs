@@ -895,17 +895,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private readonly ErmFactsTransformation _transformation;
             private readonly List<IOperation> _operations = new List<IOperation>();
 
-            private Transformation(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
+            private Transformation(IQuery query, IFactProcessorFactory factProcessorFactory)
             {
                 var tracer = Mock.Of<ITracer>();
                 var replicationSettings = new Mock<IReplicationSettings>();
                 replicationSettings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
+                var dataChangesApplierFactory = new VerifiableDataChangesApplierFactory((type, repository) => { });
 
-                _transformation = new ErmFactsTransformation(tracer, replicationSettings.Object, query, factChangesApplierFactory);
+                _transformation = new ErmFactsTransformation(query, replicationSettings.Object, factProcessorFactory, dataChangesApplierFactory, tracer);
             }
 
             private Transformation(IQuery query)
-                : this(query, new VerifiableFactChangesApplierFactory(OnRepositoryCreated))
+                : this(query, new VerifiableFactProcessorFactory(OnRepositoryCreated))
             {
             }
 
@@ -914,9 +915,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 return new Transformation(query);
             }
 
-            public static Transformation Create(IQuery query, IFactChangesApplierFactory factChangesApplierFactory)
+            public static Transformation Create(IQuery query, IFactProcessorFactory factProcessorFactory)
             {
-                return new Transformation(query, factChangesApplierFactory);
+                return new Transformation(query, factProcessorFactory);
             }
 
             public Transformation Transform(params FactOperation[] operations)

@@ -81,10 +81,10 @@
     <Compile Include="BulkLoading\BulkLoadingFixtureBase.cs" />
     <Compile Include="DynamicMock.cs" />
     <Compile Include="MockLinqToDbDataBuilder.cs" />
+    <Compile Include="QueryableExtensions.cs" />
     <Compile Include="SqliteDomainContextFactory.cs" />
     <Compile Include="SqliteEntityContainerNameResolver.cs" />
     <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
-    <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="BulkLoading\BulkLoadingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
@@ -92,7 +92,6 @@
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
-    <Compile Include="QueryMockExtensions.cs" />
     <Compile Include="Transformation\FactsMapToCISpecsTests.cs" />
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
     <Compile Include="Transformation\ErmContextFilteringTests.cs" />
@@ -107,6 +106,7 @@
     <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Project.cs" />
+    <Compile Include="MemoryMockQuery.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="FixtureBase.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />

@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Specifications;
 using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
@@ -16,17 +17,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
         [Test]
         public void ReloadFirmCategoryStatistics()
         {
-            Reload(ctx => ctx.FirmCategoryStatistics);
+            Reload(query => Specs.Map.Statistics.StatisticsTransformationContext_FirmCategoryStatistics.Map(query));
         }
 
-        private void Reload<T>(Func<IStatisticsContext, IEnumerable<T>> loader)
+        private void Reload<T>(Func<IQuery, IQueryable<T>> loader)
             where T : class
         {
-            using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
-            using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
+            using (var ermDb = CreateConnection("FactsSqlServer", Schema.Erm))
+            using (var factDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.Facts))
             {
-                var context = new StatisticsTransformationContext(factsDb);
-                ciDb.Reload(loader(context));
+                var query = new Query(new StubReadableDomainContextProvider((DbConnection)ermDb.Connection, ermDb));
+                factDb.Reload(loader(query));
             }
         }
     }

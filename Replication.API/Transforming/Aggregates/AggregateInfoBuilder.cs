@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Specifications;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
@@ -10,33 +11,32 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     public class AggregateInfoBuilder<TAggregate> where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
     {
-        private readonly List<IMetadataInfo> _valueObjects;
-        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToTargetSpecProvider =
-            ids => new MapSpecification<IQuery, IQueryable<TAggregate>>(q => q.For(new FindSpecification<TAggregate>(x => ids.Contains(x.Id))));
+        private readonly List<IValueObjectInfo> _valueObjects;
 
-        private Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> _mapToSourceSpecProvider;
+        private MapSpecification<IQuery, IQueryable<TAggregate>> _mapToSourceSpec;
 
         public AggregateInfoBuilder()
         {
-            _valueObjects = new List<IMetadataInfo>();
+            _valueObjects = new List<IValueObjectInfo>();
         }
 
         public IAggregateInfo Build()
         {
-            return new AggregateInfo<TAggregate>(_mapToSourceSpecProvider, _mapToTargetSpecProvider, _valueObjects);
+            return new AggregateInfo<TAggregate>(_mapToSourceSpec, Specs.Find.ByIds<TAggregate>, _valueObjects);
         }
 
-        public AggregateInfoBuilder<TAggregate> HasSource(Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TAggregate>>> mapToSourceSpecProvider)
+        public AggregateInfoBuilder<TAggregate> HasSource(MapSpecification<IQuery, IQueryable<TAggregate>> mapToSourceSpec)
         {
-            _mapToSourceSpecProvider = mapToSourceSpecProvider;
+            _mapToSourceSpec = mapToSourceSpec;
             return this;
         }
 
         public AggregateInfoBuilder<TAggregate> HasValueObject<TValueObject>(
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToSourceSpecProvider, 
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TValueObject>>> mapToTargetSpecProvider)
+            MapSpecification<IQuery, IQueryable<TValueObject>> sourceMappingSpecification,
+            Func<IReadOnlyCollection<long>, FindSpecification<TValueObject>> findSpecificationProvider) 
+            where TValueObject : class
         {
-            _valueObjects.Add(new ValueObjectInfo<TValueObject>(mapToSourceSpecProvider, mapToTargetSpecProvider));
+            _valueObjects.Add(new ValueObjectInfo<TValueObject>(sourceMappingSpecification, findSpecificationProvider));
             return this;
         }
     }

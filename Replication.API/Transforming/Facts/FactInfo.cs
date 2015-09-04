@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
@@ -10,32 +9,22 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public static class FactInfo
+    public class FactInfo<TFact> : IFactInfo, IFactInfo<TFact>
+        where TFact : class, IErmFactObject
     {
-        public static FactInfoBuilder<TFact> OfType<TFact>(params object[] x) where TFact : class, IErmFactObject, IIdentifiable
-        {
-            return new FactInfoBuilder<TFact>();
-        }
-    }
-
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public class FactInfo<TFact> : IFactInfo where TFact : class, IErmFactObject
-    {
-        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TFact>>> _mapToSourceSpecProvider;
-        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TFact>>> _mapToTargetSpecProvider;
-        private readonly CalculateStatisticsSpecProvider _calculateStatisticsSpecProvider;
+        private readonly MapSpecification<IQuery, IQueryable<TFact>> _sourceMappingSpecification;
+        private readonly MapSpecification<IQuery, IQueryable<TFact>> _targetMappingSpecification;
+        private readonly Func<IReadOnlyCollection<long>, FindSpecification<TFact>> _findSpecificationProvider;
         private readonly IReadOnlyCollection<IFactDependencyInfo> _aggregates;
 
         public FactInfo(
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TFact>>> mapToSourceSpecProvider,
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<TFact>>> mapToTargetSpecProvider,
-            CalculateStatisticsSpecProvider calculateStatisticsSpecProvider,
+            MapSpecification<IQuery, IQueryable<TFact>> sourceMappingSpecification,
+            Func<IReadOnlyCollection<long>, FindSpecification<TFact>> findSpecificationProvider,
             IReadOnlyCollection<IFactDependencyInfo> aggregates)
         {
-            _mapToSourceSpecProvider = mapToSourceSpecProvider;
-            _mapToTargetSpecProvider = mapToTargetSpecProvider;
-            _calculateStatisticsSpecProvider = calculateStatisticsSpecProvider;
+            _sourceMappingSpecification = sourceMappingSpecification;
+            _targetMappingSpecification = new MapSpecification<IQuery, IQueryable<TFact>>(q => q.For<TFact>());
+            _findSpecificationProvider = findSpecificationProvider;
             _aggregates = aggregates ?? new IFactDependencyInfo[0];
         }
 
@@ -49,43 +38,19 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return _aggregates; }
         }
 
-        public CalculateStatisticsSpecProvider CalculateStatisticsSpecProvider
+        public MapToObjectsSpecProvider<TFact> SourceMappingSpecification
         {
-            get { return _calculateStatisticsSpecProvider; }
+            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _sourceMappingSpecification.Map(q).Where(specification)); }
         }
 
-        public MapToObjectsSpecProvider MapToSourceSpecProvider
+        public MapToObjectsSpecProvider<TFact> TargetMappingSpecification
         {
-            get
-            {
-                return ids =>
-                {
-                    if (!ids.Any())
-                    {
-                        return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<TFact>());
-                    }
-
-                    var mapToSourceSpec = _mapToSourceSpecProvider(ids);
-                    return new MapSpecification<IQuery, IEnumerable>(mapToSourceSpec);
-                };
-            }
+            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecification.Map(q).Where(specification)); }
         }
 
-        public MapToObjectsSpecProvider MapToTargetSpecProvider
+        public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider
         {
-            get
-            {
-                return ids =>
-                {
-                    if (!ids.Any())
-                    {
-                        return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<TFact>());
-                    }
-
-                    var mapToTargetSpec = _mapToTargetSpecProvider(ids);
-                    return new MapSpecification<IQuery, IEnumerable>(mapToTargetSpec);
-                };
-            }
+            get { return _findSpecificationProvider; }
         }
     }
 }

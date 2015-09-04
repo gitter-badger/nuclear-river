@@ -5,7 +5,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 {
     public static partial class Specs
     {
-        public static class Find
+        public static partial class Find
         {
             public static class FirmStatistics
             {

@@ -7,12 +7,11 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    public delegate MapSpecification<IQuery, IEnumerable> MapToObjectsSpecProvider(IReadOnlyCollection<long> ids);
+    public delegate MapSpecification<IQuery, IEnumerable<TOutput>> MapToObjectsSpecProvider<TFilter, TOutput>(FindSpecification<TFilter> specification);
+    public delegate MapSpecification<IQuery, IEnumerable> MapToObjectsSpecProvider<TSource>(FindSpecification<TSource> specification);
 
     public interface IMetadataInfo
     {
         Type Type { get; }
-        MapToObjectsSpecProvider MapToSourceSpecProvider { get; }
-        MapToObjectsSpecProvider MapToTargetSpecProvider { get; }
     }
 }
