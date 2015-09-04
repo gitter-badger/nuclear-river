@@ -121,8 +121,8 @@ function Update-Schemas {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
-	foreach ($shema in $shemas) {
-		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$shema.sql")
+	foreach ($schema in $schemas) {
+		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$schema.sql")
 		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
 	}
