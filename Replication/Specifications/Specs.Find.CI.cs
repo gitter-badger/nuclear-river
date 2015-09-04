@@ -1,65 +1,79 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.Specifications
 {
+    using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+
     public static partial class Specs
     {
         public static partial class Find
         {
             public static partial class CI
             {
-                public static FindSpecification<CategoryGroup> CategoryGroups(IReadOnlyCollection<long> ids)
+                public static FindSpecification<CI::CategoryGroup> CategoryGroups(IReadOnlyCollection<long> ids)
                 {
-                    return API.Specifications.Specs.Find.ByIds<CategoryGroup>(ids);
+                    return API.Specifications.Specs.Find.ByIds<CI::CategoryGroup>(ids);
                 }
 
-                public static FindSpecification<Client> Clients(IReadOnlyCollection<long> ids)
+                public static FindSpecification<CI::Client> Clients(IReadOnlyCollection<long> ids)
                 {
-                    return API.Specifications.Specs.Find.ByIds<Client>(ids);
+                    return API.Specifications.Specs.Find.ByIds<CI::Client>(ids);
                 }
 
-                public static FindSpecification<ClientContact> ClientContacts(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::ClientContact> ClientContacts(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return new FindSpecification<ClientContact>(x => aggregateIds.Contains(x.ClientId));
+                    return new FindSpecification<CI::ClientContact>(x => aggregateIds.Contains(x.ClientId));
                 }
 
-                public static FindSpecification<Firm> Firms(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::Firm> Firms(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return API.Specifications.Specs.Find.ByIds<Firm>(aggregateIds);
+                    return API.Specifications.Specs.Find.ByIds<CI::Firm>(aggregateIds);
                 }
 
-                public static FindSpecification<FirmActivity> FirmActivities(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::FirmActivity> FirmActivities(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return new FindSpecification<FirmActivity>(x => aggregateIds.Contains(x.FirmId));
+                    return new FindSpecification<CI::FirmActivity>(x => aggregateIds.Contains(x.FirmId));
                 }
 
-                public static FindSpecification<FirmBalance> FirmBalances(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::FirmBalance> FirmBalances(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return new FindSpecification<FirmBalance>(x => aggregateIds.Contains(x.FirmId));
+                    return new FindSpecification<CI::FirmBalance>(x => aggregateIds.Contains(x.FirmId));
                 }
 
-                public static FindSpecification<FirmCategory> FirmCategories(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::FirmCategory> FirmCategories(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return new FindSpecification<FirmCategory>(x => aggregateIds.Contains(x.FirmId));
+                    return new FindSpecification<CI::FirmCategory>(x => aggregateIds.Contains(x.FirmId));
                 }
 
-                public static FindSpecification<Project> Projects(IReadOnlyCollection<long> ids)
+                public static FindSpecification<CI::Project> Projects(IReadOnlyCollection<long> ids)
                 {
-                    return API.Specifications.Specs.Find.ByIds<Project>(ids);
+                    return API.Specifications.Specs.Find.ByIds<CI::Project>(ids);
                 }
 
-                public static FindSpecification<ProjectCategory> ProjectCategories(IReadOnlyCollection<long> aggregateIds)
+                public static FindSpecification<CI::ProjectCategory> ProjectCategories(IReadOnlyCollection<long> aggregateIds)
                 {
-                    return new FindSpecification<ProjectCategory>(x => aggregateIds.Contains(x.ProjectId));
+                    return new FindSpecification<CI::ProjectCategory>(x => aggregateIds.Contains(x.ProjectId));
                 }
 
-                public static FindSpecification<Territory> Territories(IReadOnlyCollection<long> ids)
+                public static FindSpecification<CI::Territory> Territories(IReadOnlyCollection<long> ids)
                 {
-                    return API.Specifications.Specs.Find.ByIds<Territory>(ids);
+                    return API.Specifications.Specs.Find.ByIds<CI::Territory>(ids);
+                }
+
+                public static partial class FirmCategoryStatistics
+                {
+                    public static FindSpecification<CI::FirmCategoryStatistics> ByProject(long projectId)
+                    {
+                        return new FindSpecification<CI::FirmCategoryStatistics>(x => x.ProjectId == projectId);
+                    }
+
+                    public static FindSpecification<CI::FirmCategoryStatistics> ByProjectAndCategories(long projectId, IReadOnlyCollection<long?> categoryIds)
+                    {
+                        return new FindSpecification<CI::FirmCategoryStatistics>(x => x.ProjectId == projectId && categoryIds.Contains(x.CategoryId));
+                    }
                 }
             }
         }

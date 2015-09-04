@@ -24,7 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::CategoryGroup { Id = 123, Name = "category group", Rate = 1 });
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.CategoryGroups.Map(x).ById(123), Inquire(new CI::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }));
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.CategoryGroups.Map(x).ById(123), Inquire(new CI::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }));
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Client { Id = 1, Name = "a client" });
 
             Transformation.Create(query)
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Clients.Map(x).ById(1), Inquire(new CI::Client { Name = "a client" }), x => new { x.Name }, "The name should be processed.");
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Clients.Map(x).ById(1), Inquire(new CI::Client { Name = "a client" }), x => new { x.Name }, "The name should be processed.");
         }
 
         [Test]
@@ -46,9 +46,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Contact { ClientId = 3 });
 
             Transformation.Create(query)
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 3), Inquire(new CI::ClientContact { ClientId = 3 }), x => new { x.ClientId }, "The client reference should be processed.");
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 3), Inquire(new CI::ClientContact { ClientId = 3 }), x => new { x.ClientId }, "The client reference should be processed.");
         }
 
         [Test]
@@ -71,30 +71,30 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             // TODO: split into several tests
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },
                                            "The name should be processed.")
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { CreatedOn = monthAgo }),
                                            x => new { x.CreatedOn },
                                            "The createdOn should be processed.")
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1, 2),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
                                            Inquire(new CI::Firm { LastDisqualifiedOn = dayAgo },
                                                    new CI::Firm { LastDisqualifiedOn = now }),
                                            x => new { x.LastDisqualifiedOn },
                                            "The disqualifiedOn should be processed.")
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1, 2),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
                                            Inquire(new CI::Firm { LastDistributedOn = dayAgo },
                                                    new CI::Firm { LastDistributedOn = null }),
                                            x => new { x.LastDistributedOn },
                                            "The distributedOn should be processed.")
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1, 2),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
                                            Inquire(new CI::Firm { AddressCount = 2 },
                                                    new CI::Firm { AddressCount = 0 }),
                                            x => new { x.AddressCount },
                                            "The address count should be processed.")
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1, 2),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
                                            Inquire(new CI::Firm { Id = 1, ClientId = null, ProjectId = 1, TerritoryId = 1 },
                                                    new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2, TerritoryId = 2 }),
                                            x => new { x.Id, x.ClientId, x.ProjectId, x.TerritoryId },
@@ -118,10 +118,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Contact { Id = 3, ClientId = 3, HasPhone = false, HasWebsite = true });
 
             Transformation.Create(query)
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(4), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite });
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(4), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite });
         }
 
         [Test]
@@ -143,11 +143,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::FirmContact { Id = 3, FirmAddressId = 4 });
 
             Transformation.Create(query)
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(4), Inquire(new CI::Firm { HasPhone = false, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
-                .VerifyTransform(x => Specs.Facts.Map.ToCI.Firms.Map(x).ById(5), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite });
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(4), Inquire(new CI::Firm { HasPhone = false, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
+                .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(5), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite });
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Account { Id = 3, Balance = 345, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 2 });
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.FirmBalances.Map(x).Where(b => new long[] { 1, 2, 3 }.Contains(b.FirmId)).OrderBy(fb => fb.FirmId),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmBalances.Map(x).Where(b => new long[] { 1, 2, 3 }.Contains(b.FirmId)).OrderBy(fb => fb.FirmId),
                                            Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1 },
                                                    new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
                                                    new CI::FirmBalance { FirmId = 3, Balance = 123, AccountId = 1 }),
@@ -193,7 +193,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 });
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.FirmCategories.Map(x).Where(c => c.FirmId == 1),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmCategories.Map(x).Where(c => c.FirmId == 1),
                                            Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
                                                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
                                                    new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
@@ -209,7 +209,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Project { Id = 456, Name = "p2", OrganizationUnitId = 1 });
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Projects.Map(x).ById(123, 456),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Projects.Map(x).ById(123, 456),
                                            Inquire(new CI::Project { Id = 123, Name = "p1" },
                                                    new CI::Project { Id = 456, Name = "p2" }),
                                            "The projects should be processed.");
@@ -232,7 +232,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             query.AddRange(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }));
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.ProjectCategories.Map(x).Where(c => c.ProjectId == 1),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.ProjectCategories.Map(x).Where(c => c.ProjectId == 1),
                                            Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 },
                                                    new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
         }
@@ -247,7 +247,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 });
 
             Transformation.Create(query)
-                          .VerifyTransform(x => Specs.Facts.Map.ToCI.Territories.Map(x).ById(1, 2),
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.Territories.Map(x).ById(1, 2),
                                            Inquire(new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
                                                    new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }));
         }

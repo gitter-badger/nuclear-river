@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
         [Test]
         public void ReloadFirmCategoryStatistics()
         {
-            Reload(query => Specs.Map.Statistics.StatisticsTransformationContext_FirmCategoryStatistics.Map(query));
+            Reload(query => Specs.Map.Facts.ToStatistics.FirmCategoryStatistics.Map(query));
         }
 
         private void Reload<T>(Func<IQuery, IQueryable<T>> loader)

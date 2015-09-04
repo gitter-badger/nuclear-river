@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
 using NuClear.AdvancedSearch.Replication.Specifications;
 
@@ -15,8 +14,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             new[]
             {
                 StatisticsOfType<CI::FirmCategoryStatistics>()
-                    .HasSource(Specs.Map.Statistics.StatisticsTransformationContext_FirmCategoryStatistics)
-                    .HasTarget(Specs.Map.Statistics.StatisticsContext_FirmCategoryStatistics)
+                    .HasSource(Specs.Map.Facts.ToStatistics.FirmCategoryStatistics)
+                    .HasTarget(Specs.Map.CI.ToStatistics.FirmCategoryStatistics)
                     .HasFilter(
                         (projectId, categoryIds) =>
                         categoryIds.Contains(null)

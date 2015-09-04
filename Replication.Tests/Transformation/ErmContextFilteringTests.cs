@@ -33,34 +33,34 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Accounts()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Accounts()).ById(2), Inquire<Account>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Accounts()).ById(3), Inquire<Account>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Accounts()).ById(4), Inquire<Account>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Accounts()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Accounts()).ById(2), Inquire<Account>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Accounts()).ById(3), Inquire<Account>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Accounts()).ById(4), Inquire<Account>());
         }
 
         [Test]
         public void ShouldReadAllActivityTypes()
         {
-            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Appointments()).ById(ids));
-            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Phonecalls()).ById(ids));
-            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Tasks()).ById(ids));
-            ShouldReadActivity((q, ids) => q.For(Specs.Erm.Find.Letters()).ById(ids));
+            ShouldReadActivity((q, ids) => q.For(Specs.Find.Erm.Appointments()).ById(ids));
+            ShouldReadActivity((q, ids) => q.For(Specs.Find.Erm.Phonecalls()).ById(ids));
+            ShouldReadActivity((q, ids) => q.For(Specs.Find.Erm.Tasks()).ById(ids));
+            ShouldReadActivity((q, ids) => q.For(Specs.Find.Erm.Letters()).ById(ids));
         }
 
         [Test]
         public void ShouldReadAllActivityReferenceTypes()
         {
-            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientAppointments()), q => q.For(Specs.Erm.Find.FirmAppointments()));
-            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientPhonecalls()), q => q.For(Specs.Erm.Find.FirmPhonecalls()));
-            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientTasks()), q => q.For(Specs.Erm.Find.FirmTasks()));
-            ShouldReadActivityReference(q => q.For(Specs.Erm.Find.ClientLetters()), q => q.For(Specs.Erm.Find.FirmLetters()));
+            ShouldReadActivityReference(q => q.For(Specs.Find.Erm.ClientAppointments()), q => q.For(Specs.Find.Erm.FirmAppointments()));
+            ShouldReadActivityReference(q => q.For(Specs.Find.Erm.ClientPhonecalls()), q => q.For(Specs.Find.Erm.FirmPhonecalls()));
+            ShouldReadActivityReference(q => q.For(Specs.Find.Erm.ClientTasks()), q => q.For(Specs.Find.Erm.FirmTasks()));
+            ShouldReadActivityReference(q => q.For(Specs.Find.Erm.ClientLetters()), q => q.For(Specs.Find.Erm.FirmLetters()));
         }
 
         [Test]
         public void ShouldReadBranchOfficeOrganizationUnit()
         {
-            var specification = Specs.Erm.Find.BranchOfficeOrganizationUnits();
+            var specification = Specs.Find.Erm.BranchOfficeOrganizationUnits();
 
             var data = new[]
                        {
@@ -99,10 +99,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Categories()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Categories()).ById(2), Inquire<Category>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Categories()).ById(3), Inquire<Category>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Categories()).ById(4), Inquire<Category>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Categories()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Categories()).ById(2), Inquire<Category>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Categories()).ById(3), Inquire<Category>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Categories()).ById(4), Inquire<Category>());
         }
 
         [Test]
@@ -122,10 +122,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses()).ById(2), Inquire<CategoryFirmAddress>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses()).ById(3), Inquire<CategoryFirmAddress>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryFirmAddresses()).ById(4), Inquire<CategoryFirmAddress>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryFirmAddresses()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryFirmAddresses()).ById(2), Inquire<CategoryFirmAddress>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryFirmAddresses()).ById(3), Inquire<CategoryFirmAddress>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryFirmAddresses()).ById(4), Inquire<CategoryFirmAddress>());
         }
 
         [Test]
@@ -145,10 +145,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups()).ById(2), Inquire<CategoryGroup>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups()).ById(3), Inquire<CategoryGroup>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryGroups()).ById(4), Inquire<CategoryGroup>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryGroups()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryGroups()).ById(2), Inquire<CategoryGroup>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryGroups()).ById(3), Inquire<CategoryGroup>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryGroups()).ById(4), Inquire<CategoryGroup>());
         }
 
         [Test]
@@ -168,10 +168,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits()).ById(2), Inquire<CategoryOrganizationUnit>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits()).ById(3), Inquire<CategoryOrganizationUnit>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.CategoryOrganizationUnits()).ById(4), Inquire<CategoryOrganizationUnit>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryOrganizationUnits()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryOrganizationUnits()).ById(2), Inquire<CategoryOrganizationUnit>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryOrganizationUnits()).ById(3), Inquire<CategoryOrganizationUnit>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.CategoryOrganizationUnits()).ById(4), Inquire<CategoryOrganizationUnit>());
         }
 
         [Test]
@@ -200,10 +200,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Clients()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Clients()).ById(2), Inquire<Client>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Clients()).ById(3), Inquire<Client>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Clients()).ById(4), Inquire<Client>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Clients()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Clients()).ById(2), Inquire<Client>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Clients()).ById(3), Inquire<Client>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Clients()).ById(4), Inquire<Client>());
         }
 
         [Test]
@@ -234,10 +234,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Contacts()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Contacts()).ById(2), Inquire<Contact>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Contacts()).ById(3), Inquire<Contact>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Contacts()).ById(4), Inquire<Contact>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Contacts()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Contacts()).ById(2), Inquire<Contact>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Contacts()).ById(3), Inquire<Contact>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Contacts()).ById(4), Inquire<Contact>());
         }
 
         [Test]
@@ -259,11 +259,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[4]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Firms()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Firms()).ById(2), Inquire<Firm>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Firms()).ById(3), Inquire<Firm>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Firms()).ById(4), Inquire<Firm>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Firms()).ById(5), Inquire<Firm>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Firms()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Firms()).ById(2), Inquire<Firm>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Firms()).ById(3), Inquire<Firm>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Firms()).ById(4), Inquire<Firm>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Firms()).ById(5), Inquire<Firm>());
         }
 
         [Test]
@@ -285,11 +285,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[4]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses()).ById(2), Inquire<FirmAddress>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses()).ById(3), Inquire<FirmAddress>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses()).ById(4), Inquire<FirmAddress>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.FirmAddresses()).ById(5), Inquire(data[4]));
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(2), Inquire<FirmAddress>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(3), Inquire<FirmAddress>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(4), Inquire<FirmAddress>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(5), Inquire(data[4]));
         }
 
         //[Test]
@@ -307,9 +307,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         //         .Has(data[2]);
 
         //    Reader.Create(Query)
-        //          .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts()).ById(1), Inquire(data[0]))
-        //          .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts()).ById(2), Inquire(data[1]))
-        //          .VerifyRead(x => x.For(Specs.Erm.Find.FirmContacts()).ById(3), Inquire(data[2]));
+        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(1), Inquire(data[0]))
+        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(2), Inquire(data[1]))
+        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(3), Inquire(data[2]));
         //}
 
         [Test]
@@ -329,10 +329,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[3]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons()).ById(2), Inquire<LegalPerson>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons()).ById(3), Inquire<LegalPerson>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.LegalPersons()).ById(4), Inquire<LegalPerson>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.LegalPersons()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.LegalPersons()).ById(2), Inquire<LegalPerson>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.LegalPersons()).ById(3), Inquire<LegalPerson>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.LegalPersons()).ById(4), Inquire<LegalPerson>());
         }
 
         [Test]
@@ -354,11 +354,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[4]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Orders()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Orders()).ById(2), Inquire<Order>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Orders()).ById(3), Inquire<Order>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Orders()).ById(4), Inquire<Order>())
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Orders()).ById(5), Inquire(data[4]));
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Orders()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Orders()).ById(2), Inquire<Order>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Orders()).ById(3), Inquire<Order>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Orders()).ById(4), Inquire<Order>())
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Orders()).ById(5), Inquire(data[4]));
         }
 
         [Test]
@@ -374,8 +374,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[1]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Projects()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Projects()).ById(2), Inquire<Project>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Projects()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Projects()).ById(2), Inquire<Project>());
         }
 
         [Test]
@@ -391,8 +391,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(data[1]);
 
             Reader.Create(Query)
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Territories()).ById(1), Inquire(data[0]))
-                  .VerifyRead(x => x.For(Specs.Erm.Find.Territories()).ById(2), Inquire<Territory>());
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Territories()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.Territories()).ById(2), Inquire<Territory>());
         }
 
         private void ShouldReadActivity<T>(Func<IQuery, IReadOnlyCollection<long>,  IEnumerable<T>> func)

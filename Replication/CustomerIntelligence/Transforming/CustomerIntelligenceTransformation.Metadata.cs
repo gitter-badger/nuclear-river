@@ -16,28 +16,28 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             new[]
             {
                 AggregateOfType<Firm>()
-                    .HasSource(Specs.Facts.Map.ToCI.Firms)
-                    .HasValueObject(Specs.Facts.Map.ToCI.FirmActivities, Specs.Find.CI.FirmActivities)
-                    .HasValueObject(Specs.Facts.Map.ToCI.FirmBalances, Specs.Find.CI.FirmBalances)
-                    .HasValueObject(Specs.Facts.Map.ToCI.FirmCategories, Specs.Find.CI.FirmCategories)
+                    .HasSource(Specs.Map.Facts.ToCI.Firms)
+                    .HasValueObject(Specs.Map.Facts.ToCI.FirmActivities, Specs.Find.CI.FirmActivities)
+                    .HasValueObject(Specs.Map.Facts.ToCI.FirmBalances, Specs.Find.CI.FirmBalances)
+                    .HasValueObject(Specs.Map.Facts.ToCI.FirmCategories, Specs.Find.CI.FirmCategories)
                     .Build(),
 
                 AggregateOfType<Client>()
-                    .HasSource(Specs.Facts.Map.ToCI.Clients)
-                    .HasValueObject(Specs.Facts.Map.ToCI.ClientContacts, Specs.Find.CI.ClientContacts)
+                    .HasSource(Specs.Map.Facts.ToCI.Clients)
+                    .HasValueObject(Specs.Map.Facts.ToCI.ClientContacts, Specs.Find.CI.ClientContacts)
                     .Build(),
 
                 AggregateOfType<Project>()
-                    .HasSource(Specs.Facts.Map.ToCI.Projects)
-                    .HasValueObject(Specs.Facts.Map.ToCI.ProjectCategories, Specs.Find.CI.ProjectCategories)
+                    .HasSource(Specs.Map.Facts.ToCI.Projects)
+                    .HasValueObject(Specs.Map.Facts.ToCI.ProjectCategories, Specs.Find.CI.ProjectCategories)
                     .Build(),
 
                 AggregateOfType<Territory>()
-                    .HasSource(Specs.Facts.Map.ToCI.Territories)
+                    .HasSource(Specs.Map.Facts.ToCI.Territories)
                     .Build(),
 
                 AggregateOfType<CategoryGroup>()
-                    .HasSource(Specs.Facts.Map.ToCI.CategoryGroups)
+                    .HasSource(Specs.Map.Facts.ToCI.CategoryGroups)
                     .Build()
             }.ToDictionary(x => x.Type);
 

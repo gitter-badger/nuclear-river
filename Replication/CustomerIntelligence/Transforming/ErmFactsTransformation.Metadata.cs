@@ -19,98 +19,98 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             = new[]
               {
                   FactOfType<Activity>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Activities)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByActivity)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByClientActivity)
+                      .HasSource(Specs.Map.Erm.ToFacts.Activities)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByActivity)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByClientActivity)
                       .Build(),
 
                   FactOfType<Account>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Accounts)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByAccount)
+                      .HasSource(Specs.Map.Erm.ToFacts.Accounts)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByAccount)
                       .Build(),
 
                   FactOfType<BranchOfficeOrganizationUnit>()
-                      .HasSource(Specs.Erm.Map.ToFacts.BranchOfficeOrganizationUnits)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByBranchOfficeOrganizationUnit)
+                      .HasSource(Specs.Map.Erm.ToFacts.BranchOfficeOrganizationUnits)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByBranchOfficeOrganizationUnit)
                       .Build(),
 
                   FactOfType<Category>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Categories)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategory)
+                      .HasSource(Specs.Map.Erm.ToFacts.Categories)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByCategory)
                       .Build(),
 
                   FactOfType<CategoryFirmAddress>()
-                      .HasSource(Specs.Erm.Map.ToFacts.CategoryFirmAddresses)
-                      .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirmAddressCategory)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryFirmAddress)
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByCategoryFirmAddress)
+                      .HasSource(Specs.Map.Erm.ToFacts.CategoryFirmAddresses)
+                      .LeadsToStatisticsCalculation(Specs.Map.Facts.ToStatistics.ByFirmAddressCategory)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByCategoryFirmAddress)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByCategoryFirmAddress)
                       .Build(),
 
                   FactOfType<CategoryGroup>()
-                      .HasSource(Specs.Erm.Map.ToFacts.CategoryGroups)
+                      .HasSource(Specs.Map.Erm.ToFacts.CategoryGroups)
                       .HasMatchedAggregate<CI::CategoryGroup>()
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryGroup)
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByCategoryGroup)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByCategoryGroup)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByCategoryGroup)
                       .Build(),
 
                   FactOfType<CategoryOrganizationUnit>()
-                      .HasSource(Specs.Erm.Map.ToFacts.CategoryOrganizationUnits)
-                      .HasDependentAggregate<CI::Project>(Specs.Facts.Map.ToProjectAggregate.ByCategoryOrganizationUnit)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByCategoryOrganizationUnit)
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByCategoryOrganizationUnit)
+                      .HasSource(Specs.Map.Erm.ToFacts.CategoryOrganizationUnits)
+                      .HasDependentAggregate<CI::Project>(Specs.Map.Facts.ToProjectAggregate.ByCategoryOrganizationUnit)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByCategoryOrganizationUnit)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByCategoryOrganizationUnit)
                       .Build(),
 
                   FactOfType<Client>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Clients)
+                      .HasSource(Specs.Map.Erm.ToFacts.Clients)
                       .HasMatchedAggregate<CI::Client>()
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByClient)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByClient)
                       .Build(),
 
                   FactOfType<Contact>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Contacts)
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByContacts)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByContacts)
+                      .HasSource(Specs.Map.Erm.ToFacts.Contacts)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByContacts)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByContacts)
                       .Build(),
 
                   FactOfType<Firm>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Firms)
-                      .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirm)
+                      .HasSource(Specs.Map.Erm.ToFacts.Firms)
+                      .LeadsToStatisticsCalculation(Specs.Map.Facts.ToStatistics.ByFirm)
                       .HasMatchedAggregate<CI::Firm>()
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByFirm)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByFirm)
                       .Build(),
 
                   FactOfType<FirmAddress>()
-                      .HasSource(Specs.Erm.Map.ToFacts.FirmAddresses)
-                      .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByFirmAddress)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmAddress)
-                      .HasDependentAggregate<CI::Client>(Specs.Facts.Map.ToClientAggregate.ByFirmAddress)
+                      .HasSource(Specs.Map.Erm.ToFacts.FirmAddresses)
+                      .LeadsToStatisticsCalculation(Specs.Map.Facts.ToStatistics.ByFirmAddress)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByFirmAddress)
+                      .HasDependentAggregate<CI::Client>(Specs.Map.Facts.ToClientAggregate.ByFirmAddress)
                       .Build(),
 
                   FactOfType<FirmContact>()
-                      .HasSource(Specs.Erm.Map.ToFacts.FirmContacts)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByFirmContacts)
+                      .HasSource(Specs.Map.Erm.ToFacts.FirmContacts)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByFirmContacts)
                       .Build(),
 
                   FactOfType<LegalPerson>()
-                      .HasSource(Specs.Erm.Map.ToFacts.LegalPersons)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByLegalPerson)
+                      .HasSource(Specs.Map.Erm.ToFacts.LegalPersons)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByLegalPerson)
                       .Build(),
 
                   FactOfType<Order>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Orders)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByOrder)
+                      .HasSource(Specs.Map.Erm.ToFacts.Orders)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByOrder)
                       .Build(),
 
                   FactOfType<Project>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Projects)
-                      .LeadsToStatisticsCalculation(Specs.Facts.Map.ToStatistics.ByProject)
+                      .HasSource(Specs.Map.Erm.ToFacts.Projects)
+                      .LeadsToStatisticsCalculation(Specs.Map.Facts.ToStatistics.ByProject)
                       .HasMatchedAggregate<CI::Project>()
-                      .HasDependentAggregate<CI::Territory>(Specs.Facts.Map.ToTerritoryAggregate.ByProject)
-                      .HasDependentAggregate<CI::Firm>(Specs.Facts.Map.ToFirmAggregate.ByProject)
+                      .HasDependentAggregate<CI::Territory>(Specs.Map.Facts.ToTerritoryAggregate.ByProject)
+                      .HasDependentAggregate<CI::Firm>(Specs.Map.Facts.ToFirmAggregate.ByProject)
                       .Build(),
 
                   FactOfType<Territory>()
-                      .HasSource(Specs.Erm.Map.ToFacts.Territories)
+                      .HasSource(Specs.Map.Erm.ToFacts.Territories)
                       .HasMatchedAggregate<CI::Territory>()
                       .Build(),
 

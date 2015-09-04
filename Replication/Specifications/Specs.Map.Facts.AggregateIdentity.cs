@@ -17,9 +17,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
     public static partial class Specs
     {
-        public static partial class Facts
+        public static partial class Map
         {
-            public static partial class Map
+            public static partial class Facts
             {
                 public static class ToClientAggregate
                 {
@@ -331,7 +331,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     }
                 }
 
-                public static class ToStatistics
+                public static partial class ToStatistics
                 {
                     public static MapSpecification<IQuery, IEnumerable<Tuple<long, long?>>> ByFirm(FindSpecification<Facts::Firm> specification)
                     {

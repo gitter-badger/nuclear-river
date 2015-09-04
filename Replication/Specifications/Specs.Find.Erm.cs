@@ -8,9 +8,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 {
     public static partial class Specs
     {
-        public static partial class Erm
+        public static partial class Find
         {
-            public static class Find
+            public static class Erm
             {
                 private const int ActivityStatusCompleted = 2;
                 private const int RegardingObjectReference = 1;

@@ -11,9 +11,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
     public static partial class Specs
     {
-        public static partial class Facts
+        public static partial class Map
         {
-            public static partial class Map
+            public static partial class Facts
             {
                 // ReSharper disable once InconsistentNaming
                 public static class ToCI

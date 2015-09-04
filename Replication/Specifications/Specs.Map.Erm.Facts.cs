@@ -8,9 +8,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 {
     public static partial class Specs
     {
-        public static partial class Erm
+        public static partial class Map
         {
-            public static class Map
+            public static partial class Erm
             {
                 public static class ToFacts
                 {
@@ -18,17 +18,17 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                         new MapSpecification<IQuery, IQueryable<Activity>>(
                             q =>
                             {
-                                var appointmentActivities = MapToActivity(q.For(Find.Appointments()), q.For(Find.FirmAppointments()), q.For(Find.ClientAppointments()));
-                                var phonecallActivities = MapToActivity(q.For(Find.Phonecalls()), q.For(Find.FirmPhonecalls()), q.For(Find.ClientPhonecalls()));
-                                var taskActivities = MapToActivity(q.For(Find.Tasks()), q.For(Find.FirmTasks()), q.For(Find.ClientTasks()));
-                                var letterActivities = MapToActivity(q.For(Find.Letters()), q.For(Find.FirmLetters()), q.For(Find.ClientLetters()));
+                                var appointmentActivities = MapToActivity(q.For(Find.Erm.Appointments()), q.For(Find.Erm.FirmAppointments()), q.For(Find.Erm.ClientAppointments()));
+                                var phonecallActivities = MapToActivity(q.For(Find.Erm.Phonecalls()), q.For(Find.Erm.FirmPhonecalls()), q.For(Find.Erm.ClientPhonecalls()));
+                                var taskActivities = MapToActivity(q.For(Find.Erm.Tasks()), q.For(Find.Erm.FirmTasks()), q.For(Find.Erm.ClientTasks()));
+                                var letterActivities = MapToActivity(q.For(Find.Erm.Letters()), q.For(Find.Erm.FirmLetters()), q.For(Find.Erm.ClientLetters()));
 
                                 return appointmentActivities.Union(phonecallActivities).Union(taskActivities).Union(letterActivities);
                             });
 
                     public static readonly MapSpecification<IQuery, IQueryable<Account>> Accounts =
                         new MapSpecification<IQuery, IQueryable<Account>>(
-                            q => from account in q.For(Find.Accounts())
+                            q => from account in q.For(Find.Erm.Accounts())
                                  select new Account
                                  {
                                      Id = account.Id,
@@ -39,7 +39,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<BranchOfficeOrganizationUnit>> BranchOfficeOrganizationUnits =
                         new MapSpecification<IQuery, IQueryable<BranchOfficeOrganizationUnit>>(
-                            q => from branchOfficeOrganizationUnit in q.For(Find.BranchOfficeOrganizationUnits())
+                            q => from branchOfficeOrganizationUnit in q.For(Find.Erm.BranchOfficeOrganizationUnits())
                                  select new BranchOfficeOrganizationUnit
                                  {
                                      Id = branchOfficeOrganizationUnit.Id,
@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Category>> Categories =
                         new MapSpecification<IQuery, IQueryable<Category>>(
-                            q => from category in q.For(Find.Categories())
+                            q => from category in q.For(Find.Erm.Categories())
                                  select new Category
                                  {
                                      Id = category.Id,
@@ -59,7 +59,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<CategoryGroup>> CategoryGroups =
                         new MapSpecification<IQuery, IQueryable<CategoryGroup>>(
-                            q => from categoryGroup in q.For(Find.CategoryGroups())
+                            q => from categoryGroup in q.For(Find.Erm.CategoryGroups())
                                  select new CategoryGroup
                                  {
                                      Id = categoryGroup.Id,
@@ -69,7 +69,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<CategoryFirmAddress>> CategoryFirmAddresses =
                         new MapSpecification<IQuery, IQueryable<CategoryFirmAddress>>(
-                            q => from categoryFirmAddress in q.For(Find.CategoryFirmAddresses())
+                            q => from categoryFirmAddress in q.For(Find.Erm.CategoryFirmAddresses())
                                  select new CategoryFirmAddress
                                  {
                                      Id = categoryFirmAddress.Id,
@@ -79,7 +79,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<CategoryOrganizationUnit>> CategoryOrganizationUnits =
                         new MapSpecification<IQuery, IQueryable<CategoryOrganizationUnit>>(
-                            q => from categoryOrganizationUnit in q.For(Find.CategoryOrganizationUnits())
+                            q => from categoryOrganizationUnit in q.For(Find.Erm.CategoryOrganizationUnits())
                                  select new CategoryOrganizationUnit
                                  {
                                      Id = categoryOrganizationUnit.Id,
@@ -90,7 +90,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Client>> Clients =
                         new MapSpecification<IQuery, IQueryable<Client>>(
-                            q => from client in q.For(Find.Clients())
+                            q => from client in q.For(Find.Erm.Clients())
                                  select new Client
                                  {
                                      Id = client.Id,
@@ -102,7 +102,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Contact>> Contacts =
                         new MapSpecification<IQuery, IQueryable<Contact>>(
-                            q => from contact in q.For(Find.Contacts())
+                            q => from contact in q.For(Find.Erm.Contacts())
                                  select new Contact
                                  {
                                      Id = contact.Id,
@@ -115,7 +115,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Firm>> Firms =
                         new MapSpecification<IQuery, IQueryable<Firm>>(
-                            q => from firm in q.For(Find.Firms())
+                            q => from firm in q.For(Find.Erm.Firms())
                                  select new Firm
                                  {
                                      Id = firm.Id,
@@ -130,7 +130,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<FirmAddress>> FirmAddresses =
                         new MapSpecification<IQuery, IQueryable<FirmAddress>>(
-                            q => from firmAddress in q.For(Find.FirmAddresses())
+                            q => from firmAddress in q.For(Find.Erm.FirmAddresses())
                                  select new FirmAddress
                                  {
                                      Id = firmAddress.Id,
@@ -151,7 +151,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<LegalPerson>> LegalPersons =
                         new MapSpecification<IQuery, IQueryable<LegalPerson>>(
-                            q => from legalPerson in q.For(Find.LegalPersons())
+                            q => from legalPerson in q.For(Find.Erm.LegalPersons())
                                  where legalPerson.ClientId != null
                                  select new LegalPerson
                                  {
@@ -161,7 +161,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Order>> Orders =
                         new MapSpecification<IQuery, IQueryable<Order>>(
-                            q => from order in q.For(Find.Orders())
+                            q => from order in q.For(Find.Erm.Orders())
                                  where new[] { OrderState.OnTermination, OrderState.Archive }.Contains(order.WorkflowStepId)
                                  select new Order
                                  {
@@ -172,7 +172,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Project>> Projects =
                         new MapSpecification<IQuery, IQueryable<Project>>(
-                            q => from project in q.For(Find.Projects())
+                            q => from project in q.For(Find.Erm.Projects())
                                  where project.OrganizationUnitId != null
                                  select new Project
                                  {
@@ -183,7 +183,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<Territory>> Territories =
                         new MapSpecification<IQuery, IQueryable<Territory>>(
-                            q => from territory in q.For(Find.Territories())
+                            q => from territory in q.For(Find.Erm.Territories())
                                  select new Territory
                                  {
                                      Id = territory.Id,

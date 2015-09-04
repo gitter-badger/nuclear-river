@@ -145,13 +145,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\DataMapper.cs" />
     <Compile Include="CustomerIntelligence\Data\Schema.Erm.cs" />
-    <Compile Include="Specifications\Specs.Find.Statistics.cs" />
-    <Compile Include="Specifications\Specs.Map.Statistics.cs" />
+    <Compile Include="Specifications\Specs.Find.Bit.cs" />
+    <Compile Include="Specifications\Specs.Map.Facts.Statistics.cs" />
+    <Compile Include="Specifications\Specs.Map.CI.Statistics.cs" />
     <Compile Include="Specifications\Specs.Find.Facts.cs" />
     <Compile Include="Specifications\Specs.Map.Facts.CI.cs" />
     <Compile Include="Specifications\Specs.Map.Erm.Facts.cs" />
-    <Compile Include="Specifications\Specs.Find.cs" />
-    <Compile Include="Specifications\Specs.Map.Facts.cs" />
+    <Compile Include="Specifications\Specs.Map.Facts.AggregateIdentity.cs" />
     <Compile Include="Specifications\Specs.Find.Erm.cs" />
     <Compile Include="Data\Linq2DbDataConnectionTransactionManager.cs" />
     <Compile Include="Data\IDataMapper.cs" />
