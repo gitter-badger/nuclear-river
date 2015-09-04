@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using NuClear.AdvancedSearch.Replication.Model;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
@@ -44,6 +46,35 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
         private bool Equals(FirmCategoryStatistics other)
         {
             return FirmId == other.FirmId && CategoryId == other.CategoryId;
+        }
+
+        public class FullEqualityComparer : IEqualityComparer<FirmCategoryStatistics>
+        {
+            public bool Equals(FirmCategoryStatistics x, FirmCategoryStatistics y)
+            {
+                return x.ProjectId == y.ProjectId
+                       && x.FirmId == y.FirmId
+                       && x.CategoryId == y.CategoryId
+                       && x.Hits == y.Hits
+                       && x.Shows == y.Shows
+                       && x.AdvertisersShare == y.AdvertisersShare
+                       && x.FirmCount == y.FirmCount;
+            }
+
+            public int GetHashCode(FirmCategoryStatistics obj)
+            {
+                unchecked
+                {
+                    var code = obj.ProjectId.GetHashCode();
+                    code = (code * 397) ^ obj.FirmId.GetHashCode();
+                    code = (code * 397) ^ obj.CategoryId.GetHashCode();
+                    code = (code * 397) ^ obj.Hits.GetHashCode();
+                    code = (code * 397) ^ obj.Shows.GetHashCode();
+                    code = (code * 397) ^ obj.AdvertisersShare.GetHashCode();
+                    code = (code * 397) ^ obj.FirmCount.GetHashCode();
+                    return code;
+                }
+            }
         }
     }
 }

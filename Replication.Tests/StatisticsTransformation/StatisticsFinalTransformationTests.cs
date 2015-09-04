@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Moq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming.Operations;
 using NuClear.AdvancedSearch.Replication.Data;
@@ -56,6 +52,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
         }
 
+        [Test]
+        public void ShouldUpdateOnlyChangedRecords()
+        {
+            Mock<IDataMapper> mapper;
+            var transformation = CreateTransformationWithDataIntersection(out mapper);
+            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
+
+            transformation.Recalculate(new[] { operation });
+
+            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
+            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.AtLeastOnce);
+        }
+
         private static StatisticsFinalTransformation CreateTransformation(out Mock<IDataMapper> mapperMock)
         {
             var data = new[]
@@ -68,10 +77,34 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
                            new FirmCategoryStatistics { ProjectId = 2, FirmId = 12, CategoryId = 100 },
                        };
 
+            return CreateTransformation(data,
+                                        data.Select(x => new FirmCategoryStatistics { ProjectId = x.ProjectId, FirmId = x.FirmId, CategoryId = x.CategoryId, FirmCount = 1 }),
+                                        out mapperMock);
+        }
+
+        private static StatisticsFinalTransformation CreateTransformationWithDataIntersection(out Mock<IDataMapper> mapperMock)
+        {
+            var sourceData = new[]
+                             {
+                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100, Shows = 1 },
+                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101, Shows = 1 },
+                             };
+
+            var targetData = new[]
+                             {
+                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100, Shows = 1 },
+                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101, Shows = 2 },
+                             };
+
+            return CreateTransformation(sourceData, targetData, out mapperMock);
+        }
+
+        private static StatisticsFinalTransformation CreateTransformation(IEnumerable<FirmCategoryStatistics> sourceData, IEnumerable<FirmCategoryStatistics> targetData, out Mock<IDataMapper> mapperMock)
+        {
             var source = new Mock<IStatisticsContext>();
-            source.SetupGet(x => x.FirmCategoryStatistics).Returns(Inquire(data));
+            source.SetupGet(x => x.FirmCategoryStatistics).Returns(sourceData.AsQueryable());
             var target = new Mock<IStatisticsContext>();
-            target.SetupGet(x => x.FirmCategoryStatistics).Returns(Inquire(data));
+            target.SetupGet(x => x.FirmCategoryStatistics).Returns(targetData.AsQueryable());
             var mapper = new Mock<IDataMapper>();
             var transformation = new StatisticsFinalTransformation(source.Object, target.Object, mapper.Object);
 

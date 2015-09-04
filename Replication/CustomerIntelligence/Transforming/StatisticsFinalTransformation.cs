@@ -53,9 +53,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private MergeTool.MergeResult<CI.FirmCategoryStatistics> DetectChanges(Expression<Func<CI.FirmCategoryStatistics, bool>> filter)
         {
-            return MergeTool.Merge(
+            // Сначала сравниением получаем различающиеся записи,
+            // затем получаем те из различающихся, которые совпадают по идентификатору.
+            var intermediateResult = MergeTool.Merge(
                 _source.FirmCategoryStatistics.Where(filter).AsEnumerable(),
-                _target.FirmCategoryStatistics.Where(filter).AsEnumerable());
+                _target.FirmCategoryStatistics.Where(filter).AsEnumerable(),
+                new CI.FirmCategoryStatistics.FullEqualityComparer());
+
+            return MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement);
         }
     }
 }
