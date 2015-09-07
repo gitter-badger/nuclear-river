@@ -27,31 +27,29 @@ Task Run-UnitTests {
 	Run-UnitTests $projects
 }
 
-Properties { $OptionQuerying = $true }
-Task Build-OData -Precondition { $OptionQuerying } {
+Task Build-OData -Precondition { $Metadata['Web.OData'] -ne $null } {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
 	Build-WebPackage $projectFileName 'Web.OData'
 }
-Task Deploy-OData -Depends Take-ODataOffline -Precondition { $OptionQuerying } {
+Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] -ne $null } {
 	Deploy-WebPackage 'Web.OData'
 	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
 }
 
-Task Take-ODataOffline -Precondition { $OptionQuerying } {
+Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] -ne $null } {
 	Take-WebsiteOffline 'Web.OData'
 }
 
-Properties { $OptionReplication = $true }
-Task Build-TaskService -Precondition { $OptionReplication } {
+Task Build-TaskService -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
 
-Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $OptionReplication } {
+Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
 	Deploy-WinService 'Replication.EntryPoint'
 }
 
-Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $OptionReplication } {
+Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
 	Take-WinServiceOffline 'Replication.EntryPoint'
 }
 
@@ -73,20 +71,19 @@ Task Build-ReplicationLibs {
 	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 }
 
-Properties { $UpdateSchemas = '' }
-Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { ![string]::IsNullOrEmpty($UpdateSchemas) } {
+Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { $Metadata['UpdateSchemas'] -ne $null -and $Metadata['UpdateSchemas'].Count -ne 0 } {
 
 	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
 	$config = Get-ReplicationConfig
 
-	$sqlScriptsDir = Join-Path (Get-Metadata 'Common').Dir.Solution 'Schemas'
+	$sqlScriptsDir = Join-Path $Metadata.Common.Dir.Solution 'Schemas'
 
 	& $scriptFilePath `
 	-LibDir $libDir `
 	-Config $config `
 	-SqlScriptsDir $sqlScriptsDir `
-	-UpdateSchemas $UpdateSchemas
+	-UpdateSchemas $Metadata['UpdateSchemas']
 }
 
 function Get-ReplicationConfig {
@@ -110,7 +107,8 @@ function Get-ReplicationConfig {
 
 Task Build-Packages -depends `
 Build-OData, `
-Build-TaskService
+Build-TaskService, `
+Build-ConvertUseCasesService
 
 Task Deploy-Packages -depends `
 Take-ODataOffline, `

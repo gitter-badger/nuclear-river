@@ -4,11 +4,11 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 
-function Get-QuartzConfigMetadata ($EnvType, $Country, $Index){
+function Get-QuartzConfigMetadata ($Context){
 
-	switch ($EnvType){
+	switch ($Context.EnvType){
 		'Test' {
-			switch ($Country){
+			switch ($Context.Country){
 				'Russia' {
 					$quartzConfigs = @('Templates\quartz.Test.Russia.config')
 					
@@ -25,7 +25,7 @@ function Get-QuartzConfigMetadata ($EnvType, $Country, $Index){
 			}
 		}
 		'Production' {
-			switch ($Country){
+			switch ($Context.Country){
 				'Russia' {
 					$quartzConfigs = @('quartz.Production.Russia.config')
 					$alterQuartzConfigs = @()
@@ -41,17 +41,17 @@ function Get-QuartzConfigMetadata ($EnvType, $Country, $Index){
 			}
 		}
 		default {
-			switch ($Country){
+			switch ($Context.Country){
 				'Russia' {
-					$quartzConfigs = @("quartz.$EnvType.Russia.config")
+					$quartzConfigs = @("quartz.$($Context.EnvType).Russia.config")
 					$alterQuartzConfigs = @('Templates\quartz.Test.Russia.config')
 				}
 				'Emirates' {
-					$quartzConfigs = @("quartz.$EnvType.Emirates.config")
+					$quartzConfigs = @("quartz.$($Context.EnvType).Emirates.config")
 					$alterQuartzConfigs = @('Templates\quartz.Test.Emirates.config')
 				}
 				default {
-					$quartzConfigs = @("quartz.$EnvType.MultiCulture.config")
+					$quartzConfigs = @("quartz.$($Context.EnvType).MultiCulture.config")
 					$alterQuartzConfigs = @('Templates\quartz.Test.MultiCulture.config')
 				}
 			}
@@ -64,11 +64,14 @@ function Get-QuartzConfigMetadata ($EnvType, $Country, $Index){
 	}
 }
 
-function Get-TargetHostsMetadata ($EnvType, $Country, $Index){
+function Get-TargetHostsMetadata ($Context){
 
-	$webMetadata = Get-WebMetadata $EnvType $Country '2Gis.Erm.TaskService.Installer' $Index
+	$temp = $Context.EntryPoint
+	$Context.EntryPoint = '2Gis.Erm.TaskService.Installer'
+	$webMetadata = Get-WebMetadata $Context
+	$Context.EntryPoint = $temp
 
-	switch ($EnvType) {
+	switch ($Context.EnvType) {
 		'Production' {
 			return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
 		}
@@ -81,8 +84,8 @@ function Get-TargetHostsMetadata ($EnvType, $Country, $Index){
 	}
 }
 
-function Get-ServiceNameMetadata ($EntryPoint, $Index) {
-	switch ($EntryPoint) {
+function Get-ServiceNameMetadata ($Context) {
+	switch ($Context.EntryPoint) {
 		'Replication.EntryPoint' {
 			return @{
 				'ServiceName' = 'AdvSearch'
@@ -98,12 +101,12 @@ function Get-ServiceNameMetadata ($EntryPoint, $Index) {
 	}
 }
 
-function Get-TaskServiceMetadata ($EnvType, $Country, $EntryPoint, $Index) {
+function Get-TaskServiceMetadata ($Context) {
 
 	$metadata = @{}
-	$metadata += Get-TargetHostsMetadata $EnvType $Country $Index
-	$metadata += Get-QuartzConfigMetadata $EnvType $Country $Index
-	$metadata += Get-ServiceNameMetadata $EntryPoint $Index
+	$metadata += Get-TargetHostsMetadata $Context
+	$metadata += Get-QuartzConfigMetadata $Context
+	$metadata += Get-ServiceNameMetadata $Context
 	
 	$metadata += @{
 		'EntrypointType' = 'Desktop'

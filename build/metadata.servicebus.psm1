@@ -28,13 +28,13 @@ $SharedAccessKeys = @{
 	'Test.21' =	'fWDhmeSQ9ss+Pp44oUirEizlzEg/oBBOxCaBCsspCLo='
 }
 
-function Get-SharedAccessKeyMetadata($EnvName){
+function Get-SharedAccessKeyMetadata($Context){
 
-	if (!$SharedAccessKeys.ContainsKey($EnvName)){
+	if (!$SharedAccessKeys.ContainsKey($Context.EnvironmentName)){
 		return @{}
 	}
 
-	return @{ '{SharedAccessKey}' = $SharedAccessKeys[$EnvName] }
+	return @{ '{SharedAccessKey}' = $SharedAccessKeys[$Context.EnvironmentName] }
 }
 
 Export-ModuleMember -Function Get-SharedAccessKeyMetadata

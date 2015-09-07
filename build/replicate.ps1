@@ -1,25 +1,20 @@
-﻿param($LibDir, $Config, $SqlScriptsDir, $UpdateSchemas)
+﻿param($LibDir, $Config, $SqlScriptsDir, [string[]]$UpdateSchemas)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
-
-$AllSchemas = @('ERM', 'BIT', 'CustomerIntelligence', 'Transport')
-$UpdateSchemasArray = $UpdateSchemas.Split(@(','), 'RemoveEmptyEntries')
-$schemas = $AllSchemas | where { $UpdateSchemasArray -contains $_ }
-
 
 # load libraries
 Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($_.FullName)) }
 
 function Replicate-Data {
 
-	if($schemas -contains 'ERM'){
+	if($UpdateSchemas -contains 'ERM'){
 		Replicate-ErmToFacts
 		Replicate-FactsToCI
 	}
 
-	if($schemas -contains 'CustomerIntelligence'){
+	if($UpdateSchemas -contains 'CustomerIntelligence'){
 		Replicate-FactsToCI
 	}
 }
@@ -121,8 +116,10 @@ function Update-Schemas {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
-	foreach ($schema in $schemas) {
+	foreach ($schema in $UpdateSchemas) {
 		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$schema.sql")
+		Write-Host "$schema.sql..."
+
 		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
 	}
