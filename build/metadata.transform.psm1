@@ -31,7 +31,7 @@ function Get-XdtTransformMetadata($Context){
 function Get-RegexTransformMetadata($Context){
 
 	$regex = @{}
-	$regex += @{ '{EnvNum}' = $Context.Index }
+	$regex += @{ '{EnvNum}' = $Context['Index'] }
 	$regex += Get-SharedAccessKeyMetadata $Context
 
 	return $regex

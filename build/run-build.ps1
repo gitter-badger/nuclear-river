@@ -6,10 +6,10 @@ if ($TaskList.Count -eq 0){
 
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
-	$Properties.EntryPoint = @(
+	$Properties.EntryPoints = @(
 		#'Web.OData'
 		#'Replication.EntryPoint'
-		'ConvertUseCasesService'
+		#'ConvertUseCasesService'
 	)
 }
 

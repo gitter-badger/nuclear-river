@@ -58,7 +58,7 @@ function Parse-EnvironmentMetadata ($Properties) {
 	$environmentMetadata += $entryPointsMetadata
 
 	$updateSchemas = $Properties['UpdateSchemas']
-	if ($updateSchemas -isnot [array]){
+	if ($updateSchemas -and $updateSchemas -isnot [array]){
 		$updateSchemas = $updateSchemas.Split(@(','), 'RemoveEmptyEntries')
 		[string[]]$updateSchemas = $AllSchemas | where { $updateSchemas -contains $_ }
 	}
