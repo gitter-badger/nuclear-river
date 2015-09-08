@@ -1,12 +1,16 @@
 param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-Packages', 'Deploy-Packages')
+	$TaskList = @('Build-Packages')
 }
 
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
-	$Properties.OptionConvertUseCases = $true
+	$Properties.EntryPoints = @(
+		#'Web.OData'
+		#'Replication.EntryPoint'
+		#'ConvertUseCasesService'
+	)
 }
 
 Set-StrictMode -Version Latest
@@ -17,9 +21,6 @@ cls
 $Properties.SemanticVersion = '0.0.1'
 $Properties.SolutionDir = Join-Path $PSScriptRoot '..'
 $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
-
-Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking
-$Properties.EnvironmentMetadata = $EnvironmentMetadata
 
 # Restore-Packages
 & {
@@ -34,5 +35,10 @@ $Properties.EnvironmentMetadata = $EnvironmentMetadata
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.50\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.1.0-new-meta-6e67c5-64\tools\buildtools.psm1" -DisableNameChecking -Force
+Add-Metadata (Parse-CommonMetadata $Properties)
+
+Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking -Force
+Add-Metadata (Parse-EnvironmentMetadata $Properties)
+
 Run-Build $TaskList $Properties

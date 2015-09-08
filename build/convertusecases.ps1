@@ -7,11 +7,11 @@ Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 
-Task Build-ConvertUseCasesService {
+Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] -ne $null } {
 	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
 	$toolsDir = $packageInfo.VersionedDir
 
-	$commonMetadata = Get-Metadata 'Common'
+	$commonMetadata = $Metadata.Common
 	$tempDir = Join-Path $commonMetadata.Dir.Temp 'ConvertUseCasesService'
 	Copy-Item $toolsDir $tempDir -Force -Recurse
 
@@ -24,8 +24,7 @@ Task Build-ConvertUseCasesService {
 	Publish-Artifacts $tempDir 'ConvertUseCasesService'
 }
 
-Properties { $OptionConvertUseCases = $false }
-Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService -Precondition { $OptionConvertUseCases } {
+Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] -ne $null } {
 	
 	Load-WinServiceModule 'ConvertUseCasesService'
 	Take-WinServiceOffline 'ConvertUseCasesService'

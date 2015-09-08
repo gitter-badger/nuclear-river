@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 $SharedAccessKeys = @{
-	'Production.Russia' = 'ekQp9UcnukDWwNK9ZCiHXU91ovxdXs/XMZ05fAsam+s='
+	'Production.Russia' = 'XPnmzI+uyfZtKpUo4Ys79Lr8cmlLftTjd5jxeYMAp0I='
 	'Load.Russia' = 'daOQn6EYUWbJPlfV1592+xCIQRTumxZzzEw2c1i1u0M='
 	'Test.01' = 'dxorbZPNw1/uiwnp86NfFOgRaJqe3IMzFfMLTG3omM4='
 	'Test.02' = '2t4kdp1F87nw01Gkjgy7s7gzblYCHgt6lzn/emeNNg8='
@@ -28,13 +28,13 @@ $SharedAccessKeys = @{
 	'Test.21' =	'fWDhmeSQ9ss+Pp44oUirEizlzEg/oBBOxCaBCsspCLo='
 }
 
-function Get-SharedAccessKeyMetadata($EnvName){
+function Get-SharedAccessKeyMetadata($Context){
 
-	if (!$SharedAccessKeys.ContainsKey($EnvName)){
+	if (!$SharedAccessKeys.ContainsKey($Context.EnvironmentName)){
 		return @{}
 	}
 
-	return @{ '{SharedAccessKey}' = $SharedAccessKeys[$EnvName] }
+	return @{ '{SharedAccessKey}' = $SharedAccessKeys[$Context.EnvironmentName] }
 }
 
 Export-ModuleMember -Function Get-SharedAccessKeyMetadata

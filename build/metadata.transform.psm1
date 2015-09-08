@@ -4,23 +4,23 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
 
-function Get-XdtTransformMetadata($EnvType, $Country, $Index){
+function Get-XdtTransformMetadata($Context){
 	$xdt = @(
 		'Common\log4net.Release.config'
 		'Common\Erm.Release.config'
 	)
 
-	switch($EnvType){
+	switch($Context.EnvType){
 		'Test' {
 			$xdt += @(
-				"Templates\Erm.Test.$Country.config"
-				"Templates\ConvertUseCases.Test.$Country.config"
+				"Templates\Erm.Test.$($Context.Country).config"
+				"Templates\ConvertUseCases.Test.$($Context.Country).config"
 				)
 		}
 		'Production' {
 			$xdt += @(
-				"Erm.Production.$Country.config"
-				"ConvertUseCases.Production.$Country.config"
+				"Erm.Production.$($Context.Country).config"
+				"ConvertUseCases.Production.$($Context.Country).config"
 				)
 		}
 	}
@@ -28,20 +28,20 @@ function Get-XdtTransformMetadata($EnvType, $Country, $Index){
 	return $xdt
 }
 
-function Get-RegexTransformMetadata($EnvName, $Index){
+function Get-RegexTransformMetadata($Context){
 
 	$regex = @{}
-	$regex += @{ '{EnvNum}' = "$Index" }
-	$regex += Get-SharedAccessKeyMetadata $EnvName
+	$regex += @{ '{EnvNum}' = $Context['Index'] }
+	$regex += Get-SharedAccessKeyMetadata $Context
 
 	return $regex
 }
 
-function Get-TransformMetadata ($EnvName, $EnvType, $Country, $Index){
+function Get-TransformMetadata ($Context) {
 	
 	$metadata = @{
-		'Xdt' = Get-XdtTransformMetadata $EnvType $Country $Index
-		'Regex' = Get-RegexTransformMetadata $EnvName $Index
+		'Xdt' = Get-XdtTransformMetadata $Context
+		'Regex' = Get-RegexTransformMetadata $Context
 	}
 
 	return $metadata

@@ -1,4 +1,4 @@
-﻿param($LibDir, $Config, $SqlScriptsDir)
+﻿param($LibDir, $Config, $SqlScriptsDir, [string[]]$UpdateSchemas)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -6,6 +6,18 @@ $ErrorActionPreference = 'Stop'
 
 # load libraries
 Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($_.FullName)) }
+
+function Replicate-Data {
+
+	if($UpdateSchemas -contains 'ERM'){
+		Replicate-ErmToFacts
+		Replicate-FactsToCI
+	}
+
+	if($UpdateSchemas -contains 'CustomerIntelligence'){
+		Replicate-FactsToCI
+	}
+}
 
 function Replicate-ErmToFacts {
 
@@ -100,12 +112,14 @@ if (not exists(select * from sys.databases where name = '$initialCatalog'))
 	Exec-Command $connection $command
 }
 
-function Create-Tables {
+function Update-Schemas {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
-	$sqlScripts = Get-ChildItem $SqlScriptsDir -Filter '*.sql' | Sort-Object
-	foreach($sqlScript in $sqlScripts){
+	foreach ($schema in $UpdateSchemas) {
+		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$schema.sql")
+		Write-Host "$schema.sql..."
+
 		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
 		Exec-Command $connection $command
 	}
@@ -151,9 +165,8 @@ function Clear-ServiceBusTopic ($topicName) {
 }
 
 Create-Database
-Create-Tables
-Replicate-ErmToFacts
-Replicate-FactsToCI
+Update-Schemas
+Replicate-Data
 Clear-ServiceBusTopic 'topic.performedoperations'
 Clear-ServiceBusTopic $Config.AppSettings.TransportEntityPath
 

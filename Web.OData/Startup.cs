@@ -20,25 +20,25 @@ namespace NuClear.AdvancedSearch.Web.OData
     {
         public void Configuration(IAppBuilder appBuilder)
         {
-            var httpServer = new HttpServer(new HttpConfiguration());
-
-            var settingsContainer = new WebApplicationSettings();
+            var config = new HttpConfiguration();
 
             // DI
+            var settingsContainer = new WebApplicationSettings();
             var container = Bootstrapper.ConfigureUnity(settingsContainer);
-            httpServer.Configuration.DependencyResolver = new UnityResolver(container);
+            config.DependencyResolver = new UnityResolver(container);
 
             // turn on CORS support
-            httpServer.Configuration.EnableCors(new EnableCorsAttribute("*", "*", "*"));
+            config.EnableCors(new EnableCorsAttribute("*", "*", "*"));
 
             // default web api
-            httpServer.Configuration.MapHttpAttributeRoutes();
-            httpServer.Configuration.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
+            config.MapHttpAttributeRoutes();
+            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
             // configure entity framework
             DbConfiguration.SetConfiguration(new ODataDbConfiguration());
 
             // register odata models
+            var httpServer = new HttpServer(config);
             var modelRegistrator = container.Resolve<ODataModelRegistrator>();
             modelRegistrator.RegisterModels(httpServer);
 

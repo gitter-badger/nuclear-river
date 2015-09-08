@@ -59,14 +59,16 @@ namespace NuClear.AdvancedSearch.Web.OData
             // batch handler should be mapped first
             var batchHandler = new DefaultODataBatchHandler(httpServer) { ODataRouteName = routePrefix };
             var routeTemplate = string.IsNullOrEmpty(routePrefix) ? ODataRouteConstants.Batch : (routePrefix + '/' + ODataRouteConstants.Batch);
-            httpServer.Configuration.Routes.MapHttpBatchRoute(routePrefix + "Batch", routeTemplate, batchHandler);
+
+            var config = httpServer.Configuration;
+            config.Routes.MapHttpBatchRoute(routePrefix + "Batch", routeTemplate, batchHandler);
 
             var additionalHandlers = new[]
             {
                 new UnityResolver.PerRequestResolver(configureHttpRequest)
             };
-            var handler = HttpClientFactory.CreatePipeline(new HttpControllerDispatcher(httpServer.Configuration), additionalHandlers);
-            httpServer.Configuration.MapODataServiceRoute(routePrefix, routePrefix, edmModel, handler);
+            var handler = HttpClientFactory.CreatePipeline(new HttpControllerDispatcher(config), additionalHandlers);
+            config.MapODataServiceRoute(routePrefix, routePrefix, edmModel, handler);
         }
     }
 }
