@@ -57,6 +57,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
         }
 
+        [Test]
+        public void ShouldUpdateOnlyChangedRecords()
+        {
+            Mock<IDataMapper> mapper;
+            var transformation = CreateTransformationWithDataIntersection(out mapper);
+            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
+
+            transformation.Recalculate(new[] { operation });
+
+            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
+            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.AtLeastOnce);
+        }
+
         private static StatisticsFinalTransformation CreateTransformation(out VerificationContainer container)
         {
             var query = new MemoryMockQuery(
@@ -95,17 +108,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
         }
 
         class VerificationContainer
-        {
+                       {
             private readonly IDictionary<Type, IRepository> _dictionary = new Dictionary<Type, IRepository>();
 
             public Mock<IRepository<T>> Verify<T>() where T : class
             {
                 var repository = (IRepository<T>)_dictionary[typeof(T)];
                 return Mock.Get(repository);
-            }
+        }
 
             public void Add(Type type, IRepository repository)
-            {
+        {
                 _dictionary.Add(type, repository);
             }
         }

@@ -1,22 +1,21 @@
 -- create schema
-if not exists (select * from sys.schemas where name = 'CustomerIntelligence')
-	exec('create schema CustomerIntelligence')
-go
+if not exists (select * from sys.schemas where name = 'CustomerIntelligence') exec('create schema CustomerIntelligence')
 
 -- drop tables
-if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup;
-if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project;
-if object_id('CustomerIntelligence.ProjectCategory') is not null drop table CustomerIntelligence.ProjectCategory;
-if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIntelligence.Territory;
-if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm;
-if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance;
-if object_id('CustomerIntelligence.FirmActivity') is not null drop table CustomerIntelligence.FirmActivity;
-if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm;
-if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client;
-if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact;
-if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact;
-if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject;
-if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory;
+if object_id('CustomerIntelligence.CategoryGroup') is not null drop table CustomerIntelligence.CategoryGroup
+if object_id('CustomerIntelligence.Project') is not null drop table CustomerIntelligence.Project
+if object_id('CustomerIntelligence.ProjectCategory') is not null drop table CustomerIntelligence.ProjectCategory
+if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIntelligence.Territory
+if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm
+if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance
+if object_id('CustomerIntelligence.FirmActivity') is not null drop table CustomerIntelligence.FirmActivity
+if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm
+if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client
+if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact
+if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact
+if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject
+if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory
+if object_id('CustomerIntelligence.FirmView', 'view') is not null drop view CustomerIntelligence.FirmView
 go
 
 
@@ -122,4 +121,13 @@ create table CustomerIntelligence.ClientContact(
 	, IsFired bit not null constraint DF_Contacts_IsFired default 0
     , constraint PK_ClientContact primary key (ClientId, ContactId)
 )
+go
+
+
+-- FirmView
+create view CustomerIntelligence.FirmView
+as
+select Firm.*, FirmActivity.LastActivityOn
+from CustomerIntelligence.Firm
+	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = Firm.Id
 go

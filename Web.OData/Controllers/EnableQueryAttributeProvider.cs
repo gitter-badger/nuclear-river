@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Web.Http.Filters;
 using System.Web.OData;
+using System.Web.OData.Query;
 
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
@@ -38,6 +39,13 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
 
             // ограничение для серверного paging
             PageSize = 100;
+
+            // убрали ограничение, вернуть когда в ODATA появится $filter=Id in [1, 2, 3]
+            MaxNodeCount = int.MaxValue;
+
+            // запреты
+            AllowedArithmeticOperators = AllowedArithmeticOperators.None;
+            AllowedFunctions = AllowedFunctions.All | AllowedFunctions.Any;
         }
     }
 }

@@ -12,11 +12,11 @@ $DomainNames = @{
 	'Kazakhstan' = 'kz'
 }
 
-function Get-TargetHostsMetadata ($EnvType, $Country, $EntryPoint) {
+function Get-TargetHostsMetadata ($Context) {
 
-	switch ($EnvType) {
+	switch ($Context.EnvType) {
 		'Test' {
-			switch ($Country) {
+			switch ($Context.Country) {
 				'Russia' {
 					return @{ 'TargetHosts' = @('uk-erm-test01') }
 				}
@@ -35,7 +35,7 @@ function Get-TargetHostsMetadata ($EnvType, $Country, $EntryPoint) {
 			return @{ 'TargetHosts' = @('uk-erm-iis03') }
 		}
 		'Int' {
-			switch ($Country) {
+			switch ($Context.Country) {
 				'Russia' {
 					return @{ 'TargetHosts' = @('uk-test-int02') }
 				}
@@ -48,13 +48,13 @@ function Get-TargetHostsMetadata ($EnvType, $Country, $EntryPoint) {
 			return @{ 'TargetHosts' = @('uk-erm-iis12') }
 		}
 		default {
-			throw "Unknown EntryPoint '$EntryPoint'"
+			throw "Unknown environment type '$($Context.EnvType)'"
 		}
 	}
 }
 
-function Get-ValidateWebsiteMetadata ($EnvType) {
-	switch($EnvType){
+function Get-ValidateWebsiteMetadata ($Context) {
+	switch($Context.EnvType){
 		{ @('Production', 'Load') -contains $_ } {
 			return @{ 'ValidateWebsite' = $false }
 		}
@@ -64,28 +64,28 @@ function Get-ValidateWebsiteMetadata ($EnvType) {
 	}
 }
 
-function Get-IisAppPathMetadata ($EnvType, $Country, $EntryPoint, $Index) {
+function Get-IisAppPathMetadata ($Context) {
 
-	switch ($EntryPoint) {
-		'2Gis.Erm.UI.Web.Mvc' { $prefix = "web-app$Index" }
-		'2Gis.Erm.API.WCF.Operations' { $prefix = "basic-operations$Index.api" }
-		'2Gis.Erm.API.WCF.MoDi' { $prefix = "money-distribution$Index.api" }
-		'2Gis.Erm.API.WCF.Metadata' { $prefix = "metadata$Index.api" }
-		'2Gis.Erm.API.WCF.OrderValidation' { $prefix = "order-validation$Index.api" }
-		'2Gis.Erm.API.WCF.Operations.Special' { $prefix = "financial-operations$Index.api" }
-		'2Gis.Erm.API.WCF.Releasing' { $prefix = "releasing$Index.api" }
-		'2Gis.Erm.UI.Desktop.WPF' { $prefix = "wpf-app$Index" }
+	switch ($Context.EntryPoint) {
+		'2Gis.Erm.UI.Web.Mvc' { $prefix = "web-app$($Context.Index)" }
+		'2Gis.Erm.API.WCF.Operations' { $prefix = "basic-operations$($Context['Index']).api" }
+		'2Gis.Erm.API.WCF.MoDi' { $prefix = "money-distribution$($Context['Index']).api" }
+		'2Gis.Erm.API.WCF.Metadata' { $prefix = "metadata$($Context['Index']).api" }
+		'2Gis.Erm.API.WCF.OrderValidation' { $prefix = "order-validation$($Context['Index']).api" }
+		'2Gis.Erm.API.WCF.Operations.Special' { $prefix = "financial-operations$($Context['Index']).api" }
+		'2Gis.Erm.API.WCF.Releasing' { $prefix = "releasing$($Context['Index']).api" }
+		'2Gis.Erm.UI.Desktop.WPF' { $prefix = "wpf-app$($Context['Index'])" }
 		# line added
-		'Web.OData' { $prefix = "search$Index.api" }
+		'Web.OData' { $prefix = "search$($Context['Index']).api" }
 		default {
 			return @{}
 		}
 	}
 
-	$envTypeLower = $EnvType.ToLowerInvariant()
-	$domain = $DomainNames[$Country]
+	$envTypeLower = $Context.EnvType.ToLowerInvariant()
+	$domain = $DomainNames[$Context.Country]
 
-	switch ($EnvType) {
+	switch ($Context.EnvType) {
 		'Production' {
 			return @{ 'IisAppPath' = "$prefix.prod.erm.2gis.$domain" }
 		}
@@ -95,8 +95,8 @@ function Get-IisAppPathMetadata ($EnvType, $Country, $EntryPoint, $Index) {
 	}
 }
 
-function Get-TakeOfflineMetadata ($EnvType) {
-	switch($EnvType){
+function Get-TakeOfflineMetadata ($Context) {
+	switch($Context.EnvType){
 		'Production' {
 			return @{ 'TakeOffline' = $false }
 		}
@@ -106,9 +106,9 @@ function Get-TakeOfflineMetadata ($EnvType) {
 	}
 }
 
-function Get-OptionsMetadata ($Country) {
+function Get-OptionsMetadata ($Context) {
 
-	switch ($Country){
+	switch ($Context.Country){
 		'Russia' {
 			return @{
 				'OptionModi' = $true
@@ -122,14 +122,14 @@ function Get-OptionsMetadata ($Country) {
 	}
 }
 
-function Get-WebMetadata ($EnvType, $Country, $EntryPoint, $Index) {
+function Get-WebMetadata ($Context) {
 
 	$metadata = @{}
-	$metadata += Get-ValidateWebsiteMetadata $EnvType
-	$metadata += Get-TargetHostsMetadata $EnvType $Country $EntryPoint
-	$metadata += Get-IisAppPathMetadata $EnvType $Country $EntryPoint $Index
-	$metadata += Get-TakeOfflineMetadata $EnvType
-	$metadata += Get-OptionsMetadata $Country
+	$metadata += Get-ValidateWebsiteMetadata $Context
+	$metadata += Get-TargetHostsMetadata $Context
+	$metadata += Get-IisAppPathMetadata $Context
+	$metadata += Get-TakeOfflineMetadata $Context
+	$metadata += Get-OptionsMetadata $Context
 	
 	$metadata += @{
 		'EntrypointType' = 'Web'

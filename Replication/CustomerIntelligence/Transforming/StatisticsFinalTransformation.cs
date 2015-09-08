@@ -17,14 +17,14 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         private readonly StatisticsProcessorFactory _statisticsProcessorFactory;
 
         public StatisticsFinalTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory)
-        {
+    {
             if (query == null)
             {
                 throw new ArgumentNullException("query");
             }
 
             if (dataChangesApplierFactory == null)
-            {
+        {
                 throw new ArgumentNullException("dataChangesApplierFactory");
             }
 
@@ -44,8 +44,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 {
                     var changesApplier = _dataChangesApplierFactory.Create(metadata.Type);
                     processor.RecalculateStatistics(_query, changesApplier, batch.Key, batch.Distinct().ToList());
-                }
+        }
             }
         }
-   }
+    }
 }

@@ -1,12 +1,9 @@
 -- create schema
-if not exists (select * from sys.schemas where name = 'Transport')
-	exec('create schema Transport')
-go
+if not exists (select * from sys.schemas where name = 'Transport') exec('create schema Transport')
 
 -- drop tables
-if object_id('Transport.PerformedOperationFinalProcessing') is not null drop table Transport.PerformedOperationFinalProcessing;
+if object_id('Transport.PerformedOperationFinalProcessing') is not null drop table Transport.PerformedOperationFinalProcessing
 go
-
 
 -- PerformedOperationFinalProcessings
 create table Transport.PerformedOperationFinalProcessing(

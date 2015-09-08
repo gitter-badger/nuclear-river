@@ -16,12 +16,26 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public static class MergeTool
     {
-        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2)
+        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2, IEqualityComparer<T> comparer = null)
         {
+            if (comparer == null)
+            {
+                comparer = EqualityComparer<T>.Default;
+            }
+
             using (Probe.Create("Merging", typeof(T).Name))
             {
-                var set1 = new HashSet<T>(data1);
-                var set2 = new HashSet<T>(data2);
+                HashSet<T> set1;
+                using (Probe.Create("Query source"))
+                {
+                    set1 = new HashSet<T>(data1, comparer);
+                }
+
+                HashSet<T> set2;
+                using (Probe.Create("Query target"))
+                {
+                    set2 = new HashSet<T>(data2, comparer);
+                }
 
                 // NOTE: avoiding enumerable extensions to reuse hashset performance
                 var difference = set1.Where(x => !set2.Contains(x));
