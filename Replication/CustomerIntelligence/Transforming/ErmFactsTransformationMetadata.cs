@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
 using NuClear.AdvancedSearch.Replication.Specifications;
@@ -11,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     using CI = Model;
 
-    public sealed partial class ErmFactsTransformation
+    public sealed class ErmFactsTransformationMetadata : IMetadataSource<IFactInfo>
     {
         // Правило по определению зависимых агрегатов: смотрим сборку CI сущностей из фактов (CustomerIntelligenceTransformationContext)
         // если видим join - считаем, что агрегат зависит от факта, если join'а нет - то нет (даже при наличии связи по Id)
@@ -116,7 +117,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
               }.ToDictionary(x => x.Type);
 
-        public static FactInfoBuilder<TFact> FactOfType<TFact>()
+        public IReadOnlyDictionary<Type, IFactInfo> Metadata
+        {
+            get { return Facts; }
+        }
+
+        private static FactInfoBuilder<TFact> FactOfType<TFact>()
             where TFact : class, IErmFactObject, IIdentifiable
         {
             return new FactInfoBuilder<TFact>();

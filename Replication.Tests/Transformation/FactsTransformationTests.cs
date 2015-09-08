@@ -901,9 +901,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 var replicationSettings = new Mock<IReplicationSettings>();
                 replicationSettings.SetupGet(x => x.ReplicationBatchSize).Returns(100);
                 var factProcessorFactory = new VerifiableFactProcessorFactory();
+                var metadataSource = new ErmFactsTransformationMetadata();
 
                 _changesApplierFactory = changesApplierFactory;
-                _transformation = new ErmFactsTransformation(query, replicationSettings.Object, factProcessorFactory, changesApplierFactory, tracer);
+                _transformation = new ErmFactsTransformation(query, replicationSettings.Object, factProcessorFactory, changesApplierFactory, metadataSource, tracer);
             }
 
             public static Transformation Create(IQuery query)

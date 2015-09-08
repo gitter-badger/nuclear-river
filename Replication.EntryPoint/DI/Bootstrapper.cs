@@ -8,7 +8,9 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
@@ -144,6 +146,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // register matadata sources without massprocessor
             container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(PerformedOperationsMessageFlowsMetadataSource), Lifetime.Singleton);
+
+            container.RegisterType<API.Transforming.IMetadataSource<IFactInfo>, ErmFactsTransformationMetadata>();
+            container.RegisterType<API.Transforming.IMetadataSource<IAggregateInfo>, CustomerIntelligenceTransformationMetadata>();
+            container.RegisterType<API.Transforming.IMetadataSource<IStatisticsInfo>, StatisticsFinalTransformationMetadata>();
 
             return container;
         }

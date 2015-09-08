@@ -108,12 +108,12 @@
     <Compile Include="CustomerIntelligence\Model\Erm\Order.cs" />
     <Compile Include="CustomerIntelligence\Transforming\DataChangesApplier.cs" />
     <Compile Include="CustomerIntelligence\Transforming\LinqExtensions.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\StatisticsFinalTransformationMetadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\BitFactsTransformation.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\ProjectCategoryStatistics.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\CustomerIntelligenceTransformationMetadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\AggregateOperationPriorityComparer.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformation.Metadata.cs" />
+    <Compile Include="CustomerIntelligence\Transforming\ErmFactsTransformationMetadata.cs" />
     <Compile Include="CustomerIntelligence\Transforming\FactTypePriorityComparer.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Model\Facts\FirmCategory.cs" />

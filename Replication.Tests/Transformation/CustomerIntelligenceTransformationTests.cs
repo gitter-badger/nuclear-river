@@ -435,7 +435,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             private Transformation(IQuery source)
             {
                 RepositoriesToVerify.Clear();
-                _transformation = new CustomerIntelligenceTransformation(source, new VerifiableDataChangesApplierFactory(OnRepositoryCreated));
+                var metadataSource = new CustomerIntelligenceTransformationMetadata();
+                _transformation = new CustomerIntelligenceTransformation(source, new VerifiableDataChangesApplierFactory(OnRepositoryCreated), metadataSource);
             }
 
             public static Transformation Create(IQuery source)

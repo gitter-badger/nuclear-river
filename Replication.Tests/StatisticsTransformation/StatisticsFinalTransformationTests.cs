@@ -115,7 +115,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
         {
             var query = new MemoryMockQuery(data);
             container = new VerificationContainer();
-            return new StatisticsFinalTransformation(query, new VerifiableDataChangesApplierFactory(container.Add));
+            var metadataSource = new StatisticsFinalTransformationMetadata();
+            return new StatisticsFinalTransformation(query, new VerifiableDataChangesApplierFactory(container.Add), metadataSource);
         }
 
         private class VerificationContainer

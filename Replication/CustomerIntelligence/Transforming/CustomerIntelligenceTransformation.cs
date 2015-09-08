@@ -11,14 +11,15 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class CustomerIntelligenceTransformation
+    public sealed class CustomerIntelligenceTransformation
     {
         private readonly IQuery _query;
         private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
+        private readonly IMetadataSource<IAggregateInfo> _metadataSource;
         private readonly IAggregateProcessorFactory _aggregateProcessorFactory;
         private readonly IValueObjectProcessorFactory _valueObjectProcessorFactory;
 
-        public CustomerIntelligenceTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory)
+        public CustomerIntelligenceTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory, IMetadataSource<IAggregateInfo> metadataSource)
         {
             if (query == null)
             {
@@ -32,6 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _query = query;
             _dataChangesApplierFactory = dataChangesApplierFactory;
+            _metadataSource = metadataSource;
             _aggregateProcessorFactory = new AggregateProcessorFactory();
             _valueObjectProcessorFactory = new ValueObjectProcessorFactory();
         }
@@ -51,7 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToList();
 
                     IAggregateInfo aggregateInfo;
-                    if (!Aggregates.TryGetValue(aggregateType, out aggregateInfo))
+                    if (!_metadataSource.Metadata.TryGetValue(aggregateType, out aggregateInfo))
                     {
                         throw new NotSupportedException(string.Format("The '{0}' aggregate not supported.", aggregateType));
                     }

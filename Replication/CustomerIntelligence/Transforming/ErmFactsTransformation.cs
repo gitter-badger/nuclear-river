@@ -13,19 +13,21 @@ using NuClear.Tracing.API;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class ErmFactsTransformation
+    public sealed class ErmFactsTransformation
     {
         private readonly IQuery _query;
         private readonly ITracer _tracer;
         private readonly IReplicationSettings _replicationSettings;
         private readonly IFactProcessorFactory _factProcessorFactory;
         private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
+        private readonly IMetadataSource<IFactInfo> _metadataSource;
 
         public ErmFactsTransformation(
             IQuery query,
             IReplicationSettings replicationSettings,
             IFactProcessorFactory factProcessorFactory, 
             IDataChangesApplierFactory dataChangesApplierFactory,
+            IMetadataSource<IFactInfo> metadataSource,
             ITracer tracer)
         {
             if (query == null)
@@ -43,6 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _replicationSettings = replicationSettings;
             _factProcessorFactory = factProcessorFactory;
             _dataChangesApplierFactory = dataChangesApplierFactory;
+            _metadataSource = metadataSource;
         }
 
         public IReadOnlyCollection<IOperation> Transform(IEnumerable<FactOperation> operations)
@@ -60,7 +63,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     var factIds = slice.Select(x => x.FactId).Distinct();
 
                     IFactInfo factInfo;
-                    if (!Facts.TryGetValue(factType, out factInfo))
+                    if (!_metadataSource.Metadata.TryGetValue(factType, out factInfo))
                     {
                         throw new NotSupportedException(string.Format("The '{0}' fact not supported.", factType));
                     }

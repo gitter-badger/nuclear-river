@@ -10,7 +10,7 @@ using NuClear.AdvancedSearch.Replication.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed partial class CustomerIntelligenceTransformation
+    public sealed class CustomerIntelligenceTransformationMetadata : IMetadataSource<IAggregateInfo>
     {
         private static readonly Dictionary<Type, IAggregateInfo> Aggregates =
             new[]
@@ -41,7 +41,12 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     .Build()
             }.ToDictionary(x => x.Type);
 
-        public static AggregateInfoBuilder<TAggregate> AggregateOfType<TAggregate>() 
+        public IReadOnlyDictionary<Type, IAggregateInfo> Metadata
+        {
+            get { return Aggregates; }
+        }
+
+        private static AggregateInfoBuilder<TAggregate> AggregateOfType<TAggregate>()
             where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
         {
             return new AggregateInfoBuilder<TAggregate>();

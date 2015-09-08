@@ -14,9 +14,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IQuery _query;
         private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
+        private readonly IMetadataSource<IStatisticsInfo> _metadataSource;
         private readonly StatisticsProcessorFactory _statisticsProcessorFactory;
 
-        public StatisticsFinalTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory)
+        public StatisticsFinalTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory, IMetadataSource<IStatisticsInfo> metadataSource)
     {
             if (query == null)
             {
@@ -30,12 +31,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
             _query = query;
             _dataChangesApplierFactory = dataChangesApplierFactory;
+            _metadataSource = metadataSource;
             _statisticsProcessorFactory = new StatisticsProcessorFactory();
         }
 
         public void Recalculate(IEnumerable<CalculateStatisticsOperation> operations)
         {
-            var metadata = Statistics.Single();
+            var metadata = _metadataSource.Metadata.Values.Single();
             var processor = _statisticsProcessorFactory.Create(metadata);
 
             using (Probe.Create("Recalculate Statistics Operations"))
