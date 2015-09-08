@@ -23,7 +23,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToList());
 
-            var aggregatesToCreate = _metadata.SourceMappingSpecification.Invoke(createFilter).Map(query);
+            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(query);
 
             applier.Create(aggregatesToCreate);
         }
@@ -37,9 +37,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToList());
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
 
-            var aggregatesToCreate = _metadata.SourceMappingSpecification.Invoke(createFilter).Map(query);
-            var aggregatesToUpdate = _metadata.SourceMappingSpecification.Invoke(updateFilter).Map(query);
-            var aggregatesToDelete = _metadata.TargetMappingSpecification.Invoke(deleteFilter).Map(query);
+            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(query);
+            var aggregatesToUpdate = _metadata.SourceMappingProvider.Invoke(updateFilter).Map(query);
+            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(query);
 
             applier.Delete(aggregatesToDelete);
             applier.Create(aggregatesToCreate);
@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
 
-            var aggregatesToDelete = _metadata.TargetMappingSpecification.Invoke(deleteFilter).Map(query);
+            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(query);
 
             applier.Delete(aggregatesToDelete);
         }

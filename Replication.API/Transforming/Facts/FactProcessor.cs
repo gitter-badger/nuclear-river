@@ -50,21 +50,21 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         private void CreateFact(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var sourceQueryable = _factInfo.SourceMappingSpecification.Invoke(spec).Map(query).Cast<TFact>();
+            var sourceQueryable = _factInfo.SourceMappingProvider.Invoke(spec).Map(query).Cast<TFact>();
             applier.Create(sourceQueryable);
         }
 
         private void UpdateFact(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var sourceQueryable = _factInfo.SourceMappingSpecification(spec).Map(query).Cast<TFact>();
+            var sourceQueryable = _factInfo.SourceMappingProvider(spec).Map(query).Cast<TFact>();
             applier.Update(sourceQueryable);
         }
 
         private void DeleteFact(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var targetQueryable = _factInfo.TargetMappingSpecification(spec).Map(query).Cast<TFact>();
+            var targetQueryable = _factInfo.TargetMappingProvider(spec).Map(query).Cast<TFact>();
             applier.Delete(targetQueryable);
         }
     }

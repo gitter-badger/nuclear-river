@@ -12,8 +12,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 
     public interface IFactInfo<T>
     {
-        MapToObjectsSpecProvider<T> SourceMappingSpecification { get; }
-        MapToObjectsSpecProvider<T> TargetMappingSpecification { get; }
+        MapToObjectsSpecProvider<T> SourceMappingProvider { get; }
+        MapToObjectsSpecProvider<T> TargetMappingProvider { get; }
 
         Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; }
     }

@@ -21,8 +21,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
             // Сначала сравниением получаем различающиеся записи,
             // затем получаем те из различающихся, которые совпадают по идентификатору.
             var intermediateResult = MergeTool.Merge(
-                _metadata.SourceMappingSpecification.Invoke(filter).Map(query).ToList(),
-                _metadata.TargetMappingSpecification.Invoke(filter).Map(query).ToList(),
+                _metadata.SourceMappingProvider.Invoke(filter).Map(query).ToList(),
+                _metadata.TargetMappingProvider.Invoke(filter).Map(query).ToList(),
                 _metadata.FieldComparer);
 
             var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement);

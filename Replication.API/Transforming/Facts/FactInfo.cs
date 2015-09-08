@@ -38,12 +38,12 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return _aggregates; }
         }
 
-        public MapToObjectsSpecProvider<TFact> SourceMappingSpecification
+        public MapToObjectsSpecProvider<TFact> SourceMappingProvider
         {
             get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _sourceMappingSpecification.Map(q).Where(specification)); }
         }
 
-        public MapToObjectsSpecProvider<TFact> TargetMappingSpecification
+        public MapToObjectsSpecProvider<TFact> TargetMappingProvider
         {
             get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecification.Map(q).Where(specification)); }
         }
