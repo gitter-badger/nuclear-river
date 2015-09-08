@@ -38,7 +38,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             _query = query;
         }
 
-        public IMergeResult<TTarget> DetectChanges<TTarget>(MapSpecification<IEnumerable, IEnumerable<TTarget>> mapSpec, FindSpecification<TSource> specification)
+        public MergeResult<TTarget> DetectChanges<TTarget>(MapSpecification<IEnumerable, IEnumerable<TTarget>> mapSpec, FindSpecification<TSource> specification)
         {
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {

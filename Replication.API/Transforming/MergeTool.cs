@@ -6,13 +6,6 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    public interface IMergeResult<out T>
-    {
-        IEnumerable<T> Difference { get; }
-        IEnumerable<T> Intersection { get; }
-        IEnumerable<T> Complement { get; }
-    }
-
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public static class MergeTool
     {
@@ -48,12 +41,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
     }
 
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public class MergeResult<T> : IMergeResult<T>
+    public class MergeResult<T>
     {
-        public IEnumerable<T> Difference { get; private set; }
-        public IEnumerable<T> Intersection { get; private set; }
-        public IEnumerable<T> Complement { get; private set; }
-
         public MergeResult(IEnumerable<T> difference, IEnumerable<T> intersection, IEnumerable<T> complement)
         {
             Difference = difference;
@@ -61,11 +50,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             Complement = complement;
         }
 
-        public MergeResult(IMergeResult<T> mergeResult)
-        {
-            Difference = mergeResult.Difference;
-            Intersection = mergeResult.Intersection;
-            Complement = mergeResult.Complement;
-        }
+        public IEnumerable<T> Difference { get; private set; }
+        public IEnumerable<T> Intersection { get; private set; }
+        public IEnumerable<T> Complement { get; private set; }
     }
 }
