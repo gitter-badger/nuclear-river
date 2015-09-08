@@ -20,21 +20,21 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
         public DataChangesDetector(IAggregateInfo<TSource> metadataInfo, IQuery query)
         {
             _source = metadataInfo.SourceMappingSpecification;
-            _target = metadataInfo.SourceMappingSpecification;
+            _target = metadataInfo.TargetMappingSpecification;
             _query = query;
         }
 
         public DataChangesDetector(IFactInfo<TSource> metadataInfo, IQuery query)
         {
             _source = metadataInfo.SourceMappingSpecification;
-            _target = metadataInfo.SourceMappingSpecification;
+            _target = metadataInfo.TargetMappingSpecification;
             _query = query;
         }
 
         public DataChangesDetector(IValueObjectInfo<TSource> metadataInfo, IQuery query)
         {
             _source = metadataInfo.SourceMappingSpecification;
-            _target = metadataInfo.SourceMappingSpecification;
+            _target = metadataInfo.TargetMappingSpecification;
             _query = query;
         }
 

@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Erm::Contact { Id = 1, ClientId = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }
@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Client>(1)));
         }

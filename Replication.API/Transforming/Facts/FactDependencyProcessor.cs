@@ -6,7 +6,7 @@ using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
-    internal class FactDependencyProcessor<TFact>
+    public class FactDependencyProcessor<TFact> : IFactDependencyProcessor
     {
         private readonly IFactDependencyInfo<TFact> _metadata;
 

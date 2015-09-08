@@ -9,7 +9,7 @@ using NuClear.Storage.Specifications;
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     public sealed class ValueObjectProcessor<T> : IValueObjectProcessor 
-        where T : class, IIdentifiable
+        where T : class, IObject
     {
         private static readonly MapSpecification<IEnumerable, IEnumerable<IObject>> ValueObjectsChangesDetectionMapSpec =
             new MapSpecification<IEnumerable, IEnumerable<IObject>>(x => x.Cast<IObject>());

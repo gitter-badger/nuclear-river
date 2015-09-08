@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::Territory>(1)));
         }
@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::Territory>(1)));
         }
@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, FactChangesApplierFactory)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::Territory>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1)));
         }

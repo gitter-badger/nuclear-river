@@ -1,8 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
-using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
 {
@@ -15,13 +13,11 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public IFactProcessor Create(IFactInfo factInfo, IQuery query)
+        public IFactProcessor Create(IFactInfo factInfo)
         {
-            var applierType = typeof(FactProcessor<>).MakeGenericType(factInfo.Type);
-            return (IFactProcessor)_unityContainer.Resolve(
-                applierType,
-                new DependencyOverride(typeof(IFactInfo), factInfo),
-                new DependencyOverride(typeof(IQuery), query));
+            var processorType = typeof(FactProcessor<>).MakeGenericType(factInfo.Type);
+            var processor = _unityContainer.Resolve(processorType, new DependencyOverride(typeof(IFactInfo), factInfo));
+            return (IFactProcessor)processor;
         }
     }
 }

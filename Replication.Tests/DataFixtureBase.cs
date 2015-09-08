@@ -43,9 +43,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             get { return new Query(_stubDomainContextProvider); }
         }
 
-        protected IFactProcessorFactory FactChangesApplierFactory
+        protected StubDataChangesApplierFactory StubDataChangesApplierFactory
         {
-            get { return new StubFactProcessorFactory(_stubDomainContextProvider); }
+            get { return new StubDataChangesApplierFactory(_stubDomainContextProvider); }
         }
 
         protected MockLinqToDbDataBuilder ErmDb

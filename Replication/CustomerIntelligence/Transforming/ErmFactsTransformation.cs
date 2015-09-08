@@ -69,7 +69,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     {
                         foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
                         {
-                            var processor = _factProcessorFactory.Create(factInfo, _query);
+                            var processor = _factProcessorFactory.Create(factInfo);
 
                             _tracer.Debug("Apply changes to target facts storage");
                             var aggregateOperations = processor.ApplyChanges(_query, _dataChangesApplierFactory.Create(factInfo.Type), batch);

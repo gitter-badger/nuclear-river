@@ -13,11 +13,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryGroupIfCategoryGroupCreated()
         {
-            // Erm
-            var query = new MemoryMockQuery(
+            ErmDb.Has(
                 new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::CategoryGroup>(1)));
         }
@@ -25,11 +24,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryGroupIfCategoryGroupDeleted()
         {
-            // Facts
-            var query = new MemoryMockQuery(
+            FactsDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::CategoryGroup>(1)));
         }
@@ -37,11 +35,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryGroupIfCategoryGroupUpdated()
         {
-            var query = new MemoryMockQuery(
-                new Erm::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 },
+            ErmDb.Has(
+                new Erm::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 });
+            FactsDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query, StubDataChangesApplierFactory)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::CategoryGroup>(1)));
         }
