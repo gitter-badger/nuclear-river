@@ -21,6 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                         categoryIds.Contains(null)
                             ? Specs.Find.CI.FirmCategoryStatistics.ByProject(projectId)
                             : Specs.Find.CI.FirmCategoryStatistics.ByProjectAndCategories(projectId, categoryIds))
+                    .HasFieldComparer(new CI::FirmCategoryStatistics.FullEqualityComparer())
                     .Build()
             };
 

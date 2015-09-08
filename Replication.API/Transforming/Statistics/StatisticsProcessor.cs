@@ -17,8 +17,15 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
         public void RecalculateStatistics(IQuery query, IDataChangesApplier changesApplier, long projectId, IReadOnlyCollection<long?> categoryIds)
         {
             var filter = _metadata.FindSpecificationProvider.Invoke(projectId, categoryIds);
-            var changes = MergeTool.Merge(_metadata.SourceMappingSpecification.Invoke(filter).Map(query).ToList(),
-                                          _metadata.TargetMappingSpecification.Invoke(filter).Map(query).ToList());
+
+            // —начала сравниением получаем различающиес€ записи,
+            // затем получаем те из различающихс€, которые совпадают по идентификатору.
+            var intermediateResult = MergeTool.Merge(
+                _metadata.SourceMappingSpecification.Invoke(filter).Map(query).ToList(),
+                _metadata.TargetMappingSpecification.Invoke(filter).Map(query).ToList(),
+                _metadata.FieldComparer);
+
+            var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement);
 
             // Ќаличие или отсутствие статистики - не повод создавать или удал€ть рубрики у фирм.
             // ѕоэтому только обновление.

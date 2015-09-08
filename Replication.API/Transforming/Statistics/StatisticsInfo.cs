@@ -11,14 +11,15 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
     {
         private readonly MapSpecification<IQuery, IQueryable<T>> _sourceMappingSpecification;
         private readonly MapSpecification<IQuery, IQueryable<T>> _targetMappingSpecification;
-        private readonly Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> _findSpecificationProvider;
 
         public StatisticsInfo(
             MapSpecification<IQuery, IQueryable<T>> sourceMappingSpecification,
             MapSpecification<IQuery, IQueryable<T>> targetMappingSpecification,
-            Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> findSpecificationProvider)
+            Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> findSpecificationProvider,
+            IEqualityComparer<T> fieldComparer)
         {
-            _findSpecificationProvider = findSpecificationProvider;
+            FieldComparer = fieldComparer;
+            FindSpecificationProvider = findSpecificationProvider;
             _sourceMappingSpecification = sourceMappingSpecification;
             _targetMappingSpecification = targetMappingSpecification;
         }
@@ -38,9 +39,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
             get { return specification => new MapSpecification<IQuery, IEnumerable<T>>(q => _targetMappingSpecification.Map(q).Where(specification)); }
         }
 
-        public Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> FindSpecificationProvider
-        {
-            get { return _findSpecificationProvider; } 
-        }
+        public Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
+
+        public IEqualityComparer<T> FieldComparer { get; private set; }
     }
 }
