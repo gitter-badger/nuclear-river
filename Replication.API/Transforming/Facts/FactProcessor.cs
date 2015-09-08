@@ -10,12 +10,14 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
     public class FactProcessor<TFact> : IFactProcessor where TFact : class, IErmFactObject
     {
         private readonly FactInfo<TFact> _factInfo;
-        private readonly IFactDependencyProcessorFactory _dependencyProcessorFactory;
+        private readonly IReadOnlyCollection<IFactDependencyProcessor> _depencencyProcessors;
+        private readonly IReadOnlyCollection<IFactDependencyProcessor> _indirectDepencencyProcessors;
 
         public FactProcessor(FactInfo<TFact> factInfo, IFactDependencyProcessorFactory dependencyProcessorFactory)
         {
             _factInfo = factInfo;
-            _dependencyProcessorFactory = dependencyProcessorFactory;
+            _depencencyProcessors = _factInfo.DependencyInfos.Select(dependencyProcessorFactory.Create).ToList();
+            _indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(dependencyProcessorFactory.Create).ToList();
         }
 
         public IReadOnlyCollection<IOperation> ApplyChanges(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
@@ -28,20 +30,17 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             var idsToUpdate = changes.Intersection.ToList();
             var idsToDelete = changes.Complement.ToList();
 
-            var depencencyProcessors = _factInfo.DependencyInfos.Select(x => _dependencyProcessorFactory.Create(x)).ToList();
-            var indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(x => _dependencyProcessorFactory.Create(x)).ToList();
-
             // Create
             CreateFact(query, applier, idsToCreate);
-            result.AddRange(depencencyProcessors.SelectMany(x => x.ProcessCreation(query, idsToCreate)));
+            result.AddRange(_depencencyProcessors.SelectMany(x => x.ProcessCreation(query, idsToCreate)));
 
             // Update
-            result.AddRange(indirectDepencencyProcessors.SelectMany(x => x.ProcessUpdating(query, idsToUpdate)));
+            result.AddRange(_indirectDepencencyProcessors.SelectMany(x => x.ProcessUpdating(query, idsToUpdate)));
             UpdateFact(query, applier, idsToUpdate);
-            result.AddRange(depencencyProcessors.SelectMany(x => x.ProcessUpdating(query, idsToUpdate)));
+            result.AddRange(_depencencyProcessors.SelectMany(x => x.ProcessUpdating(query, idsToUpdate)));
 
             // Delete
-            result.AddRange(depencencyProcessors.SelectMany(x => x.ProcessDeletion(query, idsToDelete)));
+            result.AddRange(_depencencyProcessors.SelectMany(x => x.ProcessDeletion(query, idsToDelete)));
             DeleteFact(query, applier, idsToDelete);
 
             return result;
