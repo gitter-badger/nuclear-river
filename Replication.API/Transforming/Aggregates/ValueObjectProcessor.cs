@@ -17,18 +17,19 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _applier;
         private readonly ValueObjectInfo<T> _metadata;
+        private readonly DataChangesDetector<T> _changesDetector;
 
         public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
         {
             _metadata = metadata;
             _query = query;
             _applier = applier;
+            _changesDetector = new DataChangesDetector<T>(_metadata, _query);
         }
 
         public void ApplyChanges(IReadOnlyCollection<long> ids)
         {
-            var changesDetector = new DataChangesDetector<T>(_metadata, _query);
-            var mergeResult = changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, _metadata.FindSpecificationProvider.Invoke(ids));
 
             _applier.Delete(mergeResult.Complement);
             _applier.Create(mergeResult.Difference);
