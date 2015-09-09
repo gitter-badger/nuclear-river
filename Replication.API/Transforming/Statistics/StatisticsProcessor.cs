@@ -9,10 +9,10 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
         where T : class
     {
         private readonly IQuery _query;
-        private readonly IDataChangesApplier<T> _changesApplier;
+        private readonly IBulkRepository<T> _changesApplier;
         private readonly StatisticsInfo<T> _metadata;
 
-        public StatisticsProcessor(StatisticsInfo<T> metadata, IQuery query, IDataChangesApplier<T> changesApplier)
+        public StatisticsProcessor(StatisticsInfo<T> metadata, IQuery query, IBulkRepository<T> changesApplier)
         {
             _query = query;
             _changesApplier = changesApplier;

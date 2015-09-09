@@ -15,10 +15,10 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             new MapSpecification<IEnumerable, IEnumerable<IObject>>(x => x.Cast<IObject>());
 
         private readonly IQuery _query;
-        private readonly IDataChangesApplier<T> _applier;
+        private readonly IBulkRepository<T> _applier;
         private readonly ValueObjectInfo<T> _metadata;
 
-        public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IDataChangesApplier<T> applier)
+        public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
         {
             _metadata = metadata;
             _query = query;

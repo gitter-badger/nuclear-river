@@ -11,11 +11,11 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         where T : class, IIdentifiable
     {
         private readonly IQuery _query;
-        private readonly IDataChangesApplier<T> _applier;
+        private readonly IBulkRepository<T> _applier;
         private readonly AggregateInfo<T> _metadata;
         private readonly DataChangesDetector<T> _aggregateChangesDetector;
 
-        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IDataChangesApplier<T> applier)
+        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
         {
             _metadata = metadata;
             _query = query;

@@ -6,12 +6,12 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public class DataChangesApplier<TTarget> : IDataChangesApplier<TTarget> 
+    public class BulkRepository<TTarget> : IBulkRepository<TTarget> 
         where TTarget : class
     {
         private readonly IRepository<TTarget> _repository;
 
-        public DataChangesApplier(IRepository<TTarget> repository)
+        public BulkRepository(IRepository<TTarget> repository)
         {
             _repository = repository;
         }

@@ -2,7 +2,7 @@
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    public interface IDataChangesApplier<TTarget>
+    public interface IBulkRepository<TTarget>
     {
         void Create(IEnumerable objects);
         void Update(IEnumerable objects);

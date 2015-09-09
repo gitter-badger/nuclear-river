@@ -269,7 +269,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(IDataChangesApplier<>), typeof(DataChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IBulkRepository<>), typeof(BulkRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .ConfigureReadWriteModels();
         }
 

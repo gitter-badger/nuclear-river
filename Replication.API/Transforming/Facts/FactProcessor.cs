@@ -11,14 +11,14 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         where TFact : class, IErmFactObject
     {
         private readonly IQuery _query;
-        private readonly IDataChangesApplier<TFact> _applier;
+        private readonly IBulkRepository<TFact> _applier;
 
         private readonly FactInfo<TFact> _factInfo;
         private readonly IReadOnlyCollection<IFactDependencyProcessor> _depencencyProcessors;
         private readonly IReadOnlyCollection<IFactDependencyProcessor> _indirectDepencencyProcessors;
         private readonly DataChangesDetector<TFact> _changesDetector;
 
-        public FactProcessor(FactInfo<TFact> factInfo, IFactDependencyProcessorFactory dependencyProcessorFactory, IQuery query, IDataChangesApplier<TFact> applier)
+        public FactProcessor(FactInfo<TFact> factInfo, IFactDependencyProcessorFactory dependencyProcessorFactory, IQuery query, IBulkRepository<TFact> applier)
         {
             _query = query;
             _applier = applier;

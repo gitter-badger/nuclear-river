@@ -111,7 +111,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             return new StatisticsProcessor<T>(
                 (StatisticsInfo<T>)metadata,
                 new MemoryMockQuery(data),
-                new DataChangesApplier<T>(repository.Object));
+                new BulkRepository<T>(repository.Object));
         }
     }
 }
