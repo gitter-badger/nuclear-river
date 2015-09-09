@@ -67,7 +67,7 @@ function Get-ValidateWebsiteMetadata ($Context) {
 function Get-IisAppPathMetadata ($Context) {
 
 	switch ($Context.EntryPoint) {
-		'2Gis.Erm.UI.Web.Mvc' { $prefix = "web-app$($Context.Index)" }
+		'2Gis.Erm.UI.Web.Mvc' { $prefix = "web-app$($Context['Index'])" }
 		'2Gis.Erm.API.WCF.Operations' { $prefix = "basic-operations$($Context['Index']).api" }
 		'2Gis.Erm.API.WCF.MoDi' { $prefix = "money-distribution$($Context['Index']).api" }
 		'2Gis.Erm.API.WCF.Metadata' { $prefix = "metadata$($Context['Index']).api" }
@@ -135,7 +135,7 @@ function Get-WebMetadata ($Context) {
 		'EntrypointType' = 'Web'
 	}
 	
-	return $metadata
+	return @{ "$($Context.EntryPoint)" = $metadata }
 }
 
 Export-ModuleMember -Function Get-WebMetadata

@@ -10,28 +10,38 @@ Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
 
 function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
-	$EntryPointsMetadata = @{}
-	$EntryPointsMetadata += @{ 'Transform' = Get-TransformMetadata $Context }
-
+	$entryPointsMetadata = @{}
+	$entryPointsMetadata += Get-TransformMetadata $Context
+	
 	switch ($EntryPoints){
 		'Web.OData' {
-			$Context.EntryPoint = 'Web.OData'
-			$EntryPointsMetadata += @{ 'Web.OData' = Get-WebMetadata $Context }
+			$Context.EntryPoint = $_
+			$entryPointsMetadata += Get-WebMetadata $Context
 		}
-		'Replication.EntryPoint' {
-			$Context.EntryPoint = 'Replication.EntryPoint'
-			$EntryPointsMetadata += @{ 'Replication.EntryPoint' = Get-TaskServiceMetadata $Context }
-		}
-		'ConvertUseCasesService' {
-			$Context.EntryPoint = 'ConvertUseCasesService'
-			$EntryPointsMetadata += @{ 'ConvertUseCasesService' = Get-TaskServiceMetadata $Context }
+
+		{ @(
+			'Replication.EntryPoint'
+			'ConvertUseCasesService'
+			) -contains $_} {
+			$Context.EntryPoint = $_
+			$entryPointsMetadata += Get-TaskServiceMetadata $Context
 		}
 		default {
 			throw "Can't find entrypoint $_"
 		}
 	}
 
-	return $EntryPointsMetadata
+	return $entryPointsMetadata
+}
+
+function Get-UpdateSchemasMetadata ($UpdateSchemas) {
+
+	[string[]]$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
+	if ($UpdateSchemas.Count -ne 0){
+		return @{ 'UpdateSchemas' = $UpdateSchemas }
+	}
+
+	return @{}
 }
 
 function Parse-EnvironmentMetadata ($Properties) {
@@ -43,31 +53,47 @@ function Parse-EnvironmentMetadata ($Properties) {
 
 	$environmentMetadata = @{ 'Common' = @{ 'EnvironmentName' =  $environmentName } }
 
-	$entryPoints = $Properties['EntryPoints']
-	if ($entryPoints -isnot [array]){
-		$entryPoints = $entryPoints.Split(@(','), 'RemoveEmptyEntries')
-	}
-
 	$context = $AllEnvironments[$environmentName]
 	if ($context -eq $null){
 		throw "Can't find environment for name '$environmentName'"
 	}
-
 	$context.EnvironmentName = $environmentName
-	$entryPointsMetadata = Get-EntryPointsMetadata $entryPoints $context
-	$environmentMetadata += $entryPointsMetadata
+
+	if ($Properties.ContainsKey('EntryPoints')){
+		$entryPoints = $Properties['EntryPoints']
+	
+		if ($entryPoints -and $entryPoints -isnot [array]){
+			$entryPoints = $entryPoints.Split(@(','), 'RemoveEmptyEntries')
+		}
+	} else {
+		$entryPoints = $AllEntryPoints
+	}
+
+	$environmentMetadata += Get-EntryPointsMetadata $entryPoints $context
 
 	$updateSchemas = $Properties['UpdateSchemas']
-	if ($updateSchemas -and $updateSchemas -isnot [array]){
-		$updateSchemas = $updateSchemas.Split(@(','), 'RemoveEmptyEntries')
-		[string[]]$updateSchemas = $AllSchemas | where { $updateSchemas -contains $_ }
+	if ($updateSchemas){
+		if ($updateSchemas -isnot [array]){
+			$updateSchemas = $updateSchemas.Split(@(','), 'RemoveEmptyEntries')
+		}
+		$environmentMetadata += Get-UpdateSchemasMetadata $updateSchemas
 	}
-	$environmentMetadata += @{ 'UpdateSchemas' = $updateSchemas }
 
 	return $environmentMetadata
 }
 
-$AllSchemas = @('ERM', 'BIT', 'CustomerIntelligence', 'Transport')
+$AllSchemas = @(
+	'ERM'
+	'BIT'
+	'CustomerIntelligence'
+	'Transport'
+)
+
+$AllEntryPoints = @(
+	'Web.OData'
+	'Replication.EntryPoint'
+	'ConvertUseCasesService'
+)
 
 $AllEnvironments = @{
 

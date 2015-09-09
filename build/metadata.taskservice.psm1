@@ -66,11 +66,6 @@ function Get-QuartzConfigMetadata ($Context){
 
 function Get-TargetHostsMetadata ($Context){
 
-	$temp = $Context.EntryPoint
-	$Context.EntryPoint = '2Gis.Erm.TaskService.Installer'
-	$webMetadata = Get-WebMetadata $Context
-	$Context.EntryPoint = $temp
-
 	switch ($Context.EnvType) {
 		'Production' {
 			return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
@@ -79,7 +74,12 @@ function Get-TargetHostsMetadata ($Context){
 			return @{ 'TargetHosts' = @('uk-erm-iis10', 'uk-erm-iis11', 'uk-erm-iis12') }
 		}
 		default {
-			return @{'TargetHosts' = $webMetadata.TargetHosts}
+			$webMetadata = Get-WebMetadata $Context
+			if ($webMetadata -eq $null){
+				throw "Can't find web metadata for entrypoint $($Context.EntryPoint)"
+			}
+			
+			return @{'TargetHosts' = $webMetadata[$Context.EntryPoint].TargetHosts}
 		}
 	}
 }
@@ -112,7 +112,7 @@ function Get-TaskServiceMetadata ($Context) {
 		'EntrypointType' = 'Desktop'
 	}
 	
-	return $metadata
+	return @{ "$($Context.EntryPoint)" = $metadata }
 }
 
 Export-ModuleMember -Function Get-TaskServiceMetadata

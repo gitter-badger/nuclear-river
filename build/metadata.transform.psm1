@@ -31,7 +31,11 @@ function Get-XdtTransformMetadata($Context){
 function Get-RegexTransformMetadata($Context){
 
 	$regex = @{}
-	$regex += @{ '{EnvNum}' = $Context['Index'] }
+
+	if ($Context['Index']){
+		$regex += @{ '{EnvNum}' = $Context['Index'] }
+	}
+
 	$regex += Get-SharedAccessKeyMetadata $Context
 
 	return $regex
@@ -39,12 +43,12 @@ function Get-RegexTransformMetadata($Context){
 
 function Get-TransformMetadata ($Context) {
 	
-	$metadata = @{
-		'Xdt' = Get-XdtTransformMetadata $Context
-		'Regex' = Get-RegexTransformMetadata $Context
+	return @{
+		'Transform' = @{
+			'Xdt' = Get-XdtTransformMetadata $Context
+			'Regex' = Get-RegexTransformMetadata $Context
+		}
 	}
-
-	return $metadata
 }
 
 Export-ModuleMember -Function Get-TransformMetadata

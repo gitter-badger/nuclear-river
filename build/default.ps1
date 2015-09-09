@@ -27,29 +27,29 @@ Task Run-UnitTests {
 	Run-UnitTests $projects
 }
 
-Task Build-OData -Precondition { $Metadata['Web.OData'] -ne $null } {
+Task Build-OData -Precondition { $Metadata['Web.OData'] } {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
 	Build-WebPackage $projectFileName 'Web.OData'
 }
-Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] -ne $null } {
+Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 	Deploy-WebPackage 'Web.OData'
 	Validate-WebSite 'Web.OData' 'CustomerIntelligence/$metadata'
 }
 
-Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] -ne $null } {
+Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 	Take-WebsiteOffline 'Web.OData'
 }
 
-Task Build-TaskService -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
+Task Build-TaskService -Precondition { $Metadata['Replication.EntryPoint'] } {
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	Build-WinService $projectFileName 'Replication.EntryPoint'
 }
 
-Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
+Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $Metadata['Replication.EntryPoint'] } {
 	Deploy-WinService 'Replication.EntryPoint'
 }
 
-Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $Metadata['Replication.EntryPoint'] -ne $null } {
+Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $Metadata['Replication.EntryPoint'] } {
 	Take-WinServiceOffline 'Replication.EntryPoint'
 }
 
@@ -71,7 +71,7 @@ Task Build-ReplicationLibs {
 	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 }
 
-Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { $Metadata['UpdateSchemas'] -ne $null -and $Metadata['UpdateSchemas'].Count -ne 0 } {
+Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { $Metadata['UpdateSchemas'] } {
 
 	$libDir = Get-Artifacts 'ReplicationLibs'
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
