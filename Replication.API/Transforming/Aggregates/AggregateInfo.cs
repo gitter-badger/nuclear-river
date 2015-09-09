@@ -12,19 +12,17 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
     public sealed class AggregateInfo<T> : IAggregateInfo, IAggregateInfo<T>
         where T : class, IIdentifiable
     {
-        private readonly MapSpecification<IQuery, IQueryable<T>> _sourceMappingSpecification;
-        private readonly MapSpecification<IQuery, IQueryable<T>> _targetMappingSpecification;
-        private readonly Func<IReadOnlyCollection<long>, FindSpecification<T>> _findSpecificationProvider;
-
         public AggregateInfo(
             MapSpecification<IQuery, IQueryable<T>> sourceMappingSpecification,
             Func<IReadOnlyCollection<long>, FindSpecification<T>> findSpecificationProvider,
             IReadOnlyCollection<IValueObjectInfo> valueObjects = null)
         {
-            _sourceMappingSpecification = sourceMappingSpecification;
-            _targetMappingSpecification = new MapSpecification<IQuery, IQueryable<T>>(q => q.For<T>());
-            _findSpecificationProvider = findSpecificationProvider;
+            var targetMappingSpecification = new MapSpecification<IQuery, IQueryable<T>>(q => q.For<T>());
+
+            FindSpecificationProvider = findSpecificationProvider;
             ValueObjects = valueObjects;
+            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => sourceMappingSpecification.Map(q).Where(specification));
+            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -32,20 +30,11 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             get { return typeof(T); }
         }
 
-        public MapToObjectsSpecProvider<T> SourceMappingProvider
-        {
-            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _sourceMappingSpecification.Map(q).Where(specification)); }
-        }
+        public MapToObjectsSpecProvider<T> SourceMappingProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<T> TargetMappingProvider
-        {
-            get { return specification => new MapSpecification<IQuery, IEnumerable>(q => _targetMappingSpecification.Map(q).Where(specification)); }
-        }
+        public MapToObjectsSpecProvider<T> TargetMappingProvider { get; private set; }
 
-        public Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider
-        {
-            get { return _findSpecificationProvider; }
-        }
+        public Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
 
         public IReadOnlyCollection<IValueObjectInfo> ValueObjects { get; private set; }
     }

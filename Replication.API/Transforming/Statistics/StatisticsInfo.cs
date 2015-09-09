@@ -9,9 +9,6 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
 {
     public class StatisticsInfo<T> : IStatisticsInfo, IStatisticsInfo<T>
     {
-        private readonly MapSpecification<IQuery, IQueryable<T>> _sourceMappingSpecification;
-        private readonly MapSpecification<IQuery, IQueryable<T>> _targetMappingSpecification;
-
         public StatisticsInfo(
             MapSpecification<IQuery, IQueryable<T>> sourceMappingSpecification,
             MapSpecification<IQuery, IQueryable<T>> targetMappingSpecification,
@@ -20,8 +17,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
         {
             FieldComparer = fieldComparer;
             FindSpecificationProvider = findSpecificationProvider;
-            _sourceMappingSpecification = sourceMappingSpecification;
-            _targetMappingSpecification = targetMappingSpecification;
+
+            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => sourceMappingSpecification.Map(q).Where(specification));
+            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -29,15 +27,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
             get { return typeof(T); }
         }
 
-        public MapToObjectsSpecProvider<T, T> SourceMappingProvider
-        {
-            get { return specification => new MapSpecification<IQuery, IEnumerable<T>>(q => _sourceMappingSpecification.Map(q).Where(specification)); }
-        }
+        public MapToObjectsSpecProvider<T, T> SourceMappingProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<T, T> TargetMappingProvider
-        {
-            get { return specification => new MapSpecification<IQuery, IEnumerable<T>>(q => _targetMappingSpecification.Map(q).Where(specification)); }
-        }
+        public MapToObjectsSpecProvider<T, T> TargetMappingProvider { get; private set; }
 
         public Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
 
