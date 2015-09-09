@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 foreach (var batch in operations.GroupBy(x => x.ProjectId, x => x.CategoryId))
                 {
-                    processor.RecalculateStatistics(batch.Key, batch.Distinct().ToList());
+                    processor.RecalculateStatistics(batch.Key, batch.Distinct().ToArray());
                 }
             }
         }

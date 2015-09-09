@@ -23,8 +23,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             _query = query;
             _applier = applier;
             _factInfo = factInfo;
-            _depencencyProcessors = _factInfo.DependencyInfos.Select(dependencyProcessorFactory.Create).ToList();
-            _indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(dependencyProcessorFactory.Create).ToList();
+            _depencencyProcessors = _factInfo.DependencyInfos.Select(dependencyProcessorFactory.Create).ToArray();
+            _indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(dependencyProcessorFactory.Create).ToArray();
             _changesDetector = new DataChangesDetector<TFact>(_factInfo, _query);
         }
 
@@ -33,9 +33,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             var changes = _changesDetector.DetectChanges(Specs.Map.ToIds, _factInfo.FindSpecificationProvider.Invoke(ids));
             var result = new List<IOperation>();
 
-            var idsToCreate = changes.Difference.ToList();
-            var idsToUpdate = changes.Intersection.ToList();
-            var idsToDelete = changes.Complement.ToList();
+            var idsToCreate = changes.Difference.ToArray();
+            var idsToUpdate = changes.Intersection.ToArray();
+            var idsToDelete = changes.Complement.ToArray();
 
             // Create
             CreateFact(idsToCreate);

@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         {
             var writer = XmlWriter.Create(new StreamWriter(Stream.Null));
             
-            errors = SerializeAndValidateCsdl(model, writer).Select(ToText).ToList();
+            errors = SerializeAndValidateCsdl(model, writer).Select(ToText).ToArray();
 
             return errors.Count == 0;
         }
@@ -62,7 +62,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
         {
             var writer = XmlWriter.Create(new StreamWriter(Stream.Null));
 
-            errors = SerializeAndValidateSsdl(model, writer).Select(ToText).ToList();
+            errors = SerializeAndValidateSsdl(model, writer).Select(ToText).ToArray();
 
             return errors.Count == 0;
         }

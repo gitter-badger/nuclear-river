@@ -75,7 +75,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     }
                 }
 
-                return result.Distinct().ToList();
+                return result.Distinct().ToArray();
             }
         }
     }

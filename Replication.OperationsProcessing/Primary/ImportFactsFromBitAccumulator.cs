@@ -32,7 +32,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             })
             .Where(x => x.Item1)
             .Select(x => x.Item2)
-            .ToList();
+            .ToArray();
 
             return new CorporateBusAggregatableMessage
             {
@@ -84,11 +84,11 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                 };
 
                                 return rubricDto;
-                            }).ToList()
+                            }).ToArray()
                         };
 
                         return firmDto;
-                    }).ToList(),
+                    }).ToArray(),
                 };
 
                 return true;
@@ -130,7 +130,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         };
 
                         return rubricDto;
-                    }).ToList()
+                    }).ToArray()
                 };
 
                 return true;

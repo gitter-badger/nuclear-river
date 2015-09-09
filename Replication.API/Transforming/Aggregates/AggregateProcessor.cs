@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         {
             var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
-            var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToList());
+            var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
 
             var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
 
@@ -38,9 +38,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         {
             var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
-            var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToList());
-            var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToList());
-            var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
+            var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
+            var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToArray());
+            var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
             var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
             var aggregatesToUpdate = _metadata.SourceMappingProvider.Invoke(updateFilter).Map(_query);
@@ -55,7 +55,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         {
             var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
-            var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
+            var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
             var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(_query);
 

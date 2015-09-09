@@ -51,7 +51,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 {
                     var operation = slice.Key.Operation;
                     var aggregateType = slice.Key.AggregateType;
-                    var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToList();
+                    var aggregateIds = slice.Select(x => x.AggregateId).Distinct().ToArray();
 
                     IAggregateInfo aggregateInfo;
                     if (!_metadataSource.Metadata.TryGetValue(aggregateType, out aggregateInfo))
