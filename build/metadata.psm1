@@ -36,7 +36,7 @@ function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
 function Get-UpdateSchemasMetadata ($UpdateSchemas) {
 
-	$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
+	[string[]]$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
 	if ($UpdateSchemas -and $UpdateSchemas.Count -ne 0){
 		return @{ 'UpdateSchemas' = $UpdateSchemas }
 	}
