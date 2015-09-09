@@ -68,7 +68,18 @@ function Get-TargetHostsMetadata ($Context){
 
 	switch ($Context.EnvType) {
 		'Production' {
-			return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
+			switch ($Context.EntryPoint){
+				'Replication.EntryPoint'{
+					return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
+				}
+				'ConvertUseCasesService'{
+					# TODO: Дима скажет что здесь прописать
+					return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
+				}
+				default {
+					throw "Unknown entrypoint $_"
+				}
+			}
 		}
 		'Load' {
 			return @{ 'TargetHosts' = @('uk-erm-iis10', 'uk-erm-iis11', 'uk-erm-iis12') }
