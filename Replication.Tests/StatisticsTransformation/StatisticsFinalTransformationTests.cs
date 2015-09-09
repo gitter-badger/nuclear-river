@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Moq;
 
-using Moq;
-
-using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.Writings;
 
@@ -17,8 +14,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
     [TestFixture]
     internal sealed class StatisticsFinalTransformationTests
     {
-        private static object[] data =
-            new object[]
+        private static readonly object[] data =
             {
                 new Facts::FirmCategory { ProjectId = 1, FirmId = 10, CategoryId = 100, },
                 new Facts::FirmCategory { ProjectId = 1, FirmId = 10, CategoryId = 101, },
@@ -63,76 +59,59 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
         [Test]
         public void ShouldRecalculateOnlySpecifiedProjectCategory()
         {
-            VerificationContainer mapper;
-            var transformation = CreateTransformation(data, out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = 100 };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(1, new long?[] { 100 });
 
-            var mock = mapper.Verify<CI::FirmCategoryStatistics>();
-            mock.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
-            mock.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId != 100)), Times.Never);
+            repository.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId != 100)), Times.Never);
 
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
         }
 
         [Test]
         public void ShouldRecalculateOnlySpecifiedProject()
         {
-            VerificationContainer mapper;
-            var transformation = CreateTransformation(data, out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(1, new long?[] { null });
 
-            var mock = mapper.Verify<CI::FirmCategoryStatistics>();
-            mock.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
-            mock.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
+            repository.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
 
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 101)), Times.AtLeastOnce);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 101)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
         }
 
         [Test]
         public void ShouldUpdateOnlyChangedRecords()
         {
-            VerificationContainer mapper;
-            var transformation = CreateTransformation(data, out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 3, CategoryId = null };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(3, new long?[] { null });
 
-            var mock = mapper.Verify<CI::FirmCategoryStatistics>();
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
-            mock.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.Once);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.Once);
         }
 
-        private static StatisticsFinalTransformation CreateTransformation(object[] data, out VerificationContainer container)
+        private static IStatisticsProcessor StatisticsProcessor<T>(object[] data, out Mock<IRepository<T>> repository) 
+            where T : class
         {
-            var query = new MemoryMockQuery(data);
-            container = new VerificationContainer();
             var metadataSource = new StatisticsFinalTransformationMetadata();
-            return new StatisticsFinalTransformation(query, new VerifiableDataChangesApplierFactory(container.Add), metadataSource);
-        }
+            var metadata = metadataSource.Metadata[typeof(T)];
+            repository = new Mock<IRepository<T>>();
 
-        private class VerificationContainer
-        {
-            private readonly IDictionary<Type, IRepository> _dictionary = new Dictionary<Type, IRepository>();
-
-            public Mock<IRepository<T>> Verify<T>() where T : class
-            {
-                var repository = (IRepository<T>)_dictionary[typeof(T)];
-                return Mock.Get(repository);
-            }
-
-            public void Add(Type type, IRepository repository)
-            {
-                _dictionary.Add(type, repository);
-            }
+            return new StatisticsProcessor<T>(
+                (StatisticsInfo<T>)metadata,
+                new MemoryMockQuery(data),
+                new DataChangesApplier<T>(repository.Object));
         }
     }
 }

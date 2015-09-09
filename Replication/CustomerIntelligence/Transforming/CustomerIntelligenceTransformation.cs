@@ -6,38 +6,39 @@ using System.Transactions;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
-using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
     public sealed class CustomerIntelligenceTransformation
     {
-        private readonly IQuery _query;
-        private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
         private readonly IMetadataSource<IAggregateInfo> _metadataSource;
         private readonly IAggregateProcessorFactory _aggregateProcessorFactory;
         private readonly IValueObjectProcessorFactory _valueObjectProcessorFactory;
 
-        public CustomerIntelligenceTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory, IMetadataSource<IAggregateInfo> metadataSource)
+        public CustomerIntelligenceTransformation(IMetadataSource<IAggregateInfo> metadataSource,
+                                                  IAggregateProcessorFactory aggregateProcessorFactory,
+                                                  IValueObjectProcessorFactory valueObjectProcessorFactory)
         {
-            if (query == null)
+            if (metadataSource == null)
             {
-                throw new ArgumentNullException("query");
+                throw new ArgumentNullException("metadataSource");
             }
 
-            if (dataChangesApplierFactory == null)
+            if (aggregateProcessorFactory == null)
             {
-                throw new ArgumentNullException("dataChangesApplierFactory");
+                throw new ArgumentNullException("aggregateProcessorFactory");
             }
 
-            _query = query;
-            _dataChangesApplierFactory = dataChangesApplierFactory;
+            if (valueObjectProcessorFactory == null)
+            {
+                throw new ArgumentNullException("valueObjectProcessorFactory");
+            }
+
             _metadataSource = metadataSource;
-            _aggregateProcessorFactory = new AggregateProcessorFactory();
-            _valueObjectProcessorFactory = new ValueObjectProcessorFactory();
+            _aggregateProcessorFactory = aggregateProcessorFactory;
+            _valueObjectProcessorFactory = valueObjectProcessorFactory;
         }
-
 
         public void Transform(IEnumerable<AggregateOperation> operations)
         {
@@ -90,9 +91,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
-            var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
             var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Initialize(_query, changesApplier, aggregateIds);
+            processor.Initialize(aggregateIds);
 
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
         }
@@ -101,27 +101,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
         {
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
 
-            var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
             var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Recalculate(_query, changesApplier, aggregateIds);
+            processor.Recalculate(aggregateIds);
         }
 
         private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
         {
             ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
 
-            var changesApplier = _dataChangesApplierFactory.Create(aggregateInfo.Type);
             var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Destroy(_query, changesApplier, aggregateIds);
+            processor.Destroy(aggregateIds);
         }
 
         private void ApplyChangesToValueObjects(IEnumerable<IValueObjectInfo> valueObjectInfos, IReadOnlyCollection<long> aggregateIds)
         {
             foreach (var valueObjectInfo in valueObjectInfos)
             {
-                var changesApplier = _dataChangesApplierFactory.Create(valueObjectInfo.Type);
                 var transformation = _valueObjectProcessorFactory.Create(valueObjectInfo);
-                transformation.ApplyChanges(_query, changesApplier, aggregateIds);
+                transformation.ApplyChanges(aggregateIds);
             }
         }
     }

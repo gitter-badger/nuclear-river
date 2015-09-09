@@ -14,21 +14,25 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         private static readonly MapSpecification<IEnumerable, IEnumerable<IObject>> ValueObjectsChangesDetectionMapSpec =
             new MapSpecification<IEnumerable, IEnumerable<IObject>>(x => x.Cast<IObject>());
 
+        private readonly IQuery _query;
+        private readonly IDataChangesApplier<T> _applier;
         private readonly ValueObjectInfo<T> _metadata;
 
-        public ValueObjectProcessor(ValueObjectInfo<T> metadata)
+        public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IDataChangesApplier<T> applier)
         {
             _metadata = metadata;
+            _query = query;
+            _applier = applier;
         }
 
-        public void ApplyChanges(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
+        public void ApplyChanges(IReadOnlyCollection<long> ids)
         {
-            var changesDetector = new DataChangesDetector<T>(_metadata, query);
+            var changesDetector = new DataChangesDetector<T>(_metadata, _query);
             var mergeResult = changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, _metadata.FindSpecificationProvider.Invoke(ids));
 
-            applier.Delete(mergeResult.Complement);
-            applier.Create(mergeResult.Difference);
-            applier.Update(mergeResult.Intersection);
+            _applier.Delete(mergeResult.Complement);
+            _applier.Create(mergeResult.Difference);
+            _applier.Update(mergeResult.Intersection);
         }
     }
 }

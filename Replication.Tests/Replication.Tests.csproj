@@ -88,7 +88,6 @@
     <Compile Include="BulkLoading\BulkLoadingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
-    <Compile Include="StubDataChangesApplierFactory.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
@@ -116,7 +115,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\TransformationFixtureBase.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="VerifiableDataChangesApplierFactory.cs" />
     <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>

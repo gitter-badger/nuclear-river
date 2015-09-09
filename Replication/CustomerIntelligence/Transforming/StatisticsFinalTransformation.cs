@@ -5,34 +5,30 @@ using System.Linq;
 using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
-using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public partial class StatisticsFinalTransformation
+    public class StatisticsFinalTransformation
     {
-        private readonly IQuery _query;
-        private readonly IDataChangesApplierFactory _dataChangesApplierFactory;
         private readonly IMetadataSource<IStatisticsInfo> _metadataSource;
-        private readonly StatisticsProcessorFactory _statisticsProcessorFactory;
+        private readonly IStatisticsProcessorFactory _statisticsProcessorFactory;
 
-        public StatisticsFinalTransformation(IQuery query, IDataChangesApplierFactory dataChangesApplierFactory, IMetadataSource<IStatisticsInfo> metadataSource)
-    {
-            if (query == null)
-            {
-                throw new ArgumentNullException("query");
-            }
-
-            if (dataChangesApplierFactory == null)
+        public StatisticsFinalTransformation(IMetadataSource<IStatisticsInfo> metadataSource,
+                                             IStatisticsProcessorFactory statisticsProcessorFactory)
         {
-                throw new ArgumentNullException("dataChangesApplierFactory");
+            if (metadataSource == null)
+            {
+                throw new ArgumentNullException("metadataSource");
             }
 
-            _query = query;
-            _dataChangesApplierFactory = dataChangesApplierFactory;
+            if (statisticsProcessorFactory == null)
+            {
+                throw new ArgumentNullException("statisticsProcessorFactory");
+            }
+
             _metadataSource = metadataSource;
-            _statisticsProcessorFactory = new StatisticsProcessorFactory();
+            _statisticsProcessorFactory = statisticsProcessorFactory;
         }
 
         public void Recalculate(IEnumerable<CalculateStatisticsOperation> operations)
@@ -44,9 +40,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             {
                 foreach (var batch in operations.GroupBy(x => x.ProjectId, x => x.CategoryId))
                 {
-                    var changesApplier = _dataChangesApplierFactory.Create(metadata.Type);
-                    processor.RecalculateStatistics(_query, changesApplier, batch.Key, batch.Distinct().ToList());
-        }
+                    processor.RecalculateStatistics(batch.Key, batch.Distinct().ToList());
+                }
             }
         }
     }

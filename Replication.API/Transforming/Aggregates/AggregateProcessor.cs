@@ -7,55 +7,59 @@ using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
-    public sealed class AggregateProcessor<T> : IAggregateProcessor where T : class, IIdentifiable
+    public sealed class AggregateProcessor<T> : IAggregateProcessor 
+        where T : class, IIdentifiable
     {
+        private readonly IQuery _query;
+        private readonly IDataChangesApplier<T> _applier;
         private readonly AggregateInfo<T> _metadata;
+        private readonly DataChangesDetector<T> _aggregateChangesDetector;
 
-        public AggregateProcessor(AggregateInfo<T> metadata)
+        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IDataChangesApplier<T> applier)
         {
             _metadata = metadata;
+            _query = query;
+            _applier = applier;
+            _aggregateChangesDetector = new DataChangesDetector<T>(_metadata, _query);
         }
 
-        public void Initialize(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
+        public void Initialize(IReadOnlyCollection<long> ids)
         {
-            var aggregateChangesDetector = new DataChangesDetector<T>(_metadata, query);
-            var mergeResult = aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToList());
 
-            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(query);
+            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
 
-            applier.Create(aggregatesToCreate);
+            _applier.Create(aggregatesToCreate);
         }
 
-        public void Recalculate(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
+        public void Recalculate(IReadOnlyCollection<long> ids)
         {
-            var aggregateChangesDetector = new DataChangesDetector<T>(_metadata, query);
-            var mergeResult = aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToList());
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToList());
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
 
-            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(query);
-            var aggregatesToUpdate = _metadata.SourceMappingProvider.Invoke(updateFilter).Map(query);
-            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(query);
+            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
+            var aggregatesToUpdate = _metadata.SourceMappingProvider.Invoke(updateFilter).Map(_query);
+            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(_query);
 
-            applier.Delete(aggregatesToDelete);
-            applier.Create(aggregatesToCreate);
-            applier.Update(aggregatesToUpdate);
+            _applier.Delete(aggregatesToDelete);
+            _applier.Create(aggregatesToCreate);
+            _applier.Update(aggregatesToUpdate);
         }
 
-        public void Destroy(IQuery query, IDataChangesApplier applier, IReadOnlyCollection<long> ids)
+        public void Destroy(IReadOnlyCollection<long> ids)
         {
-            var aggregateChangesDetector = new DataChangesDetector<T>(_metadata, query);
-            var mergeResult = aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToList());
 
-            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(query);
+            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(_query);
 
-            applier.Delete(aggregatesToDelete);
+            _applier.Delete(aggregatesToDelete);
         }
     }
 }

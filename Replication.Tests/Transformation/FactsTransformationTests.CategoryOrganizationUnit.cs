@@ -17,7 +17,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Project>(1)));
         }
@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Project>(1)));
         }
@@ -41,7 +41,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Project>(1)));
         }
@@ -61,7 +61,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1, ClientId = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(1),
                                           Aggregate.Recalculate<CI::Client>(1)));

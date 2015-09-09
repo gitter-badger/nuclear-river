@@ -8,34 +8,36 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
     public class FactDependencyProcessor<TFact> : IFactDependencyProcessor
     {
+        private readonly IQuery _query;
         private readonly IFactDependencyInfo<TFact> _metadata;
 
-        public FactDependencyProcessor(IFactDependencyInfo<TFact> metadata)
+        public FactDependencyProcessor(IQuery query, IFactDependencyInfo<TFact> metadata)
         {
+            _query = query;
             _metadata = metadata;
         }
 
-        public IEnumerable<IOperation> ProcessCreation(IQuery query, IReadOnlyCollection<long> factIds)
+        public IEnumerable<IOperation> ProcessCreation(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(query, factIds, _metadata.CreationMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.CreationMappingSpecificationProvider);
         }
 
-        public IEnumerable<IOperation> ProcessUpdating(IQuery query, IReadOnlyCollection<long> factIds)
+        public IEnumerable<IOperation> ProcessUpdating(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(query, factIds, _metadata.UpdatingMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.UpdatingMappingSpecificationProvider);
         }
 
-        public IEnumerable<IOperation> ProcessDeletion(IQuery query, IReadOnlyCollection<long> factIds)
+        public IEnumerable<IOperation> ProcessDeletion(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(query, factIds, _metadata.DeletionMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.DeletionMappingSpecificationProvider);
         }
 
-        private IEnumerable<IOperation> ProcessDependencies(IQuery query, IReadOnlyCollection<long> factIds, MapToObjectsSpecProvider<TFact> operationFactory)
+        private IEnumerable<IOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, MapToObjectsSpecProvider<TFact> operationFactory)
         {
             using (Probe.Create("Querying dependent aggregates"))
             {
                 var filter = _metadata.FindSpecificationProvider.Invoke(factIds);
-                return operationFactory.Invoke(filter).Map(query).Cast<IOperation>();
+                return operationFactory.Invoke(filter).Map(_query).Cast<IOperation>();
             }
         }
     }

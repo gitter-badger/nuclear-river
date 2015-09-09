@@ -16,7 +16,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(
                 new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI::CategoryGroup>(1)));
         }
@@ -27,7 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI::CategoryGroup>(1)));
         }
@@ -40,7 +40,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryGroup>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI::CategoryGroup>(1)));
         }

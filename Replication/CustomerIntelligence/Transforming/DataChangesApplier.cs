@@ -6,7 +6,8 @@ using NuClear.Storage.Writings;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public class DataChangesApplier<TTarget> : IDataChangesApplier<TTarget> where TTarget : class
+    public class DataChangesApplier<TTarget> : IDataChangesApplier<TTarget> 
+        where TTarget : class
     {
         private readonly IRepository<TTarget> _repository;
 

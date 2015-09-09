@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             ErmDb.Has(new Client { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI.Client>(1)));
         }
@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Client { Id = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1)));
         }
@@ -55,7 +55,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI.Client>(1)));
         }
@@ -66,7 +66,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Firm { Id = 2, ClientId = 1 });
             FactsDb.Has(new Facts::Client { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1)), op => op is RecalculateAggregate);
         }
@@ -79,7 +79,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1), Aggregate.Recalculate<CI.Firm>(2), Aggregate.Recalculate<CI.Client>(3)));
         }
@@ -90,7 +90,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1)), op => op is RecalculateAggregate);
         }
@@ -100,7 +100,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             ErmDb.Has(new Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(1))
                           .Verify(Inquire(Aggregate.Initialize<CI.Firm>(1)));
         }
@@ -111,7 +111,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Firm { Id = 1 });
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -121,7 +121,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Firm>(1))
                           .Verify(Inquire(Aggregate.Destroy<CI.Firm>(1)));
         }
@@ -136,7 +136,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Account>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -155,7 +155,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 2, ClientId = 2 })
                    .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Account>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -169,7 +169,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
                    .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Account>(5))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -184,7 +184,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -196,7 +196,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -213,7 +213,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -227,7 +227,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -241,7 +241,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
                    .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -252,7 +252,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::BranchOfficeOrganizationUnit>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -268,7 +268,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 1, Level = 1 })
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -284,7 +284,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 1, Level = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -300,7 +300,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -321,7 +321,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -341,7 +341,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -360,7 +360,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -375,7 +375,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -390,7 +390,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -405,7 +405,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
                    .Has(new Facts::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Category>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -420,7 +420,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -438,7 +438,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -453,7 +453,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryFirmAddress>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -467,7 +467,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
                    .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(6))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(3)));
         }
@@ -485,7 +485,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 1 })
                    .Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 1, CategoryId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -498,7 +498,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 })
                    .Has(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::CategoryOrganizationUnit>(6))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(3)));
         }
@@ -510,7 +510,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)), op => op is RecalculateAggregate);
         }
@@ -523,7 +523,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Client>(1)));
         }
@@ -534,7 +534,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Client>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(2)), op => op is RecalculateAggregate);
         }
@@ -547,7 +547,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Contact>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -563,7 +563,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2, ClientId = 2 })
                    .Has(new Facts::Contact { Id = 1, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Contact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1), Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Client>(2),  Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -575,7 +575,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 })
                    .Has(new Facts::Contact { Id = 3, ClientId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Contact>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Client>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -586,7 +586,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new FirmAddress { Id = 2, FirmId = 1 });
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmAddress>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -599,7 +599,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmAddress>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -610,7 +610,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmAddress>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -623,7 +623,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmContact>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -639,7 +639,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
                    .Has(new Facts::FirmContact { Id = 1, FirmAddressId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmContact>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -653,7 +653,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
                    .Has(new Facts::FirmContact { Id = 3, FirmAddressId = 2 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmContact>(3))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -668,7 +668,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::LegalPerson>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -686,7 +686,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::LegalPerson>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -700,7 +700,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
                    .Has(new Facts::Account { Id = 5, LegalPersonId = 4, BranchOfficeOrganizationUnitId = 3 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::LegalPerson>(4))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -711,7 +711,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Order { Id = 2, FirmId = 1, WorkflowStepId = 4 });
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Order>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -725,7 +725,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::Order { Id = 1, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Order>(1))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -736,7 +736,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Order { Id = 2, FirmId = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::Order>(2))
                           .Verify(Inquire(Aggregate.Recalculate<CI.Firm>(1)));
         }
@@ -749,7 +749,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             FactsDb.Has(new Facts::Firm { Id = 1 });
 
-            Transformation.Create(Query, StubDataChangesApplierFactory)
+            Transformation.Create(Query)
                           .Transform(Fact.Operation<Facts::FirmAddress>(1), Fact.Operation<Facts::Firm>(2), Fact.Operation<Facts::FirmAddress>(2))
                           .Verify(Inquire(Aggregate.Initialize<CI.Firm>(2), Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2)));
         }
@@ -893,9 +893,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             private readonly ErmFactsTransformation _transformation;
             private readonly List<IOperation> _operations = new List<IOperation>();
-            private readonly IDataChangesApplierFactory _changesApplierFactory;
 
-            private Transformation(IQuery query, IDataChangesApplierFactory changesApplierFactory)
+            private Transformation(IQuery query)
             {
                 var tracer = Mock.Of<ITracer>();
                 var replicationSettings = new Mock<IReplicationSettings>();
@@ -903,18 +902,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 var factProcessorFactory = new VerifiableFactProcessorFactory();
                 var metadataSource = new ErmFactsTransformationMetadata();
 
-                _changesApplierFactory = changesApplierFactory;
-                _transformation = new ErmFactsTransformation(query, replicationSettings.Object, factProcessorFactory, changesApplierFactory, metadataSource, tracer);
+                _transformation = new ErmFactsTransformation(metadataSource, factProcessorFactory, replicationSettings.Object, tracer);
             }
 
             public static Transformation Create(IQuery query)
             {
-                return new Transformation(query, new VerifiableDataChangesApplierFactory((type, repository) => { }));
-            }
-
-            public static Transformation Create(IQuery query, IDataChangesApplierFactory changesApplierFactory)
-            {
-                return new Transformation(query, changesApplierFactory);
+                return new Transformation(query);
             }
 
             public Transformation Transform(params FactOperation[] operations)
@@ -925,16 +918,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public Transformation Verify<T>(Expression<Action<IRepository<T>>> action, Func<Times> times = null, string failMessage = null) where T : class
             {
-                var verifiableFactory = _changesApplierFactory as VerifiableDataChangesApplierFactory;
-                if (verifiableFactory == null)
-                {
-                    throw new Exception("factory sould be verifiable");
-                }
-
-                var repository = (IRepository<T>)verifiableFactory.FindCreatedRepository(typeof(T));
-                Mock.Get(repository)
-                    .Verify(action, times ?? Times.AtLeastOnce, failMessage);
-                return this;
+                throw new NotImplementedException("Требуется реализовать заново");
             }
 
             public Transformation Verify(IEnumerable<IOperation> expected, Func<IOperation, bool> predicate = null)
