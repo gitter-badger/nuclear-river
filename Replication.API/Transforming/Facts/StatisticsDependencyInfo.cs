@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             CreationMappingSpecificationProvider
                 = UpdatingMappingSpecificationProvider
                 = DeletionMappingSpecificationProvider
-                = specification => new MapSpecification<IQuery, IEnumerable>(q => calculateStatisticsSpecProvider.Invoke(specification).Map(q).Select(tuple => new CalculateStatisticsOperation { ProjectId = tuple.Item1, CategoryId = tuple.Item2 }));
+                = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(q => calculateStatisticsSpecProvider.Invoke(specification).Map(q).Select(tuple => new CalculateStatisticsOperation { ProjectId = tuple.Item1, CategoryId = tuple.Item2 }));
         }
 
         public Type Type
@@ -34,11 +33,11 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return false; }
         }
 
-        public MapToObjectsSpecProvider<TFact> CreationMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> CreationMappingSpecificationProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> UpdatingMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> UpdatingMappingSpecificationProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> DeletionMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> DeletionMappingSpecificationProvider { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider { get; private set; }
     }

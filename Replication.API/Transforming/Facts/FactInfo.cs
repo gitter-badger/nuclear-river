@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,8 +20,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             FindSpecificationProvider = findSpecificationProvider;
 
             var targetMappingSpecification = new MapSpecification<IQuery, IQueryable<TFact>>(q => q.For<TFact>());
-            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => sourceMappingSpecification.Map(q).Where(specification));
-            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => targetMappingSpecification.Map(q).Where(specification));
+            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<TFact>>(q => sourceMappingSpecification.Map(q).Where(specification));
+            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<TFact>>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -32,9 +31,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 
         public IReadOnlyCollection<IFactDependencyInfo> DependencyInfos { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> SourceMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, TFact> SourceMappingProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> TargetMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, TFact> TargetMappingProvider { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider { get; private set; }
     }

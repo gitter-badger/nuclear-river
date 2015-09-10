@@ -11,8 +11,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
     public interface IValueObjectInfo<T>
     {
-        MapToObjectsSpecProvider<T> SourceMappingProvider { get; }
-        MapToObjectsSpecProvider<T> TargetMappingProvider { get; }
+        MapToObjectsSpecProvider<T, T> SourceMappingProvider { get; }
+        MapToObjectsSpecProvider<T, T> TargetMappingProvider { get; }
 
         Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; }
     }

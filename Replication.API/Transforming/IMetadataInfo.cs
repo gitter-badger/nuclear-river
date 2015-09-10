@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using NuClear.Storage.Readings;
@@ -8,7 +7,6 @@ using NuClear.Storage.Specifications;
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
     public delegate MapSpecification<IQuery, IEnumerable<TOutput>> MapToObjectsSpecProvider<TFilter, TOutput>(FindSpecification<TFilter> specification);
-    public delegate MapSpecification<IQuery, IEnumerable> MapToObjectsSpecProvider<TSource>(FindSpecification<TSource> specification);
 
     public interface IMetadataInfo
     {

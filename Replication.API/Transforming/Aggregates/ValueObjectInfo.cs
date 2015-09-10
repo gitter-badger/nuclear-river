@@ -18,8 +18,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             FindSpecificationProvider = findSpecificationProvider;
 
             var targetMappingSpecification = new MapSpecification<IQuery, IQueryable<TValueObject>>(q => q.For<TValueObject>());
-            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => sourceMappingSpecification.Map(q).Where(specification));
-            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => targetMappingSpecification.Map(q).Where(specification));
+            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<TValueObject>>(q => sourceMappingSpecification.Map(q).Where(specification));
+            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<TValueObject>>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -27,9 +27,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             get { return typeof(TValueObject); }
         }
 
-        public MapToObjectsSpecProvider<TValueObject> SourceMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<TValueObject, TValueObject> SourceMappingProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TValueObject> TargetMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<TValueObject, TValueObject> TargetMappingProvider { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<TValueObject>> FindSpecificationProvider { get; private set; }
     }

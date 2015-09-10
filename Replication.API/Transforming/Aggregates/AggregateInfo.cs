@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,8 +20,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             FindSpecificationProvider = findSpecificationProvider;
             ValueObjects = valueObjects;
-            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => sourceMappingSpecification.Map(q).Where(specification));
-            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => targetMappingSpecification.Map(q).Where(specification));
+            SourceMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => sourceMappingSpecification.Map(q).Where(specification));
+            TargetMappingProvider = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -30,9 +29,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             get { return typeof(T); }
         }
 
-        public MapToObjectsSpecProvider<T> SourceMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<T, T> SourceMappingProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<T> TargetMappingProvider { get; private set; }
+        public MapToObjectsSpecProvider<T, T> TargetMappingProvider { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
 

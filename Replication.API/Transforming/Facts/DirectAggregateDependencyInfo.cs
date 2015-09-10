@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,9 +18,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             FindSpecificationProvider = Specs.Find.ByIds<TFact>;
 
             // FIXME {all, 04.09.2015}: Слабое место - внутри спецификации идентификаторы, затем идём в базу за идентификаторами. Если достать их из спецификации в бузу хдить не потребуется.
-            CreationMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => q.For(specification).Select(x => x.Id).Select(id => new InitializeAggregate(aggregateType, id)));
-            UpdatingMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => q.For(specification).Select(x => x.Id).Select(id => new RecalculateAggregate(aggregateType, id)));
-            DeletionMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable>(q => q.For(specification).Select(x => x.Id).Select(id => new DestroyAggregate(aggregateType, id)));
+            CreationMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(q => q.For(specification).Select(x => x.Id).Select(id => new InitializeAggregate(aggregateType, id)));
+            UpdatingMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(q => q.For(specification).Select(x => x.Id).Select(id => new RecalculateAggregate(aggregateType, id)));
+            DeletionMappingSpecificationProvider = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(q => q.For(specification).Select(x => x.Id).Select(id => new DestroyAggregate(aggregateType, id)));
         }
 
         public Type Type
@@ -34,11 +33,11 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return true; }
         }
 
-        public MapToObjectsSpecProvider<TFact> CreationMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> CreationMappingSpecificationProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> UpdatingMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> UpdatingMappingSpecificationProvider { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact> DeletionMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> DeletionMappingSpecificationProvider { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider { get; private set; }
     }

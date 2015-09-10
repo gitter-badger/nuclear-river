@@ -12,9 +12,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 
     public interface IFactDependencyInfo<T>
     {
-        MapToObjectsSpecProvider<T> CreationMappingSpecificationProvider { get; }
-        MapToObjectsSpecProvider<T> UpdatingMappingSpecificationProvider { get; }
-        MapToObjectsSpecProvider<T> DeletionMappingSpecificationProvider { get; }
+        MapToObjectsSpecProvider<T, IOperation> CreationMappingSpecificationProvider { get; }
+        MapToObjectsSpecProvider<T, IOperation> UpdatingMappingSpecificationProvider { get; }
+        MapToObjectsSpecProvider<T, IOperation> DeletionMappingSpecificationProvider { get; }
 
         Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; }
     }

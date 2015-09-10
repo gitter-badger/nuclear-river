@@ -1,35 +1,30 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
+using NuClear.AdvancedSearch.Replication.API.Specifications;
 using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
     public sealed class ValueObjectProcessor<T> : IValueObjectProcessor 
         where T : class, IObject
     {
-        private static readonly MapSpecification<IEnumerable, IEnumerable<IObject>> ValueObjectsChangesDetectionMapSpec =
-            new MapSpecification<IEnumerable, IEnumerable<IObject>>(x => x.Cast<IObject>());
-
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _applier;
         private readonly ValueObjectInfo<T> _metadata;
-        private readonly DataChangesDetector<T> _changesDetector;
+        private readonly DataChangesDetector<T, T> _changesDetector;
 
         public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
         {
             _metadata = metadata;
             _query = query;
             _applier = applier;
-            _changesDetector = new DataChangesDetector<T>(_metadata, _query);
+            _changesDetector = new DataChangesDetector<T, T>(_metadata.SourceMappingProvider, _metadata.TargetMappingProvider, _query);
         }
 
         public void ApplyChanges(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _changesDetector.DetectChanges(ValueObjectsChangesDetectionMapSpec, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             _applier.Delete(mergeResult.Complement);
             _applier.Create(mergeResult.Difference);

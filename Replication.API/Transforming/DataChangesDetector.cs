@@ -1,49 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
-using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming
 {
-    // FIXME {all, 04.09.2015}: Вернуться сюда
-    internal class DataChangesDetector<TSource>
+    internal class DataChangesDetector<TFilter, TOutput>
     {
         private readonly IQuery _query;
-        private readonly MapToObjectsSpecProvider<TSource> _source;
-        private readonly MapToObjectsSpecProvider<TSource> _target;
+        private readonly MapToObjectsSpecProvider<TFilter, TOutput> _sourceProvider;
+        private readonly MapToObjectsSpecProvider<TFilter, TOutput> _targetProvider;
 
-        public DataChangesDetector(IAggregateInfo<TSource> metadataInfo, IQuery query)
+        public DataChangesDetector(
+            MapToObjectsSpecProvider<TFilter, TOutput> sourceProvider,
+            MapToObjectsSpecProvider<TFilter, TOutput> targetProvider,
+            IQuery query)
         {
-            _source = metadataInfo.SourceMappingProvider;
-            _target = metadataInfo.TargetMappingProvider;
+            _sourceProvider = sourceProvider;
+            _targetProvider = targetProvider;
             _query = query;
         }
 
-        public DataChangesDetector(IFactInfo<TSource> metadataInfo, IQuery query)
-        {
-            _source = metadataInfo.SourceMappingProvider;
-            _target = metadataInfo.TargetMappingProvider;
-            _query = query;
-        }
-
-        public DataChangesDetector(IValueObjectInfo<TSource> metadataInfo, IQuery query)
-        {
-            _source = metadataInfo.SourceMappingProvider;
-            _target = metadataInfo.TargetMappingProvider;
-            _query = query;
-        }
-
-        public MergeResult<TTarget> DetectChanges<TTarget>(MapSpecification<IEnumerable, IEnumerable<TTarget>> mapSpec, FindSpecification<TSource> specification)
+        public MergeResult<TCompared> DetectChanges<TCompared>(MapSpecification<IEnumerable<TOutput>, IEnumerable<TCompared>> mapSpec, FindSpecification<TFilter> specification)
         {
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
-                var sourceObjects = _source.Invoke(specification).Map(_query);
-                var targetObjects = _target.Invoke(specification).Map(_query);
+                var sourceObjects = _sourceProvider.Invoke(specification).Map(_query);
+                var targetObjects = _targetProvider.Invoke(specification).Map(_query);
 
                 var result = MergeTool.Merge(
                     mapSpec.Map(sourceObjects).ToArray(),

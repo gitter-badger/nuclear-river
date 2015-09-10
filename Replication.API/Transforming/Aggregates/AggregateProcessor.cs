@@ -13,19 +13,19 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _applier;
         private readonly AggregateInfo<T> _metadata;
-        private readonly DataChangesDetector<T> _aggregateChangesDetector;
+        private readonly DataChangesDetector<T, T> _aggregateChangesDetector;
 
         public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
         {
             _metadata = metadata;
             _query = query;
             _applier = applier;
-            _aggregateChangesDetector = new DataChangesDetector<T>(_metadata, _query);
+            _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.SourceMappingProvider, _metadata.TargetMappingProvider, _query);
         }
 
         public void Initialize(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
 
@@ -36,7 +36,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
         public void Recalculate(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToArray());
@@ -53,7 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
         public void Destroy(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds, _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 

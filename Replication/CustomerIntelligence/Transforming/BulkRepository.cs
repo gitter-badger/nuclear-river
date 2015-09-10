@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.Storage.Writings;
@@ -16,15 +15,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _repository = repository;
         }
 
-        public void Create(IEnumerable objects)
+        public void Create(IEnumerable<TTarget> objects)
         {
-            _repository.AddRange(objects.Cast<TTarget>());
+            _repository.AddRange(objects);
             _repository.Save();
         }
 
-        public void Update(IEnumerable objects)
+        public void Update(IEnumerable<TTarget> objects)
         {
-            foreach (var obj in objects.Cast<TTarget>())
+            foreach (var obj in objects)
             {
                 _repository.Update(obj);
             }
@@ -32,9 +31,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
             _repository.Save();
         }
 
-        public void Delete(IEnumerable objects)
+        public void Delete(IEnumerable<TTarget> objects)
         {
-            _repository.DeleteRange(objects.Cast<TTarget>());
+            _repository.DeleteRange(objects);
             _repository.Save();
         }
     }

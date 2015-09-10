@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
@@ -32,12 +31,12 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             return ProcessDependencies(factIds, _metadata.DeletionMappingSpecificationProvider);
         }
 
-        private IEnumerable<IOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, MapToObjectsSpecProvider<TFact> operationFactory)
+        private IEnumerable<IOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, MapToObjectsSpecProvider<TFact, IOperation> operationFactory)
         {
             using (Probe.Create("Querying dependent aggregates"))
             {
                 var filter = _metadata.FindSpecificationProvider.Invoke(factIds);
-                return operationFactory.Invoke(filter).Map(_query).Cast<IOperation>();
+                return operationFactory.Invoke(filter).Map(_query);
             }
         }
     }
