@@ -292,25 +292,25 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                   .VerifyRead(x => x.For(Specs.Find.Erm.FirmAddresses()).ById(5), Inquire(data[4]));
         }
 
-        //[Test]
-        //public void ShouldReadFirmContact()
-        //{
-        //    var data = new[]
-        //               {
-        //                   new FirmContact { Id = 1, ContactType = 1, FirmAddressId = 1 },
-        //                   new FirmContact { Id = 2, ContactType = 2, FirmAddressId = 1 },
-        //                   new FirmContact { Id = 3, ContactType = 4, FirmAddressId = 2 }
-        //               };
+        [Test]
+        public void ShouldReadFirmContact()
+        {
+            var data = new[]
+                       {
+                           new FirmContact { Id = 1, ContactType = 1, FirmAddressId = 1 },
+                           new FirmContact { Id = 2, ContactType = 2, FirmAddressId = 1 },
+                           new FirmContact { Id = 3, ContactType = 4, FirmAddressId = 2 }
+                       };
 
-        //    ErmDb.Has(data[0])
-        //         .Has(data[1])
-        //         .Has(data[2]);
+            ErmDb.Has(data[0])
+                 .Has(data[1])
+                 .Has(data[2]);
 
-        //    Reader.Create(Query)
-        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(1), Inquire(data[0]))
-        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(2), Inquire(data[1]))
-        //          .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(3), Inquire(data[2]));
-        //}
+            Reader.Create(Query)
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(1), Inquire(data[0]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(2), Inquire(data[1]))
+                  .VerifyRead(x => x.For(Specs.Find.Erm.FirmContacts()).ById(3), Inquire(data[2]));
+        }
 
         [Test]
         public void ShouldReadLegalPerson()

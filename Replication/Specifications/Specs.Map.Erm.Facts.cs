@@ -139,7 +139,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                     public static readonly MapSpecification<IQuery, IQueryable<FirmContact>> FirmContacts =
                         new MapSpecification<IQuery, IQueryable<FirmContact>>(
-                            q => from firmContact in q.For<NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm.FirmContact>()
+                            q => from firmContact in q.For(Find.Erm.FirmContacts())
                                  where firmContact.FirmAddressId != null && (firmContact.ContactType == ContactType.Phone || firmContact.ContactType == ContactType.Website)
                                  select new FirmContact
                                  {

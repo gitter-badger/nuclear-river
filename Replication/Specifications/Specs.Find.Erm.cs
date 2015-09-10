@@ -55,6 +55,11 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     return new FindSpecification<FirmAddress>(x => x.IsActive && !x.IsDeleted);
                 }
 
+                public static FindSpecification<FirmContact> FirmContacts()
+                {
+                    return new FindSpecification<FirmContact>(x => true);
+                }
+
                 public static FindSpecification<LegalPerson> LegalPersons()
                 {
                     return new FindSpecification<LegalPerson>(x => x.IsActive && !x.IsDeleted);
