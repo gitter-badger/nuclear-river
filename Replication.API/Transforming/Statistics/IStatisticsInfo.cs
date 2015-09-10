@@ -11,8 +11,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
 
     public interface IStatisticsInfo<T>
     {
-        MapToObjectsSpecProvider<T, T> SourceMappingProvider { get; }
-        MapToObjectsSpecProvider<T, T> TargetMappingProvider { get; }
+        MapToObjectsSpecProvider<T, T> MapSpecificationProviderForSource { get; }
+        MapToObjectsSpecProvider<T, T> MapSpecificationProviderForTarget { get; }
 
         Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> FindSpecificationProvider { get; }
     }

@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             _metadata = metadata;
             _query = query;
             _applier = applier;
-            _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.SourceMappingProvider, _metadata.TargetMappingProvider, _query);
+            _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
         }
 
         public void Initialize(IReadOnlyCollection<long> ids)
@@ -29,7 +29,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
 
-            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
+            var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query);
 
             _applier.Create(aggregatesToCreate);
         }
@@ -42,9 +42,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToArray());
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
-            var aggregatesToCreate = _metadata.SourceMappingProvider.Invoke(createFilter).Map(_query);
-            var aggregatesToUpdate = _metadata.SourceMappingProvider.Invoke(updateFilter).Map(_query);
-            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(_query);
+            var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query);
+            var aggregatesToUpdate = _metadata.MapSpecificationProviderForSource.Invoke(updateFilter).Map(_query);
+            var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query);
 
             _applier.Delete(aggregatesToDelete);
             _applier.Create(aggregatesToCreate);
@@ -57,7 +57,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
-            var aggregatesToDelete = _metadata.TargetMappingProvider.Invoke(deleteFilter).Map(_query);
+            var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query);
 
             _applier.Delete(aggregatesToDelete);
         }

@@ -17,9 +17,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         {
             FindSpecificationProvider = Specs.Find.ByIds<TFact>;
 
-            CreationMappingSpecificationProvider
-                = UpdatingMappingSpecificationProvider
-                = DeletionMappingSpecificationProvider
+            MapSpecificationProviderOnCreate
+                = MapSpecificationProviderOnUpdate
+                = MapSpecificationProviderOnDelete
                 = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(q => calculateStatisticsSpecProvider.Invoke(specification).Map(q).Select(tuple => new CalculateStatisticsOperation { ProjectId = tuple.Item1, CategoryId = tuple.Item2 }));
         }
 
@@ -33,11 +33,11 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             get { return false; }
         }
 
-        public MapToObjectsSpecProvider<TFact, IOperation> CreationMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> MapSpecificationProviderOnCreate { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact, IOperation> UpdatingMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> MapSpecificationProviderOnUpdate { get; private set; }
 
-        public MapToObjectsSpecProvider<TFact, IOperation> DeletionMappingSpecificationProvider { get; private set; }
+        public MapToObjectsSpecProvider<TFact, IOperation> MapSpecificationProviderOnDelete { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<TFact>> FindSpecificationProvider { get; private set; }
     }

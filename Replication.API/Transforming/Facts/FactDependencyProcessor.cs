@@ -18,17 +18,17 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 
         public IEnumerable<IOperation> ProcessCreation(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(factIds, _metadata.CreationMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.MapSpecificationProviderOnCreate);
         }
 
         public IEnumerable<IOperation> ProcessUpdating(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(factIds, _metadata.UpdatingMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.MapSpecificationProviderOnUpdate);
         }
 
         public IEnumerable<IOperation> ProcessDeletion(IReadOnlyCollection<long> factIds)
         {
-            return ProcessDependencies(factIds, _metadata.DeletionMappingSpecificationProvider);
+            return ProcessDependencies(factIds, _metadata.MapSpecificationProviderOnDelete);
         }
 
         private IEnumerable<IOperation> ProcessDependencies(IReadOnlyCollection<long> factIds, MapToObjectsSpecProvider<TFact, IOperation> operationFactory)

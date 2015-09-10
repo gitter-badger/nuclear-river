@@ -25,7 +25,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             _factInfo = factInfo;
             _depencencyProcessors = _factInfo.DependencyInfos.Select(dependencyProcessorFactory.Create).ToArray();
             _indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(dependencyProcessorFactory.Create).ToArray();
-            _changesDetector = new DataChangesDetector<TFact, TFact>(_factInfo.SourceMappingProvider, _factInfo.TargetMappingProvider, _query);
+            _changesDetector = new DataChangesDetector<TFact, TFact>(_factInfo.MapSpecificationProviderForSource, _factInfo.MapSpecificationProviderForTarget, _query);
         }
 
         public IReadOnlyCollection<IOperation> ApplyChanges(IReadOnlyCollection<long> ids)
@@ -56,21 +56,21 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         private void CreateFact(IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var sourceQueryable = _factInfo.SourceMappingProvider.Invoke(spec).Map(_query);
+            var sourceQueryable = _factInfo.MapSpecificationProviderForSource.Invoke(spec).Map(_query);
             _applier.Create(sourceQueryable);
         }
 
         private void UpdateFact(IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var sourceQueryable = _factInfo.SourceMappingProvider(spec).Map(_query);
+            var sourceQueryable = _factInfo.MapSpecificationProviderForSource(spec).Map(_query);
             _applier.Update(sourceQueryable);
         }
 
         private void DeleteFact(IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
-            var targetQueryable = _factInfo.TargetMappingProvider(spec).Map(_query);
+            var targetQueryable = _factInfo.MapSpecificationProviderForTarget(spec).Map(_query);
             _applier.Delete(targetQueryable);
         }
     }

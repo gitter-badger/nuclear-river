@@ -19,7 +19,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             _metadata = metadata;
             _query = query;
             _applier = applier;
-            _changesDetector = new DataChangesDetector<T, T>(_metadata.SourceMappingProvider, _metadata.TargetMappingProvider, _query);
+            _changesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
         }
 
         public void ApplyChanges(IReadOnlyCollection<long> ids)
