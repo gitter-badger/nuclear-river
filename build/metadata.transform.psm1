@@ -36,7 +36,15 @@ function Get-RegexTransformMetadata($Context){
 		$regex += @{ '{EnvNum}' = $Context['Index'] }
 	}
 
-	$regex += Get-SharedAccessKeyMetadata $Context
+	$serviceBusMetadata = Get-ServiceBusMetadata $Context
+	if ($serviceBusMetadata.Count -ne 0){
+		$routeMetadata = $serviceBusMetadata.ServiceBus.Routes[$serviceBusMetadata.ServiceBus.UseCaseRoute]
+		$regex += @{
+			'{SourceTopic}' = $routeMetadata.SourceTopic
+			'{SourceSubscription}' = $routeMetadata.SourceSubscription
+			'{DestTopic}' = $routeMetadata.DestTopic
+		}
+	}
 
 	return $regex
 }
