@@ -115,7 +115,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\TransformationFixtureBase.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

@@ -10,16 +10,17 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal partial class FactsTransformationTests
+    internal partial class FactTransformationTests
     {
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
             ErmDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Initialize<CI::Project>(1)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Project>(1)
+                          .VerifyDistinct(Statistics.Operation(1),
+                                          Aggregate.Initialize<CI::Project>(1));
         }
 
         [Test]
@@ -27,9 +28,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire<IOperation>(Statistics.Operation(1), Aggregate.Destroy<CI::Project>(1)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Project>(1)
+                          .VerifyDistinct(Statistics.Operation(1),
+                                          Aggregate.Destroy<CI::Project>(1));
         }
 
         [Test]
@@ -43,14 +45,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                    .Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Project>(1))
-                          .Verify(Inquire<IOperation>(Statistics.Operation(1),
-                                                      Aggregate.Recalculate<CI::Territory>(1),
-                                                      Aggregate.Recalculate<CI::Firm>(1),
-                                                      Aggregate.Recalculate<CI::Project>(1),
-                                                      Aggregate.Recalculate<CI::Territory>(2),
-                                                      Aggregate.Recalculate<CI::Firm>(2)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Project>(1)
+                          .VerifyDistinct(Statistics.Operation(1),
+                                          Aggregate.Recalculate<CI::Territory>(1),
+                                          Aggregate.Recalculate<CI::Firm>(1),
+                                          Aggregate.Recalculate<CI::Project>(1),
+                                          Aggregate.Recalculate<CI::Territory>(2),
+                                          Aggregate.Recalculate<CI::Firm>(2));
         }
     }
 }

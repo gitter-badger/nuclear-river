@@ -8,16 +8,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal partial class FactsTransformationTests
+    internal partial class FactTransformationTests
     {
         [Test]
         public void ShouldInitializeTerritoryIfTerritoryCreated()
         {
             ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Territory>(1))
-                          .Verify(Inquire(Aggregate.Initialize<CI::Territory>(1)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Territory>(1)
+                          .VerifyDistinct(Aggregate.Initialize<CI::Territory>(1));
         }
 
         [Test]
@@ -25,9 +25,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 2 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Territory>(1))
-                          .Verify(Inquire(Aggregate.Destroy<CI::Territory>(1)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Territory>(1)
+                          .VerifyDistinct(Aggregate.Destroy<CI::Territory>(1));
         }
 
         [Test]
@@ -36,9 +36,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             ErmDb.Has(new Erm::Territory { Id = 1, OrganizationUnitId = 2 });
             FactsDb.Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Territory>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Territory>(1)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Territory>(1)
+                          .VerifyDistinct(Aggregate.Recalculate<CI::Territory>(1));
         }
     }
 }

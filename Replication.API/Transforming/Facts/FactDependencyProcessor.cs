@@ -10,7 +10,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         private readonly IQuery _query;
         private readonly IFactDependencyInfo<TFact> _metadata;
 
-        public FactDependencyProcessor(IQuery query, IFactDependencyInfo<TFact> metadata)
+        public FactDependencyProcessor(IFactDependencyInfo<TFact> metadata, IQuery query)
         {
             _query = query;
             _metadata = metadata;

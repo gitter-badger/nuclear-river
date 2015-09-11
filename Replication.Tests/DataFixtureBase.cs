@@ -1,11 +1,12 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 
 using LinqToDB.Data;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.Storage.LinqToDB;
 using NuClear.Storage.Readings;
+using NuClear.Storage.Writings;
 
 using NUnit.Framework;
 
@@ -53,9 +54,31 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             get { return _mockLinqToDbDataBuilder; }
         }
 
+        protected LinqToDBRepositoryFactory RepositoryFactory
+        {
+            get { return new LinqToDBRepositoryFactory(_stubDomainContextProvider); }
+        }
+
+        [Obsolete("Нужно удалить")]
         protected static IQueryable<T> Inquire<T>(params T[] elements)
         {
             return elements.AsQueryable();
+        }
+
+        protected class LinqToDBRepositoryFactory
+        {
+            private readonly StubDomainContextProvider _stubDomainContextProvider;
+
+            public LinqToDBRepositoryFactory(StubDomainContextProvider stubDomainContextProvider)
+            {
+                _stubDomainContextProvider = stubDomainContextProvider;
+            }
+
+            public IRepository<T> Create<T>() 
+                where T : class
+            {
+                return new LinqToDBRepository<T>(_stubDomainContextProvider);
+            }
         }
     }
 }

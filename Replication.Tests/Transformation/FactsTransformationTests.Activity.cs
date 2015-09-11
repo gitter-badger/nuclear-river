@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal partial class FactsTransformationTests
+    internal partial class FactTransformationTests
     {
         private const int ActivityStatusCompleted = 2;
         private const int RegardingObjectReference = 1;
@@ -30,10 +30,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 4, ClientId = 2 });
             FactsDb.Has(new Facts::Firm { Id = 5 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Activity>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3),
-                                          Aggregate.Recalculate<CI::Firm>(4)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Activity>(1)
+                          .VerifyDistinct(Aggregate.Recalculate<CI::Firm>(3),
+                                          Aggregate.Recalculate<CI::Firm>(4));
         }
 
         [Test]
@@ -48,10 +48,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 4, ClientId = 2 });
             FactsDb.Has(new Facts::Firm { Id = 5 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Activity>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3),
-                                          Aggregate.Recalculate<CI::Firm>(4)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Activity>(1)
+                          .VerifyDistinct(Aggregate.Recalculate<CI::Firm>(3),
+                                          Aggregate.Recalculate<CI::Firm>(4));
         }
         [Test]
         public void ShouldRecalculateFirmsIfActivityDeleted()
@@ -62,10 +62,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             FactsDb.Has(new Facts::Firm { Id = 4, ClientId = 2 });
             FactsDb.Has(new Facts::Firm { Id = 5 });
 
-            Transformation.Create(Query)
-                          .Transform(Fact.Operation<Facts::Activity>(1))
-                          .Verify(Inquire(Aggregate.Recalculate<CI::Firm>(3),
-                                          Aggregate.Recalculate<CI::Firm>(4)));
+            Transformation.Create(Query, RepositoryFactory)
+                          .ApplyChanges<Facts::Activity>(1)
+                          .VerifyDistinct(Aggregate.Recalculate<CI::Firm>(3),
+                                          Aggregate.Recalculate<CI::Firm>(4));
         }
     }
 }
