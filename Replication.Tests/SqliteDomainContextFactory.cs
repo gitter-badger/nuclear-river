@@ -185,11 +185,26 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                         var attributes = schema.GetAttributes<TableAttribute>(table);
                         if (attributes != null && attributes.Length > 0)
                         {
-                            // SQLite does not support schemas
-                            Array.ForEach(attributes, attr => attr.Schema = null);
-
-                            // create empty table
-                            CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
+                            // SQLite does not support schemas, so prepend with it table names
+                            Array.ForEach(attributes,
+                                          attr =>
+                                          {
+                                              attr.Name = string.IsNullOrEmpty(attr.Name)
+                                                              ? attr.Schema + "_" + table.Name
+                                                              : attr.Schema + "_" + attr.Name;
+                                              attr.Schema = null;
+                                          });
+                            
+                            try
+                            {
+                                // create empty table
+                                CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
+                            }
+                            catch (Exception exception)
+                            {
+                                // table can be already created by previous type mapped to the same table
+                                // ignore exception and continue
+                            }
                         }
                     }
                 }
