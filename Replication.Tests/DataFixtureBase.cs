@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 
 using LinqToDB.Data;
+
+using Moq;
 
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.Readings;
@@ -54,7 +58,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             get { return _mockLinqToDbDataBuilder; }
         }
 
-        protected LinqToDBRepositoryFactory RepositoryFactory
+        protected IRepositoryFactory RepositoryFactory
         {
             get { return new LinqToDBRepositoryFactory(_stubDomainContextProvider); }
         }
@@ -65,7 +69,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             return elements.AsQueryable();
         }
 
-        protected class LinqToDBRepositoryFactory
+        protected interface IRepositoryFactory
+        {
+            IRepository<T> Create<T>()
+                where T : class;
+        }
+
+        protected class LinqToDBRepositoryFactory : IRepositoryFactory
         {
             private readonly StubDomainContextProvider _stubDomainContextProvider;
 
@@ -74,10 +84,38 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                 _stubDomainContextProvider = stubDomainContextProvider;
             }
 
-            public IRepository<T> Create<T>() 
-                where T : class
+            IRepository<T> IRepositoryFactory.Create<T>() 
             {
                 return new LinqToDBRepository<T>(_stubDomainContextProvider);
+            }
+        }
+
+        protected class VerifiableRepositoryFactory : IRepositoryFactory
+        {
+            private readonly IDictionary<Type, IRepository> _cache;
+
+            public VerifiableRepositoryFactory()
+            {
+                _cache = new Dictionary<Type, IRepository>();
+            }
+
+            IRepository<T> IRepositoryFactory.Create<T>()
+            {
+                IRepository repository;
+                if (!_cache.TryGetValue(typeof(T), out repository))
+                {
+                    _cache[typeof(T)] = repository = Mock.Of<IRepository<T>>();
+                }
+
+                return (IRepository<T>)repository;
+            }
+
+            public void Verify<T>(Expression<Action<IRepository<T>>> expression, Func<Times> times, string failMessage) 
+                where T : class
+            {
+                var repository = (IRepository<T>)_cache[typeof(T)];
+                var mock = Mock.Get(repository);
+                mock.Verify(expression, times, failMessage);
             }
         }
     }

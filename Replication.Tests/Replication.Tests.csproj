@@ -95,6 +95,7 @@
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
     <Compile Include="Transformation\ErmFilteringTests.cs" />
     <Compile Include="Transformation\ErmMapToFactsSpecsTests.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Data.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
     <Compile Include="Transformation\ErmMapToFactsSpecsTests.Activity.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Activity.cs" />
