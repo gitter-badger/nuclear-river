@@ -57,6 +57,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             get { return _mockLinqToDbDataBuilder; }
         }
 
+        protected MockLinqToDbDataBuilder CustomerIntelligenceDb
+        {
+            get { return _mockLinqToDbDataBuilder; }
+        }
+
         protected static IQueryable<T> Inquire<T>(params T[] elements)
         {
             return elements.AsQueryable();

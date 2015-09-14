@@ -373,6 +373,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldDestroyFirmUsingSqlLite()
+        {
+            CustomerIntelligenceDb.Has(new CI::Firm { Id = 1 });
+
+            Transformation.Create(Query)
+                          .Transform(Aggregate.Destroy<CI::Firm>(1))
+                          .Verify<CI::Firm>(m => m.DeleteRange(It.Is(Predicate.SequentialMatch(new[] { new CI::Firm { Id = 1 } }))));
+        }
+
+        [Test]
         public void ShouldDestroyFirmHavingBalance()
         {
             // CI
