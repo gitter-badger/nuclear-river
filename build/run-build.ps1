@@ -7,9 +7,9 @@ if ($TaskList.Count -eq 0){
 if ($Properties.Count -eq 0){
  	$Properties.EnvironmentName = 'Test.21'
 	$Properties.EntryPoints = @(
-		#'Web.OData'
-		#'Replication.EntryPoint'
-		#'ConvertUseCasesService'
+		'Web.OData'
+		'Replication.EntryPoint'
+		'ConvertUseCasesService'
 	)
 }
 
@@ -35,10 +35,8 @@ $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.1.0-new-meta-6e67c5-64\tools\buildtools.psm1" -DisableNameChecking -Force
-Add-Metadata (Parse-CommonMetadata $Properties)
-
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.0.51\tools\buildtools.psm1" -DisableNameChecking -Force
 Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking -Force
-Add-Metadata (Parse-EnvironmentMetadata $Properties)
 
+Add-Metadata (Parse-EnvironmentMetadata $Properties)
 Run-Build $TaskList $Properties
