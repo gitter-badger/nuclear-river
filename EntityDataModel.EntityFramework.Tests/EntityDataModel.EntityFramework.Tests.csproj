@@ -116,7 +116,9 @@
     <EmbeddedResource Include="Data\CategoryGroup.csv" />
     <EmbeddedResource Include="Data\FirmCategory.csv" />
     <EmbeddedResource Include="Data\ProjectCategory.csv" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
