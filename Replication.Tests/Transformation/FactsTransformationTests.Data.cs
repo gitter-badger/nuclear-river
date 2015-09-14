@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action<IQuery, MockLinqToDbDataBuilder, MockLinqToDbDataBuilder> run)
         {
-            run(Query, ErmDb, FactsDb);
+            run(Query, SourceDb, TargetDb);
         }
 
         private IEnumerable Cases

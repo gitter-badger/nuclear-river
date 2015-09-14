@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeClientIfClientCreated()
         {
-            ErmDb.Has(new Erm::Client { Id = 1 });
+            SourceDb.Has(new Erm::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Client>(1)
@@ -36,8 +36,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientIfClientUpdated()
         {
-            ErmDb.Has(new Erm::Client { Id = 1 });
-            FactsDb.Has(new Facts::Client { Id = 1 });
+            SourceDb.Has(new Erm::Client { Id = 1 });
+            TargetDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Client>(1)
@@ -47,7 +47,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyClientIfClientDeleted()
         {
-            FactsDb.Has(new Facts::Client { Id = 1 });
+            TargetDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Client>(1)
@@ -57,8 +57,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientIfFirmCreated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 2, ClientId = 1 });
-            FactsDb.Has(new Facts::Client { Id = 1 });
+            SourceDb.Has(new Erm::Firm { Id = 2, ClientId = 1 });
+            TargetDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Firm>(2)
@@ -68,9 +68,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientIfFirmUpdated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 2, ClientId = 3 });
+            SourceDb.Has(new Erm::Firm { Id = 2, ClientId = 3 });
 
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -81,7 +81,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientIfFirmDeleted()
         {
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -92,7 +92,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeFirmIfFirmCreated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 });
+            SourceDb.Has(new Erm::Firm { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Firm>(1)
@@ -102,8 +102,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmUpdated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 });
-            FactsDb.Has(new Facts::Firm { Id = 1 });
+            SourceDb.Has(new Erm::Firm { Id = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Firm>(1)
@@ -113,7 +113,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyFirmIfFirmDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Firm>(1)
@@ -123,9 +123,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountCreated()
         {
-            ErmDb.Has(new Erm::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
+            SourceDb.Has(new Erm::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 });
 
-            FactsDb.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
@@ -138,9 +138,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountUpdated()
         {
-            ErmDb.Has(new Erm::Account { Id = 1, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 1 });
+            SourceDb.Has(new Erm::Account { Id = 1, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -157,7 +157,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfAccountDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
@@ -171,9 +171,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitCreated()
         {
-            ErmDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
+            SourceDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
 
-            FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
@@ -186,9 +186,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitCreated()
         {
-            ErmDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
+            SourceDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::BranchOfficeOrganizationUnit>(1)
@@ -198,9 +198,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitUpdated()
         {
-            ErmDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 });
+            SourceDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
@@ -215,9 +215,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitUpdated()
         {
-            ErmDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 });
+            SourceDb.Has(new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1, OrganizationUnitId = 2 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 });
 
@@ -229,7 +229,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfBranchOfficeOrganizationUnitDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
@@ -243,7 +243,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDetachedFirmIfBranchOfficeOrganizationUnitDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -254,9 +254,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Created()
         {
-            ErmDb.Has(new Erm::Category { Id = 3, Level = 3, ParentId = 2 });
+            SourceDb.Has(new Erm::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -270,9 +270,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Created()
         {
-            ErmDb.Has(new Erm::Category { Id = 2, Level = 2, ParentId = 1 });
+            SourceDb.Has(new Erm::Category { Id = 2, Level = 2, ParentId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -286,9 +286,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Created()
         {
-            ErmDb.Has(new Erm::Category { Id = 1, Level = 1 });
+            SourceDb.Has(new Erm::Category { Id = 1, Level = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 2, Level = 2, ParentId = 1 })
@@ -302,13 +302,13 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Updated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 })
+            SourceDb.Has(new Erm::Firm { Id = 1 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 })
                  .Has(new Erm::Category { Id = 1, Level = 1 },
                       new Erm::Category { Id = 2, Level = 2, ParentId = 1 },
                       new Erm::Category { Id = 3, Level = 3, ParentId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -323,12 +323,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Updated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 })
+            SourceDb.Has(new Erm::Firm { Id = 1 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 })
                  .Has(new Erm::Category { Id = 1, Level = 1 },
                       new Erm::Category { Id = 2, Level = 2, ParentId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -343,11 +343,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Updated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 })
+            SourceDb.Has(new Erm::Firm { Id = 1 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 })
                  .Has(new Erm::Category { Id = 1, Level = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -362,7 +362,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel3Deleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -377,7 +377,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel2Deleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -392,7 +392,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOfLevel1Deleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 })
                    .Has(new Facts::Category { Id = 1, Level = 1 })
@@ -407,11 +407,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressCreated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 })
+            SourceDb.Has(new Erm::Firm { Id = 1 })
                  .Has(new Erm::FirmAddress { Id = 2, FirmId = 1 })
                  .Has(new Erm::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -422,11 +422,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressUpdated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 }, new Erm::Firm { Id = 2 })
+            SourceDb.Has(new Erm::Firm { Id = 1 }, new Erm::Firm { Id = 2 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 })
                  .Has(new Erm::CategoryFirmAddress { Id = 1, FirmAddressId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
@@ -440,10 +440,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryFirmAddressDeleted()
         {
-            ErmDb.Has(new Erm::Firm { Id = 1 })
+            SourceDb.Has(new Erm::Firm { Id = 1 })
                  .Has(new Erm::FirmAddress { Id = 2, FirmId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 3, FirmAddressId = 2 });
 
@@ -455,9 +455,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitCreated()
         {
-            ErmDb.Has(new Erm::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
+            SourceDb.Has(new Erm::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
                    .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 });
 
@@ -469,9 +469,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitUpdated()
         {
-            ErmDb.Has(new Erm::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 1 });
+            SourceDb.Has(new Erm::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, OrganizationUnitId = 2 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
@@ -487,7 +487,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfCategoryOrganizationUnitDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::FirmAddress { Id = 4, FirmId = 3 })
                    .Has(new Facts::CategoryFirmAddress { Id = 5, FirmAddressId = 4, CategoryId = 2 })
                    .Has(new Facts::CategoryOrganizationUnit { Id = 6, OrganizationUnitId = 1, CategoryId = 2 });
@@ -500,9 +500,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientCreated()
         {
-            ErmDb.Has(new Erm::Client { Id = 1 });
+            SourceDb.Has(new Erm::Client { Id = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Client>(1)
@@ -512,9 +512,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientUpdated()
         {
-            ErmDb.Has(new Erm::Client { Id = 1 });
+            SourceDb.Has(new Erm::Client { Id = 1 });
 
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -525,7 +525,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfClientDeleted()
         {
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -536,9 +536,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactCreated()
         {
-            ErmDb.Has(new Erm::Contact { Id = 3, ClientId = 1 });
+            SourceDb.Has(new Erm::Contact { Id = 3, ClientId = 1 });
 
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -549,9 +549,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactUpdated()
         {
-            ErmDb.Has(new Erm::Contact { Id = 1, ClientId = 2 });
+            SourceDb.Has(new Erm::Contact { Id = 1, ClientId = 2 });
 
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Client { Id = 2 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 2 })
@@ -565,7 +565,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfContactDeleted()
         {
-            FactsDb.Has(new Facts::Client { Id = 1 })
+            TargetDb.Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 1 })
                    .Has(new Facts::Contact { Id = 3, ClientId = 1 });
 
@@ -577,8 +577,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressCreated()
         {
-            ErmDb.Has(new Erm::FirmAddress { Id = 2, FirmId = 1 });
-            FactsDb.Has(new Facts::Firm { Id = 1 });
+            SourceDb.Has(new Erm::FirmAddress { Id = 2, FirmId = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::FirmAddress>(2)
@@ -588,8 +588,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressUpdated()
         {
-            ErmDb.Has(new Erm::FirmAddress { Id = 1, FirmId = 2 });
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            SourceDb.Has(new Erm::FirmAddress { Id = 1, FirmId = 2 });
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 });
 
@@ -601,7 +601,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmAddressDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -612,9 +612,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactCreated()
         {
-            ErmDb.Has(new Erm::FirmContact { Id = 3, FirmAddressId = 2, ContactType = 1 });
+            SourceDb.Has(new Erm::FirmContact { Id = 3, FirmAddressId = 2, ContactType = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -625,9 +625,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactUpdated()
         {
-            ErmDb.Has(new Erm::FirmContact { Id = 1, FirmAddressId = 2, ContactType = 1 });
+            SourceDb.Has(new Erm::FirmContact { Id = 1, FirmAddressId = 2, ContactType = 1 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 2 })
@@ -641,9 +641,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfFirmContactDeleted()
         {
-            ErmDb.Has(new Erm::FirmContact { Id = 3, FirmAddressId = 2 });
+            SourceDb.Has(new Erm::FirmContact { Id = 3, FirmAddressId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::FirmAddress { Id = 2, FirmId = 1 })
                    .Has(new Facts::FirmContact { Id = 3, FirmAddressId = 2 });
 
@@ -655,9 +655,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonCreated()
         {
-            ErmDb.Has((new Erm::LegalPerson { Id = 1, ClientId = 1 }));
+            SourceDb.Has((new Erm::LegalPerson { Id = 1, ClientId = 1 }));
 
-            FactsDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
@@ -670,9 +670,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonUpdated()
         {
-            ErmDb.Has(new Erm::LegalPerson { Id = 1, ClientId = 2 });
+            SourceDb.Has(new Erm::LegalPerson { Id = 1, ClientId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 1 })
                    .Has(new Facts::Client { Id = 2 })
@@ -688,7 +688,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfLegalPersonDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1, ClientId = 2, OrganizationUnitId = 1 })
                    .Has(new Facts::Client { Id = 2 })
                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 3, OrganizationUnitId = 1 })
                    .Has(new Facts::LegalPerson { Id = 4, ClientId = 2 })
@@ -702,8 +702,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderCreated()
         {
-            ErmDb.Has(new Erm::Order { Id = 2, FirmId = 1, WorkflowStepId = 4 });
-            FactsDb.Has(new Facts::Firm { Id = 1 });
+            SourceDb.Has(new Erm::Order { Id = 2, FirmId = 1, WorkflowStepId = 4 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Order>(2)
@@ -713,9 +713,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderUpdated()
         {
-            ErmDb.Has(new Erm::Order { Id = 1, FirmId = 2, WorkflowStepId = 4 });
+            SourceDb.Has(new Erm::Order { Id = 1, FirmId = 2, WorkflowStepId = 4 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Firm { Id = 2 })
                    .Has(new Facts::Order { Id = 1, FirmId = 1 });
 
@@ -727,7 +727,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateFirmIfOrderDeleted()
         {
-            FactsDb.Has(new Facts::Firm { Id = 1 })
+            TargetDb.Has(new Facts::Firm { Id = 1 })
                    .Has(new Facts::Order { Id = 2, FirmId = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -738,10 +738,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldEnqueueOperationsInOrderForFirmIfFirmAddressCreated()
         {
-            ErmDb.Has(new Erm::Firm { Id = 2 })
+            SourceDb.Has(new Erm::Firm { Id = 2 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
 
-            FactsDb.Has(new Facts::Firm { Id = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
             // Тест не пройдёт - порядок между различными типами решается уровнем выше, в Transformation
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::FirmAddress>(1)

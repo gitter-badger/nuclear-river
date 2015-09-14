@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeProjectIfProjectCreated()
         {
-            ErmDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
+            SourceDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Project>(1)
@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyProjectIfProjectDeleted()
         {
-            FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
+            TargetDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Project>(1)
@@ -37,9 +37,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateDependentAggregatesIfProjectUpdated()
         {
-            ErmDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
+            SourceDb.Has(new Erm::Project { Id = 1, OrganizationUnitId = 2 });
 
-            FactsDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
+            TargetDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::Territory { Id = 2, OrganizationUnitId = 2 })
                    .Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 })

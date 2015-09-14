@@ -13,7 +13,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeCategoryGroupIfCategoryGroupCreated()
         {
-            ErmDb.Has(
+            SourceDb.Has(
                 new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -24,7 +24,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyCategoryGroupIfCategoryGroupDeleted()
         {
-            FactsDb.Has(
+            TargetDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -35,9 +35,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateCategoryGroupIfCategoryGroupUpdated()
         {
-            ErmDb.Has(
+            SourceDb.Has(
                 new Erm::CategoryGroup { Id = 1, Name = "FooBar", Rate = 2 });
-            FactsDb.Has(
+            TargetDb.Has(
                 new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalculateClientAndFirmIfCategoryGroupUpdated()
         {
-            ErmDb.Has(new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
+            SourceDb.Has(new Erm::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
                  .Has(new Erm::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1 })
                  .Has(new Erm::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 })
                  .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 })
@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                  .Has(new Erm::Client { Id = 1 });
 
 
-            FactsDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
+            TargetDb.Has(new Facts::CategoryGroup { Id = 1, Name = "Name", Rate = 1 })
                    .Has(new Facts::CategoryOrganizationUnit { Id = 1, CategoryGroupId = 1, CategoryId = 1, OrganizationUnitId = 1 })
                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 })
                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 })

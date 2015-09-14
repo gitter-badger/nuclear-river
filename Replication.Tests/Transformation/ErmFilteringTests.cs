@@ -37,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void CommonFilteringTests<T>(T entity, FindSpecification<T> specification, bool expected)
             where T : class, IErmObject
         {
-            ErmDb.Has(entity);
+            SourceDb.Has(entity);
 
             Reader.Create(Query)
                   .Verify(x => x.For(specification).Any(), expected);
@@ -167,7 +167,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             const int ActivityStatusCompleted = 2;
 
-            ErmDb.Has(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted })
+            SourceDb.Has(new T { Id = 1, IsActive = true, IsDeleted = false, Status = ActivityStatusCompleted })
                  .Has(new T { Id = 2, IsActive = false, IsDeleted = false, Status = ActivityStatusCompleted })
                  .Has(new T { Id = 3, IsActive = true, IsDeleted = true, Status = ActivityStatusCompleted })
                  .Has(new T { Id = 4, IsActive = true, IsDeleted = false, Status = 0 });
@@ -184,7 +184,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             const int ReferenceRegardingObject = 1;
 
-            ErmDb.Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Firm })
+            SourceDb.Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Firm })
                  .Has(new TReference { Reference = 0, ReferencedType = EntityTypeIds.Firm })
                  .Has(new TReference { Reference = ReferenceRegardingObject, ReferencedType = EntityTypeIds.Client })
                  .Has(new TReference { Reference = 0, ReferencedType = EntityTypeIds.Client })

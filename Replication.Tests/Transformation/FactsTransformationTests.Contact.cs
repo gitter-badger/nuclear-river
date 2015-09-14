@@ -14,9 +14,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateClientIfContactCreated()
         {
-            ErmDb.Has(new Erm::Contact { Id = 1, ClientId = 1 });
+            SourceDb.Has(new Erm::Contact { Id = 1, ClientId = 1 });
 
-            FactsDb.Has(new Facts::Client { Id = 1 });
+            TargetDb.Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
                           .ApplyChanges<Facts::Contact>(1)
@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateClientIfContactDeleted()
         {
-            FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
+            TargetDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
@@ -37,9 +37,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldRecalulateClientIfContactUpdated()
         {
-            ErmDb.Has(new Erm::Contact { Id = 1, ClientId = 1 });
+            SourceDb.Has(new Erm::Contact { Id = 1, ClientId = 1 });
 
-            FactsDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
+            TargetDb.Has(new Facts::Contact { Id = 1, ClientId = 1 })
                    .Has(new Facts::Client { Id = 1 });
 
             Transformation.Create(Query, RepositoryFactory)
