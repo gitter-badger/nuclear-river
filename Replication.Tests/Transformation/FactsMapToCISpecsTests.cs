@@ -20,32 +20,32 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformCategoryGroup()
         {
-            var query = new MemoryMockQuery(
+            SourceDb.Has(
                 new Facts::CategoryGroup { Id = 123, Name = "category group", Rate = 1 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.CategoryGroups.Map(x).ById(123), Inquire(new CI::CategoryGroup { Id = 123, Name = "category group", Rate = 1 }));
         }
 
         [Test]
         public void ShouldTransformClient()
         {
-            var query = new MemoryMockQuery(
+            SourceDb.Has(
                 new Facts::Client { Id = 1, Name = "a client" });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Clients.Map(x).ById(1), Inquire(new CI::Client { Name = "a client" }), x => new { x.Name }, "The name should be processed.");
         }
 
         [Test]
         public void ShouldTransformClientContact()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Contact { ClientId = 1, Role = 1 },
-                new Facts::Contact { ClientId = 2, IsFired = true },
-                new Facts::Contact { ClientId = 3 });
+            SourceDb.Has(
+                new Facts::Contact { Id = 1, ClientId = 1, Role = 1 },
+                new Facts::Contact { Id = 2, ClientId = 2, IsFired = true },
+                new Facts::Contact { Id = 3, ClientId = 3 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 3), Inquire(new CI::ClientContact { ClientId = 3 }), x => new { x.ClientId }, "The client reference should be processed.");
@@ -58,19 +58,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var dayAgo = now.AddDays(-1);
             var monthAgo = now.AddMonths(-1);
 
-            var query = new MemoryMockQuery(
-                new Facts::Project { Id = 1, OrganizationUnitId = 1 },
-                new Facts::Project { Id = 2, OrganizationUnitId = 2 },
-                new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
-                new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2 },
-                new Facts::FirmAddress { Id = 1, FirmId = 1 },
-                new Facts::FirmAddress { Id = 2, FirmId = 1 },
-                new Facts::Client { Id = 1, LastDisqualifiedOn = now },
-                new Facts::LegalPerson { Id = 1, ClientId = 1 },
-                new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
+                         new Facts::Project { Id = 2, OrganizationUnitId = 2 })
+                    .Has(new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
+                         new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2 })
+                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 },
+                         new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                    .Has(new Facts::Client { Id = 1, LastDisqualifiedOn = now })
+                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
+                    .Has(new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
 
             // TODO: split into several tests
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },
@@ -104,20 +103,19 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmContactInfoFromClient()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Project { Id = 1, OrganizationUnitId = 0 },
-                new Facts::Firm { Id = 1, },
-                new Facts::Firm { Id = 2, ClientId = 1 },
-                new Facts::Firm { Id = 3, ClientId = 2 },
-                new Facts::Firm { Id = 4, ClientId = 3 },
-                new Facts::Client { Id = 1, HasPhone = true, HasWebsite = true },
-                new Facts::Client { Id = 2, HasPhone = false, HasWebsite = false },
-                new Facts::Client { Id = 3, HasPhone = false, HasWebsite = false },
-                new Facts::Contact { Id = 1, ClientId = 2, HasPhone = true, HasWebsite = true },
-                new Facts::Contact { Id = 2, ClientId = 3, HasPhone = true, HasWebsite = false },
-                new Facts::Contact { Id = 3, ClientId = 3, HasPhone = false, HasWebsite = true });
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 0 })
+                    .Has(new Facts::Firm { Id = 1, },
+                         new Facts::Firm { Id = 2, ClientId = 1 },
+                         new Facts::Firm { Id = 3, ClientId = 2 },
+                         new Facts::Firm { Id = 4, ClientId = 3 })
+                    .Has(new Facts::Client { Id = 1, HasPhone = true, HasWebsite = true },
+                         new Facts::Client { Id = 2, HasPhone = false, HasWebsite = false },
+                         new Facts::Client { Id = 3, HasPhone = false, HasWebsite = false })
+                    .Has(new Facts::Contact { Id = 1, ClientId = 2, HasPhone = true, HasWebsite = true },
+                         new Facts::Contact { Id = 2, ClientId = 3, HasPhone = true, HasWebsite = false },
+                         new Facts::Contact { Id = 3, ClientId = 3, HasPhone = false, HasWebsite = true });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = true }), x => new { x.HasPhone, x.HasWebsite })
@@ -127,22 +125,21 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmContactInfoFromFirm()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Project { Id = 1, OrganizationUnitId = 0 },
-                new Facts::Firm { Id = 1, Name = "has no addresses" },
-                new Facts::Firm { Id = 2, Name = "has addresses, but no contacts" },
-                new Facts::Firm { Id = 3, Name = "has one phone contact" },
-                new Facts::Firm { Id = 4, Name = "has one website contact" },
-                new Facts::Firm { Id = 5, Name = "has an unknown contact" },
-                new Facts::FirmAddress { Id = 1, FirmId = 2 },
-                new Facts::FirmAddress { Id = 2, FirmId = 3 },
-                new Facts::FirmAddress { Id = 3, FirmId = 4 },
-                new Facts::FirmAddress { Id = 4, FirmId = 5 },
-                new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = 2 },
-                new Facts::FirmContact { Id = 2, HasWebsite = true, FirmAddressId = 3 },
-                new Facts::FirmContact { Id = 3, FirmAddressId = 4 });
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 0 })
+                    .Has(new Facts::Firm { Id = 1, Name = "has no addresses" },
+                         new Facts::Firm { Id = 2, Name = "has addresses, but no contacts" },
+                         new Facts::Firm { Id = 3, Name = "has one phone contact" },
+                         new Facts::Firm { Id = 4, Name = "has one website contact" },
+                         new Facts::Firm { Id = 5, Name = "has an unknown contact" })
+                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 2 },
+                         new Facts::FirmAddress { Id = 2, FirmId = 3 },
+                         new Facts::FirmAddress { Id = 3, FirmId = 4 },
+                         new Facts::FirmAddress { Id = 4, FirmId = 5 })
+                    .Has(new Facts::FirmContact { Id = 1, HasPhone = true, FirmAddressId = 2 },
+                         new Facts::FirmContact { Id = 2, HasWebsite = true, FirmAddressId = 3 },
+                         new Facts::FirmContact { Id = 3, FirmAddressId = 4 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(2), Inquire(new CI::Firm { HasPhone = false, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(3), Inquire(new CI::Firm { HasPhone = true, HasWebsite = false }), x => new { x.HasPhone, x.HasWebsite })
@@ -153,21 +150,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmBalance()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
-                new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
-                new Facts::Firm { Id = 3, ClientId = 1, OrganizationUnitId = 1 },
-                new Facts::Client { Id = 1 },
-                new Facts::Client { Id = 2 },
-                new Facts::LegalPerson { Id = 1, ClientId = 1 },
-                new Facts::LegalPerson { Id = 2, ClientId = 2 },
-                new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 },
-                new Facts::BranchOfficeOrganizationUnit { Id = 2, OrganizationUnitId = 2 },
-                new Facts::Account { Id = 1, Balance = 123, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 },
-                new Facts::Account { Id = 2, Balance = 234, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 2 },
-                new Facts::Account { Id = 3, Balance = 345, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 2 });
+            SourceDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
+                         new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
+                         new Facts::Firm { Id = 3, ClientId = 1, OrganizationUnitId = 1 })
+                    .Has(new Facts::Client { Id = 1 },
+                         new Facts::Client { Id = 2 })
+                    .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 },
+                         new Facts::LegalPerson { Id = 2, ClientId = 2 })
+                    .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 },
+                         new Facts::BranchOfficeOrganizationUnit { Id = 2, OrganizationUnitId = 2 })
+                    .Has(new Facts::Account { Id = 1, Balance = 123, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1 },
+                         new Facts::Account { Id = 2, Balance = 234, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 2 },
+                         new Facts::Account { Id = 3, Balance = 345, LegalPersonId = 2, BranchOfficeOrganizationUnitId = 2 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmBalances.Map(x).Where(b => new long[] { 1, 2, 3 }.Contains(b.FirmId)).OrderBy(fb => fb.FirmId),
                                            Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1 },
                                                    new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
@@ -178,21 +174,20 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmCategory()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Category { Id = 1, Level = 1 },
-                new Facts::Category { Id = 2, Level = 2, ParentId = 1 },
-                new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
-                new Facts::Category { Id = 4, Level = 3, ParentId = 2 },
-                new Facts::Firm { Id = 1 },
-                new Facts::FirmAddress { Id = 1, FirmId = 1 },
-                new Facts::FirmAddress { Id = 2, FirmId = 1 },
-                new Facts::CategoryFirmAddress { FirmAddressId = 1, CategoryId = 3 },
-                new Facts::CategoryFirmAddress { FirmAddressId = 2, CategoryId = 4 },
-                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
-                new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 });
+            SourceDb.Has(new Facts::Category { Id = 1, Level = 1 },
+                         new Facts::Category { Id = 2, Level = 2, ParentId = 1 },
+                         new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
+                         new Facts::Category { Id = 4, Level = 3, ParentId = 2 })
+                    .Has(new Facts::Firm { Id = 1 })
+                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 },
+                         new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 },
+                         new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 4 })
+                    .Has(new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                         new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                         new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmCategories.Map(x).Where(c => c.FirmId == 1),
                                            Inquire(new CI::FirmCategory { FirmId = 1, CategoryId = 1 },
                                                    new CI::FirmCategory { FirmId = 1, CategoryId = 2 },
@@ -204,11 +199,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformProject()
         {
-            var query = new MemoryMockQuery(
+            SourceDb.Has(
                 new Facts::Project { Id = 123, Name = "p1" },
                 new Facts::Project { Id = 456, Name = "p2", OrganizationUnitId = 1 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Projects.Map(x).ById(123, 456),
                                            Inquire(new CI::Project { Id = 123, Name = "p1" },
                                                    new CI::Project { Id = 456, Name = "p2" }),
@@ -218,20 +213,22 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformProjectCategory()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Project { Id = 1, OrganizationUnitId = 2 },
-                new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 3 },
-                new Facts::CategoryOrganizationUnit { OrganizationUnitId = 2, CategoryId = 4 },
-                new Facts::Category { Id = 3 },
-                new Facts::Category { Id = 4 },
-                new Facts::ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 });
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 })
+                    .Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 3 },
+                         new Facts::CategoryOrganizationUnit { Id = 2, OrganizationUnitId = 2, CategoryId = 4 })
+                    .Has(new Facts::Category { Id = 3 },
+                         new Facts::Category { Id = 4 })
+                    .Has(new Facts::ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 });
 
             // Десять фирм в проекте, каждая с рубрикой #3
-            query.AddRange(Enumerable.Range(0, 10).Select(i => new Facts::Firm { Id = i, OrganizationUnitId = 2 }));
-            query.AddRange(Enumerable.Range(0, 10).Select(i => new Facts::FirmAddress { Id = i, FirmId = i }));
-            query.AddRange(Enumerable.Range(0, 10).Select(i => new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 }));
+            for (var i = 0; i < 10; i++)
+            {
+                SourceDb.Has(new Facts::Firm { Id = i, OrganizationUnitId = 2 });
+                SourceDb.Has(new Facts::FirmAddress { Id = i, FirmId = i });
+                SourceDb.Has(new Facts::CategoryFirmAddress { Id = i, FirmAddressId = i, CategoryId = 3 });
+            }
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.ProjectCategories.Map(x).Where(c => c.ProjectId == 1),
                                            Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 },
                                                    new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
@@ -240,13 +237,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformTerritories()
         {
-            var query = new MemoryMockQuery(
-                new Facts::Project { Id = 1, OrganizationUnitId = 1 },
-                new Facts::Project { Id = 2, OrganizationUnitId = 2 },
-                new Facts::Territory { Id = 1, Name = "name1", OrganizationUnitId = 1 },
-                new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 });
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
+                         new Facts::Project { Id = 2, OrganizationUnitId = 2 })
+                    .Has(new Facts::Territory { Id = 1, Name = "name1", OrganizationUnitId = 1 },
+                         new Facts::Territory { Id = 2, Name = "name2", OrganizationUnitId = 2 });
 
-            Transformation.Create(query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Territories.Map(x).ById(1, 2),
                                            Inquire(new CI::Territory { Id = 1, Name = "name1", ProjectId = 1 },
                                                    new CI::Territory { Id = 2, Name = "name2", ProjectId = 2 }));
