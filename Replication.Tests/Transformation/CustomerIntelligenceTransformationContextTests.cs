@@ -47,13 +47,11 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var context = new Mock<IErmFactsContext>();
             context.SetupGet(x => x.Contacts).Returns(Inquire(
                 new Facts::Contact { Id = 1, Role = 1 },
-                new Facts::Contact { Id = 2, IsFired = true },
                 new Facts::Contact { Id = 3, ClientId = 1 }
                 ));
 
             Transformation.Create(context.Object)
                 .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
-                .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
                 .VerifyTransform(x => x.ClientContacts.Where(y => y.ContactId == 3), Inquire(new CI::ClientContact { ClientId = 1 }), x => new { x.ClientId }, "The client reference should be processed.")
                 ;
         }

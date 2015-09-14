@@ -81,7 +81,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformContact()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Contacts == Inquire(
-                new Erm::Contact { Id = 1, IsFired = true, ClientId = 2 },
+                new Erm::Contact { Id = 1, ClientId = 2 },
                 new Erm::Contact { Id = 2, Role = 200000 },
                 new Erm::Contact { Id = 3, Role = 200001 },
                 new Erm::Contact { Id = 4, Role = 200002 },
@@ -91,7 +91,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Erm::Contact { Id = 8, AdditionalPhoneNumber = "phone" },
                 new Erm::Contact { Id = 9, Website = "site" }
                 )))
-                .VerifyTransform(x => x.Contacts.ById(1), Inquire(new Facts::Contact { Id = 1, IsFired = true, ClientId = 2 }))
+                .VerifyTransform(x => x.Contacts.ById(1), Inquire(new Facts::Contact { Id = 1, ClientId = 2 }))
                 .VerifyTransform(x => x.Contacts.ById(2), Inquire(new Facts::Contact { Id = 2, Role = 1 }))
                 .VerifyTransform(x => x.Contacts.ById(3), Inquire(new Facts::Contact { Id = 3, Role = 2 }))
                 .VerifyTransform(x => x.Contacts.ById(4), Inquire(new Facts::Contact { Id = 4, Role = 3 }))

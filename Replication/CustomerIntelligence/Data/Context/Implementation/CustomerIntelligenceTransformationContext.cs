@@ -67,7 +67,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                  ClientId = contact.ClientId,
                                   ContactId = contact.Id,
                                   Role = contact.Role,
-                                  IsFired = contact.IsFired,
                               };
             }
         }
