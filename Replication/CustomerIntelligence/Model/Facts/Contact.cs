@@ -8,8 +8,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 
         public int Role { get; set; }
 
-        public bool IsFired { get; set; }
-
         public bool HasPhone { get; set; }
 
         public bool HasWebsite { get; set; }

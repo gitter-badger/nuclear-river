@@ -117,7 +117,6 @@ go
 create table ERM.Contact(
 	Id bigint not null
 	, [Role] int not null
-	, IsFired bit not null constraint DF_Contacts_IsFired default 0
     , HasPhone bit not null constraint DF_Contacts_HasPhone default 0
     , HasWebsite bit not null constraint DF_Contacts_HasWebsite default 0
     , ClientId bigint not null

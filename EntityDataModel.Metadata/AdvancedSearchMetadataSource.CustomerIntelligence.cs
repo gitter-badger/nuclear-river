@@ -84,7 +84,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                                 .HasKey("ContactId")
                                                                 .Property(EntityPropertyElement.Config.Name("ContactId").OfType(ElementaryTypeKind.Int64))
                                                                 .Property(EntityPropertyElement.Config.Name("Role").OfType<EnumTypeElement>(EnumTypeElement.Config.Name(EnumName.ContactRole)))
-                                                                .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
                                                         )
                                                         .AsMany()
                                                 )
@@ -129,7 +128,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .HasKey("ClientId", "ContactId")
                                  .Property(EntityPropertyElement.Config.Name("ContactId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Role").OfType(ElementaryTypeKind.Int32))
-                                 .Property(EntityPropertyElement.Config.Name("IsFired").OfType(ElementaryTypeKind.Boolean))
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOne()),
                     EntityElement.Config.Name(ViewName.Firm)
                                  .HasKey("Id")

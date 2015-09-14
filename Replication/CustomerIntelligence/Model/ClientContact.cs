@@ -10,8 +10,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
 
         public int Role { get; set; }
 
-        public bool IsFired { get; set; }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -32,14 +30,13 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model
                 var hashCode = ClientId.GetHashCode();
                 hashCode = (hashCode * 397) ^ ContactId.GetHashCode();
                 hashCode = (hashCode * 397) ^ Role;
-                hashCode = (hashCode * 397) ^ IsFired.GetHashCode();
                 return hashCode;
             }
         }
 
         private bool Equals(ClientContact other)
         {
-            return ClientId == other.ClientId && ContactId == other.ContactId && Role == other.Role && IsFired == other.IsFired;
+            return ClientId == other.ClientId && ContactId == other.ContactId && Role == other.Role;
         }
     }
 }

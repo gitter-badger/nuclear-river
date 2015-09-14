@@ -5,6 +5,5 @@
         public long ContactId { get; set; }
         public long ClientId { get; set; }
         public ContactRole Role { get; set; }
-        public bool IsFired { get; set; }
     }
 }

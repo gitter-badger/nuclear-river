@@ -172,7 +172,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 {
                     Id = 1,
                     Role = 1,
-                    IsFired = true,
+                    IsFired = false,
                     MainPhoneNumber = "phone1",
                     HomePhoneNumber = "phone2",
                     MobilePhoneNumber = "phone3",
@@ -182,13 +182,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 })
                  .Has(new Contact { Id = 2, IsActive = false, IsDeleted = false })
                  .Has(new Contact { Id = 3, IsActive = false, IsDeleted = true })
-                 .Has(new Contact { Id = 4, IsActive = true, IsDeleted = true });
+                 .Has(new Contact { Id = 4, IsActive = true, IsDeleted = true })
+                 .Has(new Contact { Id = 5, IsFired = true });
 
             Reader.Create(ErmDb)
-                  .VerifyRead(x => x.Contacts.ById(1), Inquire(new Contact { Id = 1, Role = 1, IsFired = true, MainPhoneNumber = "phone1", HomePhoneNumber = "phone2", MobilePhoneNumber = "phone3", AdditionalPhoneNumber = "phone4", Website = "site", ClientId = 1 }))
+                  .VerifyRead(x => x.Contacts.ById(1), Inquire(new Contact { Id = 1, Role = 1, IsFired = false, MainPhoneNumber = "phone1", HomePhoneNumber = "phone2", MobilePhoneNumber = "phone3", AdditionalPhoneNumber = "phone4", Website = "site", ClientId = 1 }))
                   .VerifyRead(x => x.Contacts.ById(2), Inquire<Contact>())
                   .VerifyRead(x => x.Contacts.ById(3), Inquire<Contact>())
-                  .VerifyRead(x => x.Contacts.ById(4), Inquire<Contact>());
+                  .VerifyRead(x => x.Contacts.ById(4), Inquire<Contact>())
+                  .VerifyRead(x => x.Contacts.ById(5), Inquire<Contact>());
         }
 
         [Test]

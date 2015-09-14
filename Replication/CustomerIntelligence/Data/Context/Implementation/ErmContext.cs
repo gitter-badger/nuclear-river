@@ -141,7 +141,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 return from contact in _context.GetTable<Contact>()
-                       where contact.IsActive && !contact.IsDeleted
+                       where contact.IsActive && !contact.IsDeleted && !contact.IsFired
                        select contact;
             }
         }
