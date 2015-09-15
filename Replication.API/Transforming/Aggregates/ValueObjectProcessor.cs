@@ -9,6 +9,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
     public sealed class ValueObjectProcessor<T> : IValueObjectProcessor 
         where T : class, IObject
     {
+        // TODO {all, 15.09.2015}: Имеет смысл избавить *Processor от зависимостей IQuery, I*Info, заменить на DataChangesDetector
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _repository;
         private readonly ValueObjectInfo<T> _metadata;
