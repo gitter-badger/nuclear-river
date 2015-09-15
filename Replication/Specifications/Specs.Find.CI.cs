@@ -13,24 +13,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
         {
             public static partial class CI
             {
-                public static FindSpecification<CI::CategoryGroup> CategoryGroups(IReadOnlyCollection<long> ids)
-                {
-                    return API.Specifications.Specs.Find.ByIds<CI::CategoryGroup>(ids);
-                }
-
-                public static FindSpecification<CI::Client> Clients(IReadOnlyCollection<long> ids)
-                {
-                    return API.Specifications.Specs.Find.ByIds<CI::Client>(ids);
-                }
-
                 public static FindSpecification<CI::ClientContact> ClientContacts(IReadOnlyCollection<long> aggregateIds)
                 {
                     return new FindSpecification<CI::ClientContact>(x => aggregateIds.Contains(x.ClientId));
-                }
-
-                public static FindSpecification<CI::Firm> Firms(IReadOnlyCollection<long> aggregateIds)
-                {
-                    return API.Specifications.Specs.Find.ByIds<CI::Firm>(aggregateIds);
                 }
 
                 public static FindSpecification<CI::FirmActivity> FirmActivities(IReadOnlyCollection<long> aggregateIds)
@@ -48,19 +33,9 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                     return new FindSpecification<CI::FirmCategory>(x => aggregateIds.Contains(x.FirmId));
                 }
 
-                public static FindSpecification<CI::Project> Projects(IReadOnlyCollection<long> ids)
-                {
-                    return API.Specifications.Specs.Find.ByIds<CI::Project>(ids);
-                }
-
                 public static FindSpecification<CI::ProjectCategory> ProjectCategories(IReadOnlyCollection<long> aggregateIds)
                 {
                     return new FindSpecification<CI::ProjectCategory>(x => aggregateIds.Contains(x.ProjectId));
-                }
-
-                public static FindSpecification<CI::Territory> Territories(IReadOnlyCollection<long> ids)
-                {
-                    return API.Specifications.Specs.Find.ByIds<CI::Territory>(ids);
                 }
 
                 public static partial class FirmCategoryStatistics

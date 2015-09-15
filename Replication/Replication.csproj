@@ -148,7 +148,6 @@
     <Compile Include="Specifications\Specs.Find.Bit.cs" />
     <Compile Include="Specifications\Specs.Map.Facts.Statistics.cs" />
     <Compile Include="Specifications\Specs.Map.CI.Statistics.cs" />
-    <Compile Include="Specifications\Specs.Find.Facts.cs" />
     <Compile Include="Specifications\Specs.Map.Facts.CI.cs" />
     <Compile Include="Specifications\Specs.Map.Erm.Facts.cs" />
     <Compile Include="Specifications\Specs.Map.Facts.AggregateIdentity.cs" />
