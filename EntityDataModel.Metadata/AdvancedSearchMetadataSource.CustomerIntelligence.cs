@@ -65,7 +65,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                                 .HasKey("CategoryId")
                                                 .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
                                                 .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double).Nullable())
-                                                .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64).Nullable())
+                                                .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int32).Nullable())
                                                 .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64).Nullable())
                                                 .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64).Nullable())
                                         ).AsMany())
@@ -154,7 +154,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .HasKey("FirmId", "CategoryId")
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("AdvertisersShare").OfType(ElementaryTypeKind.Double).Nullable())
-                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int64).Nullable())
+                                 .Property(EntityPropertyElement.Config.Name("FirmCount").OfType(ElementaryTypeKind.Int32).Nullable())
                                  .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()));
