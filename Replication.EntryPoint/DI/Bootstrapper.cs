@@ -114,6 +114,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureWcf()
                      .ConfigureOperationsProcessing()
                      .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureMetdadataProcessing(EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -264,13 +265,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IBulkRepository<>), typeof(BulkRepository<>), entryPointSpecificLifetimeManagerFactory())
+                .ConfigureReadWriteModels();
+        }
+
+        private static IUnityContainer ConfigureMetdadataProcessing(this IUnityContainer container, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        {
+            return container
                 .RegisterType<IAggregateProcessorFactory, UnityAggregateProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactDependencyProcessorFactory, UnityFactDependencyProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(IBulkRepository<>), typeof(BulkRepository<>), entryPointSpecificLifetimeManagerFactory())
-                .ConfigureReadWriteModels();
+                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory());
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
