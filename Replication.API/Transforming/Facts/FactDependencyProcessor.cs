@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using NuClear.Storage.Readings;
 using NuClear.Telemetry.Probing;
@@ -36,7 +37,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
             using (Probe.Create("Querying dependent aggregates"))
             {
                 var filter = _metadata.FindSpecificationProvider.Invoke(factIds);
-                return operationFactory.Invoke(filter).Map(_query);
+                return operationFactory.Invoke(filter).Map(_query).ToArray();
             }
         }
     }
