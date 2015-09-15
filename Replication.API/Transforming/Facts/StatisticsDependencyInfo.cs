@@ -10,6 +10,7 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
+    // TODO {all, 15.09.2015}: Подумать о правильном поядке вызова при создании/обновлении/удалении факта (до/после - аналогично AggregateDependencyInfo или должен отличаться?)
     public sealed class StatisticsDependencyInfo<TFact> : IFactDependencyInfo, IFactDependencyInfo<TFact>
         where TFact : class, IIdentifiable
     {
