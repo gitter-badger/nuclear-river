@@ -11,15 +11,15 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         where T : class, IIdentifiable
     {
         private readonly IQuery _query;
-        private readonly IBulkRepository<T> _applier;
+        private readonly IBulkRepository<T> _repository;
         private readonly AggregateInfo<T> _metadata;
         private readonly DataChangesDetector<T, T> _aggregateChangesDetector;
 
-        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
+        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IBulkRepository<T> repository)
         {
             _metadata = metadata;
             _query = query;
-            _applier = applier;
+            _repository = repository;
             _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
         }
 
@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query);
 
-            _applier.Create(aggregatesToCreate);
+            _repository.Create(aggregatesToCreate);
         }
 
         public void Recalculate(IReadOnlyCollection<long> ids)
@@ -46,9 +46,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             var aggregatesToUpdate = _metadata.MapSpecificationProviderForSource.Invoke(updateFilter).Map(_query);
             var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query);
 
-            _applier.Delete(aggregatesToDelete);
-            _applier.Create(aggregatesToCreate);
-            _applier.Update(aggregatesToUpdate);
+            _repository.Delete(aggregatesToDelete);
+            _repository.Create(aggregatesToCreate);
+            _repository.Update(aggregatesToUpdate);
         }
 
         public void Destroy(IReadOnlyCollection<long> ids)
@@ -59,7 +59,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query);
 
-            _applier.Delete(aggregatesToDelete);
+            _repository.Delete(aggregatesToDelete);
         }
     }
 }

@@ -11,17 +11,17 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         where TFact : class, IErmFactObject
     {
         private readonly IQuery _query;
-        private readonly IBulkRepository<TFact> _applier;
+        private readonly IBulkRepository<TFact> _repository;
 
         private readonly FactInfo<TFact> _factInfo;
         private readonly IReadOnlyCollection<IFactDependencyProcessor> _depencencyProcessors;
         private readonly IReadOnlyCollection<IFactDependencyProcessor> _indirectDepencencyProcessors;
         private readonly DataChangesDetector<TFact, TFact> _changesDetector;
 
-        public FactProcessor(FactInfo<TFact> factInfo, IFactDependencyProcessorFactory dependencyProcessorFactory, IQuery query, IBulkRepository<TFact> applier)
+        public FactProcessor(FactInfo<TFact> factInfo, IFactDependencyProcessorFactory dependencyProcessorFactory, IQuery query, IBulkRepository<TFact> repository)
         {
             _query = query;
-            _applier = applier;
+            _repository = repository;
             _factInfo = factInfo;
             _depencencyProcessors = _factInfo.DependencyInfos.Select(dependencyProcessorFactory.Create).ToArray();
             _indirectDepencencyProcessors = _factInfo.DependencyInfos.Where(x => !x.IsDirectDependency).Select(dependencyProcessorFactory.Create).ToArray();
@@ -57,21 +57,21 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
             var sourceQueryable = _factInfo.MapSpecificationProviderForSource.Invoke(spec).Map(_query);
-            _applier.Create(sourceQueryable);
+            _repository.Create(sourceQueryable);
         }
 
         private void UpdateFact(IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
             var sourceQueryable = _factInfo.MapSpecificationProviderForSource(spec).Map(_query);
-            _applier.Update(sourceQueryable);
+            _repository.Update(sourceQueryable);
         }
 
         private void DeleteFact(IReadOnlyCollection<long> ids)
         {
             var spec = _factInfo.FindSpecificationProvider.Invoke(ids);
             var targetQueryable = _factInfo.MapSpecificationProviderForTarget(spec).Map(_query);
-            _applier.Delete(targetQueryable);
+            _repository.Delete(targetQueryable);
         }
     }
 }

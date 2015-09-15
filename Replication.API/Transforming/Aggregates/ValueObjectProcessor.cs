@@ -10,15 +10,15 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         where T : class, IObject
     {
         private readonly IQuery _query;
-        private readonly IBulkRepository<T> _applier;
+        private readonly IBulkRepository<T> _repository;
         private readonly ValueObjectInfo<T> _metadata;
         private readonly DataChangesDetector<T, T> _changesDetector;
 
-        public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IBulkRepository<T> applier)
+        public ValueObjectProcessor(ValueObjectInfo<T> metadata, IQuery query, IBulkRepository<T> repository)
         {
             _metadata = metadata;
             _query = query;
-            _applier = applier;
+            _repository = repository;
             _changesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
         }
 
@@ -26,9 +26,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         {
             var mergeResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
-            _applier.Delete(mergeResult.Complement);
-            _applier.Create(mergeResult.Difference);
-            _applier.Update(mergeResult.Intersection);
+            _repository.Delete(mergeResult.Complement);
+            _repository.Create(mergeResult.Difference);
+            _repository.Update(mergeResult.Intersection);
         }
     }
 }

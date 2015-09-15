@@ -9,13 +9,13 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
         where T : class
     {
         private readonly IQuery _query;
-        private readonly IBulkRepository<T> _changesApplier;
+        private readonly IBulkRepository<T> _repository;
         private readonly StatisticsInfo<T> _metadata;
 
-        public StatisticsProcessor(StatisticsInfo<T> metadata, IQuery query, IBulkRepository<T> changesApplier)
+        public StatisticsProcessor(StatisticsInfo<T> metadata, IQuery query, IBulkRepository<T> repository)
         {
             _query = query;
-            _changesApplier = changesApplier;
+            _repository = repository;
             _metadata = metadata;
         }
 
@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
 
             // Ќаличие или отсутствие статистики - не повод создавать или удал€ть рубрики у фирм.
             // ѕоэтому только обновление.
-            _changesApplier.Update(changes.Intersection);
+            _repository.Update(changes.Intersection);
         }
     }
 }
