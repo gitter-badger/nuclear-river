@@ -23,7 +23,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
             _query = query;
         }
 
-        public MergeResult<TCompared> DetectChanges<TCompared>(MapSpecification<IEnumerable<TOutput>, IEnumerable<TCompared>> mapSpec, FindSpecification<TFilter> specification)
+        public MergeResult<TCompared> DetectChanges<TCompared>(MapSpecification<IEnumerable<TOutput>, IEnumerable<TCompared>> mapSpec, FindSpecification<TFilter> specification, IEqualityComparer<TCompared> comparer = null)
         {
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {
@@ -32,7 +32,8 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming
 
                 var result = MergeTool.Merge(
                     mapSpec.Map(sourceObjects).ToArray(),
-                    mapSpec.Map(targetObjects).ToArray());
+                    mapSpec.Map(targetObjects).ToArray(), 
+                    comparer);
 
                 scope.Complete();
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Specifications;
 using NuClear.Storage.Readings;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
@@ -11,12 +11,14 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _repository;
         private readonly StatisticsInfo<T> _metadata;
+        private readonly DataChangesDetector<T, T> _changesDetector;
 
         public StatisticsProcessor(StatisticsInfo<T> metadata, IQuery query, IBulkRepository<T> repository)
         {
             _query = query;
             _repository = repository;
             _metadata = metadata;
+            _changesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
         }
 
         public void RecalculateStatistics(long projectId, IReadOnlyCollection<long?> categoryIds)
@@ -25,11 +27,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
 
             // Сначала сравниением получаем различающиеся записи,
             // затем получаем те из различающихся, которые совпадают по идентификатору.
-            var intermediateResult = MergeTool.Merge(
-                _metadata.MapSpecificationProviderForSource.Invoke(filter).Map(_query).ToArray(),
-                _metadata.MapSpecificationProviderForTarget.Invoke(filter).Map(_query).ToArray(),
-                _metadata.FieldComparer);
-
+            var intermediateResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), filter, _metadata.FieldComparer);
             var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement);
 
             // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
