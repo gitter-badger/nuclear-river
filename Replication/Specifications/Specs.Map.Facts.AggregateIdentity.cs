@@ -2,18 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.API.Operations;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.Specifications
 {
     using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
-
-    public sealed class Identity<T>
-    {
-        public long Id { get; set; }
-    }
 
     public static partial class Specs
     {
