@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Statistics
 
             // Ќаличие или отсутствие статистики - не повод создавать или удал€ть рубрики у фирм.
             // ѕоэтому только обновление.
-            _changesApplier.Update(changes.Intersection.AsQueryable());
+            _changesApplier.Update(changes.Intersection);
         }
     }
 }
