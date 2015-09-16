@@ -375,6 +375,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldDestroyFirmUsingSqlLite()
         {
+            LinqToDB.Common.Configuration.Linq.GenerateExpressionTest = true;
+
             CustomerIntelligenceDb.Has(new CI::Firm { Id = 1 });
 
             Transformation.Create(Query)

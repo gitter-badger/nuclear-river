@@ -81,10 +81,10 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                 // FIXME {all, 03.04.2015}: the obtained SQL is too complex and slow
                                 var clientsHavingPhone = from contact in q.For<Facts::Contact>()
                                                          where contact.HasPhone
-                                                         select contact.ClientId;
+                                                         select (long?)contact.ClientId;
                                 var clientsHavingWebsite = from contact in q.For<Facts::Contact>()
                                                            where contact.HasWebsite
-                                                           select contact.ClientId;
+                                                           select (long?)contact.ClientId;
 
                                 var firmsHavingPhone = from firmContact in q.For<Facts::FirmContact>().Where(x => x.HasPhone)
                                                        join firmAddress in q.For<Facts::FirmAddress>() on firmContact.FirmAddressId equals firmAddress.Id
@@ -96,8 +96,11 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                                 return from firm in q.For(API.Specifications.Specs.Find.ByIds<Facts::Firm>(ids))
                                        join project in q.For<Facts::Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
-                                       let firmClient = q.For<Facts::Client>().SingleOrDefault(client => client.Id == firm.ClientId)
-                                       let rates = from firmAddress in q.For<Facts::FirmAddress>().Where(firmAddress => firmAddress.FirmId == firm.Id)
+                                       join client in q.For<Facts::Client>() on firm.ClientId equals client.Id
+                                       join order in q.For<Facts::Order>() on firm.Id equals order.FirmId into orders
+                                       join firmAddress in q.For<Facts::FirmAddress>() on firm.Id equals firmAddress.FirmId into firmAddresses
+                                       let rates = from firmAddress in q.For<Facts::FirmAddress>()
+                                                   where firmAddress.FirmId == firm.Id
                                                    join categoryFirmAddress in q.For<Facts::CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
                                                    join categoryOrganizationUnit in q.For<Facts::CategoryOrganizationUnit>() on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
                                                        new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
@@ -105,21 +108,21 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                    orderby categoryGroup.Rate descending
                                                    select categoryGroup.Id
                                        select new Firm
-                                       {
-                                           Id = firm.Id,
-                                           Name = firm.Name,
-                                           CreatedOn = firm.CreatedOn,
-                                           LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
-                                           LastDistributedOn = q.For<Facts::Order>().Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
-                                           HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
-                                           HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
-                                           AddressCount = q.For<Facts::FirmAddress>().Count(fa => fa.FirmId == firm.Id),
-                                           CategoryGroupId = rates.FirstOrDefault(),
-                                           ClientId = firm.ClientId,
-                                           ProjectId = project.Id,
-                                           OwnerId = firm.OwnerId,
-                                           TerritoryId = firm.TerritoryId
-                                       };
+                                              {
+                                                  Id = firm.Id,
+                                                  Name = firm.Name,
+                                                  CreatedOn = firm.CreatedOn,
+                                                  LastDisqualifiedOn = client.LastDisqualifiedOn ?? firm.LastDisqualifiedOn,
+                                                  LastDistributedOn = orders.Select(d => (DateTimeOffset?)d.EndDistributionDateFact).Max(),
+                                                  HasPhone = firmsHavingPhone.Contains(firm.Id) || client.HasPhone || clientsHavingPhone.Contains(firm.ClientId),
+                                                  HasWebsite = firmsHavingWebsite.Contains(firm.Id) || client.HasWebsite || clientsHavingWebsite.Contains(firm.ClientId),
+                                                  AddressCount = firmAddresses.Count(),
+                                                  CategoryGroupId = rates.FirstOrDefault(),
+                                                  ClientId = firm.ClientId,
+                                                  ProjectId = project.Id,
+                                                  OwnerId = firm.OwnerId,
+                                                  TerritoryId = firm.TerritoryId
+                                              };
                             });
                     }
 
