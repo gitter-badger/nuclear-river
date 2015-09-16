@@ -96,13 +96,13 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                 // TODO {all, 02.04.2015}: CategoryGroupId processing
                                 return from firm in q.For(API.Specifications.Specs.Find.ByIds<Facts::Firm>(ids))
                                        join project in q.For<Facts::Project>() on firm.OrganizationUnitId equals project.OrganizationUnitId
-                                       join client in q.For<Facts::Client>() on firm.ClientId equals client.Id
-                                       join order in q.For<Facts::Order>() on firm.Id equals order.FirmId into orders
-                                       join firmAddress in q.For<Facts::FirmAddress>() on firm.Id equals firmAddress.FirmId into firmAddresses
+                                       join client in q.For<Facts::Client>() on firm.ClientId equals client.Id into clients
+                                       from client in clients.DefaultIfEmpty(new Facts::Client())
                                        let rates = from firmAddress in q.For<Facts::FirmAddress>()
                                                    where firmAddress.FirmId == firm.Id
                                                    join categoryFirmAddress in q.For<Facts::CategoryFirmAddress>() on firmAddress.Id equals categoryFirmAddress.FirmAddressId
-                                                   join categoryOrganizationUnit in q.For<Facts::CategoryOrganizationUnit>() on new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
+                                                   join categoryOrganizationUnit in q.For<Facts::CategoryOrganizationUnit>() on
+                                                       new { categoryFirmAddress.CategoryId, firm.OrganizationUnitId } equals
                                                        new { categoryOrganizationUnit.CategoryId, categoryOrganizationUnit.OrganizationUnitId }
                                                    join categoryGroup in q.For<Facts::CategoryGroup>() on categoryOrganizationUnit.CategoryGroupId equals categoryGroup.Id
                                                    orderby categoryGroup.Rate descending
@@ -113,10 +113,14 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                                   Name = firm.Name,
                                                   CreatedOn = firm.CreatedOn,
                                                   LastDisqualifiedOn = client.LastDisqualifiedOn ?? firm.LastDisqualifiedOn,
-                                                  LastDistributedOn = orders.Select(d => (DateTimeOffset?)d.EndDistributionDateFact).Max(),
+                                                  LastDistributedOn = q.For<Facts::Order>()
+                                                                       .Where(order => order.FirmId == firm.Id)
+                                                                       .Select(order => order.EndDistributionDateFact)
+                                                                       .Cast<DateTimeOffset?>()
+                                                                       .Max(),
                                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || client.HasPhone || clientsHavingPhone.Contains(firm.ClientId),
                                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || client.HasWebsite || clientsHavingWebsite.Contains(firm.ClientId),
-                                                  AddressCount = firmAddresses.Count(),
+                                                  AddressCount = q.For<Facts::FirmAddress>().Count(fa => fa.FirmId == firm.Id),
                                                   CategoryGroupId = rates.FirstOrDefault(),
                                                   ClientId = firm.ClientId,
                                                   ProjectId = project.Id,
