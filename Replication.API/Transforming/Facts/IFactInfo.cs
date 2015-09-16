@@ -1,16 +1,20 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.API.Operations;
-using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Facts
 {
-    public delegate MapSpecification<IQuery, IEnumerable<CalculateStatisticsOperation>> CalculateStatisticsSpecProvider(IReadOnlyCollection<long> ids);
-
     public interface IFactInfo : IMetadataInfo
     {
         IReadOnlyCollection<IFactDependencyInfo> DependencyInfos { get; }
-        CalculateStatisticsSpecProvider CalculateStatisticsSpecProvider { get; } 
+    }
+
+    public interface IFactInfo<T>
+    {
+        MapToObjectsSpecProvider<T, T> MapSpecificationProviderForSource { get; }
+        MapToObjectsSpecProvider<T, T> MapSpecificationProviderForTarget { get; }
+
+        Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; }
     }
 }

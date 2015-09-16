@@ -197,9 +197,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
                             try
                             {
-                                // create empty table
-                                CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
-                            }
+                            // create empty table
+                            CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
+                        }
                             catch (Exception exception)
                             {
                                 // table can be already created by previous type mapped to the same table

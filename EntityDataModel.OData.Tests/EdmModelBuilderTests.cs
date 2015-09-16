@@ -69,7 +69,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var model = BuildValidModel(config);
 
             Assert.NotNull(model);
-            Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToList(), Has.Count.EqualTo(2));
+            Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToArray(), Has.Count.EqualTo(2));
             Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
             Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
         }
@@ -82,7 +82,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
             var model = BuildValidModel(config);
 
             Assert.NotNull(model);
-            Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToList(), Has.Count.EqualTo(2));
+            Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToArray(), Has.Count.EqualTo(2));
             Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
             Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
         }

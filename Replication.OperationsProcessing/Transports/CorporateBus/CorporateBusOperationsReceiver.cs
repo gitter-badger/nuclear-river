@@ -30,7 +30,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
         protected override IReadOnlyList<CorporateBusPerformedOperationsMessage> Peek()
         {
             var batch = _corporateBusMessageFlowReceiver.ReceiveBatch(MessageReceiverSettings.BatchSize);
-            var messages = batch.Select(corporateBusMessage => new CorporateBusPerformedOperationsMessage(new [] { corporateBusMessage })).ToList();
+            var messages = batch.Select(corporateBusMessage => new CorporateBusPerformedOperationsMessage(new [] { corporateBusMessage })).ToArray();
             return messages;
         }
 

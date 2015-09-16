@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="2GIS.NuClear.Aggregates, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Aggregates.0.5.3\lib\portable-net451+win81+wpa81\2GIS.NuClear.Aggregates.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
@@ -47,19 +47,19 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.API.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.API.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
+    <Reference Include="linq2db, Version=1.0.7.3, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <HintPath>..\packages\linq2db.1.0.7.3\lib\net45\linq2db.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -98,25 +98,42 @@
     <Compile Include="Specifications\Specs.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfo.cs" />
     <Compile Include="Transforming\Aggregates\AggregateInfoBuilder.cs" />
-    <Compile Include="Transforming\Aggregates\IAggregateChangesApplier.cs" />
-    <Compile Include="Transforming\Aggregates\IAggregateInfo.cs" />
+    <Compile Include="Transforming\Aggregates\AggregateProcessor.cs" />
+    <Compile Include="Transforming\Aggregates\IAggregateProcessor.cs" />
+    <Compile Include="Transforming\Aggregates\IAggregateProcessorFactory.cs" />
+    <Compile Include="Transforming\Aggregates\IValueObjectProcessor.cs" />
+    <Compile Include="Transforming\Aggregates\IValueObjectProcessorFactory.cs" />
     <Compile Include="Transforming\Aggregates\ValueObjectInfo.cs" />
+    <Compile Include="Transforming\Aggregates\ValueObjectProcessor.cs" />
+    <Compile Include="Transforming\DataChangesDetector.cs" />
+    <Compile Include="Transforming\Facts\FactDependencyProcessor.cs" />
+    <Compile Include="Transforming\Facts\FactProcessor.cs" />
+    <Compile Include="Transforming\Facts\IFactDependencyProcessor.cs" />
+    <Compile Include="Transforming\Facts\IFactDependencyProcessorFactory.cs" />
+    <Compile Include="Transforming\Facts\IFactProcessor.cs" />
+    <Compile Include="Transforming\Facts\IFactProcessorFactory.cs" />
+    <Compile Include="Transforming\Facts\StatisticsDependencyInfo.cs" />
     <Compile Include="Transforming\Facts\AggregateDependencyInfo.cs" />
     <Compile Include="Transforming\Facts\DirectAggregateDependencyInfo.cs" />
-    <Compile Include="Transforming\Facts\FactDependencyInfoBuilder.cs" />
     <Compile Include="Transforming\Facts\FactInfo.cs" />
     <Compile Include="Transforming\Facts\FactInfoBuilder.cs" />
-    <Compile Include="Transforming\Facts\IFactChangesApplier.cs" />
-    <Compile Include="Transforming\Facts\IFactChangesApplierFactory.cs" />
+    <Compile Include="Transforming\Aggregates\IAggregateInfo.cs" />
+    <Compile Include="Transforming\IBulkRepository.cs" />
     <Compile Include="Transforming\Facts\IFactDependencyInfo.cs" />
     <Compile Include="Transforming\Facts\IFactInfo.cs" />
-    <Compile Include="Transforming\IDataChangesApplier.cs" />
-    <Compile Include="Transforming\IDataChangesApplierFactory.cs" />
+    <Compile Include="Transforming\IMetadataSource.cs" />
     <Compile Include="Transforming\IMetadataInfo.cs" />
-    <Compile Include="Transforming\IDataChangesDetector.cs" />
+    <Compile Include="Transforming\Aggregates\IValueObjectInfo.cs" />
+    <Compile Include="Transforming\Statistics\IStatisticsInfo.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
+    <Compile Include="Transforming\Statistics\IStatisticsProcessor.cs" />
+    <Compile Include="Transforming\Statistics\IStatisticsProcessorFactory.cs" />
+    <Compile Include="Transforming\Statistics\StatisticsInfo.cs" />
+    <Compile Include="Transforming\Statistics\StatisticsInfoBuilder.cs" />
+    <Compile Include="Transforming\Statistics\StatisticsProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

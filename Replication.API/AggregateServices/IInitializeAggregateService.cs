@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Replication.API.Operations.Identities;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.Aggregates;
 

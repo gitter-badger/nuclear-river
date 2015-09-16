@@ -172,11 +172,11 @@
       <HintPath>..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Aggregates.Storage.DI.Unity.0.5.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -217,9 +217,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Common.Logging.Log4Net1213.3.1.0\lib\net40\Common.Logging.Log4Net1213.dll</HintPath>
     </Reference>
-    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
+    <Reference Include="linq2db, Version=1.0.7.3, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <HintPath>..\packages\linq2db.1.0.7.3\lib\net45\linq2db.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -285,8 +285,11 @@
     <Compile Include="Factories\Messaging\Receiver\FinalReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Receiver\ServiceBusReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
-    <Compile Include="Factories\Replication\UnityFactChangesApplierFactory.cs" />
-    <Compile Include="Factories\Replication\UnityDataChangesApplierFactory.cs" />
+    <Compile Include="Factories\Replication\UnityAggregateProcessorFactory.cs" />
+    <Compile Include="Factories\Replication\UnityFactDependencyProcessorFactory.cs" />
+    <Compile Include="Factories\Replication\UnityStatisticsProcessorFactory.cs" />
+    <Compile Include="Factories\Replication\UnityFactProcessorFactory.cs" />
+    <Compile Include="Factories\Replication\UnityValueObjectProcessorFactory.cs" />
     <Compile Include="Factories\UnityCorporateBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Factories\UnityServiceBusMessageFlowReceiverFactory.cs" />
     <Compile Include="Jobs\ReportingJob.cs" />

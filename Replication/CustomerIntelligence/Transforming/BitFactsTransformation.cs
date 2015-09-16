@@ -34,7 +34,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<CalculateStatisticsOperation> DoTransform(FirmStatisticsDto dto)
         {
-            _mapper.DeleteAll(_query.For(Specs.Find.FirmStatistics.ByProjectId(dto.ProjectId)));
+            _mapper.DeleteAll(_query.For(Specs.Find.Bit.FirmCategoryStatistics.ByProject(dto.ProjectId)));
 
             var firmCategoryStatistics = dto.ToFirmCategoryStatistics();
             _mapper.InsertAll(firmCategoryStatistics.AsQueryable());
@@ -44,7 +44,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 
         private IEnumerable<CalculateStatisticsOperation> DoTransform(CategoryStatisticsDto dto)
         {
-            _mapper.DeleteAll(_query.For(Specs.Find.ProjectStatistics.ByProjectId(dto.ProjectId)));
+            _mapper.DeleteAll(_query.For(Specs.Find.Bit.ProjectCategoryStatistics.ByProject(dto.ProjectId)));
 
             var projectCategoryStatistics = dto.ToProjectCategoryStatistics();
             _mapper.InsertAll(projectCategoryStatistics.AsQueryable());

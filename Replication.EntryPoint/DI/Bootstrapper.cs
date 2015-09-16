@@ -8,7 +8,9 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
@@ -112,6 +114,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureWcf()
                      .ConfigureOperationsProcessing()
                      .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
+                     .ConfigureMetdadataProcessing(EntryPointSpecificLifetimeManagerFactory)
                      .ConfigureLinq2Db();
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
@@ -144,6 +147,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // register matadata sources without massprocessor
             container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(PerformedOperationsMessageFlowsMetadataSource), Lifetime.Singleton);
+
+            container.RegisterType<API.Transforming.IMetadataSource<IFactInfo>, ErmFactsTransformationMetadata>();
+            container.RegisterType<API.Transforming.IMetadataSource<IAggregateInfo>, CustomerIntelligenceTransformationMetadata>();
+            container.RegisterType<API.Transforming.IMetadataSource<IStatisticsInfo>, StatisticsFinalTransformationMetadata>();
 
             return container;
         }
@@ -258,11 +265,18 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType(typeof(IRepository<>), typeof(LinqToDBRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IReadableDomainContextProvider, ReadableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextProvider, ModifiableDomainContextProvider>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IFactChangesApplierFactory, UnityFactChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(IFactChangesApplier<>), typeof(FactChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IDataChangesApplierFactory, UnityDataChangesApplierFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType(typeof(IDataChangesApplier<>), typeof(DataChangesApplier<>), entryPointSpecificLifetimeManagerFactory())
+                .RegisterType(typeof(IBulkRepository<>), typeof(BulkRepository<>), entryPointSpecificLifetimeManagerFactory())
                 .ConfigureReadWriteModels();
+        }
+
+        private static IUnityContainer ConfigureMetdadataProcessing(this IUnityContainer container, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        {
+            return container
+                .RegisterType<IAggregateProcessorFactory, UnityAggregateProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IFactDependencyProcessorFactory, UnityFactDependencyProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory());
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)

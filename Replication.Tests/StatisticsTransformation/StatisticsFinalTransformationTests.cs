@@ -1,120 +1,117 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Moq;
 
-using Moq;
-
-using NuClear.AdvancedSearch.Replication.API.Operations;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
-using NuClear.AdvancedSearch.Replication.Data;
+using NuClear.Storage.Writings;
 
 using NUnit.Framework;
 
-using FirmCategoryStatistics = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.FirmCategoryStatistics;
-
 namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
 {
+    using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
+    using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+
     [TestFixture]
     internal sealed class StatisticsFinalTransformationTests
     {
+        private static readonly object[] data =
+            {
+                new Facts::FirmCategory { ProjectId = 1, FirmId = 10, CategoryId = 100, },
+                new Facts::FirmCategory { ProjectId = 1, FirmId = 10, CategoryId = 101, },
+                new Facts::FirmCategory { ProjectId = 1, FirmId = 10, CategoryId = 102, },
+                new Facts::FirmCategory { ProjectId = 1, FirmId = 11, CategoryId = 100, },
+                new Facts::FirmCategory { ProjectId = 1, FirmId = 11, CategoryId = 101, },
+                new Facts::FirmCategory { ProjectId = 2, FirmId = 12, CategoryId = 100, },
+                new Facts::FirmCategory { ProjectId = 3, FirmId = 10, CategoryId = 100, },
+                new Facts::FirmCategory { ProjectId = 3, FirmId = 10, CategoryId = 101, },
+
+                new Facts::FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100, },
+                new Facts::FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101, },
+                new Facts::FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 102, },
+                new Facts::FirmCategoryStatistics { ProjectId = 1, FirmId = 11, CategoryId = 100, },
+                new Facts::FirmCategoryStatistics { ProjectId = 1, FirmId = 11, CategoryId = 101, },
+                new Facts::FirmCategoryStatistics { ProjectId = 2, FirmId = 12, CategoryId = 100, },
+                new Facts::FirmCategoryStatistics { ProjectId = 3, FirmId = 10, CategoryId = 100, Hits = 1, Shows = 2 },
+                new Facts::FirmCategoryStatistics { ProjectId = 3, FirmId = 10, CategoryId = 101, Hits = 1, Shows = 2 },
+
+                new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 100, },
+                new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 101, },
+                new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 102, },
+                new Facts::ProjectCategoryStatistics { ProjectId = 2, CategoryId = 100, },
+                new Facts::ProjectCategoryStatistics { ProjectId = 3, CategoryId = 100, AdvertisersCount = 2 },
+                new Facts::ProjectCategoryStatistics { ProjectId = 3, CategoryId = 101, AdvertisersCount = 2 },
+
+                new CI::Firm { Id = 10, ProjectId = 1, },
+                new CI::Firm { Id = 11, ProjectId = 1, },
+                new CI::Firm { Id = 12, ProjectId = 2, },
+                new CI::Firm { Id = 10, ProjectId = 3, },
+
+                new CI::FirmCategoryStatistics { FirmId = 10, CategoryId = 100, },
+                new CI::FirmCategoryStatistics { FirmId = 10, CategoryId = 101, },
+                new CI::FirmCategoryStatistics { FirmId = 10, CategoryId = 102, },
+                new CI::FirmCategoryStatistics { FirmId = 11, CategoryId = 100, },
+                new CI::FirmCategoryStatistics { FirmId = 11, CategoryId = 101, },
+                new CI::FirmCategoryStatistics { FirmId = 12, CategoryId = 100, },
+                new CI::FirmCategoryStatistics { FirmId = 10, CategoryId = 100, Shows = 2, Hits = 1, AdvertisersShare = 2f / 1, FirmCount = 1 },
+                new CI::FirmCategoryStatistics { FirmId = 10, CategoryId = 101, },
+            };
+
         [Test]
         public void ShouldRecalculateOnlySpecifiedProjectCategory()
         {
-            Mock<IDataMapper> mapper;
-            var transformation = CreateTransformation(out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = 100 };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(1, new long?[] { 100 });
 
-            mapper.Verify(x => x.Insert(It.IsAny<FirmCategoryStatistics>()), Times.Never);
-            mapper.Verify(x => x.Delete(It.IsAny<FirmCategoryStatistics>()), Times.Never);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId != 100)), Times.Never);
+            repository.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId != 100)), Times.Never);
 
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
         }
 
         [Test]
         public void ShouldRecalculateOnlySpecifiedProject()
         {
-            Mock<IDataMapper> mapper;
-            var transformation = CreateTransformation(out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(1, new long?[] { null });
 
-            mapper.Verify(x => x.Insert(It.IsAny<FirmCategoryStatistics>()), Times.Never);
-            mapper.Verify(x => x.Delete(It.IsAny<FirmCategoryStatistics>()), Times.Never);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
+            repository.Verify(x => x.Add(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Delete(It.IsAny<CI::FirmCategoryStatistics>()), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId != 1)), Times.Never);
 
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 101)), Times.AtLeastOnce);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 100)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 101)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.ProjectId == 1 && y.CategoryId == 102)), Times.AtLeastOnce);
         }
 
         [Test]
         public void ShouldUpdateOnlyChangedRecords()
         {
-            Mock<IDataMapper> mapper;
-            var transformation = CreateTransformationWithDataIntersection(out mapper);
-            var operation = new CalculateStatisticsOperation { ProjectId = 1, CategoryId = null };
+            Mock<IRepository<CI::FirmCategoryStatistics>> repository;
+            var processor = StatisticsProcessor(data, out repository);
 
-            transformation.Recalculate(new[] { operation });
+            processor.RecalculateStatistics(3, new long?[] { null });
 
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
-            mapper.Verify(x => x.Update(It.Is<FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.AtLeastOnce);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 100)), Times.Never);
+            repository.Verify(x => x.Update(It.Is<CI::FirmCategoryStatistics>(y => y.CategoryId == 101)), Times.Once);
         }
 
-        private static StatisticsFinalTransformation CreateTransformation(out Mock<IDataMapper> mapperMock)
+        private static IStatisticsProcessor StatisticsProcessor<T>(object[] data, out Mock<IRepository<T>> repository) 
+            where T : class
         {
-            var data = new[]
-                       {
-                           new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100 },
-                           new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101 },
-                           new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 102 },
-                           new FirmCategoryStatistics { ProjectId = 1, FirmId = 11, CategoryId = 100 },
-                           new FirmCategoryStatistics { ProjectId = 1, FirmId = 11, CategoryId = 101 },
-                           new FirmCategoryStatistics { ProjectId = 2, FirmId = 12, CategoryId = 100 },
-                       };
+            var metadataSource = new StatisticsFinalTransformationMetadata();
+            var metadata = metadataSource.Metadata[typeof(T)];
+            repository = new Mock<IRepository<T>>();
 
-            return CreateTransformation(data,
-                                        data.Select(x => new FirmCategoryStatistics { ProjectId = x.ProjectId, FirmId = x.FirmId, CategoryId = x.CategoryId, FirmCount = 1 }),
-                                        out mapperMock);
-        }
-
-        private static StatisticsFinalTransformation CreateTransformationWithDataIntersection(out Mock<IDataMapper> mapperMock)
-        {
-            var sourceData = new[]
-                             {
-                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100, Shows = 1 },
-                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101, Shows = 1 },
-                             };
-
-            var targetData = new[]
-                             {
-                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 100, Shows = 1 },
-                                 new FirmCategoryStatistics { ProjectId = 1, FirmId = 10, CategoryId = 101, Shows = 2 },
-                             };
-
-            return CreateTransformation(sourceData, targetData, out mapperMock);
-        }
-
-        private static StatisticsFinalTransformation CreateTransformation(IEnumerable<FirmCategoryStatistics> sourceData, IEnumerable<FirmCategoryStatistics> targetData, out Mock<IDataMapper> mapperMock)
-        {
-            var source = new Mock<IStatisticsContext>();
-            source.SetupGet(x => x.FirmCategoryStatistics).Returns(sourceData.AsQueryable());
-            var target = new Mock<IStatisticsContext>();
-            target.SetupGet(x => x.FirmCategoryStatistics).Returns(targetData.AsQueryable());
-            var mapper = new Mock<IDataMapper>();
-            var transformation = new StatisticsFinalTransformation(source.Object, target.Object, mapper.Object);
-
-            mapperMock = mapper;
-            return transformation;
-        }
-
-        private static IQueryable<T> Inquire<T>(params T[] elements)
-        {
-            return elements.AsQueryable();
+            return new StatisticsProcessor<T>(
+                (StatisticsInfo<T>)metadata,
+                new MemoryMockQuery(data),
+                new BulkRepository<T>(repository.Object));
         }
     }
 }

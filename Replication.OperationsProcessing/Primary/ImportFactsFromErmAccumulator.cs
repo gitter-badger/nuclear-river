@@ -39,9 +39,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             _telemetryPublisher.Publish<ErmReceivedOperationCountIdentity>(receivedOperationCount);
 
             var filteredOperations = Filter(message);
-            var factOperations = Convert(filteredOperations).ToList();
+            var factOperations = Convert(filteredOperations).ToArray();
 
-            _telemetryPublisher.Publish<ErmEnqueuedOperationCountIdentity>(factOperations.Count);
+            _telemetryPublisher.Publish<ErmEnqueuedOperationCountIdentity>(factOperations.Length);
 
             return new OperationAggregatableMessage<FactOperation>
             {
@@ -86,7 +86,7 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                                           var parsed = EntityTypeMap<FactsContext>.TryGetEntityType(mappedKey, out entityType);
                                                           return Tuple.Create(parsed, entityType, y);
                                                       })
-                                              .Where(y => y.Item1).ToList();
+                                              .Where(y => y.Item1).ToArray();
 
                                 if (tuples.Any())
                                 {

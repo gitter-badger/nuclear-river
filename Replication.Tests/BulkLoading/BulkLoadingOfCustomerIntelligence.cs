@@ -17,61 +17,61 @@ namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
         [Test]
         public void ReloadFirms()
         {
-            Reload(query => Specs.Facts.Map.ToCI.Firms(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.Firms.Map(query));
         }
 
         [Test]
         public void ReloadFirmActivities()
         {
-            Reload(query => Specs.Facts.Map.ToCI.FirmActivities(null).Map(query) );
+            Reload(query => Specs.Map.Facts.ToCI.FirmActivities.Map(query) );
         }
 
         [Test]
         public void ReloadFirmBalances()
         {
-            Reload(query => Specs.Facts.Map.ToCI.FirmBalances(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.FirmBalances.Map(query));
         }
 
         [Test]
         public void ReloadFirmCategories()
         {
-            Reload(query => Specs.Facts.Map.ToCI.FirmCategories(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.FirmCategories.Map(query));
         }
 
         [Test]
         public void ReloadCategoryGroups()
         {
-            Reload(query => Specs.Facts.Map.ToCI.CategoryGroups(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.CategoryGroups.Map(query));
         }
 
         [Test]
         public void ReloadClients()
         {
-            Reload(query => Specs.Facts.Map.ToCI.Clients(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.Clients.Map(query));
         }
 
         [Test]
         public void ReloadClientContacts()
         {
-            Reload(query => Specs.Facts.Map.ToCI.ClientContacts(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.ClientContacts.Map(query));
         }
 
         [Test]
         public void ReloadProjects()
         {
-            Reload(query => Specs.Facts.Map.ToCI.Projects(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.Projects.Map(query));
         }
 
         [Test]
         public void ReloadProjectCategories()
         {
-            Reload(query => Specs.Facts.Map.ToCI.ProjectCategories(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.ProjectCategories.Map(query));
         }
 
         [Test]
         public void ReloadTerritories()
         {
-            Reload(query => Specs.Facts.Map.ToCI.Territories(null).Map(query));
+            Reload(query => Specs.Map.Facts.ToCI.Territories.Map(query));
         }
 
         private void Reload<T>(Func<IQuery, IEnumerable<T>> loader)

@@ -41,20 +41,20 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.2\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Storage.LinqToDB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.2\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Storage.LinqToDB.0.5.3\lib\net451\2GIS.NuClear.Storage.LinqToDB.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="linq2db, Version=1.0.7.1, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\linq2db.1.0.7.2\lib\net45\linq2db.dll</HintPath>
+    <Reference Include="linq2db, Version=1.0.7.3, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
+      <HintPath>..\packages\linq2db.1.0.7.3\lib\net45\linq2db.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\packages\Moq.4.2.1502.0911\lib\net40\Moq.dll</HintPath>
@@ -81,22 +81,21 @@
     <Compile Include="BulkLoading\BulkLoadingFixtureBase.cs" />
     <Compile Include="DynamicMock.cs" />
     <Compile Include="MockLinqToDbDataBuilder.cs" />
+    <Compile Include="QueryableExtensions.cs" />
     <Compile Include="SqliteDomainContextFactory.cs" />
     <Compile Include="SqliteEntityContainerNameResolver.cs" />
     <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
-    <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="BulkLoading\BulkLoadingOfCustomerIntelligence.cs" />
     <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
-    <Compile Include="StubFactChangesApplierFactory.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
-    <Compile Include="QueryMockExtensions.cs" />
     <Compile Include="Transformation\FactsMapToCISpecsTests.cs" />
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />
-    <Compile Include="Transformation\ErmContextFilteringTests.cs" />
+    <Compile Include="Transformation\ErmFilteringTests.cs" />
     <Compile Include="Transformation\ErmMapToFactsSpecsTests.cs" />
+    <Compile Include="Transformation\FactsTransformationTests.Data.cs" />
     <Compile Include="Transformation\FactsTransformationTests.cs" />
     <Compile Include="Transformation\ErmMapToFactsSpecsTests.Activity.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Activity.cs" />
@@ -107,6 +106,7 @@
     <Compile Include="Transformation\FactsTransformationTests.CategoryGroup.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Territory.cs" />
     <Compile Include="Transformation\FactsTransformationTests.Project.cs" />
+    <Compile Include="MemoryMockQuery.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="FixtureBase.cs" />
     <Compile Include="Data\DataConnectionExtensions.cs" />
@@ -116,8 +116,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Transformation\TransformationFixtureBase.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
-    <Compile Include="VerifiableDataChangesApplierFactory.cs" />
-    <Compile Include="VerifiableFactChangesApplierFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

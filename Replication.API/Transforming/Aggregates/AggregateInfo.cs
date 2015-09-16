@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
@@ -10,29 +8,20 @@ using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 {
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public static class AggregateInfo
+    public sealed class AggregateInfo<T> : IAggregateInfo, IAggregateInfo<T>
+        where T : class, IIdentifiable
     {
-        public static AggregateInfoBuilder<TAggregate> OfType<TAggregate>() where TAggregate : class, ICustomerIntelligenceObject, IIdentifiable
-        {
-            return new AggregateInfoBuilder<TAggregate>();
-        }
-    }
-
-    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
-    public sealed class AggregateInfo<T> : IAggregateInfo where T : class, IIdentifiable
-    {
-        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> _mapToSourceSpecProvider;
-        private readonly Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> _mapToTargetSpecProvider;
-
         public AggregateInfo(
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> mapToSourceSpecProvider,
-            Func<IReadOnlyCollection<long>, MapSpecification<IQuery, IQueryable<T>>> mapToTargetSpecProvider,
-            IEnumerable<IMetadataInfo> valueObjects = null)
+            MapSpecification<IQuery, IQueryable<T>> sourceMappingSpecification,
+            Func<IReadOnlyCollection<long>, FindSpecification<T>> findSpecificationProvider,
+            IReadOnlyCollection<IValueObjectInfo> valueObjects = null)
         {
-            _mapToSourceSpecProvider = mapToSourceSpecProvider;
-            _mapToTargetSpecProvider = mapToTargetSpecProvider;
+            var targetMappingSpecification = new MapSpecification<IQuery, IQueryable<T>>(q => q.For<T>());
+
+            FindSpecificationProvider = findSpecificationProvider;
             ValueObjects = valueObjects;
+            MapSpecificationProviderForSource = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => sourceMappingSpecification.Map(q).Where(specification));
+            MapSpecificationProviderForTarget = specification => new MapSpecification<IQuery, IEnumerable<T>>(q => targetMappingSpecification.Map(q).Where(specification));
         }
 
         public Type Type
@@ -40,40 +29,12 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             get { return typeof(T); }
         }
 
-        public MapToObjectsSpecProvider MapToSourceSpecProvider
-        {
-            get
-            {
-                return ids =>
-                       {
-                           if (!ids.Any())
-                           {
-                               return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<T>());
-                           }
+        public MapToObjectsSpecProvider<T, T> MapSpecificationProviderForSource { get; private set; }
 
-                           var mapToSourceSpec = _mapToSourceSpecProvider(ids);
-                           return new MapSpecification<IQuery, IEnumerable>(mapToSourceSpec);
-                       };
-            }
-        }
+        public MapToObjectsSpecProvider<T, T> MapSpecificationProviderForTarget { get; private set; }
 
-        public MapToObjectsSpecProvider MapToTargetSpecProvider
-        {
-            get
-            {
-                return ids =>
-                       {
-                           if (!ids.Any())
-                           {
-                               return new MapSpecification<IQuery, IEnumerable>(q => Enumerable.Empty<T>());
-                           }
+        public Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
 
-                           var mapToTargetSpec = _mapToTargetSpecProvider(ids);
-                           return new MapSpecification<IQuery, IEnumerable>(mapToTargetSpec);
-                       };
-            }
-        }
-
-        public IEnumerable<IMetadataInfo> ValueObjects { get; private set; }
+        public IReadOnlyCollection<IValueObjectInfo> ValueObjects { get; private set; }
     }
 }
