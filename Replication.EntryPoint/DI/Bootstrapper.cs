@@ -114,8 +114,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .ConfigureWcf()
                      .ConfigureOperationsProcessing()
                      .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureMetdadataProcessing(EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureLinq2Db();
+                     .ConfigureMetdadataProcessing(EntryPointSpecificLifetimeManagerFactory);
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
 
@@ -276,7 +275,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IFactDependencyProcessorFactory, UnityFactDependencyProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory());
+                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IStatisticsFactImporterFactory, UnityStatisticsFactImporterFactory>(entryPointSpecificLifetimeManagerFactory());
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
@@ -297,6 +297,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 };
 
             return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));
+        }
+
+        private static class Scope
+        {
+            public const string Erm = "Erm";
+            public const string Facts = "Facts";
+            public const string CustomerIntelligence = "CustomerIntelligence";
+            public const string Transport = "Transport";
         }
     }
 }

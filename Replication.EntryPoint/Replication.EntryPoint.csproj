@@ -276,7 +276,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DI\Bootstrapper.cs" />
-    <Compile Include="DI\Bootstrapper.Transformation.cs" />
     <Compile Include="DI\ReplicationEntryPointAssembly.cs" />
     <Compile Include="DI\ReplicationRoot.cs" />
     <Compile Include="DI\ReplicationZone.cs" />
@@ -285,6 +284,7 @@
     <Compile Include="Factories\Messaging\Receiver\FinalReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Receiver\ServiceBusReceiverResolveStrategy.cs" />
     <Compile Include="Factories\Messaging\Transformer\PrimaryMessageTransformerResolveStrategy.cs" />
+    <Compile Include="Factories\Replication\UnityStatisticsFactImporterFactory.cs" />
     <Compile Include="Factories\Replication\UnityAggregateProcessorFactory.cs" />
     <Compile Include="Factories\Replication\UnityFactDependencyProcessorFactory.cs" />
     <Compile Include="Factories\Replication\UnityStatisticsProcessorFactory.cs" />

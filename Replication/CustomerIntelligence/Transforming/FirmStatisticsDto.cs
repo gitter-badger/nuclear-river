@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 
+using NuClear.AdvancedSearch.Replication.API.Model;
+
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
 {
-    public sealed class FirmStatisticsDto : ICorporateBusDto
+    public sealed class FirmStatisticsDto : IStatisticsDto
     {
         public long ProjectId { get; set; }
 

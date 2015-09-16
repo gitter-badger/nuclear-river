@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
@@ -16,14 +17,14 @@ namespace NuClear.Replication.OperationsProcessing.Primary
 {
     public sealed class ImportFactsFromBitHandler : IMessageProcessingHandler
     {
-        private readonly BitFactsTransformation _bitFactsTransformation;
+        private readonly IStatisticsFactImporterFactory _statisticsFactImporterFactory;
         private readonly SqlStoreSender _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromBitHandler(BitFactsTransformation bitFactsTransformation, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromBitHandler(IStatisticsFactImporterFactory statisticsFactImporterFactory, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
         {
-            _bitFactsTransformation = bitFactsTransformation;
+            _statisticsFactImporterFactory = statisticsFactImporterFactory;
             _sender = sender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
@@ -38,7 +39,6 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                // FIXME {d.ivanov, 31.08.2015}: All messages must be processed in a single transaction
                 foreach (var message in messages.OfType<CorporateBusAggregatableMessage>())
                 {
                     foreach (var dto in message.Dtos)
@@ -46,7 +46,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         var firmStatisticsDto = dto as FirmStatisticsDto;
                         if (firmStatisticsDto != null)
                         {
-                            var calculateStatisticsOperations = _bitFactsTransformation.Transform(firmStatisticsDto);
+                            var firmStatisticsImporter = _statisticsFactImporterFactory.Create(typeof(FirmStatisticsDto));
+
+                            var calculateStatisticsOperations = firmStatisticsImporter.Import(firmStatisticsDto);
                             _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count);
                             _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
                         }
@@ -54,7 +56,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                         var categoryStatisticsDto = dto as CategoryStatisticsDto;
                         if (categoryStatisticsDto != null)
                         {
-                            var calculateStatisticsOperations = _bitFactsTransformation.Transform(categoryStatisticsDto);
+                            var categoryStatisticsImporter = _statisticsFactImporterFactory.Create(typeof(FirmStatisticsDto));
+
+                            var calculateStatisticsOperations = categoryStatisticsImporter.Import(categoryStatisticsDto);
                             _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count);
                             _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
                         }

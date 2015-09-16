@@ -2,20 +2,19 @@
 
 using Moq;
 
-using NuClear.AdvancedSearch.Replication.API.Operations;
+using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
-using NuClear.AdvancedSearch.Replication.Data;
 
 using NUnit.Framework;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
-    using CI = CustomerIntelligence.Model;
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal class BitFactsTransformationTests
+    internal class StatisticsFactImporterTests
     {
         [Test]
         public void ShouldProduceCalculateStatisticsOperationForFirmStatisticsDto()
@@ -44,12 +43,15 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = new MemoryMockQuery(
                 new Facts.FirmCategoryStatistics { ProjectId = 1, FirmId = 7 },
                 new Facts.FirmCategoryStatistics { ProjectId = 2, FirmId = 8 });
-            var transformation = new BitFactsTransformation(query, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>());
 
-            var operations = transformation.Transform(dto).ToArray();
+            var metadata = new StatisticsFactImportMetadata();
+            var statisticsFactInfo = (IStatisticsFactInfo<Facts.FirmCategoryStatistics>)metadata.Metadata[typeof(FirmStatisticsDto)];
+            var importer = new StatisticsFactImporter<Facts.FirmCategoryStatistics>(statisticsFactInfo, query, Mock.Of<IBulkRepository<Facts.FirmCategoryStatistics>>());
+
+            var operations = importer.Import(dto).ToArray();
 
             Assert.That(operations.Count(), Is.EqualTo(1));
-            Assert.That(operations.OfType<CalculateStatisticsOperation>().Count(), Is.EqualTo(1));
+            Assert.That(operations.Count(), Is.EqualTo(1));
         }
 
         [Test]
@@ -70,12 +72,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             var query = new MemoryMockQuery(
                 new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 7 },
                 new Facts.ProjectCategoryStatistics { ProjectId = 2, CategoryId = 7 });
-            var transformation = new BitFactsTransformation(query, Mock.Of<IDataMapper>(), Mock.Of<ITransactionManager>());
 
-            var operations = transformation.Transform(dto).ToArray();
+            var metadata = new StatisticsFactImportMetadata();
+            var statisticsFactInfo = (IStatisticsFactInfo<Facts.ProjectCategoryStatistics>)metadata.Metadata[typeof(CategoryStatisticsDto)];
+            var importer = new StatisticsFactImporter<Facts.ProjectCategoryStatistics>(statisticsFactInfo, query, Mock.Of<IBulkRepository<Facts.ProjectCategoryStatistics>>());
+
+
+            var operations = importer.Import(dto).ToArray();
 
             Assert.That(operations.Count(), Is.EqualTo(1));
-            Assert.That(operations.OfType<CalculateStatisticsOperation>().Count(), Is.EqualTo(1));
+            Assert.That(operations.Count(), Is.EqualTo(1));
         }
     }
 }

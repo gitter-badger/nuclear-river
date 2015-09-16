@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using NuClear.Storage.Specifications;
+﻿using NuClear.Storage.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.Specifications
 {

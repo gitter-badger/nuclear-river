@@ -89,7 +89,7 @@
     <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
-    <Compile Include="Transformation\BitFactsTransformationTests.cs" />
+    <Compile Include="Transformation\StatisticsFactImporterTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationContextTests.cs" />
     <Compile Include="Transformation\FactsMapToCISpecsTests.cs" />
     <Compile Include="Transformation\CustomerIntelligenceTransformationTests.cs" />

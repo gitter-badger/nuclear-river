@@ -79,6 +79,7 @@
     <Compile Include="IOperation.cs" />
     <Compile Include="Model\EntityTypeIds.cs" />
     <Compile Include="Model\IBitFactObject.cs" />
+    <Compile Include="Model\ICorporateBusDto.cs" />
     <Compile Include="Model\ICustomerIntelligenceObject.cs" />
     <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
     <Compile Include="Model\IErmFactObject.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Model\IErmValueObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
     <Compile Include="Model\IObject.cs" />
+    <Compile Include="Model\IStatisticsDto.cs" />
     <Compile Include="Operations\AggregateOperation.cs" />
     <Compile Include="Operations\CalculateStatisticsOperation.cs" />
     <Compile Include="Operations\DestroyAggregate.cs" />
@@ -107,6 +109,10 @@
     <Compile Include="Transforming\Aggregates\ValueObjectProcessor.cs" />
     <Compile Include="Transforming\DataChangesDetector.cs" />
     <Compile Include="Transforming\Facts\FactDependencyProcessor.cs" />
+    <Compile Include="Transforming\Facts\IStatisticsFactImporter.cs" />
+    <Compile Include="Transforming\Facts\IStatisticsFactInfo.cs" />
+    <Compile Include="Transforming\Facts\StatisticsFactBuilder.cs" />
+    <Compile Include="Transforming\Facts\StatisticsFactImporter.cs" />
     <Compile Include="Transforming\Facts\FactProcessor.cs" />
     <Compile Include="Transforming\Facts\IFactDependencyProcessor.cs" />
     <Compile Include="Transforming\Facts\IFactDependencyProcessorFactory.cs" />
@@ -118,12 +124,14 @@
     <Compile Include="Transforming\Facts\FactInfo.cs" />
     <Compile Include="Transforming\Facts\FactInfoBuilder.cs" />
     <Compile Include="Transforming\Aggregates\IAggregateInfo.cs" />
+    <Compile Include="Transforming\Facts\StatisticsFactInfo.cs" />
     <Compile Include="Transforming\IBulkRepository.cs" />
     <Compile Include="Transforming\Facts\IFactDependencyInfo.cs" />
     <Compile Include="Transforming\Facts\IFactInfo.cs" />
     <Compile Include="Transforming\IMetadataSource.cs" />
     <Compile Include="Transforming\IMetadataInfo.cs" />
     <Compile Include="Transforming\Aggregates\IValueObjectInfo.cs" />
+    <Compile Include="Transforming\IStatisticsFactImporterFactory.cs" />
     <Compile Include="Transforming\Statistics\IStatisticsInfo.cs" />
     <Compile Include="Transforming\MergeTool.cs" />
     <Compile Include="Transforming\Statistics\IStatisticsProcessor.cs" />

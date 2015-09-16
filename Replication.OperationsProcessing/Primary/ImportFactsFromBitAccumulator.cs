@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Xml.Linq;
 
+using NuClear.AdvancedSearch.Replication.API.Model;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.Messaging.Transports.CorporateBus.API;
