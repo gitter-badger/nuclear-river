@@ -172,20 +172,18 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             TargetDb.Has(new CI::Firm { Id = 1 },
                          new CI::Firm { Id = 2 },
                          new CI::Firm { Id = 3 })
-                    .Has(new CI::FirmBalance { FirmId = 2, Balance = 123 },
+                    .Has(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 123 },
                          new CI::FirmBalance { FirmId = 3, Balance = 123 });
 
 	        Transformation.Create(Query)
-	                      .Recalculate<CI::Firm>(1)
-	                      .Recalculate<CI::Firm>(2)
-	                      .Recalculate<CI::Firm>(3)
-	                      .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1, ProjectId = 1 }))))
-	                      .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2, ProjectId = 1 }))))
-	                      .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3, ProjectId = 1 }))))
-	                      .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123 }))))
-	                      .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, Balance = 456 }))))
+	                      .Recalculate<CI::Firm>(1, 2, 3)
+						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1, ProjectId = 1 }))))
+						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2, ProjectId = 1 }))))
+						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3, ProjectId = 1 }))))
+						  .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, AccountId = 1, Balance = 123 }))))
+						  .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 456 }))))
 	                      .Verify<CI::FirmBalance>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
-        }
+		}
 
         [Test]
         public void ShouldRecalculateFirmHavingCategory()
