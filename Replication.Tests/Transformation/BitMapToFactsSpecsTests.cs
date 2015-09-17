@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
+using NuClear.AdvancedSearch.Replication.Specifications;
 
 using NUnit.Framework;
 
@@ -8,15 +9,15 @@ using NUnit.Framework;
 namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 {
     [TestFixture]
-    internal class BitFactsTransformationContextTests
+    internal class BitMapToFactsSpecsTests
     {
         [Test]
-        public void ShouldTransformFirmStatisticsDto()
+        public void ShouldMapFromFirmStatisticsDto()
         {
             var dto = new FirmStatisticsDto
-                      {
-                          ProjectId = 1,
-                          Firms = new[]
+            {
+                ProjectId = 1,
+                Firms = new[]
                                   {
                                       new FirmStatisticsDto.FirmDto
                                       {
@@ -32,9 +33,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                   }
                     }
                 }
-                      };
+            };
 
-            var entities = dto.ToFirmCategoryStatistics();
+            var entities = Specs.Map.Bit.FirmCategoryStatistics().Map(dto);
 
             Assert.That(entities.Count(), Is.EqualTo(1));
             Assert.That(entities.Single().ProjectId, Is.EqualTo(1));
@@ -45,7 +46,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
-        public void ShouldTransformCategoryStatisticsDto()
+        public void ShouldMapFromCategoryStatisticsDto()
         {
             var dto = new CategoryStatisticsDto
             {
@@ -60,7 +61,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                                   }
             };
 
-            var entities = dto.ToProjectCategoryStatistics();
+            var entities = Specs.Map.Bit.ProjectCategoryStatistics().Map(dto);
 
             Assert.That(entities.Count(), Is.EqualTo(1));
             Assert.That(entities.Single().ProjectId, Is.EqualTo(1));

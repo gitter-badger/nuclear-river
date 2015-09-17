@@ -82,7 +82,6 @@
     <Compile Include="CustomerIntelligence\Model\FirmActivity.cs" />
     <Compile Include="CustomerIntelligence\Model\FirmCategoryStatistics.cs" />
     <Compile Include="CustomerIntelligence\Transforming\CategoryStatisticsDto.cs" />
-    <Compile Include="CustomerIntelligence\Transforming\BitDtoExtensions.cs" />
     <Compile Include="CustomerIntelligence\Model\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\CategoryGroup.cs" />
     <Compile Include="CustomerIntelligence\Model\Erm\Territory.cs" />
