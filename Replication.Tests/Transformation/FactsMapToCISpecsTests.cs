@@ -55,6 +55,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             var now = DateTimeOffset.UtcNow;
+			now = now.AddTicks(-now.Ticks % (10000000)); // SqlLite округляет до секунды, из-за этого тест не проходит
             var dayAgo = now.AddDays(-1);
             var monthAgo = now.AddMonths(-1);
 
@@ -68,8 +69,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                     .Has(new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
 
-            // TODO: split into several tests
-            Transformation.Create(Query)
+			// TODO: split into several tests
+			Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },
