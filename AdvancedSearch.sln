@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}"
 EndProject
@@ -31,9 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.OData", "Web.OData\Web.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
 	ProjectSection(SolutionItems) = preProject
-		Schemas\BIT.sql = Schemas\BIT.sql
-		Schemas\CustomerIntelligence.sql = Schemas\CustomerIntelligence.sql
-		Schemas\ERM.sql = Schemas\ERM.sql
 		Schemas\Transport.sql = Schemas\Transport.sql
 	EndProjectSection
 EndProject
@@ -83,6 +80,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8A6466
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.API", "Replication.API\Replication.API.csproj", "{E45717BE-86C8-425B-BB13-0E69053EF040}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerIntelligence", "CustomerIntelligence", "{C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{02A5AF22-F311-46F6-A155-D022430BD529}"
+	ProjectSection(SolutionItems) = preProject
+		CustomerIntelligence\Schemas\BIT.sql = CustomerIntelligence\Schemas\BIT.sql
+		CustomerIntelligence\Schemas\CustomerIntelligence.sql = CustomerIntelligence\Schemas\CustomerIntelligence.sql
+		CustomerIntelligence\Schemas\ERM.sql = CustomerIntelligence\Schemas\ERM.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,5 +173,6 @@ Global
 		{25AACA77-648A-4462-8EC1-709963219C8E} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
 		{F3C74BF1-8646-4DB6-AECB-42E10F8542B6} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
 		{8A646634-2535-493C-A699-90B4D1C40A83} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
+		{02A5AF22-F311-46F6-A155-D022430BD529} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
 	EndGlobalSection
 EndGlobal
