@@ -14,11 +14,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
     {
         private readonly IMetadataSource<IAggregateInfo> _metadataSource;
         private readonly IAggregateProcessorFactory _aggregateProcessorFactory;
-        private readonly IValueObjectProcessorFactory _valueObjectProcessorFactory;
 
         public CustomerIntelligenceTransformation(IMetadataSource<IAggregateInfo> metadataSource,
-                                                  IAggregateProcessorFactory aggregateProcessorFactory,
-                                                  IValueObjectProcessorFactory valueObjectProcessorFactory)
+                                                  IAggregateProcessorFactory aggregateProcessorFactory)
         {
             if (metadataSource == null)
             {
@@ -30,14 +28,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                 throw new ArgumentNullException("aggregateProcessorFactory");
             }
 
-            if (valueObjectProcessorFactory == null)
-            {
-                throw new ArgumentNullException("valueObjectProcessorFactory");
-            }
-
             _metadataSource = metadataSource;
             _aggregateProcessorFactory = aggregateProcessorFactory;
-            _valueObjectProcessorFactory = valueObjectProcessorFactory;
         }
 
         public void Transform(IEnumerable<AggregateOperation> operations)
@@ -64,61 +56,30 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming
                     {
                         using (Probe.Create("ETL2 Transforming", aggregateType.Name))
                         {
-                            if (operation == typeof(InitializeAggregate))
+							var processor = _aggregateProcessorFactory.Create(aggregateInfo);
+
+							if (operation == typeof(InitializeAggregate))
                             {
-                                InitializeAggregate(aggregateInfo, aggregateIds);
-                                continue;
+								processor.Initialize(aggregateIds);
+								continue;
                             }
 
                             if (operation == typeof(RecalculateAggregate))
                             {
-                                RecalculateAggregate(aggregateInfo, aggregateIds);
-                                continue;
+								processor.Recalculate(aggregateIds);
+								continue;
                             }
 
                             if (operation == typeof(DestroyAggregate))
                             {
-                                DestroyAggregate(aggregateInfo, aggregateIds);
-                                continue;
+								processor.Destroy(aggregateIds);
+								continue;
                             }
                         }
 
                         transaction.Complete();
                     }
                 }
-            }
-        }
-
-        private void InitializeAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
-        {
-            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Initialize(aggregateIds);
-
-            ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
-        }
-
-        private void RecalculateAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
-        {
-            ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
-
-            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Recalculate(aggregateIds);
-        }
-
-        private void DestroyAggregate(IAggregateInfo aggregateInfo, IReadOnlyCollection<long> aggregateIds)
-        {
-            ApplyChangesToValueObjects(aggregateInfo.ValueObjects, aggregateIds);
-
-            var processor = _aggregateProcessorFactory.Create(aggregateInfo);
-            processor.Destroy(aggregateIds);
-        }
-
-        private void ApplyChangesToValueObjects(IEnumerable<IValueObjectInfo> valueObjectInfos, IReadOnlyCollection<long> aggregateIds)
-        {
-            foreach (var valueObjectInfo in valueObjectInfos)
-            {
-                var transformation = _valueObjectProcessorFactory.Create(valueObjectInfo);
-                transformation.ApplyChanges(aggregateIds);
             }
         }
     }

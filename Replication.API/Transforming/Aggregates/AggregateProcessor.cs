@@ -14,13 +14,15 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
         private readonly IBulkRepository<T> _repository;
         private readonly AggregateInfo<T> _metadata;
         private readonly DataChangesDetector<T, T> _aggregateChangesDetector;
+	    private readonly IReadOnlyCollection<IValueObjectProcessor> _valueObjectProcessors;
 
-        public AggregateProcessor(AggregateInfo<T> metadata, IQuery query, IBulkRepository<T> repository)
+	    public AggregateProcessor(AggregateInfo<T> metadata, IValueObjectProcessorFactory valueObjectProcessorFactory, IQuery query, IBulkRepository<T> repository)
         {
             _metadata = metadata;
             _query = query;
             _repository = repository;
             _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
+	        _valueObjectProcessors = _metadata.ValueObjects.Select(valueObjectProcessorFactory.Create).ToArray();
         }
 
         public void Initialize(IReadOnlyCollection<long> ids)
@@ -32,19 +34,23 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
             var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query);
 
             _repository.Create(aggregatesToCreate);
+
+	        ApplyChangesToValueObjects(ids);
         }
 
         public void Recalculate(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+			ApplyChangesToValueObjects(ids);
+
+			var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToArray());
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
-            var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query);
-            var aggregatesToUpdate = _metadata.MapSpecificationProviderForSource.Invoke(updateFilter).Map(_query);
-            var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query);
+            var aggregatesToCreate = _metadata.MapSpecificationProviderForSource.Invoke(createFilter).Map(_query).ToArray();
+            var aggregatesToUpdate = _metadata.MapSpecificationProviderForSource.Invoke(updateFilter).Map(_query).ToArray();
+            var aggregatesToDelete = _metadata.MapSpecificationProviderForTarget.Invoke(deleteFilter).Map(_query).ToArray();
 
             _repository.Delete(aggregatesToDelete);
             _repository.Create(aggregatesToCreate);
@@ -53,7 +59,9 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
         public void Destroy(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+			ApplyChangesToValueObjects(ids);
+
+			var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 
@@ -61,5 +69,13 @@ namespace NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates
 
             _repository.Delete(aggregatesToDelete);
         }
-    }
+
+		private void ApplyChangesToValueObjects(IReadOnlyCollection<long> aggregateIds)
+		{
+			foreach (var processor in _valueObjectProcessors)
+			{
+				processor.ApplyChanges(aggregateIds);
+			}
+		}
+	}
 }
