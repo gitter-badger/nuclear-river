@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Erm = CustomerIntelligence.Model.Erm;
 
     [TestFixture]
-    internal partial class FactTransformationTests : TransformationFixtureBase
+    internal partial class FactDependencyTests : TransformationFixtureBase
     {
         [Test]
         public void ShouldInitializeClientIfClientCreated()

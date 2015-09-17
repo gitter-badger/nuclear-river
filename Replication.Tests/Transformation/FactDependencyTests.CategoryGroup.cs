@@ -8,7 +8,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal partial class FactTransformationTests
+    internal partial class FactDependencyTests
     {
         [Test]
         public void ShouldInitializeCategoryGroupIfCategoryGroupCreated()

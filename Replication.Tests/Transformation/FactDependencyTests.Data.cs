@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Erm = CustomerIntelligence.Model.Erm;
 
     [TestFixture]
-    internal partial class FactTransformationTests : TransformationFixtureBase
+    internal partial class FactDependencyTests : TransformationFixtureBase
     {
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action<IQuery, MockLinqToDbDataBuilder, MockLinqToDbDataBuilder> run)
