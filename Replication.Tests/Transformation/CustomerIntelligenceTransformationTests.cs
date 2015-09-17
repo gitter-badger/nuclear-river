@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Moq;
 
 using NuClear.AdvancedSearch.Replication.API.Model;
-using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.Readings;
@@ -127,7 +126,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .Verify<CI::Firm>(m => m.Add(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
                           .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123.45m }))));
         }
-
 
         [Test]
         public void ShouldInitializeFirmHavingClient()
@@ -446,36 +444,36 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     throw new Exception(string.Format("missing metadata for fact type {0}", typeof(TAggregate).Name));
                 }
 
-                var repository = _repositoryFactory.Create<TAggregate>();
-                var factory = new Factory<TAggregate>(_query, repository);
+                var factory = new Factory<TAggregate>(_query, _repositoryFactory);
                 var processor = factory.Create(metadata);
                 action.Invoke((AggregateProcessor<TAggregate>)processor);
 
                 return this;
             }
 
-            private class Factory<TAggregate> : IAggregateProcessorFactory
+            private class Factory<TAggregate> : IAggregateProcessorFactory, IValueObjectProcessorFactory
                 where TAggregate : class, IIdentifiable
             {
                 private readonly IQuery _query;
-                private readonly IRepository<TAggregate> _repository;
+	            private readonly IRepositoryFactory _repositoryFactory;
 
-                public Factory(IQuery query, IRepository<TAggregate> repository)
+                public Factory(IQuery query, IRepositoryFactory repositoryFactory)
                 {
                     _query = query;
-                    _repository = repository;
+	                _repositoryFactory = repositoryFactory;
                 }
 
                 public IAggregateProcessor Create(IAggregateInfo metadata)
                 {
-                    return new AggregateProcessor<TAggregate>((AggregateInfo<TAggregate>)metadata, _query, CreateBulkRepository());
+                    return new AggregateProcessor<TAggregate>((AggregateInfo<TAggregate>)metadata, this, _query, _repositoryFactory.Create<TAggregate>());
                 }
 
-                private IBulkRepository<TAggregate> CreateBulkRepository()
-                {
-                    return new BulkRepository<TAggregate>(_repository);
-                }
-            }
+				public IValueObjectProcessor Create(IValueObjectInfo metadata)
+				{
+					var processorType = typeof(ValueObjectProcessor<>).MakeGenericType(metadata.Type);
+					return (IValueObjectProcessor)Activator.CreateInstance(processorType, metadata, _query, _repositoryFactory.Create(metadata.Type));
+				}
+			}
         }
 
         #endregion

@@ -805,9 +805,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 where TFact : class, IErmFactObject
             {
                 private readonly IQuery _query;
-                private readonly IRepository<TFact> _repository;
+                private readonly IBulkRepository<TFact> _repository;
 
-                public Factory(IQuery query, IRepository<TFact> repository)
+                public Factory(IQuery query, IBulkRepository<TFact> repository)
                 {
                     _query = query;
                     _repository = repository;
@@ -815,17 +815,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
                 public IFactProcessor Create(IFactInfo metadata)
                 {
-                    return new FactProcessor<TFact>((FactInfo<TFact>)metadata, this, _query, CreateBulkRepository());
+                    return new FactProcessor<TFact>((FactInfo<TFact>)metadata, this, _query, _repository);
                 }
 
                 public IFactDependencyProcessor Create(IFactDependencyInfo metadata)
                 {
                     return new FactDependencyProcessor<TFact>((IFactDependencyInfo<TFact>)metadata, _query);
-                }
-
-                private IBulkRepository<TFact> CreateBulkRepository()
-                {
-                    return new BulkRepository<TFact>(_repository);
                 }
             }
         }
