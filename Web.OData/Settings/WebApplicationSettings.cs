@@ -1,4 +1,4 @@
-﻿using NuClear.AdvancedSearch.Settings;
+﻿using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.Settings.API;
 
 namespace NuClear.AdvancedSearch.Web.OData.Settings

@@ -2,8 +2,8 @@ using System;
 using System.Configuration;
 using System.Data.Common;
 
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.Settings;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.AdvancedSearch.Web.OData.DataAccess

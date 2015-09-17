@@ -6,6 +6,7 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
@@ -18,7 +19,6 @@ using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
-using NuClear.AdvancedSearch.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.DI.Unity.Config;

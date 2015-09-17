@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
-using NuClear.AdvancedSearch.Settings;
 using NuClear.IdentityService.Client.Settings;
 using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Settings.API;

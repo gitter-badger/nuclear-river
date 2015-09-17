@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 using Microsoft.ServiceBus;
 
-using NuClear.AdvancedSearch.Settings;
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.Jobs;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Performance;

@@ -6,10 +6,10 @@ using System.Web.OData.Extensions;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Building;
 using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
-using NuClear.AdvancedSearch.Settings;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
 using NuClear.DI.Unity.Config;

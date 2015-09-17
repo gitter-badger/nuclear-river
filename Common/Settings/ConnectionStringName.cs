@@ -1,4 +1,4 @@
-﻿namespace NuClear.AdvancedSearch.Settings
+﻿namespace NuClear.AdvancedSearch.Common.Settings
 {
     public enum ConnectionStringName
     {

@@ -7,7 +7,6 @@ using Microsoft.OData.Edm.Library;
 
 using Moq;
 
-using NuClear.AdvancedSearch.Engine.Tests;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.EntityDataModel.OData.Building;
 using NuClear.Metamodeling.Elements;

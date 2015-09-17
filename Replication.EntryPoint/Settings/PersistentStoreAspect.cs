@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-using NuClear.AdvancedSearch.Settings;
+using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.Jobs.Settings;
 using NuClear.Settings.API;
 

@@ -3,7 +3,7 @@ using System.Configuration;
 
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Settings
+namespace NuClear.AdvancedSearch.Common.Settings
 {
     [Obsolete]
     public interface IConnectionStringSettings : ISettings

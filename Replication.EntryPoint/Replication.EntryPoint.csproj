@@ -331,6 +331,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{d4238d0c-3315-4449-b1ae-80f716d58d04}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Replication.API\Replication.API.csproj">
       <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
       <Name>Replication.API</Name>
@@ -342,10 +346,6 @@
     <ProjectReference Include="..\Replication\Replication.csproj">
       <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
       <Name>Replication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Settings\Settings.csproj">
-      <Project>{D4238D0C-3315-4449-B1AE-80F716D58D04}</Project>
-      <Name>Settings</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

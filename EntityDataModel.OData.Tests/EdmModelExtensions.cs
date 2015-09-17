@@ -7,7 +7,7 @@ using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Microsoft.OData.Edm.Validation;
 
-namespace NuClear.AdvancedSearch.Engine.Tests
+namespace NuClear.AdvancedSearch.EntityDataModel.OData.Tests
 {
     internal static class EdmModelExtensions
     {
