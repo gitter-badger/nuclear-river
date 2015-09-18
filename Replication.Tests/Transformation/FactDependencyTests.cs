@@ -735,21 +735,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .VerifyDistinct(Aggregate.Recalculate<CI.Firm>(1));
         }
 
-        [Test]
-        public void ShouldEnqueueOperationsInOrderForFirmIfFirmAddressCreated()
-        {
-            SourceDb.Has(new Erm::Firm { Id = 2 })
-                 .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
-
-            TargetDb.Has(new Facts::Firm { Id = 1 });
-            // Тест не пройдёт - порядок между различными типами решается уровнем выше, в Transformation
-            Transformation.Create(Query, RepositoryFactory)
-                          .ApplyChanges<Facts::FirmAddress>(1)
-                          .ApplyChanges<Facts::Firm>(2)
-                          .ApplyChanges<Facts::FirmAddress>(2)
-                          .VerifyDistinct(Aggregate.Initialize<CI.Firm>(2), Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2));
-        }
-
         #region Transformation
 
         private class Transformation

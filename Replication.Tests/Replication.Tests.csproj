@@ -89,6 +89,7 @@
     <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
+    <Compile Include="Transformation\ErmFactsTransformationFixture.cs" />
     <Compile Include="Transformation\StatisticsFactImporterTests.cs" />
     <Compile Include="Transformation\BitMapToFactsSpecsTests.cs" />
     <Compile Include="Transformation\FactsMapToCISpecsTests.cs" />
