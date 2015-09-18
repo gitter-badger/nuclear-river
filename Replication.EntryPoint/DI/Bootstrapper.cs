@@ -237,7 +237,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureStorage(this IUnityContainer container, ISqlSettingsAspect storageSettings, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
-            var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
+			// разрешаем update на таблицу состоящую только из Primary Keys
+			LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;
+
+			var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
 
             return container
                 .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
