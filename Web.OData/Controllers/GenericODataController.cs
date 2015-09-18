@@ -1,8 +1,4 @@
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Controllers;
 using System.Web.OData;
 using System.Web.OData.Query;
 
@@ -39,16 +35,6 @@ namespace NuClear.AdvancedSearch.Web.OData.Controllers
         {
             var entities = _finder.FindAll<TEntity>().GetById(key).SelectManyProperties<TEntity, TContainedEntity>(propertyName);
             return Ok(entities);
-        }
-
-        public override Task<HttpResponseMessage> ExecuteAsync(HttpControllerContext controllerContext, CancellationToken cancellationToken)
-        {
-            var response = base.ExecuteAsync(controllerContext, cancellationToken);
-            response.Wait(cancellationToken);
-
-            this.MakeCompatibleResponse(response.Result);
-
-            return response;
         }
     }
 }

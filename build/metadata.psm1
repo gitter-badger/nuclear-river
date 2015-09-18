@@ -7,10 +7,12 @@ $ErrorActionPreference = 'Stop'
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.taskservice.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
+Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
 
 function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
 	$entryPointsMetadata = @{}
+	$entryPointsMetadata += Get-ServiceBusMetadata $Context
 	$entryPointsMetadata += Get-TransformMetadata $Context
 	
 	switch ($EntryPoints){
@@ -58,6 +60,8 @@ function Parse-EnvironmentMetadata ($Properties) {
 		throw "Can't find environment for name '$environmentName'"
 	}
 	$context.EnvironmentName = $environmentName
+
+	$context.UseCaseRoute = $Properties['UseCaseRoute']
 
 	if ($Properties.ContainsKey('EntryPoints')){
 		$entryPoints = $Properties['EntryPoints']

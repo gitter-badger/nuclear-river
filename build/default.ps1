@@ -91,7 +91,7 @@ function Get-ReplicationConfig {
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
 	$projectDir = Split-Path $projectFileName
 	$configFileName = Join-Path $projectDir 'app.config'
-	[xml]$config = Get-TransformedConfig $configFileName
+	[xml]$config = Get-TransformedConfig $configFileName 'Replication.EntryPoint'
 
 	return @{
 		'AppSettings' = @{

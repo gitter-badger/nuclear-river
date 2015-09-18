@@ -60,7 +60,6 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                             ClientId = contact.ClientId,
                                             ContactId = contact.Id,
                                             Role = contact.Role,
-                                            IsFired = contact.IsFired,
                                         });
 
                     public readonly static MapSpecification<IQuery, IQueryable<Firm>> Firms =

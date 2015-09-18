@@ -118,7 +118,6 @@ create table CustomerIntelligence.ClientContact(
 	ClientId bigint not null
 	, ContactId bigint not null
 	, [Role] int not null
-	, IsFired bit not null constraint DF_Contacts_IsFired default 0
     , constraint PK_ClientContact primary key (ClientId, ContactId)
 )
 go

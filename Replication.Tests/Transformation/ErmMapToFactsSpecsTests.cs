@@ -101,7 +101,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformContact()
         {
             SourceDb.Has(
-                new Erm::Contact { Id = 1, IsFired = true, ClientId = 2 },
+                new Erm::Contact { Id = 1, ClientId = 2 },
                 new Erm::Contact { Id = 2, Role = 200000 },
                 new Erm::Contact { Id = 3, Role = 200001 },
                 new Erm::Contact { Id = 4, Role = 200002 },
@@ -112,7 +112,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Erm::Contact { Id = 9, Website = "site" });
 
             Transformation.Create(Query)
-                          .VerifyTransform(x => Specs.Map.Erm.ToFacts.Contacts.Map(x).ById(1), new Facts::Contact { Id = 1, IsFired = true, ClientId = 2 })
+                          .VerifyTransform(x => Specs.Map.Erm.ToFacts.Contacts.Map(x).ById(1), new Facts::Contact { Id = 1, ClientId = 2 })
                           .VerifyTransform(x => Specs.Map.Erm.ToFacts.Contacts.Map(x).ById(2), new Facts::Contact { Id = 2, Role = 1 })
                           .VerifyTransform(x => Specs.Map.Erm.ToFacts.Contacts.Map(x).ById(3), new Facts::Contact { Id = 3, Role = 2 })
                           .VerifyTransform(x => Specs.Map.Erm.ToFacts.Contacts.Map(x).ById(4), new Facts::Contact { Id = 4, Role = 3 })

@@ -4,6 +4,8 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
+Import-Module "$BuildToolsRoot\modules\servicebus.psm1" -DisableNameChecking
+
 # load libraries
 Get-ChildItem $LibDir -Filter '*.dll' | ForEach { [void][System.Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($_.FullName)) }
 
@@ -151,23 +153,8 @@ function Exec-Command ($connection, [string]$command){
 	}
 }
 
-function Clear-ServiceBusTopic ($topicName) {
-	
-	$messageFlow = New-Object NuClear.Replication.OperationsProcessing.Metadata.Flows.ImportFactsFromErmFlow
-
-	$messageFactory = [Microsoft.ServiceBus.Messaging.MessagingFactory]::CreateFromConnectionString($Config.ConnectionStrings.ServiceBus)
-	$messageReceiver = $messageFactory.CreateSubscriptionClient($topicName, $messageFlow.Id, 'ReceiveAndDelete')
-
-	do {
-		$messages = $messageReceiver.ReceiveBatch(1000, [TimeSpan]::Zero)
-	}
-	while ($messages.Count > 0)
-}
-
 Create-Database
 Update-Schemas
 Replicate-Data
-Clear-ServiceBusTopic 'topic.performedoperations'
-Clear-ServiceBusTopic $Config.AppSettings.TransportEntityPath
 
 "Done"
