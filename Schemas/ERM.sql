@@ -43,6 +43,14 @@ create table ERM.Activity(
     , constraint PK_Activities primary key (Id)
 )
 go
+create nonclustered index IX_Activity_ClientId
+on ERM.Activity (ClientId)
+include (ModifiedOn)
+go
+create nonclustered index IX_Activity_FirmId
+on ERM.Activity (FirmId)
+include (ModifiedOn)
+go
 
 -- BranchOfficeOrganizationUnit
 create table ERM.BranchOfficeOrganizationUnit(
