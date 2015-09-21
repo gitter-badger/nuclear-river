@@ -94,7 +94,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
-            EntityTypeMap.Initialize();
+			EntityTypeMap.Initialize();
 
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
@@ -213,7 +213,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)
                             .RegisterType(typeof(ServiceBusMessageFlowReceiver), Lifetime.Singleton)
                             .RegisterType(typeof(CorporateBusMessageFlowReceiver), Lifetime.PerResolve)
-                            .RegisterType<IServiceBusLockRenewer, ReceivedMessagesLockRenewalManager>(Lifetime.Singleton)
+                            .RegisterType<IServiceBusLockRenewer, TunedReceivedMessagesLockRenewalManager>(Lifetime.Singleton)
                             .RegisterType<ICorporateBusMessageFlowReceiverFactory, UnityCorporateBusMessageFlowReceiverFactory>(Lifetime.PerScope)
                             .RegisterType<IServiceBusMessageFlowReceiverFactory, UnityServiceBusMessageFlowReceiverFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.PerScope)
