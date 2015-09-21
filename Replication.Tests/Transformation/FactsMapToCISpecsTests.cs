@@ -42,12 +42,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         {
             SourceDb.Has(
                 new Facts::Contact { Id = 1, ClientId = 1, Role = 1 },
-                new Facts::Contact { Id = 2, ClientId = 2, IsFired = true },
                 new Facts::Contact { Id = 3, ClientId = 3 });
 
             Transformation.Create(Query)
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 1), Inquire(new CI::ClientContact { Role = 1 }), x => new { x.Role }, "The role should be processed.")
-                .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 2), Inquire(new CI::ClientContact { IsFired = true }), x => new { x.IsFired }, "The IsFired should be processed.")
                 .VerifyTransform(x => Specs.Map.Facts.ToCI.ClientContacts.Map(x).Where(c => c.ClientId == 3), Inquire(new CI::ClientContact { ClientId = 3 }), x => new { x.ClientId }, "The client reference should be processed.");
         }
 
@@ -55,6 +53,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             var now = DateTimeOffset.UtcNow;
+			now = now.AddTicks(-now.Ticks % (10000000)); // SqlLite округляет до секунды, из-за этого тест не проходит
             var dayAgo = now.AddDays(-1);
             var monthAgo = now.AddMonths(-1);
 
@@ -68,8 +67,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                     .Has(new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
 
-            // TODO: split into several tests
-            Transformation.Create(Query)
+			// TODO: split into several tests
+			Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },

@@ -15,7 +15,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Erm = CustomerIntelligence.Model.Erm;
 
     [TestFixture]
-    internal partial class FactTransformationTests : TransformationFixtureBase
+    internal partial class FactDependencyTests : TransformationFixtureBase
     {
         [TestCaseSource("Cases")]
         public void ShouldProcessChanges(Action<IQuery, MockLinqToDbDataBuilder, MockLinqToDbDataBuilder> run)
@@ -117,7 +117,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .ApplyChanges<TTarget>(entityId);
 
             factory.Verify<TTarget>(
-                x => x.AddRange(It.Is(Predicate.ByIds<TTarget>(new[] { entityId }))),
+                x => x.Add(It.Is(Predicate.ById<TTarget>(entityId))),
                 Times.Once,
                 string.Format("The {0} element was not inserted.", typeof(TTarget).Name));
         }
@@ -149,7 +149,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .ApplyChanges<TTarget>(targetObject.Id);
 
             factory.Verify<TTarget>(
-                x => x.DeleteRange(It.Is(Predicate.ByIds<TTarget>(new[] { targetObject.Id }))),
+                x => x.Delete(It.Is(Predicate.ById<TTarget>(targetObject.Id))),
                 Times.Once,
                 string.Format("The {0} element was not deleted.", typeof(TTarget).Name));
         }

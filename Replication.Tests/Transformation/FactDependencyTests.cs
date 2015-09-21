@@ -21,7 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Erm = CustomerIntelligence.Model.Erm;
 
     [TestFixture]
-    internal partial class FactTransformationTests : TransformationFixtureBase
+    internal partial class FactDependencyTests : TransformationFixtureBase
     {
         [Test]
         public void ShouldInitializeClientIfClientCreated()
@@ -735,21 +735,6 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                           .VerifyDistinct(Aggregate.Recalculate<CI.Firm>(1));
         }
 
-        [Test]
-        public void ShouldEnqueueOperationsInOrderForFirmIfFirmAddressCreated()
-        {
-            SourceDb.Has(new Erm::Firm { Id = 2 })
-                 .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
-
-            TargetDb.Has(new Facts::Firm { Id = 1 });
-            // Тест не пройдёт - порядок между различными типами решается уровнем выше, в Transformation
-            Transformation.Create(Query, RepositoryFactory)
-                          .ApplyChanges<Facts::FirmAddress>(1)
-                          .ApplyChanges<Facts::Firm>(2)
-                          .ApplyChanges<Facts::FirmAddress>(2)
-                          .VerifyDistinct(Aggregate.Initialize<CI.Firm>(2), Aggregate.Recalculate<CI.Firm>(1), Aggregate.Recalculate<CI.Firm>(2));
-        }
-
         #region Transformation
 
         private class Transformation
@@ -805,9 +790,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 where TFact : class, IErmFactObject
             {
                 private readonly IQuery _query;
-                private readonly IRepository<TFact> _repository;
+                private readonly IBulkRepository<TFact> _repository;
 
-                public Factory(IQuery query, IRepository<TFact> repository)
+                public Factory(IQuery query, IBulkRepository<TFact> repository)
                 {
                     _query = query;
                     _repository = repository;
@@ -815,17 +800,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
                 public IFactProcessor Create(IFactInfo metadata)
                 {
-                    return new FactProcessor<TFact>((FactInfo<TFact>)metadata, this, _query, CreateBulkRepository());
+                    return new FactProcessor<TFact>((FactInfo<TFact>)metadata, this, _query, _repository);
                 }
 
                 public IFactDependencyProcessor Create(IFactDependencyInfo metadata)
                 {
                     return new FactDependencyProcessor<TFact>((IFactDependencyInfo<TFact>)metadata, _query);
-                }
-
-                private IBulkRepository<TFact> CreateBulkRepository()
-                {
-                    return new BulkRepository<TFact>(_repository);
                 }
             }
         }

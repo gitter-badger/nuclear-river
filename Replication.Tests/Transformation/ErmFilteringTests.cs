@@ -90,7 +90,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
                 For(Specs.Find.Erm.Contacts())
                     .Entity(new Contact { Id = 1 }, true, "по умолчанию")
-                    .Entity(new Contact { Id = 1, IsFired = true }, true, "уволенный")
+                    .Entity(new Contact { Id = 1, IsFired = true }, false, "уволенный")
                     .Entity(new Contact { Id = 2, IsActive = false, IsDeleted = false }, false, "неактивный")
                     .Entity(new Contact { Id = 3, IsActive = true, IsDeleted = true }, false, "удалённый")
                     .Entity(new Contact { Id = 4, IsActive = false, IsDeleted = true }, false, "неактивный и удалённый"),

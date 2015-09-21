@@ -8,6 +8,8 @@ using LinqToDB.Data;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Replication.API.Transforming;
+using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Writings;
@@ -71,8 +73,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
         protected interface IRepositoryFactory
         {
-            IRepository<T> Create<T>()
+			IBulkRepository<T> Create<T>()
                 where T : class;
+
+	        object Create(Type type);
         }
 
         protected class LinqToDBRepositoryFactory : IRepositoryFactory
@@ -84,47 +88,94 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                 _stubDomainContextProvider = stubDomainContextProvider;
             }
 
-            public IRepository<T> Create<T>()
+            public IBulkRepository<T> Create<T>()
                 where T : class
             {
-                return new LinqToDBRepository<T>(_stubDomainContextProvider);
-            }
-        }
-
-        protected class VerifiableRepositoryFactory : IRepositoryFactory
-        {
-            private readonly IDictionary<Type, IRepository> _cache;
-
-            public VerifiableRepositoryFactory()
-            {
-                _cache = new Dictionary<Type, IRepository>();
+                return new BulkRepository<T>(new LinqToDBRepository<T>(_stubDomainContextProvider));
             }
 
-            public IRepository<T> Create<T>() 
-                where T : class
-            {
-                IRepository repository;
-                if (!_cache.TryGetValue(typeof(T), out repository))
-                {
-                    var mock = new Mock<IRepository<T>>();
-                    mock.Setup(x => x.AddRange(It.IsAny<IEnumerable<T>>()))
-                        .Callback<IEnumerable<T>>(items => { foreach (var item in items) mock.Object.Add(item); });
-                    mock.Setup(x => x.DeleteRange(It.IsAny<IEnumerable<T>>()))
-                        .Callback<IEnumerable<T>>(items => { foreach (var item in items) mock.Object.Delete(item); });
+			public object Create(Type type)
+			{
+				var repository = Activator.CreateInstance(typeof(LinqToDBRepository<>).MakeGenericType(type), _stubDomainContextProvider);
+				return Activator.CreateInstance(typeof(BulkRepository<>).MakeGenericType(type), repository);
+			}
+		}
 
-                    _cache[typeof(T)] = repository = mock.Object;
-                }
+	    protected class VerifiableRepositoryFactory : IRepositoryFactory
+	    {
+		    private readonly IDictionary<Type, IRepository> _cache;
 
-                return (IRepository<T>)repository;
-            }
+		    public VerifiableRepositoryFactory()
+		    {
+			    _cache = new Dictionary<Type, IRepository>();
+		    }
 
-            public void Verify<T>(Expression<Action<IRepository<T>>> expression, Func<Times> times, string failMessage = null) 
-                where T : class
-            {
-                var repository = (IRepository<T>)_cache[typeof(T)];
-                var mock = Mock.Get(repository);
-                mock.Verify(expression, times, failMessage);
-            }
+		    public IBulkRepository<T> Create<T>()
+			    where T : class
+		    {
+			    return new BulkRepositoryStub<T>((IRepository<T>)ResolveRepository(typeof(T)));
+		    }
+
+		    public object Create(Type type)
+		    {
+			    var bulkRepoType = typeof(BulkRepositoryStub<>).MakeGenericType(type);
+			    return Activator.CreateInstance(bulkRepoType, ResolveRepository(type));
+		    }
+
+		    public void Verify<T>(Expression<Action<IRepository<T>>> expression, Func<Times> times, string failMessage = null)
+			    where T : class
+		    {
+			    var repository = (IRepository<T>)ResolveRepository(typeof(T));
+			    var mock = Mock.Get(repository);
+			    mock.Verify(expression, times, failMessage);
+		    }
+
+		    private IRepository ResolveRepository(Type entityType)
+		    {
+				IRepository repository;
+			    if (!_cache.TryGetValue(entityType, out repository))
+			    {
+					var repoType = typeof(IRepository<>).MakeGenericType(entityType);
+					var mockType = typeof(Mock<>).MakeGenericType(repoType);
+					var mock = (Mock)Activator.CreateInstance(mockType);
+					_cache[entityType] = repository = (IRepository)mock.Object;
+				}
+
+				return repository;
+			}
+
+	    class BulkRepositoryStub<T> : IBulkRepository<T> where T : class
+	        {
+		        private readonly IRepository<T> _repository;
+
+		        public BulkRepositoryStub(IRepository<T> repository)
+		        {
+			        _repository = repository;
+		        }
+
+		        public void Create(IEnumerable<T> objects)
+		        {
+			        Foreach(objects, _repository.Add);
+		        }
+
+		        public void Update(IEnumerable<T> objects)
+		        {
+					Foreach(objects, _repository.Update);
+				}
+
+		        public void Delete(IEnumerable<T> objects)
+		        {
+					Foreach(objects, _repository.Delete);
+				}
+
+		        private void Foreach(IEnumerable<T> objects, Action<T> action)
+		        {
+			        foreach (var obj in objects)
+			        {
+				        action.Invoke(obj);
+			        }
+		        }
+	        }
         }
     }
 }

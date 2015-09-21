@@ -72,7 +72,7 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
 
                 public static FindSpecification<Contact> Contacts()
                 {
-                    return new FindSpecification<Contact>(x => x.IsActive && !x.IsDeleted);
+                    return new FindSpecification<Contact>(x => x.IsActive && !x.IsDeleted && !x.IsFired);
                 }
 
                 public static FindSpecification<Order> Orders()

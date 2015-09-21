@@ -5,6 +5,7 @@ using Microsoft.ServiceBus;
 
 using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.Jobs;
+using NuClear.Messaging.Transports.ServiceBus.API;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Security.API;
@@ -20,6 +21,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
     public sealed class ReportingJob : TaskServiceJobBase
     {
         private readonly ITelemetryPublisher _telemetry;
+        private readonly IServiceBusMessageReceiverSettings _serviceBusMessageReceiverSettings;
         private readonly NamespaceManager _manager;
         private readonly SqlConnection _sqlConnection;
 
@@ -27,10 +29,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                             ISignInService signInService,
                             IUserImpersonationService userImpersonationService,
                             ITelemetryPublisher telemetry,
-                            IConnectionStringSettings connectionStringSettings)
+                            IConnectionStringSettings connectionStringSettings,
+                            IServiceBusMessageReceiverSettings serviceBusMessageReceiverSettings)
             : base(signInService, userImpersonationService, tracer)
         {
             _telemetry = telemetry;
+            _serviceBusMessageReceiverSettings = serviceBusMessageReceiverSettings;
             _manager = NamespaceManager.CreateFromConnectionString(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus));
             _sqlConnection = new SqlConnection(connectionStringSettings.GetConnectionString(ConnectionStringName.CustomerIntelligence));
         }
@@ -74,7 +78,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         private void ReportPrimaryProcessingQueueLength()
         {
-            var subscription = _manager.GetSubscription("topic.advancedsearch", "9F2C5A2A-924C-485A-9790-9066631DB307");
+            var subscription = _manager.GetSubscription(_serviceBusMessageReceiverSettings.TransportEntityPath, ImportFactsFromErmFlow.Instance.Id.ToString());
             _telemetry.Publish<PrimaryProcessingQueueLengthIdentity>(subscription.MessageCountDetails.ActiveMessageCount);
         }
     }

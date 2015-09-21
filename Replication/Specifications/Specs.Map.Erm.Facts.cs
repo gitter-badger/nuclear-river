@@ -107,7 +107,6 @@ namespace NuClear.AdvancedSearch.Replication.Specifications
                                  {
                                      Id = contact.Id,
                                      Role = ConvertAccountRole(contact.Role),
-                                     IsFired = contact.IsFired,
                                      HasPhone = (contact.MainPhoneNumber ?? contact.MobilePhoneNumber ?? contact.HomePhoneNumber ?? contact.AdditionalPhoneNumber) != null,
                                      HasWebsite = contact.Website != null,
                                      ClientId = contact.ClientId

@@ -73,8 +73,7 @@ function Get-TargetHostsMetadata ($Context){
 					return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
 				}
 				'ConvertUseCasesService'{
-					# TODO: Дима скажет что здесь прописать
-					return @{ 'TargetHosts' = @('uk-erm-sb01', 'uk-erm-sb03', 'uk-erm-sb04') }
+					return @{ 'TargetHosts' = @('uk-erm-sb01') }
 				}
 				default {
 					throw "Unknown entrypoint $_"

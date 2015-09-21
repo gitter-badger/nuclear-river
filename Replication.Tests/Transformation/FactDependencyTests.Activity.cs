@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
     using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture]
-    internal partial class FactTransformationTests
+    internal partial class FactDependencyTests
     {
         private const int ActivityStatusCompleted = 2;
         private const int RegardingObjectReference = 1;
