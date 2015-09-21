@@ -1,52 +1,77 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
+using NuClear.AdvancedSearch.Replication.API.Settings;
 using NuClear.IdentityService.Client.Settings;
 using NuClear.OperationsLogging.Transports.ServiceBus;
+using NuClear.Settings;
 using NuClear.Settings.API;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Telemetry.Logstash;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
-    public sealed class ReplicationServiceSettings : SettingsContainerBase
+    public sealed class ReplicationServiceSettings : SettingsContainerBase, IReplicationSettings, ISqlStoreSettingsAspect
     {
+        private readonly IntSetting _replicationBatchSize = ConfigFileSetting.Int.Required("ReplicationBatchSize");
+        private readonly IntSetting _sqlCommandTimeout = ConfigFileSetting.Int.Required("SqlCommandTimeout");
+        
         public ReplicationServiceSettings()
         {
-            var connectionStringSettings = new ConnectionStringsSettingsAspect();
+            var connectionStringSettings = new ConnectionStringSettingsAspect(
+                new Dictionary<IConnectionStringIdentity, string>
+                {
+                    {
+                        ErmConnectionStringIdentity.Instance,
+                        ConfigurationManager.ConnectionStrings["Erm"].ConnectionString
+                    },
+                    {
+                        FactsConnectionStringIdentity.Instance,
+                        ConfigurationManager.ConnectionStrings["Facts"].ConnectionString
+                    },
+                    {
+                        CustomerIntelligenceConnectionStringIdentity.Instance,
+                        ConfigurationManager.ConnectionStrings["CustomerIntelligence"].ConnectionString
+                    },
+                    {
+                        TransportConnectionStringIdentity.Instance,
+                        ConfigurationManager.ConnectionStrings["Transport"].ConnectionString
+                    },
+                    {
+                        ServiceBusConnectionStringIdentity.Instance,
+                        ConfigurationManager.ConnectionStrings["ServiceBus"].ConnectionString
+                    },
+                    {
+                        InfrastructureConnectionStringIdenrtity.Instance,
+                        ConfigurationManager.ConnectionStrings["Infrastructure"].ConnectionString
+                    },
+                    {
+                        LoggingConnectionStringIdenrtity.Instance,
+                        ConfigurationManager.ConnectionStrings["Logging"].ConnectionString
+                    }
+                });
 
-            Aspects.Use<ServiceBusMessageLockRenewalSettings>()
-                   .Use<SqlSettingsAspect>()
+            Aspects.Use(connectionStringSettings)
+                   .Use<ServiceBusMessageLockRenewalSettings>()
                    .Use<EnvironmentSettingsAspect>()
-                   .Use(new PersistentStoreAspect(connectionStringSettings))
-                   .Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus)))
-                   .Use<TaskServiceProcessingSettingsAspect>()
+                   .Use(new QuartzSettingsAspect(connectionStringSettings.GetConnectionString(InfrastructureConnectionStringIdenrtity.Instance)))
+                   .Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ServiceBusConnectionStringIdentity.Instance)))
                    .Use<CorporateBusSettingsAspect>()
                    .Use<LogstashSettingsAspect>()
-                   .Use(connectionStringSettings)
-                   .Use(new ConnectionStringSettingsAspect(new Dictionary<IConnectionStringIdentity, string>
-                                                           {
-                                                               {
-                                                                   ErmConnectionStringIdentity.Instance,
-                                                                   ConfigurationManager.ConnectionStrings["Erm"].ConnectionString
-                                                               },
-                                                               {
-                                                                   FactsConnectionStringIdentity.Instance,
-                                                                   ConfigurationManager.ConnectionStrings["Facts"].ConnectionString
-                                                               },
-                                                               {
-                                                                   CustomerIntelligenceConnectionStringIdentity.Instance,
-                                                                   ConfigurationManager.ConnectionStrings["CustomerIntelligence"].ConnectionString
-                                                               },
-                                                               {
-                                                                   TransportConnectionStringIdentity.Instance,
-                                                                   ConfigurationManager.ConnectionStrings["Transport"].ConnectionString
-                                                               }
-                                                           }))
-                   .Use<ReplicationSettingsAspect>()
                    .Use<IdentityServiceClientSettingsAspect>();
+        }
+
+        public int ReplicationBatchSize
+        {
+            get { return _replicationBatchSize.Value; }
+        }
+
+        public int SqlCommandTimeout
+        {
+            get { return _sqlCommandTimeout.Value; }
         }
     }
 }

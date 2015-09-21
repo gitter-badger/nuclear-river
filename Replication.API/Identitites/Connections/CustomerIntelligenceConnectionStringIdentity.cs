@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Identitites.Connections
 
         public override string Description
         {
-            get { return "Operations transport DB connection string identity"; }
+            get { return "CustomerIntelligence DB connection string identity"; }
         }
     }
 }

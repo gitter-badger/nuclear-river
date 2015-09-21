@@ -12,6 +12,7 @@ using NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Emit;
 using NuClear.AdvancedSearch.EntityDataModel.Metadata;
 using NuClear.AdvancedSearch.Web.OData.DataAccess;
 using NuClear.AdvancedSearch.Web.OData.DynamicControllers;
+using NuClear.AdvancedSearch.Web.OData.Settings;
 using NuClear.DI.Unity.Config;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;

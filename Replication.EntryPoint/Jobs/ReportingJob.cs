@@ -3,12 +3,13 @@ using System.Data.SqlClient;
 
 using Microsoft.ServiceBus;
 
-using NuClear.AdvancedSearch.Common.Settings;
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.Jobs;
 using NuClear.Messaging.Transports.ServiceBus.API;
 using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Security.API;
+using NuClear.Storage.ConnectionStrings;
 using NuClear.Telemetry;
 using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
@@ -35,8 +36,8 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
         {
             _telemetry = telemetry;
             _serviceBusMessageReceiverSettings = serviceBusMessageReceiverSettings;
-            _manager = NamespaceManager.CreateFromConnectionString(connectionStringSettings.GetConnectionString(ConnectionStringName.ServiceBus));
-            _sqlConnection = new SqlConnection(connectionStringSettings.GetConnectionString(ConnectionStringName.CustomerIntelligence));
+            _manager = NamespaceManager.CreateFromConnectionString(connectionStringSettings.GetConnectionString(ServiceBusConnectionStringIdentity.Instance));
+            _sqlConnection = new SqlConnection(connectionStringSettings.GetConnectionString(CustomerIntelligenceConnectionStringIdentity.Instance));
         }
 
         protected override void ExecuteInternal(IJobExecutionContext context)

@@ -6,8 +6,10 @@ using LinqToDB.Mapping;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
+using NuClear.AdvancedSearch.Replication.API.Settings;
 using NuClear.AdvancedSearch.Replication.API.Transforming;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
 using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
@@ -101,7 +103,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                  {
                                      new TaskServiceJobsMassProcessor(container),
                                  };
-            var storageSettings = settingsContainer.AsSettings<ISqlSettingsAspect>();
+            var storageSettings = settingsContainer.AsSettings<ISqlStoreSettingsAspect>();
 
             container.AttachQueryableContainerExtension()
                      .UseParameterResolvers(ParameterResolvers.Defaults)
@@ -235,7 +237,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
 
-        private static IUnityContainer ConfigureStorage(this IUnityContainer container, ISqlSettingsAspect storageSettings, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        private static IUnityContainer ConfigureStorage(this IUnityContainer container, ISqlStoreSettingsAspect storageSettings, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
 			// разрешаем update на таблицу состоящую только из Primary Keys
 			LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;

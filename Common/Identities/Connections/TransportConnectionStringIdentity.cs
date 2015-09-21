@@ -1,7 +1,7 @@
 ﻿using NuClear.Model.Common;
 using NuClear.Storage.ConnectionStrings;
 
-namespace NuClear.AdvancedSearch.Replication.API.Identitites.Connections
+namespace NuClear.AdvancedSearch.Common.Identities.Connections
 {
     public class CustomerIntelligenceConnectionStringIdentity : IdentityBase<CustomerIntelligenceConnectionStringIdentity>, IConnectionStringIdentity
     {
@@ -12,7 +12,7 @@ namespace NuClear.AdvancedSearch.Replication.API.Identitites.Connections
 
         public override string Description
         {
-            get { return "CustomerIntelligence DB connection string identity"; }
+            get { return "Operations transport DB connection string identity"; }
         }
     }
 }

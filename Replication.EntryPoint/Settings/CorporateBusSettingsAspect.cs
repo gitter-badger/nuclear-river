@@ -8,15 +8,19 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
     {
         private readonly StringSetting _integrationApplicationName = ConfigFileSetting.String.Required("IntegrationApplicationName");
 
-        string ICorporateBusMessageReceiverSettings.ConfigurationEndpointName { get { return "NetTcpBinding_IBrokerApiReceiver"; } }
-        string ICorporateBusMessageSenderSettings.ConfigurationEndpointName { get { return "NetTcpBinding_IBrokerApiSender"; } }
+        string ICorporateBusMessageReceiverSettings.ConfigurationEndpointName
+        {
+            get { return "NetTcpBinding_IBrokerApiReceiver"; }
+        }
+
+        string ICorporateBusMessageSenderSettings.ConfigurationEndpointName
+        {
+            get { return "NetTcpBinding_IBrokerApiSender"; }
+        }
 
         public string IntegrationApplicationName
         {
-            get
-            {
-                return _integrationApplicationName.Value;
-            }
+            get { return _integrationApplicationName.Value; }
         }
     }
 }

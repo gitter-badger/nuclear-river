@@ -5,7 +5,7 @@ using System.Linq;
 
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Common.Settings
+namespace NuClear.AdvancedSearch.Web.OData.Settings
 {
     [Obsolete("Use NuClear.Storage.ConnectionStrings.ConnectionStringSettingsAspect")]
     public sealed class ConnectionStringsSettingsAspect : ISettingsAspect, IConnectionStringSettings

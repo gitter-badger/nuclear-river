@@ -6,11 +6,13 @@ using System.ServiceProcess;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.AdvancedSearch.Replication.EntryPoint.DI;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Jobs.Schedulers;
 using NuClear.Settings.API;
+using NuClear.Storage.ConnectionStrings;
 using NuClear.Tracing.API;
 using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;
@@ -30,6 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint
 
             var settingsContainer = new ReplicationServiceSettings();
             var environmentSettings = settingsContainer.AsSettings<IEnvironmentSettings>();
+            var connectionStringSettings = settingsContainer.AsSettings<IConnectionStringSettings>();
 
             var tracerContextEntryProviders =
                     new ITracerContextEntryProvider[] 
@@ -47,7 +50,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint
                                              .DefaultXmlConfig
                                              .Console
                                              .EventLog
-                                             .DB(settingsContainer.AsSettings<IConnectionStringSettings>().GetConnectionString(ConnectionStringName.Logging))
+                                             .DB(connectionStringSettings.GetConnectionString(LoggingConnectionStringIdenrtity.Instance))
                                              .Build;
 
             IUnityContainer container = null;

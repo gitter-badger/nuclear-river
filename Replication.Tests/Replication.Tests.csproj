@@ -127,6 +127,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{d4238d0c-3315-4449-b1ae-80f716d58d04}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Replication.API\Replication.API.csproj">
       <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
       <Name>Replication.API</Name>

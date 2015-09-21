@@ -7,12 +7,28 @@ using NuClear.Settings.API;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
 {
-    public sealed class TaskServiceProcessingSettingsAspect : ISettingsAspect, ITaskServiceProcessingSettings
+    public sealed class QuartzSettingsAspect : ISettingsAspect, IPersistentStoreSettings, ITaskServiceProcessingSettings
     {
+        private readonly string _jobStoreConnectionString;
         private readonly IntSetting _maxWorkingThreads = ConfigFileSetting.Int.Required("MaxWorkingThreads");
         private readonly EnumSetting<JobStoreType> _jobStoreType = ConfigFileSetting.Enum.Required<JobStoreType>("JobStoreType");
         private readonly StringSetting _schedulerName = ConfigFileSetting.String.Required("SchedulerName");
         private readonly StringSetting _misfireThreshold = ConfigFileSetting.String.Required("MisfireThreshold");
+
+        public QuartzSettingsAspect(string jobStoreConnectionString)
+        {
+            _jobStoreConnectionString = jobStoreConnectionString;
+        }
+
+        string IPersistentStoreSettings.ConnectionString
+        {
+            get { return _jobStoreConnectionString; }
+        }
+
+        string IPersistentStoreSettings.TablePrefix
+        {
+            get { return "Quartz."; }
+        }
 
         int ITaskServiceProcessingSettings.MaxWorkingThreads
         {
@@ -29,7 +45,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
             get { return _schedulerName.Value; }
         }
 
-        public TimeSpan MisfireThreshold
+        TimeSpan ITaskServiceProcessingSettings.MisfireThreshold
         {
             get { return TimeSpan.Parse(_misfireThreshold.Value, CultureInfo.InvariantCulture); }
         }
