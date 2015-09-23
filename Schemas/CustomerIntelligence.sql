@@ -130,3 +130,54 @@ select Firm.*, FirmActivity.LastActivityOn
 from CustomerIntelligence.Firm
 	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = Firm.Id
 go
+
+
+-- Идексы для клиента
+create nonclustered index IX_Quering_1
+on CustomerIntelligence.Firm (ProjectId,OwnerId,CreatedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_2
+on CustomerIntelligence.Firm (ProjectId,OwnerId,LastDistributedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_3
+on CustomerIntelligence.Firm (ProjectId,OwnerId,LastDisqualifiedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_4
+on CustomerIntelligence.Firm (LastDistributedOn,ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_5
+on CustomerIntelligence.Firm (ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_6
+on CustomerIntelligence.Firm (HasWebsite,ProjectId,OwnerId)
+include (Id)
+go
+create nonclustered index IX_Quering_7
+on CustomerIntelligence.Firm (HasWebsite,ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_8
+on CustomerIntelligence.Firm (ProjectId,OwnerId,AddressCount)
+include (Id)
+go
+create nonclustered index IX_Quering_9
+on CustomerIntelligence.Firm (ProjectId,OwnerId,AddressCount)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_10
+on CustomerIntelligence.FirmBalance (Balance)
+include (FirmId)
+go
+create nonclustered index IX_Quering_11
+on CustomerIntelligence.FirmActivity(LastActivityOn)
+include (FirmId)
+go
+create nonclustered index IX_Quering_12
+on CustomerIntelligence.ClientContact (Role)
+include (ClientId)
+go
