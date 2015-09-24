@@ -57,10 +57,12 @@ function test-uri {
                 $x = invoke-webrequest -uri $uri
             }
             $sw.stop();
-            return [System.Tuple]::Create($uri, [string]$x.StatusCode, [double]$sw.elapsedmilliseconds / $invokeCount)
+            $properties = @{ 'Test' = $uri; 'Status' = [string]$x.StatusCode; 'Average time' = [double]$sw.elapsedmilliseconds / $invokeCount }
+            return New-Object -TypeName psobject -Property $properties
         }
         catch {
-            return [System.Tuple]::Create($uri, $_.Exception.Message, [double]0)
+            $properties = @{ 'Test' = $uri; 'Status' = $_.Exception.Message; 'Average time' = [double]0 }
+            return New-Object -TypeName psobject -Property $properties
         }
     }
 }
