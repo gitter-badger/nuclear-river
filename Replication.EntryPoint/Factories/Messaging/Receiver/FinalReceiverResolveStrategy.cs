@@ -1,7 +1,7 @@
 ﻿using NuClear.Messaging.DI.Factories.Unity.Receivers.Resolvers;
 using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
-using NuClear.Replication.OperationsProcessing.Performance;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver
 {

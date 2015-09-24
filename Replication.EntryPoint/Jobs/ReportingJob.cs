@@ -4,10 +4,10 @@ using System.Data.SqlClient;
 using Microsoft.ServiceBus;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
+using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
 using NuClear.Jobs;
 using NuClear.Messaging.Transports.ServiceBus.API;
-using NuClear.Replication.OperationsProcessing.Metadata.Flows;
-using NuClear.Replication.OperationsProcessing.Performance;
+using NuClear.Replication.OperationsProcessing.Identities.Telemetry;
 using NuClear.Security.API;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Telemetry;

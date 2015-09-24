@@ -1,10 +1,10 @@
 ﻿using System;
 
+using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
 using NuClear.Messaging.API.Flows.Metadata;
 using NuClear.Messaging.DI.Factories.Unity.Transformers.Resolvers;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
-using NuClear.Replication.OperationsProcessing.Metadata.Flows;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer
 {

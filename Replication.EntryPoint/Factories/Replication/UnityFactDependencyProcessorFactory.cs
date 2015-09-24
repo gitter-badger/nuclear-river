@@ -1,6 +1,8 @@
 using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
+using NuClear.Replication.Core.API.Facts;
+using NuClear.Replication.Core.Facts;
+using NuClear.Replication.Metadata.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
 {
@@ -13,10 +15,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public IFactDependencyProcessor Create(IFactDependencyInfo metadata)
+        public IFactDependencyProcessor Create(IFactDependencyFeature metadata)
         {
-            var processorType = typeof(FactDependencyProcessor<>).MakeGenericType(metadata.Type);
-	        var metadataDependency = new DependencyOverride(typeof(IFactDependencyInfo<>).MakeGenericType(metadata.Type), metadata);
+            var processorType = typeof(FactDependencyProcessor<>).MakeGenericType(metadata.DependancyType);
+	        var metadataDependency = new DependencyOverride(typeof(IFactDependencyFeature<>).MakeGenericType(metadata.DependancyType), metadata);
             var processor = _unityContainer.Resolve(processorType, metadataDependency);
             return (IFactDependencyProcessor)processor;
         }

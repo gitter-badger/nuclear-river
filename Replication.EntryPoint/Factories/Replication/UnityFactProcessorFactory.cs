@@ -1,6 +1,10 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
+using Microsoft.Practices.Unity;
+
+using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Core.API.Facts;
+using NuClear.Replication.Core.Facts;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
 {
@@ -13,10 +17,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public IFactProcessor Create(IFactInfo factInfo)
+        public IFactProcessor Create(Type factType, IMetadataElement factMetadata)
         {
-            var processorType = typeof(FactProcessor<>).MakeGenericType(factInfo.Type);
-            var processor = _unityContainer.Resolve(processorType, new DependencyOverride(factInfo.GetType(), factInfo));
+            var processorType = typeof(FactProcessor<>).MakeGenericType(factType);
+            var processor = _unityContainer.Resolve(processorType, new DependencyOverride(factMetadata.GetType(), factMetadata));
             return (IFactProcessor)processor;
         }
     }

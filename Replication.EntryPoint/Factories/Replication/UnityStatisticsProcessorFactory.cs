@@ -1,6 +1,8 @@
 ﻿using Microsoft.Practices.Unity;
 
-using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
+using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Core.Aggregates;
+using NuClear.Replication.Core.API.Aggregates;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
 {
@@ -13,9 +15,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public IStatisticsProcessor Create(IStatisticsInfo metadata)
+        public IStatisticsProcessor Create(IMetadataElement metadata)
         {
-            var processorType = typeof(StatisticsProcessor<>).MakeGenericType(metadata.Type);
+            var statisticsType = metadata.GetType().GenericTypeArguments[0];
+            var processorType = typeof(StatisticsProcessor<>).MakeGenericType(statisticsType);
             var processor = _unityContainer.Resolve(processorType, new DependencyOverride(metadata.GetType(), metadata));
             return (IStatisticsProcessor)processor;
         }

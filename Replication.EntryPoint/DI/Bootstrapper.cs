@@ -7,14 +7,6 @@ using LinqToDB.Mapping;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
-using NuClear.AdvancedSearch.Common.Settings;
-using NuClear.AdvancedSearch.Replication.API.Identitites.Connections;
-using NuClear.AdvancedSearch.Replication.API.Settings;
-using NuClear.AdvancedSearch.Replication.API.Transforming;
-using NuClear.AdvancedSearch.Replication.API.Transforming.Aggregates;
-using NuClear.AdvancedSearch.Replication.API.Transforming.Facts;
-using NuClear.AdvancedSearch.Replication.API.Transforming.Statistics;
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Transforming;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
@@ -23,6 +15,10 @@ using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
 using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
+using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.OperationsProcessing;
+using NuClear.CustomerIntelligence.OperationsProcessing.Final;
+using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
 using NuClear.IdentityService.Client.Interaction;
@@ -60,11 +56,11 @@ using NuClear.Metamodeling.Validators;
 using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
-using NuClear.Replication.OperationsProcessing.Final;
-using NuClear.Replication.OperationsProcessing.Metadata.Flows;
-using NuClear.Replication.OperationsProcessing.Metadata.Model;
-using NuClear.Replication.OperationsProcessing.Metadata.Operations;
-using NuClear.Replication.OperationsProcessing.Performance;
+using NuClear.Replication.Core;
+using NuClear.Replication.Core.API;
+using NuClear.Replication.Core.API.Aggregates;
+using NuClear.Replication.Core.API.Facts;
+using NuClear.Replication.Core.API.Settings;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -88,7 +84,8 @@ using NuClear.WCF.Client.Config;
 
 using Quartz.Spi;
 
-using Schema = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Schema;
+using Schema = NuClear.CustomerIntelligence.Storage.Schema;
+using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLStore.Schema;
 
 namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 {
@@ -148,10 +145,10 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
 
             // register matadata sources without massprocessor
             container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(PerformedOperationsMessageFlowsMetadataSource), Lifetime.Singleton);
-
-            container.RegisterType<API.Transforming.IMetadataSource<IFactInfo>, ErmFactsTransformationMetadata>();
-            container.RegisterType<API.Transforming.IMetadataSource<IAggregateInfo>, CustomerIntelligenceTransformationMetadata>();
-            container.RegisterType<API.Transforming.IMetadataSource<IStatisticsInfo>, StatisticsFinalTransformationMetadata>();
+            container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(FactsReplicationMetadataSource), Lifetime.Singleton);
+            container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(ImportStatisticsMetadataSource), Lifetime.Singleton);
+            container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(AggregateConstructionMetadataSource), Lifetime.Singleton);
+            container.RegisterOne2ManyTypesPerTypeUniqueness(typeof(IMetadataSource), typeof(StatisticsRecalculationMetadataSource), Lifetime.Singleton);
 
             return container;
         }
@@ -258,7 +255,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                                                                                       { Scope.Erm, Schema.Erm },
                                                                                       { Scope.Facts, Schema.Facts },
                                                                                       { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
-                                                                                      { Scope.Transport, NuClear.Replication.OperationsProcessing.Transports.SQLStore.Schema.Transport },
+                                                                                      { Scope.Transport, TransportSchema.Transport },
                                                                                   },
                                                                                   transactionOptions,
                                                                                   storageSettings.SqlCommandTimeout),
@@ -281,7 +278,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IStatisticsFactImporterFactory, UnityStatisticsFactImporterFactory>(entryPointSpecificLifetimeManagerFactory());
+                .RegisterType<IStatisticsImporterFactory, UnityStatisticsImporterFactory>(entryPointSpecificLifetimeManagerFactory());
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)
