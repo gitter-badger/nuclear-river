@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{3E0E
 	ProjectSection(SolutionItems) = preProject
 		Schemas\BIT.sql = Schemas\BIT.sql
 		Schemas\CustomerIntelligence.sql = Schemas\CustomerIntelligence.sql
+		Schemas\Database.sql = Schemas\Database.sql
 		Schemas\ERM.sql = Schemas\ERM.sql
 		Schemas\Transport.sql = Schemas\Transport.sql
 	EndProjectSection
