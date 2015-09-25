@@ -14,7 +14,7 @@ using NuClear.Utils;
 
 using Quartz;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
+namespace NuClear.Replication.EntryPoint.Jobs
 {
     [DisallowConcurrentExecution]
     public class OperationsFinalProcessingJob : TaskServiceJobBase

@@ -5,7 +5,7 @@ using NuClear.Jobs.Settings;
 using NuClear.Settings;
 using NuClear.Settings.API;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.Replication.EntryPoint.Settings
 {
     public sealed class QuartzSettingsAspect : ISettingsAspect, IPersistentStoreSettings, ITaskServiceProcessingSettings
     {

@@ -7,12 +7,6 @@ using LinqToDB.Mapping;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Factories;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
@@ -61,6 +55,12 @@ using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.API.Settings;
+using NuClear.Replication.EntryPoint.Factories;
+using NuClear.Replication.EntryPoint.Factories.Messaging.Processor;
+using NuClear.Replication.EntryPoint.Factories.Messaging.Receiver;
+using NuClear.Replication.EntryPoint.Factories.Messaging.Transformer;
+using NuClear.Replication.EntryPoint.Factories.Replication;
+using NuClear.Replication.EntryPoint.Settings;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -87,7 +87,7 @@ using Quartz.Spi;
 using Schema = NuClear.CustomerIntelligence.Storage.Schema;
 using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLStore.Schema;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
+namespace NuClear.Replication.EntryPoint.DI
 {
     public static partial class Bootstrapper
     {

@@ -3,7 +3,7 @@ using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.Primary;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Processor
+namespace NuClear.Replication.EntryPoint.Factories.Messaging.Processor
 {
     public sealed class PrimaryProcessorResolveStrategy : MessageFlowProcessorResolveStrategyBase
     {

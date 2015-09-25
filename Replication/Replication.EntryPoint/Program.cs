@@ -8,9 +8,9 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
-using NuClear.AdvancedSearch.Replication.EntryPoint.DI;
-using NuClear.AdvancedSearch.Replication.EntryPoint.Settings;
 using NuClear.Jobs.Schedulers;
+using NuClear.Replication.EntryPoint.DI;
+using NuClear.Replication.EntryPoint.Settings;
 using NuClear.Settings.API;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Tracing.API;
@@ -18,7 +18,7 @@ using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;
 using NuClear.Tracing.Log4Net.Config;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint
+namespace NuClear.Replication.EntryPoint
 {
     internal static class Program
     {

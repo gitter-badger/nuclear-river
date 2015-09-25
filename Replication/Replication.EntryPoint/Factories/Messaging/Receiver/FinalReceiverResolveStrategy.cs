@@ -3,7 +3,7 @@ using NuClear.Metamodeling.Provider;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Receiver
+namespace NuClear.Replication.EntryPoint.Factories.Messaging.Receiver
 {
     public sealed class FinalReceiverResolveStrategy : MessageFlowReceiverResolveStrategyBase
     {

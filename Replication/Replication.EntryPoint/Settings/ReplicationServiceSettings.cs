@@ -12,7 +12,7 @@ using NuClear.Settings.API;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Telemetry.Logstash;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.Replication.EntryPoint.Settings
 {
     public sealed class ReplicationServiceSettings : SettingsContainerBase, IReplicationSettings, ISqlStoreSettingsAspect
     {

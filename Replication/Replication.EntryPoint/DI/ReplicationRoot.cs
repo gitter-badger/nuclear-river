@@ -1,6 +1,6 @@
 ﻿using NuClear.Assembling.Zones;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
+namespace NuClear.Replication.EntryPoint.DI
 {
     internal static class ReplicationRoot
     {

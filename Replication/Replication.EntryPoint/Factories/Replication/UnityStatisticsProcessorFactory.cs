@@ -4,7 +4,7 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
+namespace NuClear.Replication.EntryPoint.Factories.Replication
 {
     public class UnityStatisticsProcessorFactory : IStatisticsProcessorFactory
     {

@@ -6,7 +6,7 @@ using NuClear.Messaging.DI.Factories.Unity.Transformers.Resolvers;
 using NuClear.OperationsProcessing.API.Metadata;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Messaging.Transformer
+namespace NuClear.Replication.EntryPoint.Factories.Messaging.Transformer
 {
     public sealed class PrimaryMessageTransformerResolveStrategy : IMessageTransformerResolveStrategy
     {

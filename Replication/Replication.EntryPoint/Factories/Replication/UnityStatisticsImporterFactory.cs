@@ -8,7 +8,7 @@ using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
 using NuClear.Replication.Metadata;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
+namespace NuClear.Replication.EntryPoint.Factories.Replication
 {
     public class UnityStatisticsImporterFactory : IStatisticsImporterFactory
     {

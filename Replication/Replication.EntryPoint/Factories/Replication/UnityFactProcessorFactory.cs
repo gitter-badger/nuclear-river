@@ -6,7 +6,7 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
+namespace NuClear.Replication.EntryPoint.Factories.Replication
 {
     public class UnityFactProcessorFactory : IFactProcessorFactory
     {

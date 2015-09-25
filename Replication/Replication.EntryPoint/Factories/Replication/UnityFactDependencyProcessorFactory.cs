@@ -4,7 +4,7 @@ using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
 using NuClear.Replication.Metadata.Facts;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
+namespace NuClear.Replication.EntryPoint.Factories.Replication
 {
     internal class UnityFactDependencyProcessorFactory : IFactDependencyProcessorFactory
     {

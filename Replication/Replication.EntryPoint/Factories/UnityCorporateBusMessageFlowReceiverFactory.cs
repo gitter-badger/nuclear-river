@@ -4,7 +4,7 @@ using NuClear.Messaging.Transports.CorporateBus;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.CorporateBus.Flows;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories
+namespace NuClear.Replication.EntryPoint.Factories
 {
     public class UnityCorporateBusMessageFlowReceiverFactory : ICorporateBusMessageFlowReceiverFactory
     {

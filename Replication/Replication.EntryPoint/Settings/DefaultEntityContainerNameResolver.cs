@@ -3,7 +3,7 @@
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Storage.Core;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint.Settings
+namespace NuClear.Replication.EntryPoint.Settings
 {
     public class DefaultEntityContainerNameResolver : IEntityContainerNameResolver
     {

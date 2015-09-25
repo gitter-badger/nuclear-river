@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace NuClear.AdvancedSearch.Replication.EntryPoint
+namespace NuClear.Replication.EntryPoint
 {
     partial class ReplicationService
     {
