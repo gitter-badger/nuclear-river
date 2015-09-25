@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Moq;
 
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.API.Settings;
 using NuClear.Replication.Core.Facts;
+using NuClear.Replication.Metadata;
 using NuClear.Replication.Metadata.Model;
 using NuClear.Replication.Metadata.Operations;
 using NuClear.Tracing.API;
@@ -30,13 +33,19 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 			factProcessor.Setup(x => x.ApplyChanges(It.IsAny<IReadOnlyCollection<long>>()))
 			             .Returns(new IOperation[0]);
 
-			var factoryInvocationOrder = new List<Type>();
-			var factProcessorFactory = new Mock<IFactProcessorFactory>();
+            var metadataSource = new FactsReplicationMetadataSource();
+		    var metadataSet = new MetadataSet(metadataSource.Metadata.ToDictionary(x => x.Key, x => x.Value));
+            var matadataProvider = new Mock<IMetadataProvider>();
+		    matadataProvider.Setup(x => x.TryGetMetadata<ReplicationMetadataIdentity>(out metadataSet))
+		                    .Returns(true);
+
+            var factoryInvocationOrder = new List<Type>();
+            var factProcessorFactory = new Mock<IFactProcessorFactory>();
 			factProcessorFactory.Setup(x => x.Create(It.IsAny<Type>(), It.IsAny<IMetadataElement>()))
-			                    .Callback<Type, IMetadataElement>((type, metadataElement) => { factoryInvocationOrder.Add(type); })
+			                    .Callback<Type, IMetadataElement>((type, element) => { factoryInvocationOrder.Add(type); })
 			                    .Returns(factProcessor.Object);
 
-		    var transformation = new FactsReplicator(Mock.Of<IMetadataProvider>(),
+		    var transformation = new FactsReplicator(matadataProvider.Object,
 		                                             factProcessorFactory.Object,
 		                                             Mock.Of<IReplicationSettings>(),
 		                                             Mock.Of<ITracer>());
