@@ -23,11 +23,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
+		private readonly IEntityTypeMappingRegistry<FactsContext> _registry;
 
-        public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher)
+		public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher, IEntityTypeMappingRegistry<FactsContext> registry)
         {
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
+			_registry = registry;
         }
 
         protected override OperationAggregatableMessage<FactOperation> Process(TrackedUseCase message)
@@ -70,38 +72,38 @@ namespace NuClear.Replication.OperationsProcessing.Primary
             return operations;
         }
 
-        private IEnumerable<FactOperation> Convert(IEnumerable<OperationDescriptor> operations)
-        {
-            var factOperations = operations
-                .SelectMany(x =>
-                {
+	    private IEnumerable<FactOperation> Convert(IEnumerable<OperationDescriptor> operations)
+	    {
+		    var factOperations = operations
+			    .SelectMany(x =>
+			                {
 
-                    var tuples = x.AffectedEntities.Changes
-                    .Select(y =>
-                    {
-                        var mappedKey = y.Key.MapErmToFacts();
+				                var tuples = x.AffectedEntities.Changes
+				                              .Select(y =>
+				                                      {
+					                                      var mappedKey = y.Key.MapErmToFacts();
 
-                        Type entityType;
-                        var parsed = EntityTypeMap<FactsContext>.TryGetEntityType(mappedKey, out entityType);
-                        return Tuple.Create(parsed, entityType, y);
-                    })
-                    .Where(y => y.Item1).ToList();
+					                                      Type entityType;
+					                                      var parsed = _registry.TryGetEntityType(mappedKey, out entityType);
+					                                      return Tuple.Create(parsed, entityType, y);
+				                                      })
+				                              .Where(y => y.Item1).ToList();
 
-                    if (tuples.Any())
-        {
-                        if (!OperationIdentityMetadata.AllowedOperationIdentities.Contains(x.OperationIdentity))
-            {
-                            var entitySet = new EntitySet(tuples.Select(y => y.Item3.Key).Distinct().ToArray());
-                            _tracer.WarnFormat("Received well-known entities '{0}' frow unknown ERM operation '{1}'", entitySet, x.OperationIdentity);
-                        }
-            }
+				                if (tuples.Any())
+				                {
+					                if (!OperationIdentityMetadata.AllowedOperationIdentities.Contains(x.OperationIdentity))
+					                {
+						                var entitySet = new EntitySet(tuples.Select(y => y.Item3.Key).Distinct().ToArray());
+						                _tracer.WarnFormat("Received well-known entities '{0}' frow unknown ERM operation '{1}'", entitySet, x.OperationIdentity);
+					                }
+				                }
 
-                    return tuples;
-                })
-                .GroupBy(x => x.Item2, x => x.Item3.Value.Keys)
-                .SelectMany(x => x.SelectMany(y => y).Distinct().Select(y => new FactOperation(x.Key, y)));
+				                return tuples;
+			                })
+			    .GroupBy(x => x.Item2, x => x.Item3.Value.Keys)
+			    .SelectMany(x => x.SelectMany(y => y).Distinct().Select(y => new FactOperation(x.Key, y)));
 
-            return factOperations;
-        }
+		    return factOperations;
+	    }
     }
 }

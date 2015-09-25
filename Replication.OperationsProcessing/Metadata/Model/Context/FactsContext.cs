@@ -2,8 +2,8 @@
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.Context
 {
-    public sealed class FactsContext : ITypeMappingContext
-    {
+    public sealed class FactsContext : IDomainContext
+	{
         private FactsContext()
         {
         }

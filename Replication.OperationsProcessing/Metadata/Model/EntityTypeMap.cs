@@ -74,19 +74,22 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                     CreateMapping<EntityTypeTerritory, CI.Territory>(),
                 }.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        public static void Initialize()
+        public static IEntityTypeMappingRegistry<ErmContext> CreateErmContext()
         {
-            EntityTypeMappingRegistry.Initialize<ErmContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<ErmContext>(ErmTypeMap);
-
-            EntityTypeMappingRegistry.Initialize<CustomerIntelligenceContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<CustomerIntelligenceContext>(CustomerIntelligenceTypeMap);
-
-            EntityTypeMappingRegistry.Initialize<FactsContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<FactsContext>(FactsTypeMap);
+            return EntityTypeMappingRegistryFactory.Create<ErmContext>(ErmTypeMap, Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
         }
 
-        private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()
+		public static IEntityTypeMappingRegistry<CustomerIntelligenceContext> CreateCustomerIntelligenceContext()
+		{
+			return EntityTypeMappingRegistryFactory.Create<CustomerIntelligenceContext>(CustomerIntelligenceTypeMap, Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
+		}
+
+		public static IEntityTypeMappingRegistry<FactsContext> CreateFactsContext()
+		{
+			return EntityTypeMappingRegistryFactory.Create<FactsContext>(FactsTypeMap, Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
+		}
+
+		private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()
             where TEntityType : IdentityBase<TEntityType>, IEntityType, new()
         {
             return new KeyValuePair<IEntityType, Type>(IdentityBase<TEntityType>.Instance, typeof(TAggregateType));

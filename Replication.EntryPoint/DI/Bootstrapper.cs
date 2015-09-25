@@ -67,15 +67,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
-            EntityTypeMap.Initialize();
-
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
                                  {
                                      new TaskServiceJobsMassProcessor(container),
                                  };
 
-            container.AttachQueryableContainerExtension()
+            container.RegisterContexts()
+					 .AttachQueryableContainerExtension()
                      .UseParameterResolvers(ParameterResolvers.Defaults)
                      .ConfigureMetadata()
                      .ConfigureSettingsAspects(settingsContainer)
@@ -91,7 +90,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container;
         }
 
-        public static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
+		public static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
         {
             return container.RegisterInstance(tracer)
                             .RegisterInstance(tracerContextManager);
@@ -190,5 +189,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
-    }
+
+		private static IUnityContainer RegisterContexts(this IUnityContainer container)
+		{
+			return container.RegisterInstance(EntityTypeMap.CreateErmContext())
+							.RegisterInstance(EntityTypeMap.CreateCustomerIntelligenceContext())
+							.RegisterInstance(EntityTypeMap.CreateFactsContext());
+		}
+	}
 }

@@ -253,7 +253,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Primary\ImportFactsFromErmHandler.cs" />
     <Compile Include="Final\AggregateOperationAccumulator.cs" />
-    <Compile Include="Transports\AggregateOperationExtensions.cs" />
+    <Compile Include="Transports\AggregateOperationSerializer.cs" />
     <Compile Include="Primary\CorporateBusAggregatableMessage.cs" />
     <Compile Include="Transports\CorporateBus\CorporateBusMessage.cs" />
     <Compile Include="Transports\CorporateBus\CorporateBusOperationsReceiver.cs" />
