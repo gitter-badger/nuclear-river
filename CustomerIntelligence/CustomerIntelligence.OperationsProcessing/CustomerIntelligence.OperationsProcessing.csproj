@@ -202,15 +202,15 @@
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Replication.Core.API\Replication.Core.API.csproj">
+    <ProjectReference Include="..\..\Replication\Replication.Core.API\Replication.Core.API.csproj">
       <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
       <Name>Replication.Core.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication.Metadata\Replication.Metadata.csproj">
+    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
       <Project>{00bc9c6c-c9e2-4954-bb28-53c57937a286}</Project>
       <Name>Replication.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
+    <ProjectReference Include="..\..\Replication\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8e3d39d6-6bee-4edc-ace0-8c24ca929164}</Project>
       <Name>Replication.OperationsProcessing</Name>
     </ProjectReference>

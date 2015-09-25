@@ -74,7 +74,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Replication.Metadata\Replication.Metadata.csproj">
+    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
       <Project>{00BC9C6C-C9E2-4954-BB28-53C57937A286}</Project>
       <Name>Replication.Metadata</Name>
     </ProjectReference>
