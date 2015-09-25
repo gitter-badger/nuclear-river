@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
@@ -10,7 +11,7 @@ using NuClear.Querying.Metadata.Features;
 
 using NUnit.Framework;
 
-namespace NuClear.QueryingMetadata.Tests
+namespace NuClear.CustomerIntelligence.Querying.Metadata.Tests
 {
     [TestFixture]
     internal class CustomerIntelligenceMetadataTests
@@ -20,7 +21,7 @@ namespace NuClear.QueryingMetadata.Tests
         [TestFixtureSetUp]
         public void Setup()
         {
-            var sources = new IMetadataSource[] { new AdvancedSearchMetadataSource() };
+            var sources = new IMetadataSource[] { new QueryingMetadataSource() };
             var processors = new IMetadataProcessor[] {};
 
             _provider = new MetadataProvider(sources, processors);
@@ -74,7 +75,7 @@ namespace NuClear.QueryingMetadata.Tests
             var ignoredFeatures = new[] { typeof(EntityIdentityFeature), typeof(ElementMappingFeature), typeof(EntityRelationContainmentFeature) };
             element.Dump(properties, ignoredFeatures);
 
-            Debug.WriteLine(element.Serialize(properties, ignoredFeatures));
+            Debug.WriteLine((string)element.Serialize(properties, ignoredFeatures));
 
             return element.Serialize(properties, ignoredFeatures);
         }

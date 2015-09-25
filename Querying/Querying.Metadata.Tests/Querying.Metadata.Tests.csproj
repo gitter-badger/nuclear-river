@@ -59,11 +59,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StructuralModelMetadataTests.cs" />
-    <Compile Include="CustomerIntelligenceMetadataTests.cs" />
     <Compile Include="EntityMetadataTests.cs" />
     <Compile Include="EntityRelationMetadataTests.cs" />
     <Compile Include="EntityPropertyMetadataTests.cs" />
