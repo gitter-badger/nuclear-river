@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-using NuClear.CustomerIntelligence.Domain.Model;
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Specifications;
 
 using NUnit.Framework;
 
 using Erm = NuClear.CustomerIntelligence.Domain.Model.Erm;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     internal partial class ErmMapToFactsSpecsTests
     {

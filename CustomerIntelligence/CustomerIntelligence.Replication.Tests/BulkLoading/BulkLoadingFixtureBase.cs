@@ -9,7 +9,7 @@ using LinqToDB.Mapping;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
+namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
     public class BulkLoadingFixtureBase
     {

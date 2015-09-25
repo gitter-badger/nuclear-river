@@ -4,11 +4,9 @@ using System.Linq;
 
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
-using NuClear.Replication.Metadata;
 using NuClear.Replication.Metadata.Facts;
 using NuClear.Replication.Metadata.Model;
 using NuClear.Replication.Metadata.Operations;
@@ -21,7 +19,7 @@ using Erm = NuClear.CustomerIntelligence.Domain.Model.Erm;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal partial class FactDependencyTests : TransformationFixtureBase
@@ -766,8 +764,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 var factType = typeof(TFact);
 
                 IMetadataElement factMetadata;
-                Uri factMetadataId = Metadata.Id.For(ReplicationMetadataIdentity.Instance.Id, "Facts", factType.Name);
-                if (!_metadataSource.Metadata.TryGetValue(factMetadataId, out factMetadata))
+                if (!_metadataSource.Metadata.Values.TryGetElementById(new Uri(factType.Name, UriKind.Relative), out factMetadata))
                 {
                     throw new NotSupportedException(string.Format("The fact of type '{0}' is not supported.", factType));
                 }
@@ -783,12 +780,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             public void VerifyDistinct(params IOperation[] operations)
             {
-                Assert.That(_operations.Distinct(), Is.EqualTo(operations));
+                Assert.That(_operations.Distinct(), Is.EquivalentTo(operations));
             }
 
             public void VerifyDistinct(Func<IOperation, bool> filter, params IOperation[] operations)
             {
-                Assert.That(_operations.Distinct().Where(filter), Is.EqualTo(operations));
+                Assert.That(_operations.Distinct().Where(filter), Is.EquivalentTo(operations));
             }
 
             private class Factory<TFact> : IFactProcessorFactory, IFactDependencyProcessorFactory

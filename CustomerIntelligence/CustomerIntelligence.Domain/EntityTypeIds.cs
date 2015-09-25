@@ -1,4 +1,4 @@
-﻿namespace NuClear.CustomerIntelligence.Domain.Model
+﻿namespace NuClear.CustomerIntelligence.Domain
 {
     public static class EntityTypeIds
     {

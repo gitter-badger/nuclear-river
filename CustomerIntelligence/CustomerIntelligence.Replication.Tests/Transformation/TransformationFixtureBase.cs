@@ -1,6 +1,6 @@
 using NuClear.Replication.Metadata.Operations;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     internal abstract class TransformationFixtureBase : DataFixtureBase
     {

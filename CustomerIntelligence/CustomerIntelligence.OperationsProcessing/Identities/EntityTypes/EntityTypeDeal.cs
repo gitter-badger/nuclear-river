@@ -1,6 +1,6 @@
 ﻿using System;
 
-using NuClear.CustomerIntelligence.Domain.Model;
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.Model.Common.Entities;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Identities.EntityTypes

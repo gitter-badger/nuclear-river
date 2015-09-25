@@ -6,10 +6,8 @@ using Moq;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.DTO;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.Facts;
-using NuClear.Replication.Metadata;
 using NuClear.Replication.Metadata.Facts;
 
 using NUnit.Framework;
@@ -17,7 +15,7 @@ using NUnit.Framework;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class StatisticsImporterTests
@@ -52,10 +50,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var metadataSource = new ImportStatisticsMetadataSource();
             IMetadataElement importStatisticsMetadata;
-            Uri factMetadataId = Metadata.Id.For(ImportStatisticsMetadataIdentity.Instance.Id, typeof(FirmStatisticsDto).Name);
-            if (!metadataSource.Metadata.TryGetValue(factMetadataId, out importStatisticsMetadata))
+            if (!metadataSource.Metadata.Values.TryGetElementById(new Uri(typeof(FirmStatisticsDto).Name, UriKind.Relative), out importStatisticsMetadata))
             {
-                throw new NotSupportedException(string.Format("Import for statistics of type '{0}' is not supported.", typeof(FirmStatisticsDto)));
+                throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(FirmStatisticsDto)));
             }
 
             var importer = new StatisticsFactImporter<Facts.FirmCategoryStatistics>(
@@ -90,10 +87,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             var metadataSource = new ImportStatisticsMetadataSource();
             IMetadataElement importStatisticsMetadata;
-            Uri factMetadataId = Metadata.Id.For(ImportStatisticsMetadataIdentity.Instance.Id, typeof(CategoryStatisticsDto).Name);
-            if (!metadataSource.Metadata.TryGetValue(factMetadataId, out importStatisticsMetadata))
+            if (!metadataSource.Metadata.Values.TryGetElementById(new Uri(typeof(CategoryStatisticsDto).Name, UriKind.Relative), out importStatisticsMetadata))
             {
-                throw new NotSupportedException(string.Format("Import for statistics of type '{0}' is not supported.", typeof(CategoryStatisticsDto)));
+                throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(CategoryStatisticsDto)));
             }
 
             var importer = new StatisticsFactImporter<Facts.ProjectCategoryStatistics>(

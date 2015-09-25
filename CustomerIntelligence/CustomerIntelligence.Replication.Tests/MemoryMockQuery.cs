@@ -5,7 +5,7 @@ using System.Linq;
 using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     internal sealed class MemoryMockQuery : IQuery
     {

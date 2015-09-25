@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Transactions;
 
 using LinqToDB;
+using LinqToDB.Common;
 using LinqToDB.Data;
 using LinqToDB.DataProvider.SQLite;
 using LinqToDB.Expressions;
@@ -15,17 +16,17 @@ using LinqToDB.Mapping;
 using LinqToDB.SqlQuery;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
-using NuClear.AdvancedSearch.Replication.Tests.Data;
-using NuClear.CustomerIntelligence.Domain.Model.CI;
+using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.Storage.ConnectionStrings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
-    public class SqliteDomainContextFactory: IReadableDomainContextFactory, IModifiableDomainContextFactory, IStorageMappingDescriptorProvider, IDisposable
+    public class SqliteDomainContextFactory : IReadableDomainContextFactory, IModifiableDomainContextFactory, IStorageMappingDescriptorProvider, IDisposable
     {
         private const int DefaultQueryExecutionTimeout = 60;
 
@@ -48,9 +49,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         private static readonly Lazy<Type[]> Tables = new Lazy<Type[]>(
             () =>
             {
-                var accessor = typeof(Firm);
+                var accessor = typeof(EntityTypeIds);
                 return accessor.Assembly.GetTypes()
-                               .Where(t => t.IsClass && (t.Namespace ?? string.Empty).Contains(accessor.Namespace ?? string.Empty))
+                               .Where(t => t.IsClass && !t.Namespace.IsNullOrEmpty() && t.Namespace.Contains("Model"))
                                .ToArray();
             });
 
@@ -58,14 +59,14 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             new ConcurrentDictionary<IConnectionStringIdentity, Tuple<SQLiteConnection, DataConnection>>();
 
         private readonly TransactionOptions _transactionOptions = new TransactionOptions
-                                                                  {
-                                                                      IsolationLevel = IsolationLevel.ReadCommitted,
-                                                                      Timeout = TimeSpan.Zero
-                                                                  };
+        {
+            IsolationLevel = IsolationLevel.ReadCommitted,
+            Timeout = TimeSpan.Zero
+        };
         private readonly IStorageMappingDescriptorProvider _storageMappingDescriptorProvider;
         private readonly IConnectionStringSettings _connectionStringSettings;
         private readonly ILinqToDbModelFactory _linqToDbModelFactory;
-        
+
 
         public SqliteDomainContextFactory(IReadOnlyDictionary<string, MappingSchema> schemaMap)
         {
@@ -157,10 +158,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests
                     connection.Open();
 
                     var dataConnection = new DataConnection(dataProvider, connection)
-                                         {
-                                             CommandTimeout = linqToDbModel.QueryExecutionTimeout,
-                                             IsMarsEnabled = false
-                                         };
+                    {
+                        CommandTimeout = linqToDbModel.QueryExecutionTimeout,
+                        IsMarsEnabled = false
+                    };
                     dataConnection.AddMappingSchema(linqToDbModel.MappingSchema);
 
                     return Tuple.Create(connection, TuneConnection(dataConnection));
@@ -198,10 +199,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests
 
                             try
                             {
-                            // create empty table
-                            CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
-                        }
-                            catch (Exception exception)
+                                // create empty table
+                                CreateTableMethodInfo.MakeGenericMethod(table).Invoke(null, new object[] { db, null, null, null, null, null, DefaulNullable.None });
+                            }
+                            catch (Exception)
                             {
                                 // table can be already created by previous type mapped to the same table
                                 // ignore exception and continue

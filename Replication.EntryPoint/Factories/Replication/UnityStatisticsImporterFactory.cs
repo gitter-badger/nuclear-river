@@ -3,7 +3,6 @@
 using Microsoft.Practices.Unity;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
@@ -31,10 +30,9 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Factories.Replication
             }
 
             IMetadataElement importStatisticsMetadata;
-            Uri factMetadataId = Metadata.Id.For(ImportStatisticsMetadataIdentity.Instance.Id, statisticsDtoType.Name);
-            if (!metadataSet.Metadata.TryGetValue(factMetadataId, out importStatisticsMetadata))
+            if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(statisticsDtoType.Name, UriKind.Relative), out importStatisticsMetadata))
             {
-                throw new NotSupportedException(string.Format("Import for statistics of type '{0}' is not supported.", statisticsDtoType));
+                throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", statisticsDtoType));
             }
 
             var statisticsType = importStatisticsMetadata.GetType().GenericTypeArguments[0];

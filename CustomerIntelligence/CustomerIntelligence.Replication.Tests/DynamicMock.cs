@@ -3,7 +3,7 @@ using System.Linq;
 
 using Moq;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public class DynamicMock
     {

@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.StatisticsTransformation
 {
     [TestFixture]
     internal sealed class StatisticsFinalTransformationTests
@@ -110,13 +110,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
             where T : class
         {
             var metadataSource = new StatisticsRecalculationMetadataSource();
-            var metadata = metadataSource.Metadata.Values.Single();
+            var metadata = (StatisticsRecalculationMetadata<T>)metadataSource.Metadata.Values.SelectMany(x => x.Elements).Single();
             repository = new Mock<IRepository<T>>();
 
-            return new StatisticsProcessor<T>(
-                (StatisticsRecalculationMetadata<T>)metadata,
-                new MemoryMockQuery(data),
-                new BulkRepository<T>(repository.Object));
+            return new StatisticsProcessor<T>(metadata, new MemoryMockQuery(data), new BulkRepository<T>(repository.Object));
         }
     }
 }

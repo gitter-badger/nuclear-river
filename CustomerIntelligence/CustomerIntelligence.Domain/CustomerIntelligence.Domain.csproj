@@ -38,6 +38,7 @@
     <Compile Include="AggregateConstructionMetadataSource.cs" />
     <Compile Include="DTO\CategoryStatisticsDto.cs" />
     <Compile Include="DTO\FirmStatisticsDto.cs" />
+    <Compile Include="EntityTypeIds.cs" />
     <Compile Include="FactsReplicationMetadataSource.cs" />
     <Compile Include="ImportStatisticsMetadataSource.cs" />
     <Compile Include="Model\CI\CategoryGroup.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="Model\CI\Project.cs" />
     <Compile Include="Model\CI\ProjectCategory.cs" />
     <Compile Include="Model\CI\Territory.cs" />
-    <Compile Include="Model\EntityTypeIds.cs" />
     <Compile Include="Model\Erm\Account.cs" />
     <Compile Include="Model\Erm\Activity.cs" />
     <Compile Include="Model\Erm\ActivityBase.cs" />

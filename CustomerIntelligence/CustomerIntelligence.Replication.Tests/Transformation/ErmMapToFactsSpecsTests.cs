@@ -10,7 +10,7 @@ using NUnit.Framework;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 using Erm = NuClear.CustomerIntelligence.Domain.Model.Erm;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture, SetCulture("")]
     internal partial class ErmMapToFactsSpecsTests : TransformationFixtureBase

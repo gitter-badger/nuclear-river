@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Facts;
@@ -13,8 +12,6 @@ using NuClear.Replication.Metadata.Model;
 using NuClear.Replication.Metadata.Operations;
 using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
-
-using MetadataBuilder = NuClear.Metamodeling.Elements.Identities.Builder.Metadata;
 
 namespace NuClear.Replication.Core.Facts
 {
@@ -57,8 +54,7 @@ namespace NuClear.Replication.Core.Facts
                     var factType = slice.Key.FactType;
 
                     IMetadataElement factMetadata;
-                    Uri factMetadataId = MetadataBuilder.Id.For(ReplicationMetadataIdentity.Instance.Id, "Facts", factType.Name);
-                    if (!metadataSet.Metadata.TryGetValue(factMetadataId, out factMetadata))
+                    if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(factType.Name, UriKind.Relative), out factMetadata))
                     {
                         throw new NotSupportedException(string.Format("The fact of type '{0}' is not supported.", factType));
                     }

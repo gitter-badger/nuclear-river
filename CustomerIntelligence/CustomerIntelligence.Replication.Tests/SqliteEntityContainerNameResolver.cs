@@ -2,7 +2,7 @@
 
 using NuClear.Storage.Core;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public class SqliteEntityContainerNameResolver : IEntityContainerNameResolver
     {

@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public static class Settings
     {

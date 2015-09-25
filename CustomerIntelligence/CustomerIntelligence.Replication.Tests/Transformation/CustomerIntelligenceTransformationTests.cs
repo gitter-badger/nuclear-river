@@ -5,10 +5,8 @@ using Moq;
 
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
-using NuClear.Replication.Metadata;
 using NuClear.Replication.Metadata.Aggregates;
 using NuClear.Replication.Metadata.Model;
 using NuClear.Storage.Readings;
@@ -19,7 +17,7 @@ using NUnit.Framework;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class CustomerIntelligenceTransformationTests : TransformationFixtureBase
@@ -444,8 +442,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 var aggregateType = typeof(TAggregate);
 
                 IMetadataElement aggregateMetadata;
-                Uri factMetadataId = Metadata.Id.For(ReplicationMetadataIdentity.Instance.Id, "Aggregates", aggregateType.Name);
-                if (!_metadataSource.Metadata.TryGetValue(factMetadataId, out aggregateMetadata))
+                if (!_metadataSource.Metadata.Values.TryGetElementById(new Uri(aggregateType.Name, UriKind.Relative), out aggregateMetadata))
                 {
                     throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", aggregateType));
                 }

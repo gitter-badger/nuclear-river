@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.CustomerIntelligence.Domain.Model;
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Model.Erm;
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.Storage.Readings;
@@ -10,7 +10,7 @@ using NuClear.Storage.Specifications;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class ErmFilteringTests : TransformationFixtureBase

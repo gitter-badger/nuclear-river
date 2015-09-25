@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
-using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Domain.Specifications;
+using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.BulkLoading
+namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
     internal class BulkLoadingOfCustomerIntelligence : BulkLoadingFixtureBase

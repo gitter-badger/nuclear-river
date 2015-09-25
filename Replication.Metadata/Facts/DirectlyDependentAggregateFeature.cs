@@ -1,33 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using NuClear.Replication.Metadata.Model;
-using NuClear.Replication.Metadata.Operations;
-using NuClear.Storage.Readings;
 using NuClear.Storage.Specifications;
 
 namespace NuClear.Replication.Metadata.Facts
 {
-    public class DirectlyDependentAggregateFeature<T> : IDirectFactDependencyFeature, IFactDependencyFeature<T> where T : class, IIdentifiable
+    public class DirectlyDependentAggregateFeature<T> : IFactDependencyFeature<T> where T : class, IIdentifiable
     {
-        public DirectlyDependentAggregateFeature(Type aggregateType)
-        {
-            FindSpecificationProvider = Specs.Find.ByIds<T>;
+        public DirectlyDependentAggregateFeature(
+            MapToObjectsSpecProvider<T, IOperation> mapSpecificationProviderOnCreate,
+            MapToObjectsSpecProvider<T, IOperation> mapSpecificationProviderOnUpdate,
+            MapToObjectsSpecProvider<T, IOperation> mapSpecificationProviderOnDelete)
 
-            // FIXME {all, 04.09.2015}: Слабое место - внутри спецификации идентификаторы, затем идём в базу за идентификаторами. Если достать их из спецификации в бузу хдить не потребуется.
-            MapSpecificationProviderOnCreate = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(
-                                                                    q => q.For(specification)
-                                                                          .Select(x => x.Id)
-                                                                          .Select(id => new InitializeAggregate(aggregateType, id)));
-            MapSpecificationProviderOnUpdate = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(
-                                                                    q => q.For(specification)
-                                                                          .Select(x => x.Id)
-                                                                          .Select(id => new RecalculateAggregate(aggregateType, id)));
-            MapSpecificationProviderOnDelete = specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(
-                                                                    q => q.For(specification)
-                                                                          .Select(x => x.Id)
-                                                                          .Select(id => new DestroyAggregate(aggregateType, id)));
+        {
+            MapSpecificationProviderOnCreate = mapSpecificationProviderOnCreate;
+            MapSpecificationProviderOnUpdate = mapSpecificationProviderOnUpdate;
+            MapSpecificationProviderOnDelete = mapSpecificationProviderOnDelete;
+            FindSpecificationProvider = Specs.Find.ByIds<T>;
         }
 
         public Type DependancyType

@@ -12,7 +12,7 @@ using NUnit.Framework;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture, SetCulture("")]
     internal class FactsMapToCISpecsTests : TransformationFixtureBase

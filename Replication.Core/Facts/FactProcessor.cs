@@ -26,7 +26,7 @@ namespace NuClear.Replication.Core.Facts
             _query = query;
             _repository = repository;
             _factMetadata = factMetadata;
-            _depencencyProcessors = _factMetadata.Features.OfType<IDirectFactDependencyFeature>().Select(dependencyProcessorFactory.Create).ToArray();
+            _depencencyProcessors = _factMetadata.Features.OfType<IFactDependencyFeature>().Select(dependencyProcessorFactory.Create).ToArray();
             _indirectDepencencyProcessors = _factMetadata.Features.OfType<IIndirectFactDependencyFeature>().Select(dependencyProcessorFactory.Create).ToArray();
             _changesDetector = new DataChangesDetector<TFact, TFact>(_factMetadata.MapSpecificationProviderForSource, _factMetadata.MapSpecificationProviderForTarget, _query);
         }

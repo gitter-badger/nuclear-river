@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 using NuClear.Replication.Metadata.Model;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     internal abstract class FixtureBase
     {

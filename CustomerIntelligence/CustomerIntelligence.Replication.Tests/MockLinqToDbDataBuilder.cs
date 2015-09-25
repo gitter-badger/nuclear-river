@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 
-using NuClear.AdvancedSearch.Replication.Tests.Data;
+using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.Storage.LinqToDB;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public sealed class MockLinqToDbDataBuilder
     {

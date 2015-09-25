@@ -8,7 +8,7 @@ using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public class StubReadableDomainContextProvider : IReadableDomainContextProvider
     {

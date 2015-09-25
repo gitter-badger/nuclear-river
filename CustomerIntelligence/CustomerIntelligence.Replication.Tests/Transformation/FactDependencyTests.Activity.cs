@@ -1,6 +1,6 @@
 ﻿using System;
 
-using NuClear.CustomerIntelligence.Domain.Model;
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Model.Erm;
 
 using NUnit.Framework;
@@ -9,7 +9,7 @@ using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal partial class FactDependencyTests

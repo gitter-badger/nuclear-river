@@ -23,7 +23,7 @@ namespace NuClear.CustomerIntelligence.Domain
             HierarchyMetadata statisticsRecalculationMetadataRoot =
                 HierarchyMetadata
                     .Config
-                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>())
+                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<StatisticsRecalculationMetadataIdentity>())
                     .Childs(StatisticsRecalculationMetadata<CI::FirmCategoryStatistics>
                                 .Config
                                 .HasSource(Specs.Map.Facts.ToStatistics.FirmCategoryStatistics)

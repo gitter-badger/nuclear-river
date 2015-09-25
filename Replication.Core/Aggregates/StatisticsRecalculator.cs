@@ -29,7 +29,7 @@ namespace NuClear.Replication.Core.Aggregates
                 throw new NotSupportedException(string.Format("Metadata for identity '{0}' cannot be found.", typeof(StatisticsRecalculationMetadataIdentity).Name));
             }
 
-            var metadata = metadataSet.Metadata.Values.Single();
+            var metadata = metadataSet.Metadata.Values.SelectMany(x => x.Elements).Single();
             var processor = _statisticsProcessorFactory.Create(metadata);
 
             using (Probe.Create("Recalculate Statistics Operations"))

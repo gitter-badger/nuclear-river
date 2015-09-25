@@ -4,7 +4,6 @@ using System.Linq;
 using System.Transactions;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Metadata;
@@ -43,8 +42,7 @@ namespace NuClear.Replication.Core.Aggregates
                     var aggregateType = slice.Key.AggregateType;
 
                     IMetadataElement aggregateMetadata;
-                    Uri factMetadataId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For(ReplicationMetadataIdentity.Instance.Id, "Aggregates", aggregateType.Name);
-                    if (!metadataSet.Metadata.TryGetValue(factMetadataId, out aggregateMetadata))
+                    if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(aggregateType.Name, UriKind.Relative), out aggregateMetadata))
                     {
                         throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", aggregateType));
                     }

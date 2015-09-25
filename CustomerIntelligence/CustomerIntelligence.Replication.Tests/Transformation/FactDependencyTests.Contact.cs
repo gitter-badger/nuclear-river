@@ -5,7 +5,7 @@ using Erm = NuClear.CustomerIntelligence.Domain.Model.Erm;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal partial class FactDependencyTests

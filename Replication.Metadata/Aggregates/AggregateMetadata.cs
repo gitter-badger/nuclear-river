@@ -12,7 +12,7 @@ namespace NuClear.Replication.Metadata.Aggregates
     public class AggregateMetadata<T> : MetadataElement<AggregateMetadata<T>, AggregateMetadataBuilder<T>> 
         where T : class, IIdentifiable
     {
-        private readonly IMetadataElementIdentity _identity = new Uri(string.Format("Aggregates/{0}", typeof(T).Name), UriKind.Relative).AsIdentity();
+        private readonly IMetadataElementIdentity _identity = new Uri(typeof(T).Name, UriKind.Relative).AsIdentity();
 
         public AggregateMetadata(
             MapToObjectsSpecProvider<T, T> mapSpecificationProviderForSource,

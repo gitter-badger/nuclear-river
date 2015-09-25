@@ -6,7 +6,7 @@ using LinqToDB;
 using LinqToDB.Data;
 using LinqToDB.Mapping;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Data
+namespace NuClear.CustomerIntelligence.Replication.Tests.Data
 {
     internal static class DataConnectionExtensions
     {

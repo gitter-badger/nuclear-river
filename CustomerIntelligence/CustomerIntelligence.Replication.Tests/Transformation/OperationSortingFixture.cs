@@ -5,7 +5,7 @@ using NuClear.Replication.Metadata.Operations;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class OperationSortingFixture

@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 using LinqToDB.Data;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.Data
+namespace NuClear.CustomerIntelligence.Replication.Tests.Data
 {
     internal sealed class NoSqlTrace : IDisposable
     {

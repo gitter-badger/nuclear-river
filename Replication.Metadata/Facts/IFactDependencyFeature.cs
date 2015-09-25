@@ -12,15 +12,10 @@ namespace NuClear.Replication.Metadata.Facts
         Type DependancyType { get; }
     }
 
-    public interface IDirectFactDependencyFeature : IFactDependencyFeature
-    {
-    }
-
     public interface IIndirectFactDependencyFeature : IFactDependencyFeature
     {
     }
-
-
+    
     public interface IFactDependencyFeature<T> : IFactDependencyFeature
     {
         MapToObjectsSpecProvider<T, IOperation> MapSpecificationProviderOnCreate { get; }

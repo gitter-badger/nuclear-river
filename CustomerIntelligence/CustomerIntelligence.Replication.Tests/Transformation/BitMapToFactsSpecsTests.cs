@@ -6,7 +6,7 @@ using NuClear.CustomerIntelligence.Domain.Specifications;
 using NUnit.Framework;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
-namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class BitMapToFactsSpecsTests

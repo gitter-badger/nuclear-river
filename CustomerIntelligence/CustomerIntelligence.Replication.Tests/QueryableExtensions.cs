@@ -3,7 +3,7 @@ using System.Linq;
 
 using NuClear.Replication.Metadata.Model;
 
-namespace NuClear.AdvancedSearch.Replication.Tests
+namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     static class QueryableExtensions
     {
