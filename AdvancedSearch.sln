@@ -100,7 +100,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Querying", "Querying", "{77
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Replication", "Replication", "{B2560A63-4013-4556-8DF7-26F711AEED01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Querying.Metadata.Tests", "CustomerIntelligence\CustomerIntelligence.Querying.Metadata.Tests\CustomerIntelligence.Querying.Metadata.Tests.csproj", "{CAA90CA3-1FAB-43E0-A369-62BFB8092596}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Querying.Tests", "CustomerIntelligence\CustomerIntelligence.Querying.Tests\CustomerIntelligence.Querying.Tests.csproj", "{CAA90CA3-1FAB-43E0-A369-62BFB8092596}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

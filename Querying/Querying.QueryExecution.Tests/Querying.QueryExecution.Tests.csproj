@@ -83,7 +83,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomerIntelligenceTests.cs" />
     <Compile Include="QueryExecutionBaseFixture.cs" />
     <Compile Include="QueryExecutionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

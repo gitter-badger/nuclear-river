@@ -1,6 +1,6 @@
 using System;
 
-namespace NuClear.CustomerIntelligence.Querying.Metadata.Tests
+namespace NuClear.CustomerIntelligence.Querying.Tests
 {
     [Flags]
     internal enum MetadataKind

@@ -11,10 +11,10 @@ using NuClear.Querying.Metadata.Features;
 
 using NUnit.Framework;
 
-namespace NuClear.CustomerIntelligence.Querying.Metadata.Tests
+namespace NuClear.CustomerIntelligence.Querying.Tests
 {
     [TestFixture]
-    internal class CustomerIntelligenceMetadataTests
+    internal class MetadataTests
     {
         private MetadataProvider _provider;
 

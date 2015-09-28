@@ -6,6 +6,7 @@ using System.Web.OData;
 
 using Microsoft.OData.Edm;
 
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
@@ -14,18 +15,19 @@ using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Querying.EntityFramework.Emit;
 using NuClear.Querying.Metadata;
 using NuClear.Querying.OData.Building;
+using NuClear.Querying.QueryExecution;
 
 using NUnit.Framework;
 
-namespace NuClear.Querying.QueryExecution.Tests
+namespace NuClear.CustomerIntelligence.Querying.Tests
 {
     /// <remarks>
     /// Executes in invariant culture to simplify expected result after the formatting.
     /// </remarks>>
     [TestFixture, SetCulture("")]
-    public sealed class CustomerIntelligenceTests : QueryExecutionBaseFixture
+    public sealed class QueryExecutionTests : QueryExecutionBaseFixture
     {
-        private readonly IDictionary<Uri, IEdmModel> Models = BuildModels(MetadataProvider, BusinessDirectoryId, CustomerIntelligenceId);
+        private readonly IDictionary<Uri, IEdmModel> _models = BuildModels(MetadataProvider, BusinessDirectoryId, CustomerIntelligenceId);
 
         [TestCase("CategoryGroup", null, Result = "CategoryGroup[]")]
         [TestCase("Project", null, Result = "Project[]")]
@@ -59,7 +61,7 @@ namespace NuClear.Querying.QueryExecution.Tests
 
         private string BuildQuery(string modelName, string type, string filter)
         {
-            var model = Models[Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(modelName)];
+            var model = _models[Metadata.Id.For<AdvancedSearchIdentity>(modelName)];
 
             var firmType = LookupClrType(model, type);
 
@@ -69,7 +71,7 @@ namespace NuClear.Querying.QueryExecution.Tests
 
             var expression = ToExpression(query, firmType.Namespace);
 
-            Debug.WriteLine(expression);
+            Debug.WriteLine((string)expression);
 
             return expression;
         }
@@ -86,7 +88,7 @@ namespace NuClear.Querying.QueryExecution.Tests
 
         private static Type LookupClrType(IEdmModel model, string name)
         {
-            var @namespace = model.DeclaredNamespaces.SingleOrDefault();
+            var @namespace = model.DeclaredNamespaces.SingleOrDefault<string>();
             var fullName = (string.IsNullOrEmpty(@namespace) ? "" : @namespace + ".") + name;
 
             var edmType = model.FindDeclaredType(fullName);
@@ -117,7 +119,7 @@ namespace NuClear.Querying.QueryExecution.Tests
                 if (context != null)
                 {
                     var clrTypes = EmitClrTypes(context);
-                    var model = builder.Build(identity).AnnotateByClrTypes(elementId => clrTypes[elementId.AsIdentity()]);
+                    var model = builder.Build(identity).AnnotateByClrTypes(elementId => clrTypes[MetadataIdUtils.AsIdentity(elementId)]);
 
                     models.Add(identity, model);
                 }
@@ -126,19 +128,17 @@ namespace NuClear.Querying.QueryExecution.Tests
             return models;
         }
 
-        #region Customer Intelligence
-
         private const string BusinessDirectory = "BusinessDirectory";
         private const string CustomerIntelligence = "CustomerIntelligence";
 
-        private static readonly Uri BusinessDirectoryId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(BusinessDirectory);
-        private static readonly Uri CustomerIntelligenceId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(CustomerIntelligence);
+        private static readonly Uri BusinessDirectoryId = Metadata.Id.For<AdvancedSearchIdentity>(BusinessDirectory);
+        private static readonly Uri CustomerIntelligenceId = Metadata.Id.For<AdvancedSearchIdentity>(CustomerIntelligence);
 
         private static IMetadataSource AdvancedSearchMetadataSource
         {
             get
             {
-                return new AdvancedSearchMetadataSource();
+                return new QueryingMetadataSource();
             }
         }
 
@@ -149,7 +149,5 @@ namespace NuClear.Querying.QueryExecution.Tests
                 return new MetadataProvider(new[] { AdvancedSearchMetadataSource }, new IMetadataProcessor[0]);
             }
         }
-
-        #endregion
     }
 }
