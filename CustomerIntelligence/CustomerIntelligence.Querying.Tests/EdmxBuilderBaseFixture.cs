@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure;
+using System.Reflection;
 
 using Effort;
 using Effort.DataLoaders;
@@ -10,7 +11,7 @@ using Effort.Provider;
 using Moq;
 
 using NuClear.CustomerIntelligence.Domain;
-using NuClear.CustomerIntelligence.Domain.Model.CI;
+using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
@@ -103,8 +104,9 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
 
             return model;
         }
-        
-        private static readonly string DefaultTestDataUri = string.Format("res://{0}/Data", typeof(EdmxBuilderBaseFixture).Assembly.GetName().Name);
+
+        // NOTE: Assembly name CANNOT start with digits, for example, 2GIS.Assembly.Name. It should be just, for example, Assembly.Name or DoubleGIS.Assembly.Name
+        private static readonly string DefaultTestDataUri = string.Format("res://{0}/Data", Assembly.GetExecutingAssembly().GetName().Name);
 
         protected static DbConnection CreateConnection(string path = null)
         {
