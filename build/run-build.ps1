@@ -1,7 +1,7 @@
 param([string[]]$TaskList = @(), [hashtable]$Properties = @{})
 
 if ($TaskList.Count -eq 0){
-	$TaskList = @('Build-Packages')
+	$TaskList = @('Build-Packages', 'Deploy-Packages')
 }
 
 if ($Properties.Count -eq 0){
@@ -36,7 +36,7 @@ $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.1.0-optimize-6d947a-91\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.1.6\tools\buildtools.psm1" -DisableNameChecking -Force
 Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking -Force
 
 Add-Metadata (Parse-EnvironmentMetadata $Properties)
