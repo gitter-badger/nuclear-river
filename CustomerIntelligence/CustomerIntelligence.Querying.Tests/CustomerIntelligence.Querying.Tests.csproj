@@ -39,6 +39,18 @@
       <HintPath>..\..\packages\2GIS.NuClear.Utils.1.0.3\lib\portable-net451+win81+wpa81\2GIS.NuClear.Utils.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Effort, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Effort.EF6.1.1.4\lib\net45\Effort.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.OData.Core, Version=6.13.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.OData.Core.6.13.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Core.dll</HintPath>
       <Private>True</Private>
@@ -59,17 +71,24 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NMemory, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6a46696d54971e6d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NMemory.1.0.1\lib\net45\NMemory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Http, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.2\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
@@ -82,7 +101,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EdmModelBuilderTests.cs" />
+    <Compile Include="EdmxBuilderBaseFixture.cs" />
+    <Compile Include="EdmxBuilderModelTests.cs" />
+    <Compile Include="EdmxExtensions.cs" />
     <Compile Include="MetadataTests.cs" />
+    <Compile Include="Model\CustomerIntelligence\CategoryGroup.cs" />
+    <Compile Include="Model\CustomerIntelligence\Client.cs" />
+    <Compile Include="Model\CustomerIntelligence\ClientContact.cs" />
+    <Compile Include="Model\CustomerIntelligence\ContactRole.cs" />
+    <Compile Include="Model\CustomerIntelligence\Firm.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmBalance.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
+    <Compile Include="Model\CustomerIntelligence\Project.cs" />
+    <Compile Include="Model\CustomerIntelligence\ProjectCategory.cs" />
+    <Compile Include="Model\CustomerIntelligence\Territory.cs" />
     <Compile Include="QueryExecutionBaseFixture.cs" />
     <Compile Include="QueryExecutionTests.cs" />
     <Compile Include="MetadataExtensions.cs" />
@@ -90,6 +122,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Data\CategoryGroup.csv" />
+    <EmbeddedResource Include="Data\Client.csv" />
+    <EmbeddedResource Include="Data\ClientContact.csv" />
+    <EmbeddedResource Include="Data\FirmBalance.csv" />
+    <EmbeddedResource Include="Data\FirmCategory.csv" />
+    <EmbeddedResource Include="Data\FirmView.csv" />
+    <EmbeddedResource Include="Data\Project.csv" />
+    <EmbeddedResource Include="Data\ProjectCategory.csv" />
+    <EmbeddedResource Include="Data\Territory.csv" />
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +150,10 @@
     <ProjectReference Include="..\..\Querying\Querying.QueryExecution\Querying.QueryExecution.csproj">
       <Project>{135ef4b2-e97c-44b5-a6ac-6e97b103de55}</Project>
       <Name>Querying.QueryExecution</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
+      <Project>{00BC9C6C-C9E2-4954-BB28-53C57937A286}</Project>
+      <Name>Replication.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{B0A258D5-7387-4FB2-BA18-B51550DA3F0B}</Project>

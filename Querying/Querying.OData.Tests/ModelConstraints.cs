@@ -8,7 +8,7 @@ using NUnit.Framework.Constraints;
 
 namespace NuClear.Querying.OData.Tests
 {
-    internal static class Model
+    internal static class ModelConstraints
     {
         public static Constraint IsValid
         {

@@ -34,7 +34,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
 
             var model = BuildModel(provider, contextId);
 
-            Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
+            Assert.That(model, Is.Not.Null.And.Matches(ModelConstraints.IsValid));
         }
 
         private static IMetadataProvider CreateProvider(params IMetadataSource[] sources)
@@ -69,7 +69,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
         }
     }
 
-    internal static class Model
+    internal static class ModelConstraints
     {
         public static Constraint IsValid
         {

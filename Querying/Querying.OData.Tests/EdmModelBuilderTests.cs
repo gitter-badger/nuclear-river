@@ -225,7 +225,7 @@ namespace NuClear.Querying.OData.Tests
         {
             var model = BuildModel(config);
 
-            Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
+            Assert.That(model, Is.Not.Null.And.Matches(ModelConstraints.IsValid));
 
             return model;
         }

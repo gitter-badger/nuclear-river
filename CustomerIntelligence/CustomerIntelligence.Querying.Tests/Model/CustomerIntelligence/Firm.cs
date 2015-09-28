@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NuClear.Querying.EntityFramework.Tests.Model.CustomerIntelligence
+namespace NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence
 {
     public class Firm
     {

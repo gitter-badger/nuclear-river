@@ -92,31 +92,12 @@
     <Compile Include="EdmxBuilderBaseFixture.cs" />
     <Compile Include="EdmModelExtensions.cs" />
     <Compile Include="EdmxBuilderMappingTests.cs" />
-    <Compile Include="EdmxBuilderModelTests.cs" />
     <Compile Include="EdmxExtensions.cs" />
     <Compile Include="EdmxBuilderConceptualModelTests.cs" />
-    <Compile Include="Model\CustomerIntelligence\CategoryGroup.cs" />
-    <Compile Include="Model\CustomerIntelligence\Client.cs" />
-    <Compile Include="Model\CustomerIntelligence\ClientContact.cs" />
-    <Compile Include="Model\CustomerIntelligence\ContactRole.cs" />
-    <Compile Include="Model\CustomerIntelligence\Firm.cs" />
-    <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
-    <Compile Include="Model\CustomerIntelligence\FirmBalance.cs" />
-    <Compile Include="Model\CustomerIntelligence\Project.cs" />
-    <Compile Include="Model\CustomerIntelligence\ProjectCategory.cs" />
-    <Compile Include="Model\CustomerIntelligence\Territory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EdmxBuilderStoreModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\ClientContact.csv" />
-    <EmbeddedResource Include="Data\Client.csv" />
-    <EmbeddedResource Include="Data\Project.csv" />
-    <EmbeddedResource Include="Data\Territory.csv" />
-    <EmbeddedResource Include="Data\FirmBalance.csv" />
-    <EmbeddedResource Include="Data\CategoryGroup.csv" />
-    <EmbeddedResource Include="Data\FirmCategory.csv" />
-    <EmbeddedResource Include="Data\ProjectCategory.csv" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -147,9 +128,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Data\FirmView.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

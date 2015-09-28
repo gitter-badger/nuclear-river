@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 
-using Effort;
-using Effort.DataLoaders;
 using Effort.Provider;
 
 using Moq;
@@ -17,7 +14,6 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Querying.EntityFramework.Building;
-using NuClear.Querying.EntityFramework.Tests.Model.CustomerIntelligence;
 using NuClear.Querying.Metadata;
 using NuClear.Querying.Metadata.FluentSyntax;
 
@@ -34,79 +30,13 @@ namespace NuClear.Querying.EntityFramework.Tests
             EffortProviderConfiguration.RegisterProvider();
         }
 
-        protected enum AdvancedSearchModel
-        {
-            CustomerIntelligence,
-        }
-
-        protected static DbProviderFactory EffortFactory
-        {
-            get
-            {
-                return DbProviderFactories.GetFactory(EffortProviderConfiguration.ProviderInvariantName);
-            }
-        }
-
+        
         protected static DbProviderInfo EffortProvider
         {
             get
             {
                 return new DbProviderInfo(EffortProviderConfiguration.ProviderInvariantName, EffortProviderManifestTokens.Version1);
             }
-        }
-
-        protected static IMetadataSource AdvancedSearchMetadataSource
-        {
-            get
-            {
-                return new AdvancedSearchMetadataSource();
-            }
-        }
-
-        protected static ITypeProvider CustomerIntelligenceTypeProvider
-        {
-            get
-            {
-                return MockTypeProvider(
-                    typeof(CategoryGroup),
-                    typeof(Client),
-                    typeof(ClientContact),
-                    typeof(Firm),
-                    typeof(FirmBalance),
-                    typeof(FirmCategory),
-                    typeof(Project),
-                    typeof(ProjectCategory),
-                    typeof(Territory));
-            }
-        }
-
-        private static ITypeProvider MockTypeProvider(params Type[] types)
-        {
-            var typeProvider = new Mock<ITypeProvider>();
-
-            foreach (var type in types)
-            {
-                RegisterType(typeProvider, type);
-            }
-
-            return typeProvider.Object;
-        }
-
-        private static void RegisterType(Mock<ITypeProvider> typeProvider, Type type)
-        {
-            typeProvider.Setup(x => x.Resolve(It.Is<EntityElement>(el => el.ResolveName() == type.Name))).Returns(type);
-        }
-
-        protected static DbModel BuildModel(IMetadataProvider metadataProvider, AdvancedSearchModel model, ITypeProvider typeProvider = null)
-        {
-            var builder = CreateBuilder(metadataProvider, typeProvider);
-            var contextId = BuildContextId(model);
-            return builder.Build(EffortProvider, contextId);
-        }
-
-        protected static DbModel BuildModel(IMetadataSource source, AdvancedSearchModel model, ITypeProvider typeProvider = null)
-        {
-            return BuildModel(CreateMetadataProvider(source), model, typeProvider);
         }
 
         protected static DbModel BuildModel(BoundedContextElement context, ITypeProvider typeProvider = null)
@@ -243,24 +173,6 @@ namespace NuClear.Querying.EntityFramework.Tests
             }
         }
 
-        #region Test Data
-
-        private static readonly string DefaultTestDataUri = string.Format("res://{0}/Data", typeof(EdmxBuilderBaseFixture).Assembly.GetName().Name);
-
-        protected static DbConnection CreateMemoryConnection()
-        {
-            return DbConnectionFactory.CreateTransient();
-        }
-
-        protected static DbConnection CreateConnection(string path = null)
-        {
-            var dataLoader = new CsvDataLoader(path ?? DefaultTestDataUri);
-            var cachingLoader = new CachingDataLoader(dataLoader);
-            return DbConnectionFactory.CreateTransient(cachingLoader);
-        }
-
-        #endregion
-
         #region Metadata Helpers
 
         protected static BoundedContextElementBuilder NewContext(string name)
@@ -309,11 +221,6 @@ namespace NuClear.Querying.EntityFramework.Tests
             return typeProvider == null 
                 ? new EdmxModelBuilder(metadataProvider)
                 : new EdmxModelBuilder(metadataProvider, typeProvider);
-        }
-
-        protected static Uri BuildContextId(AdvancedSearchModel model)
-        {
-            return AdvancedSearchIdentity.Instance.Id.WithRelative(new Uri(model.ToString("G"), UriKind.Relative));
         }
 
         protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)

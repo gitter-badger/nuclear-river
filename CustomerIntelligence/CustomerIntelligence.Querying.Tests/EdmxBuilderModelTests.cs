@@ -3,11 +3,11 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
-using NuClear.Querying.EntityFramework.Tests.Model.CustomerIntelligence;
+using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
 
 using NUnit.Framework;
 
-namespace NuClear.Querying.EntityFramework.Tests
+namespace NuClear.CustomerIntelligence.Querying.Tests
 {
     [TestFixture]
     internal class EdmxBuilderModelTests : EdmxBuilderBaseFixture
@@ -15,7 +15,7 @@ namespace NuClear.Querying.EntityFramework.Tests
         [Test]
         public void ShouldQueryBusinessDirectoryModel()
         {
-            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
+            var model = CreateModel();
             model.Dump();
 
             using (var connection = CreateConnection())
@@ -30,7 +30,7 @@ namespace NuClear.Querying.EntityFramework.Tests
         [Test]
         public void ShouldQueryCustomerIntelligenceModel()
         {
-            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
+            var model = CreateModel();
             model.Dump();
 
             using (var connection = CreateConnection())
@@ -47,7 +47,7 @@ namespace NuClear.Querying.EntityFramework.Tests
         [Test]
         public void ShouldQueryClients()
         {
-            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
+            var model = CreateModel();
 
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
@@ -62,7 +62,7 @@ namespace NuClear.Querying.EntityFramework.Tests
         [Test]
         public void ShouldQueryFirms()
         {
-            var model = CreateModel(AdvancedSearchModel.CustomerIntelligence);
+            var model = CreateModel();
 
             using (var connection = CreateConnection())
             using (var context = new DbContext(connection, model.Compile(), false))
@@ -121,9 +121,9 @@ namespace NuClear.Querying.EntityFramework.Tests
             }
         }
 
-        private static DbModel CreateModel(AdvancedSearchModel model)
+        private static DbModel CreateModel()
         {
-            return BuildModel(AdvancedSearchMetadataSource, model, CustomerIntelligenceTypeProvider);
+            return BuildModel(AdvancedSearchMetadataSource, CustomerIntelligenceTypeProvider);
         }
   }
 }
