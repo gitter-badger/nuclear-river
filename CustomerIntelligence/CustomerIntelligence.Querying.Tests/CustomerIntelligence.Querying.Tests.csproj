@@ -78,8 +78,10 @@
       <HintPath>..\..\packages\Microsoft.AspNet.OData.5.7.0\lib\net45\System.Web.OData.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EdmModelBuilderTests.cs" />
     <Compile Include="MetadataTests.cs" />
     <Compile Include="QueryExecutionBaseFixture.cs" />
     <Compile Include="QueryExecutionTests.cs" />

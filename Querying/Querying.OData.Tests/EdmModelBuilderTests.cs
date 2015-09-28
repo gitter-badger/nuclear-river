@@ -178,20 +178,7 @@ namespace NuClear.Querying.OData.Tests
                 .And.Matches(Property.IsCollection()));
         }
 
-        [Test]
-        public void ShouldBuildValidModelForCustomerIntelligenceContext()
-        {
-            var provider = CreateProvider(new AdvancedSearchMetadataSource());
-            var contextId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>("CustomerIntelligence");
-
-            BoundedContextElement boundedContext;
-            provider.TryGetMetadata(contextId, out boundedContext);
-
-            var model = BuildModel(provider, contextId);
-
-            Assert.That(model, Is.Not.Null.And.Matches(Model.IsValid));
-        }
-
+        
         #region Utils
 
         private static IMetadataSource MockSource(IMetadataElement context)
