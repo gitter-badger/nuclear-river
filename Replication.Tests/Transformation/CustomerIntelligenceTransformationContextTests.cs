@@ -70,7 +70,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 ));
             context.SetupGet(x => x.Firms).Returns(Inquire(
                 new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
-                new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2}
+                new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = null, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2}
                 ));
             context.SetupGet(x => x.FirmAddresses).Returns(Inquire(
                 new Facts::FirmAddress { Id = 1, FirmId = 1 },
