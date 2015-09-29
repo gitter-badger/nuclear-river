@@ -23,6 +23,12 @@ function Get-XdtTransformMetadata($Context){
 				"ConvertUseCases.Production.$($Context.Country).config"
 				)
 		}
+		'Load' {
+			$xdt += @(
+				"Erm.Load.$($Context.Country).config"
+				"ConvertUseCases.Load.$($Context.Country).config"
+				)
+		}
 	}
 
 	return $xdt
