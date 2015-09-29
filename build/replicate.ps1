@@ -106,12 +106,11 @@ function Create-Database {
 
 	$connection = Create-SqlServerConnection $builder.ConnectionString
 
-	$command = @"
-if (not exists(select * from sys.databases where name = '$initialCatalog'))
-	exec ('create database $initialCatalog')
-"@
+	$sqlScript = Get-Content (Join-Path $SqlScriptsDir 'Database.sql') -Raw
+	$sqlScript = $sqlScript -replace '\$\(Database\)', $initialCatalog
 
-	Exec-Command $connection $command
+	Write-Host "Database.sql..."
+	Exec-Command $connection $sqlScript
 }
 
 function Update-Schemas {
@@ -119,11 +118,10 @@ function Update-Schemas {
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
 
 	foreach ($schema in $UpdateSchemas) {
-		$sqlScript = Get-Item (Join-Path $SqlScriptsDir "$schema.sql")
-		Write-Host "$schema.sql..."
+		$sqlScript = Get-Content (Join-Path $SqlScriptsDir "$schema.sql") -Raw
 
-		$command = [System.IO.File]::ReadAllText($sqlScript.FullName)
-		Exec-Command $connection $command
+		Write-Host "$schema.sql..."
+		Exec-Command $connection $sqlScript
 	}
 }
 

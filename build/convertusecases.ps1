@@ -3,9 +3,9 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\artifacts.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\servicebus.psm1" -DisableNameChecking
 
 Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] } {
