@@ -51,8 +51,8 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
 
                     _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
 
-                    var statistics = Enumerable.OfType<RecalculateStatisticsOperation>(result).ToArray();
-                    var aggregates = Enumerable.OfType<AggregateOperation>(result).ToArray();
+                    var statistics = result.OfType<RecalculateStatisticsOperation>().ToArray();
+                    var aggregates = result.OfType<AggregateOperation>().ToArray();
 
                     // We always need to use different transaction scope to operate with operation sender because it has its own store
                     using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,

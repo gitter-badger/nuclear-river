@@ -6,6 +6,7 @@ using Moq;
 
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
+using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.API.Settings;
@@ -33,20 +34,20 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 			factProcessor.Setup(x => x.ApplyChanges(It.IsAny<IReadOnlyCollection<long>>()))
 			             .Returns(new IOperation[0]);
 
-            var metadataSource = new FactsReplicationMetadataSource();
-		    var metadataSet = new MetadataSet(metadataSource.Metadata.ToDictionary(x => x.Key, x => x.Value));
-            var matadataProvider = new Mock<IMetadataProvider>();
-		    matadataProvider.Setup(x => x.TryGetMetadata<ReplicationMetadataIdentity>(out metadataSet))
-		                    .Returns(true);
+		    var provider = new MetadataProvider(new[] { new FactsReplicationMetadataSource() }, new IMetadataProcessor[0]);
 
             var factoryInvocationOrder = new List<Type>();
             var factProcessorFactory = new Mock<IFactProcessorFactory>();
-			factProcessorFactory.Setup(x => x.Create(It.IsAny<Type>(), It.IsAny<IMetadataElement>()))
-			                    .Callback<Type, IMetadataElement>((type, element) => { factoryInvocationOrder.Add(type); })
+			factProcessorFactory.Setup(x => x.Create(It.IsAny<IMetadataElement>()))
+			                    .Callback<IMetadataElement>(element =>
+			                                                {
+			                                                    var type = element.GetType().GenericTypeArguments[0];
+			                                                    factoryInvocationOrder.Add(type);
+			                                                })
 			                    .Returns(factProcessor.Object);
 
-		    var transformation = new FactsReplicator(matadataProvider.Object,
-		                                             factProcessorFactory.Object,
+		    var transformation = new FactsReplicator(provider,
+                                                     factProcessorFactory.Object,
 		                                             Mock.Of<IReplicationSettings>(),
 		                                             Mock.Of<ITracer>());
 

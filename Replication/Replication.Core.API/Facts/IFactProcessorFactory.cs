@@ -6,6 +6,6 @@ namespace NuClear.Replication.Core.API.Facts
 {
     public interface IFactProcessorFactory
     {
-        IFactProcessor Create(Type factType, IMetadataElement factMetadata);
+        IFactProcessor Create(IMetadataElement factMetadata);
     }
 }

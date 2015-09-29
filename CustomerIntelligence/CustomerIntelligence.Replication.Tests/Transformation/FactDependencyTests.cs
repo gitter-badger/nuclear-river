@@ -771,7 +771,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 
                 var repository = _repositoryFactory.Create<TFact>();
                 var factory = new Factory<TFact>(_query, repository);
-                var processor = factory.Create(factType, factMetadata);
+                var processor = factory.Create(factMetadata);
 
                 _operations.AddRange(processor.ApplyChanges(ids));
 
@@ -800,7 +800,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     _repository = repository;
                 }
 
-                public IFactProcessor Create(Type factType, IMetadataElement factMetadata)
+                public IFactProcessor Create(IMetadataElement factMetadata)
                 {
                     return new FactProcessor<TFact>((FactMetadata<TFact>)factMetadata, this, _query, _repository);
                 }

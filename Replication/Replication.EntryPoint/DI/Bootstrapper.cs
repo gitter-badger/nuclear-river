@@ -40,7 +40,6 @@ using NuClear.Messaging.Transports.CorporateBus;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.ServiceBus;
 using NuClear.Messaging.Transports.ServiceBus.API;
-using NuClear.Messaging.Transports.ServiceBus.LockRenewer;
 using NuClear.Metamodeling.Domain.Processors.Concrete;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
@@ -51,10 +50,12 @@ using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
 using NuClear.Replication.Core;
+using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.API.Settings;
+using NuClear.Replication.Core.Facts;
 using NuClear.Replication.EntryPoint.Factories;
 using NuClear.Replication.EntryPoint.Factories.Messaging.Processor;
 using NuClear.Replication.EntryPoint.Factories.Messaging.Receiver;
@@ -89,7 +90,7 @@ using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLS
 
 namespace NuClear.Replication.EntryPoint.DI
 {
-    public static partial class Bootstrapper
+    public static class Bootstrapper
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
@@ -113,7 +114,7 @@ namespace NuClear.Replication.EntryPoint.DI
                      .ConfigureWcf()
                      .ConfigureOperationsProcessing()
                      .ConfigureStorage(storageSettings, EntryPointSpecificLifetimeManagerFactory)
-                     .ConfigureMetdadataProcessing(EntryPointSpecificLifetimeManagerFactory);
+                     .ConfigureReplication(EntryPointSpecificLifetimeManagerFactory);
 
             ReplicationRoot.Instance.PerformTypesMassProcessing(massProcessors, true, typeof(object));
 
@@ -270,15 +271,19 @@ namespace NuClear.Replication.EntryPoint.DI
                 .ConfigureReadWriteModels();
         }
 
-        private static IUnityContainer ConfigureMetdadataProcessing(this IUnityContainer container, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
+        private static IUnityContainer ConfigureReplication(this IUnityContainer container, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
             return container
+                .RegisterType<IFactsReplicator, FactsReplicator>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IStatisticsImporterFactory, UnityStatisticsImporterFactory>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IAggregatesConstructor, AggregatesConstructor>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IStatisticsRecalculator, StatisticsRecalculator>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IAggregateProcessorFactory, UnityAggregateProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IFactDependencyProcessorFactory, UnityFactDependencyProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IStatisticsProcessorFactory, UnityStatisticsProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IValueObjectProcessorFactory, UnityValueObjectProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterType<IStatisticsImporterFactory, UnityStatisticsImporterFactory>(entryPointSpecificLifetimeManagerFactory());
+                .RegisterType<IFactProcessorFactory, UnityFactProcessorFactory>(entryPointSpecificLifetimeManagerFactory());
+
         }
 
         private static IUnityContainer ConfigureReadWriteModels(this IUnityContainer container)

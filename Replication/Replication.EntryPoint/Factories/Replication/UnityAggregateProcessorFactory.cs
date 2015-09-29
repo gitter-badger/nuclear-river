@@ -17,8 +17,9 @@ namespace NuClear.Replication.EntryPoint.Factories.Replication
             _unityContainer = unityContainer;
         }
 
-        public IAggregateProcessor Create(Type aggregateType, IMetadataElement aggregateMetadata)
+        public IAggregateProcessor Create(IMetadataElement aggregateMetadata)
         {
+            var aggregateType = aggregateMetadata.GetType().GenericTypeArguments[0];
             var processorType = typeof(AggregateProcessor<>).MakeGenericType(aggregateType);
             var processor = _unityContainer.Resolve(processorType, new DependencyOverride(aggregateMetadata.GetType(), aggregateMetadata));
             return (IAggregateProcessor)processor;

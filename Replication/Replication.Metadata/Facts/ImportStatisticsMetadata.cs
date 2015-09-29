@@ -11,10 +11,11 @@ namespace NuClear.Replication.Metadata.Facts
 {
     public class ImportStatisticsMetadata<T> : MetadataElement<ImportStatisticsMetadata<T>, ImportStatisticsMetadataBuilder<T>>
     {
-        private readonly IMetadataElementIdentity _identity;
         private readonly Func<long, FindSpecification<T>> _findSpecificationProvider;
         private readonly MapSpecification<IStatisticsDto, IReadOnlyCollection<T>> _mapSpecification;
-        
+
+        private IMetadataElementIdentity _identity;
+
         public ImportStatisticsMetadata(
             Type statisticsDtoType,
             Func<long, FindSpecification<T>> findSpecificationProvider,
@@ -28,6 +29,7 @@ namespace NuClear.Replication.Metadata.Facts
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
+            _identity = actualMetadataElementIdentity;
         }
 
         public override IMetadataElementIdentity Identity

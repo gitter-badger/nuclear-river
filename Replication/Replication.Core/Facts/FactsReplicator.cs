@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.Metamodeling.Elements;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Facts;
@@ -38,12 +39,6 @@ namespace NuClear.Replication.Core.Facts
         {
             using (Probe.Create("ETL1 Transforming"))
             {
-                MetadataSet metadataSet;
-                if (!_metadataProvider.TryGetMetadata<ReplicationMetadataIdentity>(out metadataSet))
-                {
-                    throw new NotSupportedException(string.Format("Metadata for identity '{0}' cannot be found.", typeof(ReplicationMetadataIdentity).Name));
-                }
-
                 var result = Enumerable.Empty<IOperation>();
 
                 var slices = operations.GroupBy(operation => new { operation.FactType })
@@ -54,7 +49,8 @@ namespace NuClear.Replication.Core.Facts
                     var factType = slice.Key.FactType;
 
                     IMetadataElement factMetadata;
-                    if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(factType.Name, UriKind.Relative), out factMetadata))
+                    var metadataId = ReplicationMetadataIdentity.Instance.Id.WithRelative(new Uri(string.Format("Facts/{0}", factType.Name), UriKind.Relative));
+                    if (!_metadataProvider.TryGetMetadata(metadataId, out factMetadata))
                     {
                         throw new NotSupportedException(string.Format("The fact of type '{0}' is not supported.", factType));
                     }
@@ -62,7 +58,7 @@ namespace NuClear.Replication.Core.Facts
                     var factIds = slice.Select(x => x.FactId).Distinct();
                     using (Probe.Create("ETL1 Transforming", factType.Name))
                     {
-                        var processor = _factProcessorFactory.Create(factType, factMetadata);
+                        var processor = _factProcessorFactory.Create(factMetadata);
 
                         foreach (var batch in factIds.CreateBatches(_replicationSettings.ReplicationBatchSize))
                         {

@@ -448,7 +448,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 }
 
                 var factory = new Factory<TAggregate>(_query, _repositoryFactory);
-                var processor = factory.Create(aggregateType, aggregateMetadata);
+                var processor = factory.Create(aggregateMetadata);
                 action.Invoke((AggregateProcessor<TAggregate>)processor);
 
                 return this;
@@ -466,7 +466,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 	                _repositoryFactory = repositoryFactory;
                 }
 
-                public IAggregateProcessor Create(Type aggregateType, IMetadataElement aggregateMetadata)
+                public IAggregateProcessor Create(IMetadataElement aggregateMetadata)
                 {
                     return new AggregateProcessor<TAggregate>((AggregateMetadata<TAggregate>)aggregateMetadata, this, _query, _repositoryFactory.Create<TAggregate>());
                 }

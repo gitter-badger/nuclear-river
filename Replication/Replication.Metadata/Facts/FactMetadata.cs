@@ -12,7 +12,7 @@ namespace NuClear.Replication.Metadata.Facts
     public class FactMetadata<T> : MetadataElement<FactMetadata<T>, FactMetadataBuilder<T>> 
         where T : class, IIdentifiable
     {
-        private readonly IMetadataElementIdentity _identity = new Uri(typeof(T).Name, UriKind.Relative).AsIdentity();
+        private IMetadataElementIdentity _identity = new Uri(typeof(T).Name, UriKind.Relative).AsIdentity();
 
         public FactMetadata(
             MapToObjectsSpecProvider<T, T> mapSpecificationProviderForSource,
@@ -28,6 +28,7 @@ namespace NuClear.Replication.Metadata.Facts
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
+            _identity = actualMetadataElementIdentity;
         }
 
         public override IMetadataElementIdentity Identity

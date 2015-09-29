@@ -4,6 +4,7 @@ using System.Linq;
 using System.Transactions;
 
 using NuClear.Metamodeling.Elements;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Metadata;
@@ -27,12 +28,6 @@ namespace NuClear.Replication.Core.Aggregates
         {
             using (Probe.Create("ETL2 Transforming"))
             {
-                MetadataSet metadataSet;
-                if (!_metadataProvider.TryGetMetadata<ReplicationMetadataIdentity>(out metadataSet))
-                {
-                    throw new NotSupportedException(string.Format("Metadata for identity '{0}' cannot be found.", typeof(ReplicationMetadataIdentity).Name));
-                }
-
                 var slices = operations.GroupBy(x => new { Operation = x.GetType(), x.AggregateType })
                                        .OrderByDescending(x => x.Key.Operation, new AggregateOperationPriorityComparer());
 
@@ -42,7 +37,8 @@ namespace NuClear.Replication.Core.Aggregates
                     var aggregateType = slice.Key.AggregateType;
 
                     IMetadataElement aggregateMetadata;
-                    if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(aggregateType.Name, UriKind.Relative), out aggregateMetadata))
+                    var metadataId = ReplicationMetadataIdentity.Instance.Id.WithRelative(new Uri(string.Format("Aggregates/{0}", aggregateType.Name), UriKind.Relative));
+                    if (!_metadataProvider.TryGetMetadata(metadataId, out aggregateMetadata))
                     {
                         throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", aggregateType));
                     }
@@ -53,7 +49,7 @@ namespace NuClear.Replication.Core.Aggregates
                     {
                         using (Probe.Create("ETL2 Transforming", aggregateType.Name))
                         {
-							var processor = _aggregateProcessorFactory.Create(aggregateType, aggregateMetadata);
+							var processor = _aggregateProcessorFactory.Create(aggregateMetadata);
 
 							if (operation == typeof(InitializeAggregate))
                             {

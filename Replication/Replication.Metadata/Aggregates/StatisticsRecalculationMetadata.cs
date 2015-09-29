@@ -10,7 +10,7 @@ namespace NuClear.Replication.Metadata.Aggregates
 {
     public class StatisticsRecalculationMetadata<T> : MetadataElement<StatisticsRecalculationMetadata<T>, StatisticsRecalculationMetadataBuilder<T>>
     {
-        private readonly IMetadataElementIdentity _identity = new Uri(typeof(T).Name, UriKind.Relative).AsIdentity();
+        private IMetadataElementIdentity _identity = new Uri(typeof(T).Name, UriKind.Relative).AsIdentity();
 
         public StatisticsRecalculationMetadata(
              MapToObjectsSpecProvider<T, T> mapSpecificationProviderForSource,
@@ -27,6 +27,7 @@ namespace NuClear.Replication.Metadata.Aggregates
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
+            _identity = actualMetadataElementIdentity;
         }
 
         public override IMetadataElementIdentity Identity
