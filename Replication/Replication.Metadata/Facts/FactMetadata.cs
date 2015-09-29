@@ -28,7 +28,6 @@ namespace NuClear.Replication.Metadata.Facts
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
         {
-            throw new NotSupportedException();
         }
 
         public override IMetadataElementIdentity Identity
