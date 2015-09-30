@@ -52,7 +52,7 @@ function Get-ProductionConnectionString {
 
 function Get-ConvertUseCasesServiceTempDir  {
 	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
-	$toolsDir = $packageInfo.VersionedDir
+	$toolsDir = Join-Path $packageInfo.VersionedDir 'tools'
 
 	$tempDir = Join-Path $Metadata.Common.Dir.Temp 'ConvertUseCasesService'
 	Copy-Item $toolsDir $tempDir -Force -Recurse
