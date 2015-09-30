@@ -30,7 +30,7 @@ Task Run-UnitTests {
 }
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
-	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
+	$projectFileName = Get-ProjectFileName 'Querying' 'Querying.Web.OData'
 	QueueBuild-WebPackage $projectFileName 'Web.OData'
 }
 Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
@@ -43,7 +43,7 @@ Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 }
 
 Task QueueBuild-TaskService -Precondition { $Metadata['Replication.EntryPoint'] } {
-	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.EntryPoint'
 	QueueBuild-AppPackage $projectFileName 'Replication.EntryPoint'
 }
 
@@ -60,13 +60,13 @@ Task Import-WinServiceModule {
 }
 
 Task Build-ReplicationLibs {
-	$projectFileName = Get-ProjectFileName '.' 'Replication'
+	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.Core'
 	$buildFile = Create-BuildFile $projectFileName
 	Invoke-MSBuild $buildFile
 	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
 	Publish-Artifacts $conventionalArtifactFileName 'ReplicationLibs'
 
-	$projectFileName = Get-ProjectFileName '.' 'Replication.OperationsProcessing'
+	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.OperationsProcessing'
 	$buildFile = Create-BuildFile $projectFileName
 	Invoke-MSBuild $buildFile
 	$conventionalArtifactFileName = Join-Path (Split-Path $projectFileName) 'bin\Release'
@@ -79,7 +79,7 @@ Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { $Metadata['Up
 	$scriptFilePath = Join-Path $PSScriptRoot 'replicate.ps1'
 	$config = Get-ReplicationConfig
 
-	$sqlScriptsDir = Join-Path $Metadata.Common.Dir.Solution 'Schemas'
+	$sqlScriptsDir = Join-Path $Metadata.Common.Dir.Solution 'CustomerIntelligence\Schemas'
 
 	& $scriptFilePath `
 	-LibDir $libDir `
@@ -90,7 +90,7 @@ Task Update-Schemas -Depends Build-ReplicationLibs -Precondition { $Metadata['Up
 
 function Get-ReplicationConfig {
 
-	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.EntryPoint'
 	$projectDir = Split-Path $projectFileName
 	$configFileName = Join-Path $projectDir 'app.config'
 	[xml]$config = Get-TransformedConfig $configFileName 'Replication.EntryPoint'
