@@ -1,6 +1,5 @@
-﻿using NuClear.CustomerIntelligence.Domain.Model;
-using NuClear.CustomerIntelligence.Domain.Model.Erm;
-using NuClear.Storage.Specifications;
+﻿using NuClear.CustomerIntelligence.Domain.Model.Erm;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.CustomerIntelligence.Domain.Specifications
 {

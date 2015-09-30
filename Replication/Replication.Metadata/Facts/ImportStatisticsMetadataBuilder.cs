@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.Replication.Metadata.Facts
 {

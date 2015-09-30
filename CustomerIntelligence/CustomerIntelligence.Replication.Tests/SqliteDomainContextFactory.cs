@@ -19,7 +19,7 @@ using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
-using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;

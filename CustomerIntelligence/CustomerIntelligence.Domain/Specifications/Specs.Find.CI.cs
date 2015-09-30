@@ -2,7 +2,7 @@
 using System.Linq;
 
 using NuClear.CustomerIntelligence.Domain.Model.CI;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.CustomerIntelligence.Domain.Specifications
 {

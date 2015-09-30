@@ -8,7 +8,7 @@ using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
-using NuClear.Storage.Writings;
+using NuClear.Storage.API.Writings;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore

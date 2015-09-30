@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.CustomerIntelligence.Domain.Specifications;
-using NuClear.Storage.Readings;
+using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;
 

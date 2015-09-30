@@ -12,7 +12,7 @@ using NuClear.Jobs.Schedulers;
 using NuClear.Replication.EntryPoint.DI;
 using NuClear.Replication.EntryPoint.Settings;
 using NuClear.Settings.API;
-using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Tracing.API;
 using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;

@@ -4,8 +4,8 @@ using System.Linq;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Readings;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.Replication.Metadata.Aggregates
 {

@@ -1,5 +1,5 @@
 ﻿using NuClear.Model.Common;
-using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.AdvancedSearch.Common.Identities.Connections
 {

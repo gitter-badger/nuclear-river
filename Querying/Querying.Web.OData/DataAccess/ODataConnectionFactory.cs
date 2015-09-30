@@ -1,10 +1,12 @@
 using System;
-using System.Configuration;
 using System.Data.Common;
+using System.Data.SqlClient;
 
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.Metamodeling.Provider;
 using NuClear.Querying.Metadata;
-using NuClear.Querying.Web.OData.Settings;
+
+using IConnectionStringSettings = NuClear.Storage.API.ConnectionStrings.IConnectionStringSettings;
 
 namespace NuClear.Querying.Web.OData.DataAccess
 {
@@ -27,22 +29,8 @@ namespace NuClear.Querying.Web.OData.DataAccess
                 return null;
             }
 
-            // далее можно кастомизовать DbConnection используя contextId, но пока это не нужно
-            var commonConnectionString = _connectionStringSettings.GetConnectionStringSettings(ConnectionStringName.CustomerIntelligence);
-            return CreateConnection(commonConnectionString);
-        }
-
-        private static DbConnection CreateConnection(ConnectionStringSettings connectionStringSettings)
-        {
-            var dbProviderFactory = DbProviderFactories.GetFactory(connectionStringSettings.ProviderName);
-            var dbConection = dbProviderFactory.CreateConnection();
-            if (dbConection == null)
-            {
-                throw new ArgumentException();
-            }
-
-            dbConection.ConnectionString = connectionStringSettings.ConnectionString;
-            return dbConection;
+            var connectionString = _connectionStringSettings.GetConnectionString(CustomerIntelligenceConnectionStringIdentity.Instance);
+            return new SqlConnection(connectionString);
         }
     }
 }

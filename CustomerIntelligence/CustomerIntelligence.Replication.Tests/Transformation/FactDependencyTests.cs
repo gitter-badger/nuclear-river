@@ -10,7 +10,7 @@ using NuClear.Replication.Core.Facts;
 using NuClear.Replication.Metadata.Facts;
 using NuClear.Replication.Metadata.Model;
 using NuClear.Replication.Metadata.Operations;
-using NuClear.Storage.Readings;
+using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;
 

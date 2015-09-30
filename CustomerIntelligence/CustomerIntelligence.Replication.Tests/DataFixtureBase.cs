@@ -10,9 +10,10 @@ using Moq;
 
 using NuClear.Replication.Core;
 using NuClear.Replication.Core.API;
+using NuClear.Storage.API.Readings;
+using NuClear.Storage.API.Writings;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.Readings;
-using NuClear.Storage.Writings;
 
 using NUnit.Framework;
 

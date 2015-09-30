@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
 using NuClear.CustomerIntelligence.Domain.Model.CI;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Readings;
+using NuClear.Storage.API.Specifications;
 
 using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 

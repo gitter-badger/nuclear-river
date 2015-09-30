@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using NuClear.Replication.Core.API;
-using NuClear.Storage.Writings;
+using NuClear.Storage.API.Writings;
 
 namespace NuClear.Replication.Core
 {

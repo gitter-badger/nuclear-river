@@ -1,4 +1,4 @@
-﻿using NuClear.Storage.Specifications;
+﻿using NuClear.Storage.API.Specifications;
 
 using Bit = NuClear.CustomerIntelligence.Domain.Model.Facts;
 

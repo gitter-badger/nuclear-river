@@ -2,7 +2,7 @@
 using System.Linq;
 
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.Replication.Metadata
 {

@@ -4,7 +4,7 @@ using System.Collections;
 using Moq;
 
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Readings;
+using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;
 

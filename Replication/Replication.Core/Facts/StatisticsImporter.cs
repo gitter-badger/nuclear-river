@@ -7,7 +7,7 @@ using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Metadata.Facts;
 using NuClear.Replication.Metadata.Model;
 using NuClear.Replication.Metadata.Operations;
-using NuClear.Storage.Readings;
+using NuClear.Storage.API.Readings;
 
 namespace NuClear.Replication.Core.Facts
 {

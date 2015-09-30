@@ -9,7 +9,7 @@ using NuClear.OperationsLogging.Transports.ServiceBus;
 using NuClear.Replication.Core.API.Settings;
 using NuClear.Settings;
 using NuClear.Settings.API;
-using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Telemetry.Logstash;
 
 namespace NuClear.Replication.EntryPoint.Settings

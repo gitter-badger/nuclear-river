@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.Replication.Metadata.Aggregates
 {

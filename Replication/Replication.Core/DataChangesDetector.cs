@@ -4,8 +4,8 @@ using System.Transactions;
 
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Metadata;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Specifications;
+using NuClear.Storage.API.Readings;
+using NuClear.Storage.API.Specifications;
 
 namespace NuClear.Replication.Core
 {

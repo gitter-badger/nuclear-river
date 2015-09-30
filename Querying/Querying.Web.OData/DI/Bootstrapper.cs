@@ -6,6 +6,7 @@ using System.Web.OData.Extensions;
 
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.DI.Unity.Config;
@@ -16,9 +17,9 @@ using NuClear.Querying.EntityFramework.Building;
 using NuClear.Querying.EntityFramework.Emit;
 using NuClear.Querying.Web.OData.DataAccess;
 using NuClear.Querying.Web.OData.DynamicControllers;
-using NuClear.Querying.Web.OData.Settings;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
+using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Tracing.API;
 using NuClear.Tracing.Environment;
 using NuClear.Tracing.Log4Net;
@@ -36,8 +37,7 @@ namespace NuClear.Querying.Web.OData.DI
                 .ConfigureStoreModel()
                 .ConfigureWebApiOData()
                 .ConfigureTracer(settingsContainer.AsSettings<IEnvironmentSettings>(), settingsContainer.AsSettings<IConnectionStringSettings>())
-                .ConfigureWebApiTracer()
-                ;
+                .ConfigureWebApiTracer();
 
             return container;
         }
@@ -61,7 +61,7 @@ namespace NuClear.Querying.Web.OData.DI
             var tracer = Log4NetTracerBuilder.Use
                                              .DefaultXmlConfig
                                              .EventLog
-                                             .DB(connectionStringSettings.GetConnectionString(ConnectionStringName.Logging))
+                                             .DB(connectionStringSettings.GetConnectionString(LoggingConnectionStringIdenrtity.Instance))
                                              .Build;
 
             return container.RegisterInstance(tracer)

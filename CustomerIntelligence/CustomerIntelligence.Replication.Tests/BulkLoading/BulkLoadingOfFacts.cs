@@ -5,6 +5,7 @@ using System.Linq;
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
+using NuClear.Storage.API.Readings;
 using NuClear.Storage.Readings;
 
 using NUnit.Framework;

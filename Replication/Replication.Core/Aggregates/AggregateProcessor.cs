@@ -6,7 +6,7 @@ using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Metadata;
 using NuClear.Replication.Metadata.Aggregates;
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Readings;
+using NuClear.Storage.API.Readings;
 
 namespace NuClear.Replication.Core.Aggregates
 {

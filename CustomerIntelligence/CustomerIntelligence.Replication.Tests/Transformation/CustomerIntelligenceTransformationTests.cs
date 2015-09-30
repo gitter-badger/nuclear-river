@@ -9,8 +9,8 @@ using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.Metadata.Aggregates;
 using NuClear.Replication.Metadata.Model;
-using NuClear.Storage.Readings;
-using NuClear.Storage.Writings;
+using NuClear.Storage.API.Readings;
+using NuClear.Storage.API.Writings;
 
 using NUnit.Framework;
 

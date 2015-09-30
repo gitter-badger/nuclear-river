@@ -47,6 +47,10 @@
       <HintPath>..\..\packages\2GIS.NuClear.Metamodeling.1.6.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\2GIS.NuClear.Model.Common.1.1.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Settings, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <HintPath>..\..\packages\2GIS.NuClear.Settings.1.1.0\lib\net451\2GIS.NuClear.Settings.dll</HintPath>
       <Private>True</Private>
@@ -57,6 +61,10 @@
     </Reference>
     <Reference Include="2GIS.NuClear.Settings.Unity">
       <HintPath>..\..\packages\2GIS.NuClear.Settings.Unity.1.1.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Settings.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="2GIS.NuClear.Storage.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\2GIS.NuClear.Storage.API.1.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -185,9 +193,6 @@
     <Compile Include="DataAccess\QueryableExtensions.cs" />
     <Compile Include="DataAccess\ODataDbConfiguration.cs" />
     <Compile Include="DI\ConfigureHttpRequest.cs" />
-    <Compile Include="Settings\ConnectionStringName.cs" />
-    <Compile Include="Settings\ConnectionStringsSettingsAspect.cs" />
-    <Compile Include="Settings\IConnectionStringSettings.cs" />
     <Compile Include="Settings\WebApplicationSettings.cs" />
     <Compile Include="DynamicControllers\EntityElementIdAttribute.cs" />
     <Compile Include="Controllers\EnableQueryAttributeProvider.cs" />

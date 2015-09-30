@@ -9,7 +9,7 @@ using NuClear.Jobs;
 using NuClear.Messaging.Transports.ServiceBus.API;
 using NuClear.Replication.OperationsProcessing.Identities.Telemetry;
 using NuClear.Security.API;
-using NuClear.Storage.ConnectionStrings;
+using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Telemetry;
 using NuClear.Telemetry.Probing;
 using NuClear.Tracing.API;
