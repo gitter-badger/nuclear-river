@@ -139,27 +139,27 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj">
+    <ProjectReference Include="..\..\..\Common\Common.csproj">
       <Project>{d4238d0c-3315-4449-b1ae-80f716d58d04}</Project>
       <Name>Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
+    <ProjectReference Include="..\..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{B0A258D5-7387-4FB2-BA18-B51550DA3F0B}</Project>
       <Name>CustomerIntelligence.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
+    <ProjectReference Include="..\..\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
       <Project>{FA1074A6-B89D-45DF-9B73-6881BEF46E33}</Project>
       <Name>CustomerIntelligence.Storage</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Core.API\Replication.Core.API.csproj">
+    <ProjectReference Include="..\..\..\Replication\Replication.Core.API\Replication.Core.API.csproj">
       <Project>{E45717BE-86C8-425B-BB13-0E69053EF040}</Project>
       <Name>Replication.Core.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Core\Replication.Core.csproj">
+    <ProjectReference Include="..\..\..\Replication\Replication.Core\Replication.Core.csproj">
       <Project>{D3CF7E9E-4A8E-4583-A951-50CA940BD353}</Project>
       <Name>Replication.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
+    <ProjectReference Include="..\..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
       <Project>{00bc9c6c-c9e2-4954-bb28-53c57937a286}</Project>
       <Name>Replication.Metadata</Name>
     </ProjectReference>

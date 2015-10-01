@@ -134,27 +134,27 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Querying\Querying.EntityFramework\Querying.EntityFramework.csproj">
+    <ProjectReference Include="..\..\..\Querying\Querying.EntityFramework\Querying.EntityFramework.csproj">
       <Project>{B6A84D45-6C11-4175-86F5-20CC5879FB01}</Project>
       <Name>Querying.EntityFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Querying\Querying.Metadata\Querying.Metadata.csproj">
+    <ProjectReference Include="..\..\..\Querying\Querying.Metadata\Querying.Metadata.csproj">
       <Project>{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}</Project>
       <Name>Querying.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Querying\Querying.OData\Querying.OData.csproj">
+    <ProjectReference Include="..\..\..\Querying\Querying.OData\Querying.OData.csproj">
       <Project>{C651141A-0C01-4E0A-94F2-C1F11CF77BD6}</Project>
       <Name>Querying.OData</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Querying\Querying.QueryExecution\Querying.QueryExecution.csproj">
+    <ProjectReference Include="..\..\..\Querying\Querying.QueryExecution\Querying.QueryExecution.csproj">
       <Project>{135ef4b2-e97c-44b5-a6ac-6e97b103de55}</Project>
       <Name>Querying.QueryExecution</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
+    <ProjectReference Include="..\..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
       <Project>{00BC9C6C-C9E2-4954-BB28-53C57937A286}</Project>
       <Name>Replication.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
+    <ProjectReference Include="..\..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{B0A258D5-7387-4FB2-BA18-B51550DA3F0B}</Project>
       <Name>CustomerIntelligence.Domain</Name>
     </ProjectReference>

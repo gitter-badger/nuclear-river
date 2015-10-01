@@ -82,17 +82,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Core.API", "Rep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Core", "Replication\Replication.Core\Replication.Core.csproj", "{D3CF7E9E-4A8E-4583-A951-50CA940BD353}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.OperationsProcessing.Tests", "CustomerIntelligence\CustomerIntelligence.OperationsProcessing.Tests\CustomerIntelligence.OperationsProcessing.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.OperationsProcessing.Tests", "CustomerIntelligence\Tests\CustomerIntelligence.OperationsProcessing.Tests\CustomerIntelligence.OperationsProcessing.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Replication.Tests", "CustomerIntelligence\CustomerIntelligence.Replication.Tests\CustomerIntelligence.Replication.Tests.csproj", "{25AACA77-648A-4462-8EC1-709963219C8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Replication.Tests", "CustomerIntelligence\Tests\CustomerIntelligence.Replication.Tests\CustomerIntelligence.Replication.Tests.csproj", "{25AACA77-648A-4462-8EC1-709963219C8E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Querying", "Querying", "{77AAFA66-EC7B-44AD-80A2-58B6E5A5A3A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Replication", "Replication", "{B2560A63-4013-4556-8DF7-26F711AEED01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Querying.Tests", "CustomerIntelligence\CustomerIntelligence.Querying.Tests\CustomerIntelligence.Querying.Tests.csproj", "{CAA90CA3-1FAB-43E0-A369-62BFB8092596}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Querying.Tests", "CustomerIntelligence\Tests\CustomerIntelligence.Querying.Tests\CustomerIntelligence.Querying.Tests.csproj", "{CAA90CA3-1FAB-43E0-A369-62BFB8092596}"
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "build", "build\build.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -214,9 +216,10 @@ Global
 		{794F43F6-E4F3-4A80-A2B0-195D3560CB35} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
 		{E45717BE-86C8-425B-BB13-0E69053EF040} = {B2560A63-4013-4556-8DF7-26F711AEED01}
 		{D3CF7E9E-4A8E-4583-A951-50CA940BD353} = {B2560A63-4013-4556-8DF7-26F711AEED01}
-		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
-		{25AACA77-648A-4462-8EC1-709963219C8E} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
-		{CAA90CA3-1FAB-43E0-A369-62BFB8092596} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
+		{19CFD12D-582D-4685-A40B-7E3A13B9C5D3} = {814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}
+		{25AACA77-648A-4462-8EC1-709963219C8E} = {814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}
+		{CAA90CA3-1FAB-43E0-A369-62BFB8092596} = {814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}
+		{814C4FAC-A5D7-4557-A0A4-E79FEBCE6156} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
 	EndGlobalSection
 EndGlobal

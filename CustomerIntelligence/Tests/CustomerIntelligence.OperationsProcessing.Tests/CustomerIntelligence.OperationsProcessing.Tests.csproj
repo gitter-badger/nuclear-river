@@ -176,11 +176,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CustomerIntelligence.OperationsProcessing\CustomerIntelligence.OperationsProcessing.csproj">
+    <ProjectReference Include="..\..\CustomerIntelligence.OperationsProcessing\CustomerIntelligence.OperationsProcessing.csproj">
       <Project>{794F43F6-E4F3-4A80-A2B0-195D3560CB35}</Project>
       <Name>CustomerIntelligence.OperationsProcessing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
+    <ProjectReference Include="..\..\..\Replication\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}</Project>
       <Name>Replication.OperationsProcessing</Name>
     </ProjectReference>
