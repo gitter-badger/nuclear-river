@@ -1,6 +1,7 @@
 ﻿using NuClear.Model.Common.Entities;
 using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 
 using ProtoBuf.Meta;
 
@@ -8,10 +9,10 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     public sealed class TrackedUseCaseConfigurator : IRuntimeTypeModelConfigurator
     {
-        public TrackedUseCaseConfigurator(IOperationIdentityRegistry registry)
+        public TrackedUseCaseConfigurator(IOperationIdentityRegistry registry, IEntityTypeMappingRegistry<ErmSubDomain> entityTypeMappingRegistry)
         {
             SurrogateFactory<OperationIdentitySurrogate>.Factory = () => new OperationIdentitySurrogate(registry);
-            SurrogateFactory<EntityTypeSurrogate>.Factory = () => new EntityTypeSurrogate();
+            SurrogateFactory<EntityTypeSurrogate>.Factory = () => new EntityTypeSurrogate(entityTypeMappingRegistry);
         }
 
         public RuntimeTypeModel Configure(RuntimeTypeModel typeModel)

@@ -23,9 +23,9 @@ namespace NuClear.Replication.OperationsProcessing.Primary
     {
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
-		private readonly IEntityTypeMappingRegistry<FactsContext> _registry;
+		private readonly IEntityTypeMappingRegistry<FactsSubDomain> _registry;
 
-		public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher, IEntityTypeMappingRegistry<FactsContext> registry)
+		public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher, IEntityTypeMappingRegistry<FactsSubDomain> registry)
         {
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;

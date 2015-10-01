@@ -13,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports
 {
     public class AggregateOperationSerializer
     {
-	    private readonly IEntityTypeMappingRegistry<CustomerIntelligenceContext> _registry;
+	    private readonly IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> _registry;
 
 	    private static readonly Dictionary<Guid, Type> OperationIdRegistry =
             new Dictionary<Guid, Type>
@@ -26,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports
         private static readonly Dictionary<Type, Guid> OperationTypeRegistry =
             OperationIdRegistry.ToDictionary(x => x.Value, x => x.Key);
 
-	    public AggregateOperationSerializer(IEntityTypeMappingRegistry<CustomerIntelligenceContext> registry)
+	    public AggregateOperationSerializer(IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> registry)
 	    {
 		    _registry = registry;
 	    }
@@ -34,13 +34,18 @@ namespace NuClear.Replication.OperationsProcessing.Transports
 		public AggregateOperation Deserialize(PerformedOperationFinalProcessing operation)
 		{
 			Type operationType;
-			if (OperationIdRegistry.TryGetValue(operation.OperationId, out operationType))
+			if (!OperationIdRegistry.TryGetValue(operation.OperationId, out operationType))
 			{
-				var entityName = EntityType.Instance.Parse(operation.EntityTypeId);
-				return (AggregateOperation)Activator.CreateInstance(operationType, _registry.GetEntityType(entityName), operation.EntityId);
+				throw new ArgumentException($"Unknown operation id {operation.OperationId}", nameof(operation));
 			}
 
-			throw new ArgumentException($"Unknown operation id {operation.OperationId}", nameof(operation));
+			IEntityType entityName;
+			if (!_registry.TryParce(operation.EntityTypeId, out entityName))
+			{
+				throw new ArgumentException($"Unknown entity id {operation.EntityTypeId}", nameof(operation));
+			}
+
+			return (AggregateOperation)Activator.CreateInstance(operationType, _registry.GetEntityType(entityName), operation.EntityId);
 		}
 
 		public PerformedOperationFinalProcessing Serialize(AggregateOperation operation, IMessageFlow targetFlow)

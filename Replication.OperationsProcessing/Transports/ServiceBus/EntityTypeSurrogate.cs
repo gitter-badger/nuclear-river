@@ -1,5 +1,6 @@
 ﻿
 using NuClear.Model.Common.Entities;
+using NuClear.Replication.OperationsProcessing.Metadata.Model.Context;
 
 using ProtoBuf;
 
@@ -7,7 +8,14 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
 {
     internal sealed class EntityTypeSurrogate
     {
-        public int Id { get; set; }
+	    private readonly IEntityTypeMappingRegistry<ErmSubDomain> _entityTypeMappingRegistry;
+
+	    public EntityTypeSurrogate(IEntityTypeMappingRegistry<ErmSubDomain> entityTypeMappingRegistry)
+	    {
+		    _entityTypeMappingRegistry = entityTypeMappingRegistry;
+	    }
+
+	    public int Id { get; set; }
 
         [ProtoConverter]
         public static IEntityType From(EntityTypeSurrogate value)
@@ -18,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
             }
 
             IEntityType entityType;
-            if (!EntityType.Instance.TryParse(value.Id, out entityType))
+            if (!value._entityTypeMappingRegistry.TryParce(value.Id, out entityType))
             {
                 entityType = new UnknownEntityType().SetId(value.Id);
             }

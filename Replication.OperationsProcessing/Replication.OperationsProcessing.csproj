@@ -202,7 +202,7 @@
     <Compile Include="Metadata\Flows\ImportFactsFromBitFlow.cs" />
     <Compile Include="Metadata\Flows\PerformedOperationsMessageFlowsMetadataSource.cs" />
     <Compile Include="Metadata\Flows\ImportFactsFromErmFlow.cs" />
-    <Compile Include="Metadata\Model\Context\CustomerIntelligenceContext.cs" />
+    <Compile Include="Metadata\Model\Context\ErmSubDomain.cs" />
     <Compile Include="Metadata\Operations\StatisticsOperationIdentity.cs" />
     <Compile Include="Metadata\Operations\DestroyAggregateOperationIdentity.cs" />
     <Compile Include="Metadata\Model\EntityTypeIds.cs" />
@@ -223,8 +223,8 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeFirmContact.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeLegalPerson.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeOrder.cs" />
-    <Compile Include="Metadata\Model\Context\ErmContext.cs" />
-    <Compile Include="Metadata\Model\Context\FactsContext.cs" />
+    <Compile Include="Metadata\Model\Context\CustomerIntelligenceSubDomain.cs" />
+    <Compile Include="Metadata\Model\Context\FactsSubDomain.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeProject.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeProjectCategory.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeTerritory.cs" />
