@@ -1,13 +1,14 @@
 ﻿using System.Diagnostics;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Features;
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
-using NuClear.Querying.Metadata;
-using NuClear.Querying.Metadata.Features;
 
 using NUnit.Framework;
 

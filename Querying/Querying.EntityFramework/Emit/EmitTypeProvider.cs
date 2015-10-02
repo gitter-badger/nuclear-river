@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Reflection.Emit;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Querying.EntityFramework.Building;
-using NuClear.Querying.Metadata;
 
 namespace NuClear.Querying.EntityFramework.Emit
 {

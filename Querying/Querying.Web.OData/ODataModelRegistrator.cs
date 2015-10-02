@@ -8,8 +8,9 @@ using System.Web.OData.Routing;
 
 using Microsoft.OData.Edm;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.Metamodeling.Provider;
-using NuClear.Querying.Metadata;
 using NuClear.Querying.Web.OData.DI;
 using NuClear.Querying.Web.OData.DynamicControllers;
 

@@ -6,8 +6,8 @@ using System.Web.Http.Filters;
 using System.Web.OData;
 using System.Web.OData.Query;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Metamodeling.Provider;
-using NuClear.Querying.Metadata;
 using NuClear.Querying.Web.OData.DynamicControllers;
 
 namespace NuClear.Querying.Web.OData.Controllers

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
+using NuClear.AdvancedSearch.Common.Metadata;
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
-using NuClear.Replication.Metadata;
-using NuClear.Replication.Metadata.Aggregates;
 using NuClear.Storage.API.Readings;
 
 namespace NuClear.Replication.Core.Aggregates

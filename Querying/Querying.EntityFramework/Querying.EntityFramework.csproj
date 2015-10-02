@@ -101,9 +101,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Querying.Metadata\Querying.Metadata.csproj">
-      <Project>{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}</Project>
-      <Name>Querying.Metadata</Name>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,6 +10,8 @@ using Effort.Provider;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
 using NuClear.Metamodeling.Elements;
@@ -18,7 +20,6 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Querying.EntityFramework.Building;
-using NuClear.Querying.Metadata;
 
 using NUnit.Framework;
 

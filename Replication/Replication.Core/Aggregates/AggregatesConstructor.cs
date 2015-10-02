@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Aggregates;
-using NuClear.Replication.Metadata;
-using NuClear.Replication.Metadata.Operations;
 using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.Core.Aggregates
@@ -49,24 +49,24 @@ namespace NuClear.Replication.Core.Aggregates
                     {
                         using (Probe.Create("ETL2 Transforming", aggregateType.Name))
                         {
-							var processor = _aggregateProcessorFactory.Create(aggregateMetadata);
+                            var processor = _aggregateProcessorFactory.Create(aggregateMetadata);
 
-							if (operation == typeof(InitializeAggregate))
+                            if (operation == typeof(InitializeAggregate))
                             {
-								processor.Initialize(aggregateIds);
-								continue;
+                                processor.Initialize(aggregateIds);
+                                continue;
                             }
 
                             if (operation == typeof(RecalculateAggregate))
                             {
-								processor.Recalculate(aggregateIds);
-								continue;
+                                processor.Recalculate(aggregateIds);
+                                continue;
                             }
 
                             if (operation == typeof(DestroyAggregate))
                             {
-								processor.Destroy(aggregateIds);
-								continue;
+                                processor.Destroy(aggregateIds);
+                                continue;
                             }
                         }
 

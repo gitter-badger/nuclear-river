@@ -80,10 +80,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
-      <Project>{00BC9C6C-C9E2-4954-BB28-53C57937A286}</Project>
-      <Name>Replication.Metadata</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>
       <Name>CustomerIntelligence.Domain</Name>

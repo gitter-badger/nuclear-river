@@ -6,6 +6,8 @@ using System.Web.OData;
 
 using Microsoft.OData.Edm;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
@@ -13,7 +15,6 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Querying.EntityFramework.Emit;
-using NuClear.Querying.Metadata;
 using NuClear.Querying.OData.Building;
 using NuClear.Querying.QueryExecution;
 

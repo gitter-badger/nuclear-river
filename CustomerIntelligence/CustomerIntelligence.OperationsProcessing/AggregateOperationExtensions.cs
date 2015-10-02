@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.Model.Common.Entities;
-using NuClear.Replication.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing

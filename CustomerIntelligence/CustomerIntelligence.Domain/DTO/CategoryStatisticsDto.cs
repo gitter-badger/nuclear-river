@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using NuClear.Replication.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 
 namespace NuClear.CustomerIntelligence.Domain.DTO
 {

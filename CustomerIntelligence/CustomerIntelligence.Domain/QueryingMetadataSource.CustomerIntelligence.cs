@@ -1,5 +1,5 @@
-﻿using NuClear.Querying.Metadata;
-using NuClear.Querying.Metadata.FluentSyntax;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Builders;
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 
 namespace NuClear.CustomerIntelligence.Domain
 {

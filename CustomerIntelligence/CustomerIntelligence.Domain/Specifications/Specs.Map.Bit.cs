@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.CustomerIntelligence.Domain.DTO;
 using NuClear.CustomerIntelligence.Domain.Model.Facts;
-using NuClear.Replication.Metadata.Model;
 using NuClear.Storage.API.Specifications;
 
 namespace NuClear.CustomerIntelligence.Domain.Specifications

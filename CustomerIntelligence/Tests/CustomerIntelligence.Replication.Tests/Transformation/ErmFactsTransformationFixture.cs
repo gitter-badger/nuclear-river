@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Moq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Processors;
@@ -11,9 +12,6 @@ using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.API.Settings;
 using NuClear.Replication.Core.Facts;
-using NuClear.Replication.Metadata;
-using NuClear.Replication.Metadata.Model;
-using NuClear.Replication.Metadata.Operations;
 using NuClear.Tracing.API;
 
 using NUnit.Framework;
@@ -25,51 +23,51 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     [TestFixture]
     internal class ErmFactsTransformationFixture : TransformationFixtureBase
-	{
-		[Test]
-		public void ShouldProcessFactAccordingToPriority()
-		{
-			//arrange
+    {
+        [Test]
+        public void ShouldProcessFactAccordingToPriority()
+        {
+            //arrange
             var factProcessor = new Mock<IFactProcessor>();
-			factProcessor.Setup(x => x.ApplyChanges(It.IsAny<IReadOnlyCollection<long>>()))
-			             .Returns(new IOperation[0]);
+            factProcessor.Setup(x => x.ApplyChanges(It.IsAny<IReadOnlyCollection<long>>()))
+                         .Returns(new IOperation[0]);
 
-		    var provider = new MetadataProvider(new[] { new FactsReplicationMetadataSource() }, new IMetadataProcessor[0]);
+            var provider = new MetadataProvider(new[] { new FactsReplicationMetadataSource() }, new IMetadataProcessor[0]);
 
             var factoryInvocationOrder = new List<Type>();
             var factProcessorFactory = new Mock<IFactProcessorFactory>();
-			factProcessorFactory.Setup(x => x.Create(It.IsAny<IMetadataElement>()))
-			                    .Callback<IMetadataElement>(element =>
-			                                                {
-			                                                    var type = element.GetType().GenericTypeArguments[0];
-			                                                    factoryInvocationOrder.Add(type);
-			                                                })
-			                    .Returns(factProcessor.Object);
+            factProcessorFactory.Setup(x => x.Create(It.IsAny<IMetadataElement>()))
+                                .Callback<IMetadataElement>(element =>
+                                                            {
+                                                                var type = element.GetType().GenericTypeArguments[0];
+                                                                factoryInvocationOrder.Add(type);
+                                                            })
+                                .Returns(factProcessor.Object);
 
-		    var transformation = new FactsReplicator(provider,
+            var transformation = new FactsReplicator(provider,
                                                      factProcessorFactory.Object,
-		                                             Mock.Of<IReplicationSettings>(),
-		                                             Mock.Of<ITracer>());
+                                                     Mock.Of<IReplicationSettings>(),
+                                                     Mock.Of<ITracer>());
 
-			SourceDb.Has(new Erm::Firm { Id = 2 })
-			        .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
+            SourceDb.Has(new Erm::Firm { Id = 2 })
+                    .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
 
-			TargetDb.Has(new Facts::Firm { Id = 1 });
+            TargetDb.Has(new Facts::Firm { Id = 1 });
 
-			var inputOperations = new[]
-			                      {
-				                      new FactOperation(typeof(Facts::FirmAddress), 1),
-				                      new FactOperation(typeof(Facts::Firm), 2),
-				                      new FactOperation(typeof(Facts::FirmAddress), 2),
-			                      };
+            var inputOperations = new[]
+                                  {
+                                      new FactOperation(typeof(Facts::FirmAddress), 1),
+                                      new FactOperation(typeof(Facts::Firm), 2),
+                                      new FactOperation(typeof(Facts::FirmAddress), 2),
+                                  };
 
-			//act
-			transformation.Replicate(inputOperations, new Facts::FactTypePriorityComparer());
+            //act
+            transformation.Replicate(inputOperations, new Facts::FactTypePriorityComparer());
 
-			//assert
-			Assert.That(factoryInvocationOrder.Count, Is.EqualTo(2));
-			Assert.That(factoryInvocationOrder[0], Is.EqualTo(typeof(Facts::Firm)));
-			Assert.That(factoryInvocationOrder[1], Is.EqualTo(typeof(Facts::FirmAddress)));
-		}
-	}
+            //assert
+            Assert.That(factoryInvocationOrder.Count, Is.EqualTo(2));
+            Assert.That(factoryInvocationOrder[0], Is.EqualTo(typeof(Facts::Firm)));
+            Assert.That(factoryInvocationOrder[1], Is.EqualTo(typeof(Facts::FirmAddress)));
+        }
+    }
 }

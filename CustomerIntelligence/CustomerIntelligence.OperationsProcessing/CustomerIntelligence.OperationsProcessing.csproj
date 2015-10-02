@@ -194,13 +194,13 @@
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Replication\Replication.Core.API\Replication.Core.API.csproj">
       <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
       <Name>Replication.Core.API</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
-      <Project>{00bc9c6c-c9e2-4954-bb28-53c57937a286}</Project>
-      <Name>Replication.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Replication\Replication.OperationsProcessing\Replication.OperationsProcessing.csproj">
       <Project>{8e3d39d6-6bee-4edc-ace0-8c24ca929164}</Project>
@@ -212,6 +212,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

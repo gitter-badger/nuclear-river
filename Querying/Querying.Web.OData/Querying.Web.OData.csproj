@@ -211,6 +211,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{d4238d0c-3315-4449-b1ae-80f716d58d04}</Project>
       <Name>Common</Name>
@@ -222,10 +226,6 @@
     <ProjectReference Include="..\Querying.EntityFramework\Querying.EntityFramework.csproj">
       <Project>{B6A84D45-6C11-4175-86F5-20CC5879FB01}</Project>
       <Name>Querying.EntityFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Querying.Metadata\Querying.Metadata.csproj">
-      <Project>{7ad073f2-b143-4fdd-9e31-9b6f955e6c9b}</Project>
-      <Name>Querying.Metadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\Querying.OData\Querying.OData.csproj">
       <Project>{c651141a-0c01-4e0a-94f2-c1f11cf77bd6}</Project>

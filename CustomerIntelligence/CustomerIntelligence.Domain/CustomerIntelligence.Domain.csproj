@@ -131,13 +131,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Querying\Querying.Metadata\Querying.Metadata.csproj">
-      <Project>{7AD073F2-B143-4FDD-9E31-9B6F955E6C9B}</Project>
-      <Name>Querying.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Replication\Replication.Metadata\Replication.Metadata.csproj">
-      <Project>{00BC9C6C-C9E2-4954-BB28-53C57937A286}</Project>
-      <Name>Replication.Metadata</Name>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

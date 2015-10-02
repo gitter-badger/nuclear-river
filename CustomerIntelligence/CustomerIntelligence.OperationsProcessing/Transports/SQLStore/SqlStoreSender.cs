@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Replication.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Storage.API.Writings;
 using NuClear.Telemetry.Probing;

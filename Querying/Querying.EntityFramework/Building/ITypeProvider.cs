@@ -1,6 +1,6 @@
 using System;
 
-using NuClear.Querying.Metadata;
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 
 namespace NuClear.Querying.EntityFramework.Building
 {

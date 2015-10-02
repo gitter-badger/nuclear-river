@@ -1,4 +1,4 @@
-﻿using NuClear.Replication.Metadata.Aggregates;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Features;
 
 namespace NuClear.Replication.Core.API.Aggregates
 {

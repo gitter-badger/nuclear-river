@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
-using NuClear.Querying.Metadata;
 
 namespace NuClear.CustomerIntelligence.Domain
 {

@@ -2,11 +2,11 @@
 
 using Moq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Replication.Core;
 using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
-using NuClear.Replication.Metadata.Aggregates;
 using NuClear.Storage.API.Writings;
 
 using NUnit.Framework;

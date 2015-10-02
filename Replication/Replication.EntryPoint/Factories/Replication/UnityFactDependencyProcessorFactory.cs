@@ -1,8 +1,8 @@
 using Microsoft.Practices.Unity;
 
+using NuClear.AdvancedSearch.Common.Metadata.Features;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
-using NuClear.Replication.Metadata.Facts;
 
 namespace NuClear.Replication.EntryPoint.Factories.Replication
 {

@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Xml.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Replication.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Final

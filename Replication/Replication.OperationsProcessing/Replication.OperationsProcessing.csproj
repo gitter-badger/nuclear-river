@@ -208,14 +208,15 @@
     <Compile Include="Transports\SQLStore\SqlStoreReceiverTelemetryDecorator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Replication.Metadata\Replication.Metadata.csproj">
-      <Project>{00bc9c6c-c9e2-4954-bb28-53c57937a286}</Project>
-      <Name>Replication.Metadata</Name>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

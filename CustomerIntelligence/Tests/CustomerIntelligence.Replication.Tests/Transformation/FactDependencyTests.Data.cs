@@ -3,7 +3,7 @@ using System.Collections;
 
 using Moq;
 
-using NuClear.Replication.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;

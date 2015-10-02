@@ -94,13 +94,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common.Metadata\Common.Metadata.csproj">
+      <Project>{2ebd563d-a59b-4fb8-aed6-0340d136f72c}</Project>
+      <Name>Common.Metadata</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Replication.Core.API\Replication.Core.API.csproj">
       <Project>{e45717be-86c8-425b-bb13-0e69053ef040}</Project>
       <Name>Replication.Core.API</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Replication.Metadata\Replication.Metadata.csproj">
-      <Project>{00bc9c6c-c9e2-4954-bb28-53c57937a286}</Project>
-      <Name>Replication.Metadata</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

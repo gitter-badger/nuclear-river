@@ -1,4 +1,4 @@
-﻿using NuClear.Replication.Metadata.Facts;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Features;
 
 namespace NuClear.Replication.Core.API.Facts
 {

@@ -3,8 +3,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Metamodeling.Provider;
-using NuClear.Querying.Metadata;
 
 using IConnectionStringSettings = NuClear.Storage.API.ConnectionStrings.IConnectionStringSettings;
 

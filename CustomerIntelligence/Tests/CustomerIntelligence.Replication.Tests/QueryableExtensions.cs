@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.Replication.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests
 {

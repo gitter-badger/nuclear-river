@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using NuClear.Replication.Metadata.Model;
-using NuClear.Replication.Metadata.Operations;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 
 namespace NuClear.Replication.Core.API.Facts
 {

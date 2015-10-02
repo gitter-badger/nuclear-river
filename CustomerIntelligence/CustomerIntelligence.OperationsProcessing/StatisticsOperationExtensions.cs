@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-using NuClear.Replication.Metadata.Operations;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing

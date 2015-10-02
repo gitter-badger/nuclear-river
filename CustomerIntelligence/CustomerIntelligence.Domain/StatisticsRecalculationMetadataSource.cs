@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider.Sources;
-using NuClear.Replication.Metadata;
-using NuClear.Replication.Metadata.Aggregates;
 
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
 using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
