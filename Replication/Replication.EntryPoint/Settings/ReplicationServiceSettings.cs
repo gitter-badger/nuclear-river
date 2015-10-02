@@ -45,11 +45,11 @@ namespace NuClear.Replication.EntryPoint.Settings
                         ConfigurationManager.ConnectionStrings["ServiceBus"].ConnectionString
                     },
                     {
-                        InfrastructureConnectionStringIdenrtity.Instance,
+                        InfrastructureConnectionStringIdentity.Instance,
                         ConfigurationManager.ConnectionStrings["Infrastructure"].ConnectionString
                     },
                     {
-                        LoggingConnectionStringIdenrtity.Instance,
+                        LoggingConnectionStringIdentity.Instance,
                         ConfigurationManager.ConnectionStrings["Logging"].ConnectionString
                     }
                 });
@@ -57,7 +57,7 @@ namespace NuClear.Replication.EntryPoint.Settings
             Aspects.Use(connectionStringSettings)
                    .Use<ServiceBusMessageLockRenewalSettings>()
                    .Use<EnvironmentSettingsAspect>()
-                   .Use(new QuartzSettingsAspect(connectionStringSettings.GetConnectionString(InfrastructureConnectionStringIdenrtity.Instance)))
+                   .Use(new QuartzSettingsAspect(connectionStringSettings.GetConnectionString(InfrastructureConnectionStringIdentity.Instance)))
                    .Use(new ServiceBusReceiverSettingsAspect(connectionStringSettings.GetConnectionString(ServiceBusConnectionStringIdentity.Instance)))
                    .Use<CorporateBusSettingsAspect>()
                    .Use<LogstashSettingsAspect>()

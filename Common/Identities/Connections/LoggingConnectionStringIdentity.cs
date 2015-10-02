@@ -3,7 +3,7 @@ using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.AdvancedSearch.Common.Identities.Connections
 {
-    public class LoggingConnectionStringIdenrtity : IdentityBase<LoggingConnectionStringIdenrtity>, IConnectionStringIdentity
+    public class LoggingConnectionStringIdentity : IdentityBase<LoggingConnectionStringIdentity>, IConnectionStringIdentity
     {
         public override int Id
         {

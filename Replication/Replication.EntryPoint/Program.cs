@@ -50,7 +50,7 @@ namespace NuClear.Replication.EntryPoint
                                              .DefaultXmlConfig
                                              .Console
                                              .EventLog
-                                             .DB(connectionStringSettings.GetConnectionString(LoggingConnectionStringIdenrtity.Instance))
+                                             .DB(connectionStringSettings.GetConnectionString(LoggingConnectionStringIdentity.Instance))
                                              .Build;
 
             IUnityContainer container = null;

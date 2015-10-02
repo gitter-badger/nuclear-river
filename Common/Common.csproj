@@ -54,8 +54,8 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Identities\Connections\InfrastructureConnectionStringIdenrtity.cs" />
-    <Compile Include="Identities\Connections\LoggingConnectionStringIdenrtity.cs" />
+    <Compile Include="Identities\Connections\InfrastructureConnectionStringIdentity.cs" />
+    <Compile Include="Identities\Connections\LoggingConnectionStringIdentity.cs" />
     <Compile Include="Identities\Connections\ServiceBusConnectionStringIdentity.cs" />
     <Compile Include="Identities\Connections\TransportConnectionStringIdentity.cs" />
     <Compile Include="Settings\EnvironmentSettingsAspect.cs" />

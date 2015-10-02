@@ -20,7 +20,7 @@ namespace NuClear.Querying.Web.OData.Settings
                         ConfigurationManager.ConnectionStrings["CustomerIntelligence"].ConnectionString
                     },
                     {
-                        LoggingConnectionStringIdenrtity.Instance,
+                        LoggingConnectionStringIdentity.Instance,
                         ConfigurationManager.ConnectionStrings["Logging"].ConnectionString
                     }
                 });
