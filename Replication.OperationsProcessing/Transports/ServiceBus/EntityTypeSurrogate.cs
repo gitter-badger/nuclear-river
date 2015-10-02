@@ -26,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.ServiceBus
             }
 
             IEntityType entityType;
-            if (!value._entityTypeMappingRegistry.TryParce(value.Id, out entityType))
+            if (!value._entityTypeMappingRegistry.TryParse(value.Id, out entityType))
             {
                 entityType = new UnknownEntityType().SetId(value.Id);
             }

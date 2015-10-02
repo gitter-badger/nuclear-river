@@ -40,7 +40,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports
 			}
 
 			IEntityType entityName;
-			if (!_registry.TryParce(operation.EntityTypeId, out entityName))
+			if (!_registry.TryParse(operation.EntityTypeId, out entityName))
 			{
 				throw new ArgumentException($"Unknown entity id {operation.EntityTypeId}", nameof(operation));
 			}
