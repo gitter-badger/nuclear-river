@@ -69,6 +69,8 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
             DeactivateIdentity.Instance.SpecificFor(EntityTypeTerritory.Instance),
             DeactivateIdentity.Instance.SpecificFor(EntityTypeClient.Instance),
 
+            BulkDeactivateIdentity.Instance.SpecificFor(EntityTypeFirm.Instance),
+
             AppendIdentity.Instance.SpecificFor(EntityTypeClient.Instance, EntityTypeClient.Instance),
             DetachIdentity.Instance.SpecificFor(EntityTypeClient.Instance, EntityTypeFirm.Instance),
 
