@@ -44,10 +44,11 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                                                             })
                                 .Returns(factProcessor.Object);
 
-            var transformation = new FactsReplicator(provider,
-                                                     factProcessorFactory.Object,
+            var transformation = new FactsReplicator(Mock.Of<ITracer>(),
                                                      Mock.Of<IReplicationSettings>(),
-                                                     Mock.Of<ITracer>());
+                                                     provider,
+                                                     factProcessorFactory.Object,
+                                                     new Facts::CustomerIntelligenceFactTypePriorityComparer());
 
             SourceDb.Has(new Erm::Firm { Id = 2 })
                     .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });
@@ -62,7 +63,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                                   };
 
             //act
-            transformation.Replicate(inputOperations, new Facts::FactTypePriorityComparer());
+            transformation.Replicate(inputOperations);
 
             //assert
             Assert.That(factoryInvocationOrder.Count, Is.EqualTo(2));

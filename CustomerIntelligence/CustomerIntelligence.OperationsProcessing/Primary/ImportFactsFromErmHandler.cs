@@ -46,7 +46,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                 foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>().ToArray())
                 {
                     _tracer.DebugFormat("Replicating operations from use case '{0}'", message.Id);
-                    var result = _factsReplicator.Replicate(message.Operations, new FactTypePriorityComparer());
+                    var result = _factsReplicator.Replicate(message.Operations);
                     _tracer.DebugFormat("Operations from use case '{0}' successfully replicated", message.Id);
 
                     _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);

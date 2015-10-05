@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NuClear.CustomerIntelligence.Domain.Model.Facts
 {
-    public sealed class FactTypePriorityComparer : IComparer<Type>
+    public sealed class CustomerIntelligenceFactTypePriorityComparer : IComparer<Type>
     {
         // Приоритетом сейчас выделяем только корни агрегации
         // Считаем, что в одном TUC они должны быть обработаны раньше, чем привязанные к ним сущности и valueobject'ы

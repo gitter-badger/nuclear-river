@@ -82,7 +82,7 @@
     <Compile Include="Model\Facts\CategoryOrganizationUnit.cs" />
     <Compile Include="Model\Facts\Client.cs" />
     <Compile Include="Model\Facts\Contact.cs" />
-    <Compile Include="Model\Facts\FactTypePriorityComparer.cs" />
+    <Compile Include="Model\Facts\CustomerIntelligenceFactTypePriorityComparer.cs" />
     <Compile Include="Model\Facts\Firm.cs" />
     <Compile Include="Model\Facts\FirmAddress.cs" />
     <Compile Include="Model\Facts\FirmCategory.cs" />

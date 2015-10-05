@@ -31,7 +31,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
         [Test]
         public void ShouldSortFactTypesAccordingPriority()
         {
-            var comparer = new FactTypePriorityComparer();
+            var comparer = new CustomerIntelligenceFactTypePriorityComparer();
             var data = new[] { typeof(Client), typeof(Project), typeof(object) };
 
             var sortedData = data.OrderByDescending(x => x, comparer).ToArray();

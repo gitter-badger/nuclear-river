@@ -20,29 +20,32 @@ namespace NuClear.Replication.Core.Facts
     {
         private readonly ITracer _tracer;
         private readonly IReplicationSettings _replicationSettings;
-        private readonly IFactProcessorFactory _factProcessorFactory;
         private readonly IMetadataProvider _metadataProvider;
+        private readonly IFactProcessorFactory _factProcessorFactory;
+        private readonly IComparer<Type> _factTypePriorityComparer;
 
         public FactsReplicator(
+            ITracer tracer,
+            IReplicationSettings replicationSettings,
             IMetadataProvider metadataProvider,
             IFactProcessorFactory factProcessorFactory,
-            IReplicationSettings replicationSettings,
-            ITracer tracer)
+            IComparer<Type> factTypePriorityComparer)
         {
-            _metadataProvider = metadataProvider;
             _tracer = tracer;
             _replicationSettings = replicationSettings;
+            _metadataProvider = metadataProvider;
             _factProcessorFactory = factProcessorFactory;
+            _factTypePriorityComparer = factTypePriorityComparer;
         }
 
-        public IReadOnlyCollection<IOperation> Replicate(IEnumerable<FactOperation> operations, IComparer<Type> factTypePriorityComparer)
+        public IReadOnlyCollection<IOperation> Replicate(IEnumerable<FactOperation> operations)
         {
             using (Probe.Create("ETL1 Transforming"))
             {
                 var result = Enumerable.Empty<IOperation>();
 
                 var slices = operations.GroupBy(operation => new { operation.FactType })
-                                       .OrderByDescending(slice => slice.Key.FactType, factTypePriorityComparer);
+                                       .OrderByDescending(slice => slice.Key.FactType, _factTypePriorityComparer);
 
                 foreach (var slice in slices)
                 {

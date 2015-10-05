@@ -10,6 +10,7 @@ using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.Domain.Model.Facts;
 using NuClear.CustomerIntelligence.OperationsProcessing;
 using NuClear.CustomerIntelligence.OperationsProcessing.Final;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
@@ -275,7 +276,13 @@ namespace NuClear.Replication.EntryPoint.DI
         private static IUnityContainer ConfigureReplication(this IUnityContainer container, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
             return container
-                .RegisterType<IFactsReplicator, FactsReplicator>(entryPointSpecificLifetimeManagerFactory())
+                .RegisterType<IFactsReplicator, FactsReplicator>(entryPointSpecificLifetimeManagerFactory(),
+                                                                 new InjectionFactory(c => new FactsReplicator(
+                                                                                               c.Resolve<ITracer>(),
+                                                                                               c.Resolve<IReplicationSettings>(),
+                                                                                               c.Resolve<IMetadataProvider>(),
+                                                                                               c.Resolve<IFactProcessorFactory>(),
+                                                                                               new CustomerIntelligenceFactTypePriorityComparer())))
                 .RegisterType<IStatisticsImporterFactory, UnityStatisticsImporterFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IAggregatesConstructor, AggregatesConstructor>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IStatisticsRecalculator, StatisticsRecalculator>(entryPointSpecificLifetimeManagerFactory())
