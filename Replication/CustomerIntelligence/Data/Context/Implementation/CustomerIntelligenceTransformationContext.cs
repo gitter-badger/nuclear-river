@@ -197,6 +197,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             }
         }
 
+        public IQueryable<FirmTerritory> FirmTerritories
+        {
+            get
+            {
+                var territories = from x in _ermContext.FirmAddresses
+                                  select new FirmTerritory { FirmId = x.FirmId, TerritoryId = x.TerritoryId };
+
+                return territories.Distinct();
+            }
+        }
+
         public IQueryable<Project> Projects
         {
             get
