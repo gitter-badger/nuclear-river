@@ -156,6 +156,7 @@ go
 create table ERM.FirmAddress(
 	Id bigint not null
     , FirmId bigint not null
+	, TerritoryId bigint not null
     , constraint PK_FirmAddresses primary key (Id)
 )
 go

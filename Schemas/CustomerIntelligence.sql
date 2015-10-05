@@ -103,6 +103,14 @@ create table CustomerIntelligence.FirmCategory(
 )
 go
 
+-- FirmTerritory
+create table CustomerIntelligence.FirmTerritory(
+	FirmId bigint not null
+	, TerritoryId bigint not null
+    , constraint PK_FirmTerritory primary key (FirmId, TerritoryId)
+)
+go
+
 -- Client
 create table CustomerIntelligence.Client(
 	Id bigint not null
