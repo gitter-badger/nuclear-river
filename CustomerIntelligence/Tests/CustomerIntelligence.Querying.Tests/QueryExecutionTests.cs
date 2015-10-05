@@ -53,7 +53,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
         [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id2)&@id2=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 2-го уровня.")]
         [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id3)&@id3=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 3-го уровня.")]
         [TestCase("Firm", "$filter=Client/CategoryGroup/Id eq @id&@id=12345", Result = "Firm[].Where($it => ($it.Client.CategoryGroup.Id == Convert(12345)))", Description = "Поиск по ценовой категории клиента.")]
-        [TestCase("Firm", "$filter=Client/Contacts/any(x:x/Role eq AdvancedSearch.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
+        [TestCase("Firm", "$filter=Client/Contacts/any(x:x/Role eq Querying.CustomerIntelligence.ContactRole'Employee')", Result = "Firm[].Where($it => $it.Client.Contacts.Any(x => (Convert(x.Role) == Convert(Employee))))", Description = "Поиск по роли контакта.")]
         [TestCase("Firm", "$filter=Balances/all(x:x/Balance gt @balance)&@balance=1000", Result = "Firm[].Where($it => $it.Balances.All(x => (x.Balance > Convert(1000))))", Description = "Поиск по балансу лицевого счета.")]
         public string ShouldAcceptMainCriteria(string type, string filter)
         {
@@ -62,7 +62,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
 
         private string BuildQuery(string modelName, string type, string filter)
         {
-            var model = _models[Metadata.Id.For<AdvancedSearchIdentity>(modelName)];
+            var model = _models[Metadata.Id.For<QueryingMetadataIdentity>(modelName)];
 
             var firmType = LookupClrType(model, type);
 
@@ -132,8 +132,8 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
         private const string BusinessDirectory = "BusinessDirectory";
         private const string CustomerIntelligence = "CustomerIntelligence";
 
-        private static readonly Uri BusinessDirectoryId = Metadata.Id.For<AdvancedSearchIdentity>(BusinessDirectory);
-        private static readonly Uri CustomerIntelligenceId = Metadata.Id.For<AdvancedSearchIdentity>(CustomerIntelligence);
+        private static readonly Uri BusinessDirectoryId = Metadata.Id.For<QueryingMetadataIdentity>(BusinessDirectory);
+        private static readonly Uri CustomerIntelligenceId = Metadata.Id.For<QueryingMetadataIdentity>(CustomerIntelligence);
 
         private static IMetadataSource AdvancedSearchMetadataSource
         {

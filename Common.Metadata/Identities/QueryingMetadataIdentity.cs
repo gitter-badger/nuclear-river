@@ -5,9 +5,9 @@ using NuClear.Metamodeling.Kinds;
 
 namespace NuClear.AdvancedSearch.Common.Metadata.Identities
 {
-    public sealed class AdvancedSearchIdentity : MetadataKindIdentityBase<AdvancedSearchIdentity>
+    public sealed class QueryingMetadataIdentity : MetadataKindIdentityBase<QueryingMetadataIdentity>
     {
-        private readonly Uri _id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For("AdvancedSearch");
+        private readonly Uri _id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For("Querying");
 
         public override Uri Id
         {

@@ -52,7 +52,7 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
                 throw new InvalidOperationException("The context name was not specified.");
             }
 
-            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(_name);
+            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<QueryingMetadataIdentity>(_name);
             var contextId = uri.AsIdentity();
 
             StructuralModelElement conceptualModel = null;

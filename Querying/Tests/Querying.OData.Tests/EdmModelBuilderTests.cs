@@ -32,7 +32,7 @@ namespace NuClear.Querying.OData.Tests
             var model = BuildValidModel(config);
 
             Assert.NotNull(model);
-            Assert.That(model.DeclaredNamespaces.SingleOrDefault(), Is.Not.Null.And.EqualTo("AdvancedSearch.ContextName"));
+            Assert.That(model.DeclaredNamespaces.SingleOrDefault(), Is.Not.Null.And.EqualTo("Querying.ContextName"));
             Assert.That(model.EntityContainer, Is.Not.Null);
             Assert.That(model.EntityContainer.Elements, Has.Count.EqualTo(0));
         }
@@ -71,8 +71,8 @@ namespace NuClear.Querying.OData.Tests
 
             Assert.NotNull(model);
             Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToArray(), Has.Length.EqualTo(2));
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
         }
 
         [Test]
@@ -84,8 +84,8 @@ namespace NuClear.Querying.OData.Tests
 
             Assert.NotNull(model);
             Assert.That(model.SchemaElements.OfType<EdmEntityType>().ToArray(), Has.Length.EqualTo(2));
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Library.Book"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Library.Author"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
         }
 
         [Test]
@@ -101,7 +101,7 @@ namespace NuClear.Querying.OData.Tests
             var model = BuildValidModel(config);
             Assert.NotNull(model);
 
-            var entityType = model.FindDeclaredType("AdvancedSearch.Context.Entity") as IEdmEntityType;
+            var entityType = model.FindDeclaredType("Querying.Context.Entity") as IEdmEntityType;
             Assert.NotNull(entityType);
 
             Assert.AreEqual(2, entityType.DeclaredProperties.Count());
@@ -122,7 +122,7 @@ namespace NuClear.Querying.OData.Tests
             var model = BuildValidModel(config);
             Assert.NotNull(model);
 
-            var entity = model.FindDeclaredType("AdvancedSearch.Context.Person") as IEdmEntityType;
+            var entity = model.FindDeclaredType("Querying.Context.Person") as IEdmEntityType;
             Assert.NotNull(entity);
             Assert.That(entity.FindProperty("Gender"), Is.Not.Null.And.Matches(Property.Members("Male", "Female")));
         }
@@ -141,7 +141,7 @@ namespace NuClear.Querying.OData.Tests
             var model = BuildValidModel(NewContext("Context", element));
             Assert.NotNull(model);
 
-            var entity = model.FindDeclaredType("AdvancedSearch.Context.Entity") as IEdmEntityType;
+            var entity = model.FindDeclaredType("Querying.Context.Entity") as IEdmEntityType;
             Assert.NotNull(entity);
             Assert.AreEqual(primitiveTypes.Length, entity.DeclaredProperties.Count());
         }
@@ -160,11 +160,11 @@ namespace NuClear.Querying.OData.Tests
 
             var model = BuildValidModel(config);
 
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
-            Assert.That(model.FindDeclaredType("AdvancedSearch.Context.Entity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Context.RelatedValue"), Is.Not.Null.And.InstanceOf<IEdmComplexType>());
+            Assert.That(model.FindDeclaredType("Querying.Context.RelatedEntity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
+            Assert.That(model.FindDeclaredType("Querying.Context.Entity"), Is.Not.Null.And.InstanceOf<IEdmEntityType>());
 
-            var entityType = (IEdmStructuredType)model.FindDeclaredType("AdvancedSearch.Context.Entity");
+            var entityType = (IEdmStructuredType)model.FindDeclaredType("Querying.Context.Entity");
             Assert.That(entityType.FindProperty("ToValueAsOne"), Is.Not.Null
                 .And.Matches(Property.OfKind(EdmPropertyKind.Structural))
                 .And.Not.Matches(Property.IsCollection()));
@@ -185,10 +185,10 @@ namespace NuClear.Querying.OData.Tests
         private static IMetadataSource MockSource(IMetadataElement context)
         {
             var source = new Mock<IMetadataSource>();
-            source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
+            source.Setup(x => x.Kind).Returns(new QueryingMetadataIdentity());
             source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> {
                                                                                             {
-                                                                                                Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(), context
+                                                                                                Metamodeling.Elements.Identities.Builder.Metadata.Id.For<QueryingMetadataIdentity>(), context
                                                                                             } });
 
             return source.Object;

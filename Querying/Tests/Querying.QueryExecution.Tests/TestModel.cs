@@ -60,8 +60,8 @@ namespace NuClear.Querying.QueryExecution.Tests
         private static IMetadataSource MockSource(IMetadataElement context)
         {
             var source = new Mock<IMetadataSource>();
-            source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
-            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(), context } });
+            source.Setup(x => x.Kind).Returns(new QueryingMetadataIdentity());
+            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { Metamodeling.Elements.Identities.Builder.Metadata.Id.For<QueryingMetadataIdentity>(), context } });
 
             return source.Object;
         }

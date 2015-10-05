@@ -7,7 +7,7 @@ using NuClear.Metamodeling.Provider.Sources;
 
 namespace NuClear.CustomerIntelligence.Domain
 {
-    public partial class QueryingMetadataSource : MetadataSourceBase<AdvancedSearchIdentity>
+    public partial class QueryingMetadataSource : MetadataSourceBase<QueryingMetadataIdentity>
     {
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
 

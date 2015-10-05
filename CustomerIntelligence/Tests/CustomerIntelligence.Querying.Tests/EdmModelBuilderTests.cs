@@ -28,7 +28,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
         public void ShouldBuildValidModelForCustomerIntelligenceContext()
         {
             var provider = CreateProvider(new QueryingMetadataSource());
-            var contextId = Metadata.Id.For<AdvancedSearchIdentity>("CustomerIntelligence");
+            var contextId = Metadata.Id.For<QueryingMetadataIdentity>("CustomerIntelligence");
 
             BoundedContextElement boundedContext;
             provider.TryGetMetadata(contextId, out boundedContext);

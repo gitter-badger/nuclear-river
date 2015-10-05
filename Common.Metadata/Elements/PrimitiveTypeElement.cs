@@ -20,7 +20,7 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
         private PrimitiveTypeElement(ElementaryTypeKind elementaryTypeKind)
             : base(Enumerable.Empty<IMetadataFeature>())
         {
-            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<AdvancedSearchIdentity>(elementaryTypeKind.ToString());
+            Uri uri = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<QueryingMetadataIdentity>(elementaryTypeKind.ToString());
             _identity = uri.AsIdentity();
             PrimitiveType = elementaryTypeKind;
         }

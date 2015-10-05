@@ -125,7 +125,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
 
         protected static Uri BuildContextId()
         {
-            return AdvancedSearchIdentity.Instance.Id.WithRelative(new Uri("CustomerIntelligence", UriKind.Relative));
+            return QueryingMetadataIdentity.Instance.Id.WithRelative(new Uri("CustomerIntelligence", UriKind.Relative));
         }
 
         protected static IMetadataProvider CreateMetadataProvider(params IMetadataSource[] sources)
@@ -136,8 +136,8 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
         private static IMetadataSource MockSource(IMetadataElement context)
         {
             var source = new Mock<IMetadataSource>();
-            source.Setup(x => x.Kind).Returns(new AdvancedSearchIdentity());
-            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { Metadata.Id.For<AdvancedSearchIdentity>(), context } });
+            source.Setup(x => x.Kind).Returns(new QueryingMetadataIdentity());
+            source.Setup(x => x.Metadata).Returns(new Dictionary<Uri, IMetadataElement> { { Metadata.Id.For<QueryingMetadataIdentity>(), context } });
 
             return source.Object;
         }

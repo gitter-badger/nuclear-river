@@ -14,7 +14,7 @@ namespace NuClear.Querying.QueryExecution.Tests
     public sealed class QueryExecutionTests : QueryExecutionBaseFixture
     {
         [TestCase("$filter=Id ne 1", Result = "MasterClass[].Where($it => ($it.Id != 1))")]
-        [TestCase("$filter=EnumType eq AdvancedSearch.Context.EnumType'Member1'", Result = "MasterClass[].Where($it => (Convert($it.EnumType) == Convert(Member1)))")]
+        [TestCase("$filter=EnumType eq Querying.Context.EnumType'Member1'", Result = "MasterClass[].Where($it => (Convert($it.EnumType) == Convert(Member1)))")]
         [TestCase("$filter=NonExistent ne null", ExpectedException = typeof(ODataException))]
         [TestCase("$orderby=Id desc", Result = "MasterClass[].OrderByDescending($it => $it.Id)")]
         [TestCase("$orderby=NonExistent desc", ExpectedException = typeof(ODataException))]

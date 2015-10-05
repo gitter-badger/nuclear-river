@@ -34,7 +34,7 @@ namespace NuClear.Querying.Web.OData
         public void RegisterModels(HttpServer httpServer)
         {
             MetadataSet metadataSet;
-            if (!_metadataProvider.TryGetMetadata<AdvancedSearchIdentity>(out metadataSet))
+            if (!_metadataProvider.TryGetMetadata<QueryingMetadataIdentity>(out metadataSet))
             {
                 return;
             }

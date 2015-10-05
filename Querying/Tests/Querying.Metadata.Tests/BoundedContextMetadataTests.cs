@@ -19,16 +19,16 @@ namespace NuClear.QueryingMetadata.Tests
                     .Throws(typeof(InvalidOperationException))
                     .SetName("ShouldFailIfNoName");
                 yield return Case(BoundedContextElement.Config.Name("Context"), MetadataKind.Identity)
-                    .Returns("{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'}}")
+                    .Returns("{'Identity':{'Id':'erm://metadata/Querying/Context'}}")
                     .SetName("ShouldDeclareContext");
                 yield return Case(BoundedContextElement.Config.Name("Context"), MetadataKind.Elements | MetadataKind.Features)
                     .Returns("{'Features':[],'Elements':[]}")
                     .SetName("ShouldDeclareEmptyContext");
                 yield return Case(BoundedContextElement.Config.Name("Context").ConceptualModel(StructuralModelElement.Config), MetadataKind.Identity | MetadataKind.Elements)
-                    .Returns("{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'ConceptualModel'},'Elements':[]}]}")
+                    .Returns("{'Identity':{'Id':'erm://metadata/Querying/Context'},'Elements':[{'Identity':{'Id':'ConceptualModel'},'Elements':[]}]}")
                     .SetName("ShouldDeclareContextWithConceptualModel");
                 yield return Case(BoundedContextElement.Config.Name("Context").StoreModel(StructuralModelElement.Config), MetadataKind.Identity | MetadataKind.Elements)
-                    .Returns("{'Identity':{'Id':'erm://metadata/AdvancedSearch/Context'},'Elements':[{'Identity':{'Id':'StoreModel'},'Elements':[]}]}")
+                    .Returns("{'Identity':{'Id':'erm://metadata/Querying/Context'},'Elements':[{'Identity':{'Id':'StoreModel'},'Elements':[]}]}")
                     .SetName("ShouldDeclareContextWithStoreModel");
             }
         }

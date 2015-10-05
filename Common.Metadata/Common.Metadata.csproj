@@ -75,7 +75,7 @@
     <Compile Include="Features\IndirectlyDependentAggregateFeature.cs" />
     <Compile Include="Features\IValueObjectFeature.cs" />
     <Compile Include="Features\ValueObjectFeature.cs" />
-    <Compile Include="Identities\AdvancedSearchIdentity.cs" />
+    <Compile Include="Identities\QueryingMetadataIdentity.cs" />
     <Compile Include="Identities\ImportStatisticsMetadataIdentity.cs" />
     <Compile Include="Identities\ReplicationMetadataIdentity.cs" />
     <Compile Include="Identities\StatisticsRecalculationMetadataIdentity.cs" />
