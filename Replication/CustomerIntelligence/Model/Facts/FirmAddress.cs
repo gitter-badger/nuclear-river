@@ -8,9 +8,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts
 
         public long FirmId { get; set; }
 
-		public long TerritoryId { get; set; }
+        public long TerritoryId { get; set; }
 
-		public override bool Equals(object obj)
+        public override bool Equals(object obj)
         {
             return obj is FirmAddress && IdentifiableObjectEqualityComparer<FirmAddress>.Default.Equals(this, (FirmAddress)obj);
         }

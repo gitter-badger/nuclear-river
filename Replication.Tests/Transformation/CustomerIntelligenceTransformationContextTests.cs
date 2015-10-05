@@ -73,8 +73,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = null, ClientId = 1, OrganizationUnitId = 2 }
                 ));
             context.SetupGet(x => x.FirmAddresses).Returns(Inquire(
-                new Facts::FirmAddress { Id = 1, FirmId = 1 },
-                new Facts::FirmAddress { Id = 2, FirmId = 1 }
+                new Facts::FirmAddress { Id = 1, FirmId = 1, TerritoryId = 1 },
+                new Facts::FirmAddress { Id = 2, FirmId = 1, TerritoryId = 2 }
                 ));
             context.SetupGet(x => x.Clients).Returns(Inquire(
                 new Facts::Client { Id = 1, LastDisqualifiedOn = now }
@@ -102,6 +102,10 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                     new CI::Firm { AddressCount = 2 },
                     new CI::Firm { AddressCount = 0 }
                     ), x => new { x.AddressCount }, "The address count should be processed.")
+                .VerifyTransform(x => x.FirmTerritories, Inquire(
+                    new CI::FirmTerritory { FirmId = 1, TerritoryId = 1 },
+                    new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }
+                    ), "Firm territories should be processed.")
                 .VerifyTransform(x => x.Firms.ById(1,2), Inquire(
                     new CI::Firm { Id = 1, ClientId = null, ProjectId = 1 },
                     new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2 }

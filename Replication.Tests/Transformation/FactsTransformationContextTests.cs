@@ -114,10 +114,8 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmAddress()
         {
-            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.FirmAddresses == Inquire(
-                new Erm::FirmAddress { Id = 1, FirmId = 2 }
-                )))
-                .VerifyTransform(x => x.FirmAddresses.ById(1), Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 }));
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.FirmAddresses == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 })))
+                          .VerifyTransform(x => x.FirmAddresses.ById(1), Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 }));
         }
 
         [Test]

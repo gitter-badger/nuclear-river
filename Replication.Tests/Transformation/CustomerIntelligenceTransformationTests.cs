@@ -272,6 +272,22 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldRecalculateFirmHavingTerritory()
+        {
+            var source = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmTerritories == Inquire(new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }));
+            var target = Mock.Of<ICustomerIntelligenceContext>(ctx =>
+                ctx.Firms == Inquire(new CI::Firm { Id = 1 }) &&
+                ctx.FirmTerritories == Inquire(new CI::FirmTerritory { FirmId = 1, TerritoryId = 3 }));
+
+            Transformation.Create(source, target)
+                .Transform(Aggregate.Recalculate<CI::Firm>(1))
+                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 3 }))))
+                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }))));
+        }
+
+        [Test]
         public void ShouldDestroyFirm()
         {
             var source = Mock.Of<ICustomerIntelligenceContext>();
