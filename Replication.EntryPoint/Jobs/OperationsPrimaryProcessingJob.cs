@@ -48,7 +48,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            using (Probe.Create("ETL1 Job"))
+            using (Probe.Create(Flow))
             {
                 ProcessFlow();
             }

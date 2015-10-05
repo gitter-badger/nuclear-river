@@ -282,9 +282,6 @@
     <Compile Include="Transports\StatisticsOperationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
