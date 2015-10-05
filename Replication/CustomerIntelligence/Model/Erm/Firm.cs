@@ -25,8 +25,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public long OwnerId { get; set; }
 
-        public long TerritoryId { get; set; }
-
         public bool ClosedForAscertainment { get; set; }
 
         public bool IsActive { get; set; }

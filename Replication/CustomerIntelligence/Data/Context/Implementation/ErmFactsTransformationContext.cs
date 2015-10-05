@@ -164,7 +164,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   ClientId = firm.ClientId,
                                   OrganizationUnitId = firm.OrganizationUnitId,
                                   OwnerId = firm.OwnerId,
-                                  TerritoryId = firm.TerritoryId
                               };
             }
         }

@@ -106,9 +106,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Firms == Inquire(
-                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }
+                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 }
                 )))
-                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }));
+                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 }));
         }
 
         [Test]
