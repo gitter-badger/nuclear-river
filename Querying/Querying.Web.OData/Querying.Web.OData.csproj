@@ -223,6 +223,10 @@
       <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>
       <Name>CustomerIntelligence.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\CustomerIntelligence\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
+      <Project>{FA1074A6-B89D-45DF-9B73-6881BEF46E33}</Project>
+      <Name>CustomerIntelligence.Storage</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Querying.EntityFramework\Querying.EntityFramework.csproj">
       <Project>{B6A84D45-6C11-4175-86F5-20CC5879FB01}</Project>
       <Name>Querying.EntityFramework</Name>

@@ -3,6 +3,7 @@ using System.Configuration;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Settings;
+using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.Settings.API;
 using NuClear.Storage.API.ConnectionStrings;
 

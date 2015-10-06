@@ -37,7 +37,7 @@ namespace NuClear.Replication.EntryPoint.Jobs
             _telemetry = telemetry;
             _serviceBusMessageReceiverSettings = serviceBusMessageReceiverSettings;
             _manager = NamespaceManager.CreateFromConnectionString(connectionStringSettings.GetConnectionString(ServiceBusConnectionStringIdentity.Instance));
-            _sqlConnection = new SqlConnection(connectionStringSettings.GetConnectionString(CustomerIntelligenceConnectionStringIdentity.Instance));
+            _sqlConnection = new SqlConnection(connectionStringSettings.GetConnectionString(TransportConnectionStringIdentity.Instance));
         }
 
         protected override void ExecuteInternal(IJobExecutionContext context)
