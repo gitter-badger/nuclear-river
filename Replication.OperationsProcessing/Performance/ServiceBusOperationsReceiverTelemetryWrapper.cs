@@ -34,7 +34,9 @@ namespace NuClear.Replication.OperationsProcessing.Performance
                 var dublicates = messages.GroupBy(x => x.Id).Where(group => group.Count() > 1).ToArray();
                 if (dublicates.Any())
                 {
-                    _tracer.Warn(string.Format("found message dublicates: {0}", string.Join(", ", dublicates.Select(x => x.Key.ToString()))));
+                    var dublicateIds = string.Join(", ", dublicates.Select(x => x.Key.ToString()));
+                    _tracer.Warn($"removing tacked use case dublicates: {dublicateIds}");
+                    return messages.GroupBy(x => x.Id).Select(group => group.First()).ToArray();
                 }
 
                 return messages;
