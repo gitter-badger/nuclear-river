@@ -70,7 +70,6 @@ create table CustomerIntelligence.Firm(
     , ClientId bigint null
     , ProjectId bigint not null
     , OwnerId bigint not null
-    , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
 go
@@ -101,6 +100,14 @@ create table CustomerIntelligence.FirmCategory(
     , FirmCount int null
     , AdvertisersShare float null
     , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
+)
+go
+
+-- FirmTerritory
+create table CustomerIntelligence.FirmTerritory(
+	FirmId bigint not null
+	, TerritoryId bigint not null
+    , constraint PK_FirmTerritory primary key (FirmId, TerritoryId)
 )
 go
 

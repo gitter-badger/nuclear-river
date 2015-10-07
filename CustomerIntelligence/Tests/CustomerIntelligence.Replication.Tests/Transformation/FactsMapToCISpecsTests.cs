@@ -59,16 +59,16 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 
             SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
                          new Facts::Project { Id = 2, OrganizationUnitId = 2 })
-                    .Has(new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1, TerritoryId = 1 },
-                         new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2, TerritoryId = 2 })
-                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 },
-                         new Facts::FirmAddress { Id = 2, FirmId = 1 })
+                    .Has(new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1 },
+                         new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2 })
+                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1, TerritoryId = 1 },
+                         new Facts::FirmAddress { Id = 2, FirmId = 1, TerritoryId = 2 })
                     .Has(new Facts::Client { Id = 1, LastDisqualifiedOn = now })
                     .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
                     .Has(new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
 
 			// TODO: split into several tests
-			Transformation.Create(Query)
+            Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },
@@ -92,10 +92,14 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                                                    new CI::Firm { AddressCount = 0 }),
                                            x => new { x.AddressCount },
                                            "The address count should be processed.")
+                          .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmTerritories.Map(x),
+                                           Inquire(new CI::FirmTerritory { FirmId = 1, TerritoryId = 1 },
+                                                   new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }),
+                                           "Firm territories should be processed.")
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
-                                           Inquire(new CI::Firm { Id = 1, ClientId = null, ProjectId = 1, TerritoryId = 1 },
-                                                   new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2, TerritoryId = 2 }),
-                                           x => new { x.Id, x.ClientId, x.ProjectId, x.TerritoryId },
+                                           Inquire(new CI::Firm { Id = 1, ClientId = null, ProjectId = 1 },
+                                                   new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2 }),
+                                           x => new { x.Id, x.ClientId, x.ProjectId },
                                            "The references should be processed.");
         }
 

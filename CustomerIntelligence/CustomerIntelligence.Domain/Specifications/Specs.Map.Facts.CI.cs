@@ -112,8 +112,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                                   CategoryGroupId = rates.FirstOrDefault(),
                                                   ClientId = firm.ClientId,
                                                   ProjectId = project.Id,
-                                                  OwnerId = firm.OwnerId,
-                                                  TerritoryId = firm.TerritoryId
+                                                  OwnerId = firm.OwnerId
                                               };
                             });
 
@@ -195,6 +194,12 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                 // perform union using distinct
                                 return level3.Union(level2).Union(level1);
                             });
+
+                    public static readonly MapSpecification<IQuery, IQueryable<FirmTerritory>> FirmTerritories =
+                        new MapSpecification<IQuery, IQueryable<FirmTerritory>>(
+                            q => (from firmAddress in q.For<Facts::FirmAddress>()
+                                  select new FirmTerritory { FirmId = firmAddress.FirmId, TerritoryId = firmAddress.TerritoryId })
+                                     .Distinct());
 
                     public readonly static MapSpecification<IQuery, IQueryable<Project>> Projects =
                         new MapSpecification<IQuery, IQueryable<Project>>(

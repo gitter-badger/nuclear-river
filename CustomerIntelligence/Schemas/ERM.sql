@@ -144,7 +144,6 @@ create table ERM.Firm(
     , ClientId bigint null
     , OrganizationUnitId bigint not null
     , OwnerId bigint not null
-    , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
 go
@@ -157,6 +156,7 @@ go
 create table ERM.FirmAddress(
 	Id bigint not null
     , FirmId bigint not null
+	, TerritoryId bigint not null
     , constraint PK_FirmAddresses primary key (Id)
 )
 go

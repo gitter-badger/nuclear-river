@@ -242,6 +242,21 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
         }
 
         [Test]
+        public void ShouldRecalculateFirmHavingTerritory()
+        {
+            SourceDb.Has(new Facts::Firm { Id = 1 })
+                    .Has(new Facts::FirmAddress { FirmId = 1, TerritoryId = 2 });
+
+            TargetDb.Has(new CI::Firm { Id = 1 })
+                    .Has(new CI::FirmTerritory { FirmId = 1, TerritoryId = 3 });
+
+            Transformation.Create(Query)
+                .Recalculate<CI::Firm>(1)
+                .Verify<CI::FirmTerritory>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 3 }))))
+                .Verify<CI::FirmTerritory>(m => m.Add(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }))));
+        }
+
+        [Test]
         public void ShouldDestroyFirm()
         {
             TargetDb.Has(new CI::Firm { Id = 1 });

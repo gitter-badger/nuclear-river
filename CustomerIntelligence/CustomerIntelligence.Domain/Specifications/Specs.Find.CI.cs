@@ -32,6 +32,11 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                     return new FindSpecification<FirmCategory>(x => aggregateIds.Contains(x.FirmId));
                 }
 
+                public static FindSpecification<FirmTerritory> FirmTerritories(IReadOnlyCollection<long> aggregateIds)
+                {
+                    return new FindSpecification<FirmTerritory>(x => aggregateIds.Contains(x.FirmId));
+                }
+
                 public static FindSpecification<ProjectCategory> ProjectCategories(IReadOnlyCollection<long> aggregateIds)
                 {
                     return new FindSpecification<ProjectCategory>(x => aggregateIds.Contains(x.ProjectId));

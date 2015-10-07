@@ -127,20 +127,20 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             SourceDb.Has(
-                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 });
+                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 });
 
             Transformation.Create(Query)
-                .VerifyTransform(x => Specs.Map.Erm.ToFacts.Firms.Map(x).ById(1), new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 });
+                .VerifyTransform(x => Specs.Map.Erm.ToFacts.Firms.Map(x).ById(1), new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 });
         }
 
         [Test]
         public void ShouldTransformFirmAddress()
         {
             SourceDb.Has(
-                new Erm::FirmAddress { Id = 1, FirmId = 2 });
+                new Erm::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 });
 
             Transformation.Create(Query)
-                .VerifyTransform(x => Specs.Map.Erm.ToFacts.FirmAddresses.Map(x).ById(1), new Facts::FirmAddress { Id = 1, FirmId = 2 });
+                .VerifyTransform(x => Specs.Map.Erm.ToFacts.FirmAddresses.Map(x).ById(1), new Facts::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 });
         }
 
         [Test]

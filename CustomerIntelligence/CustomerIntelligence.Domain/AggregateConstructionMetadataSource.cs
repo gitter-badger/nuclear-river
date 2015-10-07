@@ -28,7 +28,8 @@ namespace NuClear.CustomerIntelligence.Domain
                                 .HasSource(Specs.Map.Facts.ToCI.Firms)
                                 .HasValueObject(Specs.Map.Facts.ToCI.FirmActivities, Specs.Find.CI.FirmActivities)
                                 .HasValueObject(Specs.Map.Facts.ToCI.FirmBalances, Specs.Find.CI.FirmBalances)
-                                .HasValueObject(Specs.Map.Facts.ToCI.FirmCategories, Specs.Find.CI.FirmCategories),
+                                .HasValueObject(Specs.Map.Facts.ToCI.FirmCategories, Specs.Find.CI.FirmCategories)
+                                .HasValueObject(Specs.Map.Facts.ToCI.FirmTerritories, Specs.Find.CI.FirmTerritories),
 
                             AggregateMetadata<Client>
                                 .Config

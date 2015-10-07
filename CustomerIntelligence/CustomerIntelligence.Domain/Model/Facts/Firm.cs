@@ -20,8 +20,6 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Facts
 
         public long OwnerId { get; set; }
 
-        public long TerritoryId { get; set; }
-
         public override bool Equals(object obj)
         {
             return obj is Firm && IdentifiableObjectEqualityComparer<Firm>.Default.Equals(this, (Firm)obj);
