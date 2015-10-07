@@ -49,7 +49,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
 
                 public static FindSpecification<FirmAddress> FirmAddresses()
                 {
-                    return new FindSpecification<FirmAddress>(x => x.IsActive && !x.IsDeleted);
+                    return new FindSpecification<FirmAddress>(x => x.IsActive && !x.IsDeleted && !x.ClosedForAscertainment);
                 }
 
                 public static FindSpecification<FirmContact> FirmContacts()
