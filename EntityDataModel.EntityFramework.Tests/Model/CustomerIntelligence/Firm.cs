@@ -21,6 +21,6 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
         public ICollection<FirmCategory> Categories { get; set; }
         public CategoryGroup CategoryGroup { get; set; }
         public Client Client { get; set; }
-        public Territory Territory { get; set; }
+        public ICollection<FirmTerritory> Territories { get; set; }
     }
 }
