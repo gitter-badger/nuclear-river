@@ -283,8 +283,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
 
             Transformation.Create(source, target)
                 .Transform(Aggregate.Recalculate<CI::Firm>(1))
-                .Verify(m => m.Delete(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 3 }))))
-                .Verify(m => m.Insert(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }))));
+                .Verify(m => m.Update(It.Is(Predicate.Match(new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }))));
         }
 
         [Test]

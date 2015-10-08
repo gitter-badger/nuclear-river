@@ -105,7 +105,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
                 .VerifyTransform(x => x.FirmTerritories, Inquire(
                     new CI::FirmTerritory { FirmId = 1, TerritoryId = 1 },
                     new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }
-                    ), "Firm territories should be processed.")
+                    ), x => new { x.FirmId, x.TerritoryId }, "Firm territories should be processed.")
                 .VerifyTransform(x => x.Firms.ById(1,2), Inquire(
                     new CI::Firm { Id = 1, ClientId = null, ProjectId = 1 },
                     new CI::Firm { Id = 2, ClientId = 1, ProjectId = 2 }

@@ -72,8 +72,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                     .Relation(EntityRelationElement.Config.Name("Territories")
                                         .DirectTo(
                                             EntityElement.Config.Name(EntityName.FirmTerritory)
-                                                .HasKey("TerritoryId")
-                                                .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
+                                                .HasKey("FirmAddressId")
+                                                .Property(EntityPropertyElement.Config.Name("FirmAddressId").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64).Nullable())
                                         ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
                                     .Relation(EntityRelationElement.Config.Name("Client")
@@ -163,8 +164,9 @@ namespace NuClear.AdvancedSearch.EntityDataModel.Metadata
                                  .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()),
                     EntityElement.Config.Name(TableName.FirmTerritory)
-                                 .HasKey("FirmId", "TerritoryId")
-                                 .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.ProjectTerritory)).AsOne())
+                                 .HasKey("FirmId", "FirmAddressId")
+                                 .Property(EntityPropertyElement.Config.Name("FirmAddressId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =

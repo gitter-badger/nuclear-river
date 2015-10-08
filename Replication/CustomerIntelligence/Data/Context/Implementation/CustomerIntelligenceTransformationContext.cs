@@ -202,7 +202,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get
             {
                 var territories = from x in _ermContext.FirmAddresses
-                                  select new FirmTerritory { FirmId = x.FirmId, TerritoryId = x.TerritoryId };
+                                  select new FirmTerritory { FirmId = x.FirmId, FirmAddressId = x.Id, TerritoryId = x.TerritoryId };
 
                 return territories.Distinct();
             }

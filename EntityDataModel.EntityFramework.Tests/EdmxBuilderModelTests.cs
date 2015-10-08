@@ -101,7 +101,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId });
             builder.Entity<ClientContact>().HasKey(x => new { x.ContactId, x.ClientId });
-            builder.Entity<FirmTerritory>().HasKey(x => new { x.TerritoryId, x.FirmId });
+            builder.Entity<FirmTerritory>().HasKey(x => new { x.FirmAddressId, x.FirmId });
 
             var model = builder.Build(EffortProvider);
             model.Dump();
