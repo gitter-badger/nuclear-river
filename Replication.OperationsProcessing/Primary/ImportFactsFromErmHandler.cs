@@ -40,12 +40,12 @@ namespace NuClear.Replication.OperationsProcessing.Primary
                                                   .ToArray();
                 Handle(operations);
 
-                var operationPerformTime = processingResultsMap.SelectMany(pair => pair.Value)
-                                            .Select(message => message)
-                                            .OfType<OperationAggregatableMessage<FactOperation>>()
-                                            .Max(message => message.OperationTime);
+                var eldestOperationPerformTime = processingResultsMap.SelectMany(pair => pair.Value)
+                                                                     .Select(message => message)
+                                                                     .OfType<OperationAggregatableMessage<FactOperation>>()
+                                                                     .Min(message => message.OperationTime);
 
-                _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - operationPerformTime).TotalMilliseconds);
+                _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - eldestOperationPerformTime).TotalMilliseconds);
 
                 return processingResultsMap.Keys.Select(bucketId => MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded());
             }
