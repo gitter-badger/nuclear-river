@@ -6,6 +6,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests.Model.Cus
     public class Firm
     {
         public long Id { get; set; }
+        public long ProjectId { get; set; }
         public string Name { get; set; }
         public DateTimeOffset CreatedOn { get; set; }
         public DateTimeOffset? LastDisqualifiedOn { get; set; }
