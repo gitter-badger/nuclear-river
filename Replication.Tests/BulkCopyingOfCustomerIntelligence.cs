@@ -38,6 +38,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         }
 
         [Test]
+        public void ReloadFirmTerritories()
+        {
+            Reload(ctx => ctx.FirmTerritories);
+        }
+
+        [Test]
         public void ReloadCategoryGroups()
         {
             Reload(ctx => ctx.CategoryGroups);

@@ -196,7 +196,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         [Test]
         public void ShouldReadFirm()
         {
-            ErmDb.Has(new Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddHours(1), ClientId = 1, OrganizationUnitId = 2, TerritoryId = 3 })
+            ErmDb.Has(new Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddHours(1), ClientId = 1, OrganizationUnitId = 2 })
                  .Has(new Firm { Id = 2, IsActive = false })
                  .Has(new Firm { Id = 3, IsDeleted = true })
                  .Has(new Firm { Id = 4, IsActive = false, IsDeleted = true })
@@ -205,7 +205,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
             Reader.Create(ErmDb)
                   .VerifyRead(
                       x => x.Firms.ById(1),
-                      Inquire(new Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddHours(1), ClientId = 1, OrganizationUnitId = 2, TerritoryId = 3 }))
+                      Inquire(new Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddHours(1), ClientId = 1, OrganizationUnitId = 2 }))
                   .VerifyRead(x => x.Firms.ById(2), Inquire<Firm>())
                   .VerifyRead(x => x.Firms.ById(3), Inquire<Firm>())
                   .VerifyRead(x => x.Firms.ById(4), Inquire<Firm>())

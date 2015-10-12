@@ -116,7 +116,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
-                                  TerritoryId = firm.TerritoryId
                               };
             }
         }
@@ -195,6 +194,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
                 // perform union using distinct
                 return level3.Union(level2).Union(level1);
+            }
+        }
+
+        public IQueryable<FirmTerritory> FirmTerritories
+        {
+            get
+            {
+                var territories = from x in _ermContext.FirmAddresses
+                                  select new FirmTerritory { FirmId = x.FirmId, FirmAddressId = x.Id, TerritoryId = x.TerritoryId };
+
+                return territories.Distinct();
             }
         }
 

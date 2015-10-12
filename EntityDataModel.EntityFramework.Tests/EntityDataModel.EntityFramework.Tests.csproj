@@ -102,6 +102,7 @@
     <Compile Include="Model\CustomerIntelligence\Firm.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmCategory.cs" />
     <Compile Include="Model\CustomerIntelligence\FirmBalance.cs" />
+    <Compile Include="Model\CustomerIntelligence\FirmTerritory.cs" />
     <Compile Include="Model\CustomerIntelligence\Project.cs" />
     <Compile Include="Model\CustomerIntelligence\ProjectCategory.cs" />
     <Compile Include="Model\CustomerIntelligence\Territory.cs" />
@@ -117,6 +118,7 @@
     <EmbeddedResource Include="Data\CategoryGroup.csv" />
     <EmbeddedResource Include="Data\FirmCategory.csv" />
     <EmbeddedResource Include="Data\ProjectCategory.csv" />
+    <EmbeddedResource Include="Data\FirmTerritory.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
