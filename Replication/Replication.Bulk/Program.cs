@@ -33,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
                 var sourceQuery = new LinqToDbQuery(source);
 				foreach (var metadata in context.Metadata)
 				{
-					Console.WriteLine($"{metadata.Identity}");
+					Console.WriteLine($"{metadata.Identity.Id}");
 					var processor = context.Factory.Invoke(metadata, sourceQuery, target);
 					processor.Process();
 				}
