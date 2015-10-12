@@ -54,7 +54,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{8F3C0046-1F47-4C8E-8B03-D35E96686C6F}"
 	ProjectSection(SolutionItems) = preProject
+		Environments\ConvertUseCases.Business.Russia.config = Environments\ConvertUseCases.Business.Russia.config
+		Environments\ConvertUseCases.Edu.Russia.config = Environments\ConvertUseCases.Edu.Russia.config
 		Environments\ConvertUseCases.Production.Russia.config = Environments\ConvertUseCases.Production.Russia.config
+		Environments\Erm.Business.Russia.config = Environments\Erm.Business.Russia.config
+		Environments\Erm.Edu.Russia.config = Environments\Erm.Edu.Russia.config
 		Environments\Erm.Production.Russia.config = Environments\Erm.Production.Russia.config
 		Environments\quartz.Production.Russia.config = Environments\quartz.Production.Russia.config
 	EndProjectSection

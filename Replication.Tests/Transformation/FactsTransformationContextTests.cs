@@ -106,18 +106,16 @@ namespace NuClear.AdvancedSearch.Replication.Tests.Transformation
         public void ShouldTransformFirm()
         {
             Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.Firms == Inquire(
-                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }
+                new Erm::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifyTime = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 }
                 )))
-                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, TerritoryId = 4, OwnerId = 5 }));
+                .VerifyTransform(x => x.Firms.ById(1), Inquire(new Facts::Firm { Id = 1, Name = "firm", CreatedOn = Date, LastDisqualifiedOn = Date.AddDays(1), ClientId = 2, OrganizationUnitId = 3, OwnerId = 5 }));
         }
 
         [Test]
         public void ShouldTransformFirmAddress()
         {
-            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.FirmAddresses == Inquire(
-                new Erm::FirmAddress { Id = 1, FirmId = 2 }
-                )))
-                .VerifyTransform(x => x.FirmAddresses.ById(1), Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2 }));
+            Transformation.Create(Mock.Of<IErmContext>(ctx => ctx.FirmAddresses == Inquire(new Erm::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 })))
+                          .VerifyTransform(x => x.FirmAddresses.ById(1), Inquire(new Facts::FirmAddress { Id = 1, FirmId = 2, TerritoryId = 3 }));
         }
 
         [Test]

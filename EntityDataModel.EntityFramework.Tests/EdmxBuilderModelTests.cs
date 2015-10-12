@@ -74,7 +74,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                     .Include(x => x.Client)
                     .Include(x => x.Client.CategoryGroup)
                     .Include(x => x.Client.Contacts)
-                    .Include(x => x.Territory)
+                    .Include(x => x.Territories)
                     .OrderBy(x => x.Id)
                     .FirstOrDefault();
 
@@ -86,7 +86,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
                 Assert.That(firm.Client, Is.Not.Null.And.Property("Name").EqualTo("Client 1"));
                 Assert.That(firm.Client.CategoryGroup, Is.Not.Null);
                 Assert.That(firm.Client.Contacts, Is.Not.Null.And.Count.EqualTo(3));
-                Assert.That(firm.Territory, Is.Not.Null);
+                Assert.That(firm.Territories, Is.Not.Empty.And.Count.EqualTo(2));
             }
         }
 
@@ -101,6 +101,7 @@ namespace NuClear.AdvancedSearch.EntityDataModel.EntityFramework.Tests
             builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId });
             builder.Entity<ClientContact>().HasKey(x => new { x.ContactId, x.ClientId });
+            builder.Entity<FirmTerritory>().HasKey(x => new { x.FirmAddressId, x.FirmId });
 
             var model = builder.Build(EffortProvider);
             model.Dump();

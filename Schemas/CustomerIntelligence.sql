@@ -15,7 +15,9 @@ if object_id('CustomerIntelligence.Contact') is not null drop table CustomerInte
 if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact
 if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory
+if object_id('CustomerIntelligence.FirmTerritory') is not null drop table CustomerIntelligence.FirmTerritory
 if object_id('CustomerIntelligence.FirmView', 'view') is not null drop view CustomerIntelligence.FirmView
+
 go
 
 
@@ -70,7 +72,6 @@ create table CustomerIntelligence.Firm(
     , ClientId bigint null
     , ProjectId bigint not null
     , OwnerId bigint not null
-    , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
 go
@@ -101,6 +102,15 @@ create table CustomerIntelligence.FirmCategory(
     , FirmCount int null
     , AdvertisersShare float null
     , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
+)
+go
+
+-- FirmTerritory
+create table CustomerIntelligence.FirmTerritory(
+	FirmId bigint not null
+    , FirmAddressId bigint not null
+	, TerritoryId bigint null
+    , constraint PK_FirmTerritory primary key (FirmId, FirmAddressId)
 )
 go
 
