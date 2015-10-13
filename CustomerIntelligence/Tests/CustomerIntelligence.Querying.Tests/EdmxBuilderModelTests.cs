@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Querying.Tests
 {
-    using NuClear.CustomerIntelligence.Domain.Model.CI;
+    using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
 
     using CategoryGroup = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.CategoryGroup;
     using Client = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.Client;

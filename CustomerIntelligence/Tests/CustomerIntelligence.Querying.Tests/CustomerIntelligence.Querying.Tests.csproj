@@ -132,7 +132,7 @@
     <EmbeddedResource Include="Data\Project.csv" />
     <EmbeddedResource Include="Data\ProjectCategory.csv" />
     <EmbeddedResource Include="Data\Territory.csv" />
-    <None Include="Data\FirmTerritory.csv" />
+    <EmbeddedResource Include="Data\FirmTerritory.csv" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
