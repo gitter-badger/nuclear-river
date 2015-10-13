@@ -198,7 +198,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                     public static readonly MapSpecification<IQuery, IQueryable<FirmTerritory>> FirmTerritories =
                         new MapSpecification<IQuery, IQueryable<FirmTerritory>>(
                             q => (from firmAddress in q.For<Facts::FirmAddress>()
-                                  select new FirmTerritory { FirmId = firmAddress.FirmId, TerritoryId = firmAddress.TerritoryId })
+                                  select new FirmTerritory { FirmId = firmAddress.FirmId, FirmAddressId = firmAddress.Id, TerritoryId = firmAddress.TerritoryId })
                                      .Distinct());
 
                     public readonly static MapSpecification<IQuery, IQueryable<Project>> Projects =

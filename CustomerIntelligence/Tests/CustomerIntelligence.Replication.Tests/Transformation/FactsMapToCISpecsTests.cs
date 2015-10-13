@@ -95,6 +95,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmTerritories.Map(x),
                                            Inquire(new CI::FirmTerritory { FirmId = 1, TerritoryId = 1 },
                                                    new CI::FirmTerritory { FirmId = 1, TerritoryId = 2 }),
+                                           x => new { x.FirmId, x.TerritoryId }, 
                                            "Firm territories should be processed.")
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1, 2),
                                            Inquire(new CI::Firm { Id = 1, ClientId = null, ProjectId = 1 },

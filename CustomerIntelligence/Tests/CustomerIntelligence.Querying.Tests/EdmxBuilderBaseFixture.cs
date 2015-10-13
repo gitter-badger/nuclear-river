@@ -61,7 +61,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
                     typeof(FirmBalance),
                     typeof(FirmCategory),
                     typeof(Project),
-                    typeof(ProjectCategory),
+                    typeof(Category),
                     typeof(Territory));
             }
         }

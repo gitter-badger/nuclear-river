@@ -4,7 +4,9 @@ namespace NuClear.CustomerIntelligence.Domain.Model.CI
     {
         public long FirmId { get; set; }
 
-        public long TerritoryId { get; set; }
+        public long FirmAddressId { get; set; }
+
+        public long? TerritoryId { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -25,13 +27,13 @@ namespace NuClear.CustomerIntelligence.Domain.Model.CI
         {
             unchecked
             {
-                return (FirmId.GetHashCode() * 397) ^ TerritoryId.GetHashCode();
+                return (FirmId.GetHashCode() * 397) ^ FirmAddressId.GetHashCode();
             }
         }
 
         private bool Equals(FirmTerritory other)
         {
-            return FirmId == other.FirmId && TerritoryId == other.TerritoryId;
+            return FirmId == other.FirmId && FirmAddressId == other.FirmAddressId;
         }
     }
 }

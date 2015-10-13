@@ -133,8 +133,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                  {
                                      Id = firmAddress.Id,
                                      FirmId = firmAddress.FirmId,
-                                     // FIXME {all, 05.10.2015}: Ожидается, что в ERM будет релиз, который заменит null на региональные территории и сделает поле not nullable
-                                     TerritoryId = firmAddress.TerritoryId ?? 15763500638928897
+                                     TerritoryId = firmAddress.TerritoryId
                                  });
 
                     public static readonly MapSpecification<IQuery, IQueryable<FirmContact>> FirmContacts =
