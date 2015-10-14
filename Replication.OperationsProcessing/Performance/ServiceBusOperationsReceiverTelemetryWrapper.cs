@@ -25,8 +25,10 @@ namespace NuClear.Replication.OperationsProcessing.Performance
             using (Probe.Create("Peek Erm Operations"))
             {
                 var messages = _receiver.Peek();
+
                 var serviceBusMessageCount = messages.Cast<ServiceBusPerformedOperationsMessage>().Sum(x => x.Operations.Count());
                 _telemetryPublisher.Publish<ErmReceivedUseCaseCountIdentity>(serviceBusMessageCount);
+
                 return messages;
             }
         }
