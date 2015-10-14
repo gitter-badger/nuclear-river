@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkCopyingOfStatistics.cs" />
+    <Compile Include="StatisticsTransformation\StatisticsTransformationContextTests.cs" />
     <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
     <Compile Include="StatisticsTransformation\StatisticsPrimaryTransformationTests.cs" />
     <Compile Include="Transformation\BitFactsTransformationTests.cs" />
