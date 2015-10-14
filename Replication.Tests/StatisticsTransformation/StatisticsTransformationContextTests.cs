@@ -18,7 +18,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
     internal class StatisticsTransformationContextTests : BaseTransformationFixture
     {
         [Test]
-        public void ShouldTransformCategoryGroup()
+        public void ShouldTransformFirmCategoryStatistics()
         {
             var context = new Mock<IBitFactsContext>();
             context.SetupGet(x => x.FirmCategory)
@@ -38,6 +38,24 @@ namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
                               new CI::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 10000, Shows = 20000 },
                               new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 0, Shows = 0 },
                               new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 2, ProjectId = 1, AdvertisersShare = 0f, FirmCount = 1, Hits = 0, Shows = 0 }));
+        }
+
+        [Test]
+        public void AdvertisersShareShouldNotBeMoreThanOne()
+        {
+            var context = new Mock<IBitFactsContext>();
+            context.SetupGet(x => x.FirmCategory)
+                   .Returns(Inquire(new Facts::FirmCategory { FirmId = 1, CategoryId = 1, ProjectId = 1 }));
+
+            context.SetupGet(x => x.FirmStatistics)
+                   .Returns(Inquire(new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, Hits = 10000, Shows = 20000 }));
+
+            context.SetupGet(x => x.CategoryStatistics)
+                   .Returns(Inquire(new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 1, AdvertisersCount = 5 }));
+
+            Transformation.Create(context.Object)
+                          .VerifyTransform(x => x.FirmCategoryStatistics, Inquire(
+                              new CI::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, AdvertisersShare = 1f, FirmCount = 1, Hits = 10000, Shows = 20000 }));
         }
 
         #region Transformation

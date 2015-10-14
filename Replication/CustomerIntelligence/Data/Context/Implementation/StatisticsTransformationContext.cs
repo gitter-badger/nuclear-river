@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
@@ -32,7 +33,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Hits = firmStatistics.Hits,
                                   Shows = firmStatistics.Shows,
                                   FirmCount = firmCount.Count,
-                                  AdvertisersShare = (float)categoryStatistics.AdvertisersCount / firmCount.Count
+                                  AdvertisersShare = Math.Min(1, (float)categoryStatistics.AdvertisersCount / firmCount.Count)
                               };
             }
         }
