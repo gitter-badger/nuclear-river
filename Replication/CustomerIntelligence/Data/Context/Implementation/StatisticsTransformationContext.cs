@@ -1,9 +1,5 @@
 using System.Linq;
 
-using LinqToDB;
-
-using FirmCategoryStatistics = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.FirmCategoryStatistics;
-
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation
 {
     using CI = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model;
@@ -11,24 +7,24 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
     public sealed class StatisticsTransformationContext : IStatisticsContext
     {
-        private readonly IDataContext _bitContext;
+        private readonly IBitFactsContext _bitContext;
 
-        public StatisticsTransformationContext(IDataContext bitContext)
+        public StatisticsTransformationContext(IBitFactsContext bitContext)
         {
             _bitContext = bitContext;
         }
 
-        public IQueryable<FirmCategoryStatistics> FirmCategoryStatistics
+        public IQueryable<CI::FirmCategoryStatistics> FirmCategoryStatistics
         {
             get
             {
-                var firmCounts = _bitContext.GetTable<Facts.FirmCategory>().GroupBy(x => new { x.ProjectId, x.CategoryId }).Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
+                var firmCounts = _bitContext.FirmCategory.GroupBy(x => new { x.ProjectId, x.CategoryId }).Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
 
-                return from firm in _bitContext.GetTable<Facts.FirmCategory>()
-                       from firmStatistics in _bitContext.GetTable<Facts.FirmCategoryStatistics>().Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
-                       from categoryStatistics in _bitContext.GetTable<Facts.ProjectCategoryStatistics>().Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
+                return from firm in _bitContext.FirmCategory
+                       from firmStatistics in _bitContext.FirmStatistics.Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty(new Facts::FirmCategoryStatistics())
+                       from categoryStatistics in _bitContext.CategoryStatistics.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty(new Facts::ProjectCategoryStatistics())
                        from firmCount in firmCounts.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
-                       select new CI.FirmCategoryStatistics
+                       select new CI::FirmCategoryStatistics
                               {
                                   ProjectId = firm.ProjectId,
                                   FirmId = firm.FirmId,
@@ -36,7 +32,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Hits = firmStatistics.Hits,
                                   Shows = firmStatistics.Shows,
                                   FirmCount = firmCount.Count,
-                                  AdvertisersShare = categoryStatistics.AdvertisersCount / firmCount.Count
+                                  AdvertisersShare = (float)categoryStatistics.AdvertisersCount / firmCount.Count
                               };
             }
         }
