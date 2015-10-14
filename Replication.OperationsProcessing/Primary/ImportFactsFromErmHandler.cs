@@ -34,17 +34,13 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         {
             try
             {
-                var operations = processingResultsMap.SelectMany(pair => pair.Value)
-                                                  .Cast<OperationAggregatableMessage<FactOperation>>()
-                                                  .SelectMany(message => message.Operations)
-                                                  .ToArray();
-                Handle(operations);
+                var messages = processingResultsMap.SelectMany(pair => pair.Value)
+                                                   .Cast<OperationAggregatableMessage<FactOperation>>()
+                                                   .ToArray();
 
-                var eldestOperationPerformTime = processingResultsMap.SelectMany(pair => pair.Value)
-                                                                     .Select(message => message)
-                                                                     .OfType<OperationAggregatableMessage<FactOperation>>()
-                                                                     .Min(message => message.OperationTime);
+                Handle(messages.SelectMany(message => message.Operations).ToArray());
 
+                var eldestOperationPerformTime = messages.Min(message => message.OperationTime);
                 _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - eldestOperationPerformTime).TotalMilliseconds);
 
                 return processingResultsMap.Keys.Select(bucketId => MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded());
