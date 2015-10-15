@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 
 using NuClear.CustomerIntelligence.Domain.Specifications;
-using NuClear.CustomerIntelligence.Replication.Tests;
-using NuClear.CustomerIntelligence.Replication.Tests.Transformation;
 using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;
 
-namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
+namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
     using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
     using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
