@@ -7,6 +7,7 @@ using LinqToDB.Data;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
+using NuClear.Storage.LinqToDB.Cud;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests
 {
@@ -34,7 +35,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
                                                  IsolationLevel = IsolationLevel.ReadCommitted,
                                                  Timeout = TimeSpan.Zero
                                              },
-                                             new NullPendingChangesHandlingStrategy());
+                                             new NullPendingChangesHandlingStrategy(),
+                                             new IterativeStrategyProvider());
         }
     }
 }

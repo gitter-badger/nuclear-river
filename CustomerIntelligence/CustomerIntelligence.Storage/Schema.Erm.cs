@@ -1,5 +1,6 @@
 using System;
 
+using LinqToDB.DataProvider.SqlServer;
 using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Model.Erm;
@@ -16,7 +17,7 @@ namespace NuClear.CustomerIntelligence.Storage
         {
             get
             {
-                var schema = new MappingSchema();
+                var schema = new MappingSchema(new SqlServerMappingSchema());
 
                 // NOTE: ERM хранит даты в UTC с использованием типа datetime, уберем неодназначность выставив UTC явно
                 schema.SetConvertExpression<DateTime, DateTime>(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
