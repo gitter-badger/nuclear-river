@@ -127,6 +127,7 @@
     <Compile Include="Data\NoSqlTrace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Transformation\StatisticsTransformationContextTests.cs" />
     <Compile Include="Transformation\TransformationFixtureBase.cs" />
     <Compile Include="ProjectionEqualityComparer.cs" />
   </ItemGroup>

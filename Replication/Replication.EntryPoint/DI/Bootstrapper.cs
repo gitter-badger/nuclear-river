@@ -92,6 +92,8 @@ using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLS
 
 namespace NuClear.Replication.EntryPoint.DI
 {
+    using NuClear.Messaging.Transports.ServiceBus.LockRenewer;
+
     public static class Bootstrapper
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
@@ -215,7 +217,7 @@ namespace NuClear.Replication.EntryPoint.DI
             return container.RegisterInstance<IParentContainerUsedRegistrationsContainer>(new ParentContainerUsedRegistrationsContainer(typeof(IUserContext)), Lifetime.Singleton)
                             .RegisterType(typeof(ServiceBusMessageFlowReceiver), Lifetime.Singleton)
                             .RegisterType(typeof(CorporateBusMessageFlowReceiver), Lifetime.PerResolve)
-                            .RegisterType<IServiceBusLockRenewer, TunedReceivedMessagesLockRenewalManager>(Lifetime.Singleton)
+                            .RegisterType<IServiceBusLockRenewer, NullServiceBusLockRenewer>(Lifetime.Singleton)
                             .RegisterType<ICorporateBusMessageFlowReceiverFactory, UnityCorporateBusMessageFlowReceiverFactory>(Lifetime.PerScope)
                             .RegisterType<IServiceBusMessageFlowReceiverFactory, UnityServiceBusMessageFlowReceiverFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingStagesFactory, UnityMessageProcessingStagesFactory>(Lifetime.PerScope)
