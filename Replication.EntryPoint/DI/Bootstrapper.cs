@@ -47,7 +47,6 @@ using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
-using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
@@ -158,7 +157,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryWrapper), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
-                     .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final

@@ -162,4 +162,7 @@ Global
 		{8A646634-2535-493C-A699-90B4D1C40A83} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}
 	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45
+	EndGlobalSection
 EndGlobal

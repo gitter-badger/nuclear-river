@@ -40,7 +40,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
 
         public int BatchSize { get; set; }
         public string Flow { get; set; }
-        public int? TimeSafetyOffsetHours { get; set; }
 
         private IAsyncMessageFlowProcessor MessageFlowProcessor
         {
@@ -110,7 +109,6 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                                                                      MessageProcessingStage.Handling
                                                                  },
                                             FirstFaultTolerantStage = MessageProcessingStage.None,
-                                            TimeSafetyOffsetHours = TimeSafetyOffsetHours,
                                         };
 
                 messageFlowProcessor = _messageFlowProcessorFactory.CreateSync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);

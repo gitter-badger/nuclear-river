@@ -29,9 +29,13 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
 
         protected override IReadOnlyList<CorporateBusPerformedOperationsMessage> Peek()
         {
-            var batch = _corporateBusMessageFlowReceiver.ReceiveBatch(MessageReceiverSettings.BatchSize);
-            var messages = batch.Select(corporateBusMessage => new CorporateBusPerformedOperationsMessage(new [] { corporateBusMessage })).ToList();
-            return messages;
+            CorporateBusPackage corporateBusPackage;
+            if (!_corporateBusMessageFlowReceiver.TryReceive(out corporateBusPackage))
+            {
+                return new CorporateBusPerformedOperationsMessage[0];
+            }
+
+            return new []{ new CorporateBusPerformedOperationsMessage(new[] { corporateBusPackage }) };
         }
 
         protected override void Complete(
@@ -44,7 +48,10 @@ namespace NuClear.Replication.OperationsProcessing.Transports.CorporateBus
                 return;
             }
 
-            _corporateBusMessageFlowReceiver.CompleteBatch();
+            if (successfullyProcessedMessages.Any())
+            {
+                _corporateBusMessageFlowReceiver.Complete();
+            }
         }
 
         protected override void OnDispose(bool disposing)

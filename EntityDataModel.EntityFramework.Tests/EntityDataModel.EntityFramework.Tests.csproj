@@ -50,7 +50,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Utils.1.0.4\lib\portable-net451+win81+wpa81\2GIS.NuClear.Utils.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Utils.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Utils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Effort">
@@ -119,7 +119,9 @@
     <EmbeddedResource Include="Data\FirmCategory.csv" />
     <EmbeddedResource Include="Data\ProjectCategory.csv" />
     <EmbeddedResource Include="Data\FirmTerritory.csv" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EntityDataModel.Metadata\EntityDataModel.Metadata.csproj">
