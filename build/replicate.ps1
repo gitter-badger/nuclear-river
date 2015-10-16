@@ -97,22 +97,6 @@ function Replicate-QueryDtoToConnection ($connection, $queryDtos){
 	}
 }
 
-function Create-Database {
-
-	$builder = New-Object System.Data.Common.DbConnectionStringBuilder
-	$builder.set_ConnectionString($Config.ConnectionStrings.CustomerIntelligence)
-	$initialCatalog = $builder['Initial Catalog']
-	$builder['Initial Catalog'] = $null
-
-	$connection = Create-SqlServerConnection $builder.ConnectionString
-
-	$sqlScript = Get-Content (Join-Path $SqlScriptsDir 'Database.sql') -Raw
-	$sqlScript = $sqlScript -replace '\$\(Database\)', $initialCatalog
-
-	Write-Host "Database.sql..."
-	Exec-Command $connection $sqlScript
-}
-
 function Update-Schemas {
 
 	$connection = Create-SqlServerConnection $Config.ConnectionStrings.CustomerIntelligence
@@ -151,7 +135,6 @@ function Exec-Command ($connection, [string]$command){
 	}
 }
 
-Create-Database
 Update-Schemas
 Replicate-Data
 

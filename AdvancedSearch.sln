@@ -27,7 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Querying.Web.OData", "Query
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
 	ProjectSection(SolutionItems) = preProject
-		Replication\Schemas\Database.sql = Replication\Schemas\Database.sql
 		Replication\Schemas\Transport.sql = Replication\Schemas\Transport.sql
 	EndProjectSection
 EndProject
