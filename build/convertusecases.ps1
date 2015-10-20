@@ -76,15 +76,28 @@ Task Create-Topics -Precondition { $Metadata['ServiceBus'] } {
 	}
 
 	$sourceConnectionString = Get-ConnectionString $config 'Source'
-	Create-Topic $sourceConnectionString $routeMetadata.SourceTopic
-	Create-Subscription $sourceConnectionString $routeMetadata.SourceTopic $routeMetadata.SourceSubscription
+	Create-Topic $sourceConnectionString $routeMetadata.SourceTopic -Properties @{
+		'EnableBatchedOperations' = $true
+		'SupportOrdering' = $true
+	}
+	Create-Subscription $sourceConnectionString $routeMetadata.SourceTopic $routeMetadata.SourceSubscription -Properties @{
+		'EnableBatchedOperations' = $true
+		'MaxDeliveryCount' = 0x7fffffff
+	}
 
 	$destConnectionString = Get-ConnectionString $config 'Dest'
 	Delete-Topic $destConnectionString 'topic.advancedsearch' # временно, потом удалить
 	Delete-Topic $destConnectionString 'topic.performedoperations(.*)import'
 
-	Create-Topic $destConnectionString $routeMetadata.DestTopic
-	Create-Subscription $destConnectionString $routeMetadata.DestTopic $routeMetadata.DestSubscription
+	Create-Topic $destConnectionString $routeMetadata.DestTopic -Properties @{
+		'EnableBatchedOperations' = $true
+		'SupportOrdering' = $true
+		'RequiresDuplicateDetection' = $true
+	}
+	Create-Subscription $destConnectionString $routeMetadata.DestTopic $routeMetadata.DestSubscription -Properties @{
+		'EnableBatchedOperations' = $true
+		'MaxDeliveryCount' = 0x7fffffff
+	}
 }
 
 Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService, Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] } {
