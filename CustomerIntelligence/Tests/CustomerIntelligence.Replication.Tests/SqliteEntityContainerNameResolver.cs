@@ -8,16 +8,22 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
     {
         private const string Erm = "Erm";
         private const string Facts = "Facts";
+        private const string Bit = "Bit";
         private const string CustomerIntelligence = "CustomerIntelligence";
 
         public string Resolve(Type objType)
         {
-            if (objType.Namespace.Contains(Erm))
+            if (objType.Namespace.EndsWith(Erm))
             {
                 return Erm;
             }
 
-            if (objType.Namespace.Contains(Facts))
+            if (objType.Namespace.EndsWith(Facts))
+            {
+                return Facts;
+            }
+
+            if (objType.Namespace.EndsWith(Bit))
             {
                 return Facts;
             }

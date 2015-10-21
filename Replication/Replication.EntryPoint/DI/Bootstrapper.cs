@@ -10,7 +10,7 @@ using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
-using NuClear.CustomerIntelligence.Domain.Model.Facts;
+using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.CustomerIntelligence.OperationsProcessing;
 using NuClear.CustomerIntelligence.OperationsProcessing.Final;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;

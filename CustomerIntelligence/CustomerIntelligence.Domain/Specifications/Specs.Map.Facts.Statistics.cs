@@ -1,13 +1,15 @@
 ﻿using System.Linq;
 
-using NuClear.CustomerIntelligence.Domain.Model.CI;
+//
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
-using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
-
 namespace NuClear.CustomerIntelligence.Domain.Specifications
 {
+    using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
+    using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
+    using Statistics = NuClear.CustomerIntelligence.Domain.Model.Statistics;
+
     public static partial class Specs
     {
         public static partial class Map
@@ -16,24 +18,24 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
             {
                 public static partial class ToStatistics
                 { 
-                    public static readonly MapSpecification<IQuery, IQueryable<FirmCategoryStatistics>> FirmCategoryStatistics =
-                        new MapSpecification<IQuery, IQueryable<FirmCategoryStatistics>>(
+                    public static readonly MapSpecification<IQuery, IQueryable<Statistics::FirmCategoryStatistics>> FirmCategoryStatistics =
+                        new MapSpecification<IQuery, IQueryable<Statistics::FirmCategoryStatistics>>(
                             q =>
                             {
-                                var firmCounts = q.For<Facts::FirmCategory>()
+                                var firmCounts = q.For<Bit::FirmCategory>()
                                                   .GroupBy(x => new { x.ProjectId, x.CategoryId })
                                                   .Select(x => new { x.Key.ProjectId, x.Key.CategoryId, Count = x.Count() });
 
-                                return from firm in q.For<Facts::FirmCategory>()
-                                       from firmStatistics in q.For<Facts::FirmCategoryStatistics>()
+                                return from firm in q.For<Bit::FirmCategory>()
+                                       from firmStatistics in q.For<Bit::FirmCategoryStatistics>()
                                                                .Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
                                                                .DefaultIfEmpty()
-                                       from categoryStatistics in q.For<Facts::ProjectCategoryStatistics>()
+                                       from categoryStatistics in q.For<Bit::ProjectCategoryStatistics>()
                                                                    .Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
                                                                    .DefaultIfEmpty()
                                        from firmCount in firmCounts.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
                                                                    .DefaultIfEmpty()
-                                       select new FirmCategoryStatistics
+                                       select new Statistics::FirmCategoryStatistics
                                               {
                                                   ProjectId = firm.ProjectId,
                                                   FirmId = firm.FirmId,

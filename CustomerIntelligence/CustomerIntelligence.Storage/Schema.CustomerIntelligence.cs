@@ -1,6 +1,7 @@
 using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Model.CI;
+using NuClear.CustomerIntelligence.Domain.Model.Statistics;
 
 namespace NuClear.CustomerIntelligence.Storage
 {
@@ -30,7 +31,7 @@ namespace NuClear.CustomerIntelligence.Storage
                     .Property(x => x.FirmId).IsPrimaryKey();
                 config.Entity<FirmTerritory>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.FirmId).IsPrimaryKey()
-                    .Property(x => x.TerritoryId).IsPrimaryKey();
+                    .Property(x => x.FirmAddressId).IsPrimaryKey();
                 config.Entity<Project>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<ProjectCategory>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.ProjectId).IsPrimaryKey()

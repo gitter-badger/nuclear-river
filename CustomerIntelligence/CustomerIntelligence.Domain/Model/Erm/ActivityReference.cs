@@ -1,4 +1,6 @@
-﻿namespace NuClear.CustomerIntelligence.Domain.Model.Erm
+﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
+
+namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public abstract class ActivityReference : IErmValueObject
     {

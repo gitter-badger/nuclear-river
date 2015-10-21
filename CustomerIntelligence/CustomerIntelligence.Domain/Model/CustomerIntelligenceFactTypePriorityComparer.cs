@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace NuClear.CustomerIntelligence.Domain.Model.Facts
+using NuClear.CustomerIntelligence.Domain.Model.Facts;
+
+namespace NuClear.CustomerIntelligence.Domain.Model
 {
     public sealed class CustomerIntelligenceFactTypePriorityComparer : IComparer<Type>
     {

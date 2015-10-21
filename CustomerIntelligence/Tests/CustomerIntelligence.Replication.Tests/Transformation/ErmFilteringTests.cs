@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Model.Erm;
 using NuClear.CustomerIntelligence.Domain.Specifications;

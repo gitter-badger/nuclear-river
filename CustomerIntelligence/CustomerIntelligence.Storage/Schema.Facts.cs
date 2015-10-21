@@ -1,9 +1,12 @@
 using LinqToDB.Mapping;
 
+using NuClear.CustomerIntelligence.Domain.Model.Bit;
 using NuClear.CustomerIntelligence.Domain.Model.Facts;
+
 
 namespace NuClear.CustomerIntelligence.Storage
 {
+
     public static partial class Schema
     {
         private const string ErmSchema = "ERM";

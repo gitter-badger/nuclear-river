@@ -1,6 +1,7 @@
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
+using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.CustomerIntelligence.Domain.Model.Facts;
 
 using NUnit.Framework;

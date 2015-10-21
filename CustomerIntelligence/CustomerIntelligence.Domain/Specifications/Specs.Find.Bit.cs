@@ -1,6 +1,6 @@
 ﻿using NuClear.Storage.API.Specifications;
 
-using Bit = NuClear.CustomerIntelligence.Domain.Model.Facts;
+using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
 
 namespace NuClear.CustomerIntelligence.Domain.Specifications
 {

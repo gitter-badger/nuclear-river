@@ -1,6 +1,6 @@
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 
-namespace NuClear.CustomerIntelligence.Domain.Model.Facts
+namespace NuClear.CustomerIntelligence.Domain.Model.Bit
 {
     public sealed class FirmCategory : IFactStatisticsObject
     {

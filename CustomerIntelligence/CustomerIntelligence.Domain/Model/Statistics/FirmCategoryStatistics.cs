@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 
-namespace NuClear.CustomerIntelligence.Domain.Model.CI
+using NuClear.AdvancedSearch.Common.Metadata.Model;
+
+namespace NuClear.CustomerIntelligence.Domain.Model.Statistics
 {
     public sealed class FirmCategoryStatistics : ICustomerIntelligenceObject
     {

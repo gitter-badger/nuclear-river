@@ -9,11 +9,12 @@ using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider.Sources;
 
-using Bit = NuClear.CustomerIntelligence.Domain.Model.Facts;
+using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
 using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
 
 namespace NuClear.CustomerIntelligence.Domain
 {
+
     public class ImportStatisticsMetadataSource : MetadataSourceBase<ImportStatisticsMetadataIdentity>
     {
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;
