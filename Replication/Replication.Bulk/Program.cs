@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
+
+using NuClear.Metamodeling.Elements;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk
 {
@@ -27,17 +30,19 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 	    private static void Replicate(MassReplicationContext context)
 	    {
 			Console.WriteLine($"{context.Source.ConnectionStringName} -> {context.Target.ConnectionStringName}");
-			using (var source = context.Source.CreateConnection())
-			using (var target = context.Target.CreateConnection())
-			{
-                var sourceQuery = new LinqToDbQuery(source);
-				foreach (var metadata in context.Metadata)
-				{
-					Console.WriteLine($"{metadata.Identity.Id}");
-					var processor = context.Factory.Invoke(metadata, sourceQuery, target);
-					processor.Process();
-				}
-			}
+	        Parallel.ForEach(context.Metadata, metadata => Replicate(context, metadata));
 	    }
+
+	    private static void Replicate(MassReplicationContext context, IMetadataElement metadata)
+	    {
+            using (var source = context.Source.CreateConnection())
+            using (var target = context.Target.CreateConnection())
+            {
+                var sourceQuery = new LinqToDbQuery(source);
+                Console.WriteLine($"{metadata.Identity.Id}");
+                var processor = context.Factory.Invoke(metadata, sourceQuery, target);
+                processor.Process();
+            }
+        }
     }
 }

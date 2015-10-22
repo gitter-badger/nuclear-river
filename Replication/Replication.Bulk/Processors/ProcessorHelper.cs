@@ -1,3 +1,5 @@
+using System;
+
 using LinqToDB;
 using LinqToDB.Data;
 
@@ -22,10 +24,17 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
 
 		public void Process(MapToObjectsSpecProvider<T, T> mapSpecificationProviderForSource)
 		{
-			var sourceQueryable = mapSpecificationProviderForSource.Invoke(_spec).Map(_source);
-			var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
-			_target.GetTable<T>().Delete(x => true);
-			_target.BulkCopy(options, sourceQueryable);
+		    try
+		    {
+                var sourceQueryable = mapSpecificationProviderForSource.Invoke(_spec).Map(_source);
+                var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
+                _target.GetTable<T>().Delete();
+                _target.BulkCopy(options, sourceQueryable);
+            }
+            catch (Exception ex)
+		    {
+		        throw new Exception($"Can not process entity type {typeof(T).Name}", ex);
+		    }
 		}
 	}
 }
