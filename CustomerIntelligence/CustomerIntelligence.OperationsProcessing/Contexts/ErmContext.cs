@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Contexts
 {
-    public sealed class CustomerIntelligenceContext : ITypeMappingContext
+    public sealed class CustomerIntelligenceContext : IDomainContext
     {
         private CustomerIntelligenceContext()
         {

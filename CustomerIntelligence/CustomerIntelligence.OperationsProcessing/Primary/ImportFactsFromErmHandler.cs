@@ -4,7 +4,6 @@ using System.Linq;
 using System.Transactions;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
-using NuClear.CustomerIntelligence.Domain.Model.Facts;
 using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
 using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.Messaging.API.Processing;
@@ -35,52 +34,52 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
         {
-            return processingResultsMap.Select(pair => Handle(pair.Key, pair.Value));
-        }
-
-        private StageResult Handle(Guid bucketId, IEnumerable<IAggregatableMessage> messages)
-        {
             try
             {
-                _tracer.Debug("Handing fact operations started");
-                foreach (var message in messages.OfType<OperationAggregatableMessage<FactOperation>>().ToArray())
-                {
-                    _tracer.DebugFormat("Replicating operations from use case '{0}'", message.Id);
-                    var result = _factsReplicator.Replicate(message.Operations);
-                    _tracer.DebugFormat("Operations from use case '{0}' successfully replicated", message.Id);
+                var messages = processingResultsMap.SelectMany(pair => pair.Value)
+                                                   .Cast<OperationAggregatableMessage<FactOperation>>()
+                                                   .ToArray();
 
-                    _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(message.Operations.Count);
+                Handle(messages.SelectMany(message => message.Operations).ToArray());
 
-                    var statistics = result.OfType<RecalculateStatisticsOperation>().ToArray();
-                    var aggregates = result.OfType<AggregateOperation>().ToArray();
+                var eldestOperationPerformTime = messages.Min(message => message.OperationTime);
+                _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - eldestOperationPerformTime).TotalMilliseconds);
 
-                    // We always need to use different transaction scope to operate with operation sender because it has its own store
-                    using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,
-                                                                      new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
-                    {
-                        _tracer.Debug("Pushing events for statistics recalculation");
-                        _sender.Push(statistics, StatisticsFlow.Instance);
-                        _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statistics.Length);
-
-                        _tracer.Debug("Pushing events for aggregates recalculation");
-                        _sender.Push(aggregates, AggregatesFlow.Instance);
-                        _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregates.Length);
-
-                        pushTransaction.Complete();
-                    }
-
-                    _telemetryPublisher.Publish<PrimaryProcessingDelayIdentity>((long)(DateTime.UtcNow - message.OperationTime).TotalMilliseconds);
-                }
-
-                _tracer.Debug("Handing fact operations finished");
-
-                return MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded();
+                return processingResultsMap.Keys.Select(bucketId => MessageProcessingStage.Handling.ResultFor(bucketId).AsSucceeded());
             }
             catch (Exception ex)
             {
                 _tracer.Error(ex, "Error then import facts for ERM");
-                return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
+                return processingResultsMap.Keys.Select(bucketId => MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex));
             }
+        }
+
+        private void Handle(IReadOnlyCollection<FactOperation> operations)
+        {
+            _tracer.Debug("Handing fact operations started");
+            var result = _factsReplicator.Replicate(operations);
+            
+            _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count);
+
+            var statistics = result.OfType<RecalculateStatisticsOperation>().ToArray();
+            var aggregates = result.OfType<AggregateOperation>().ToArray();
+
+            // We always need to use different transaction scope to operate with operation sender because it has its own store
+            using (var pushTransaction = new TransactionScope(TransactionScopeOption.RequiresNew,
+                                                              new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
+            {
+                _tracer.Debug("Pushing events for statistics recalculation");
+                _sender.Push(statistics, StatisticsFlow.Instance);
+                _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statistics.Length);
+
+                _tracer.Debug("Pushing events for aggregates recalculation");
+                _sender.Push(aggregates, AggregatesFlow.Instance);
+                _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregates.Length);
+
+                pushTransaction.Complete();
+            }
+
+            _tracer.Debug("Handing fact operations finished");
         }
     }
 }

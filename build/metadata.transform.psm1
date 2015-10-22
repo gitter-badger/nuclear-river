@@ -17,16 +17,10 @@ function Get-XdtTransformMetadata($Context){
 				"Templates\ConvertUseCases.Test.$($Context.Country).config"
 				)
 		}
-		'Production' {
+		default {
 			$xdt += @(
-				"Erm.Production.$($Context.Country).config"
-				"ConvertUseCases.Production.$($Context.Country).config"
-				)
-		}
-		'Load' {
-			$xdt += @(
-				"Erm.Load.$($Context.Country).config"
-				"ConvertUseCases.Load.$($Context.Country).config"
+				"Erm.$($Context.EnvType).$($Context.Country).config"
+				"ConvertUseCases.$($Context.EnvType).$($Context.Country).config"
 				)
 		}
 	}

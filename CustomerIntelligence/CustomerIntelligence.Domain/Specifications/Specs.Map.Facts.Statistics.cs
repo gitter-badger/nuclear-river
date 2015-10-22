@@ -8,6 +8,8 @@ using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 
 namespace NuClear.CustomerIntelligence.Domain.Specifications
 {
+    using System;
+
     public static partial class Specs
     {
         public static partial class Map
@@ -27,22 +29,22 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                 return from firm in q.For<Facts::FirmCategory>()
                                        from firmStatistics in q.For<Facts::FirmCategoryStatistics>()
                                                                .Where(x => x.FirmId == firm.FirmId && x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
-                                                               .DefaultIfEmpty()
+                                                               .DefaultIfEmpty(new Facts::FirmCategoryStatistics())
                                        from categoryStatistics in q.For<Facts::ProjectCategoryStatistics>()
                                                                    .Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
-                                                                   .DefaultIfEmpty()
+                                                                   .DefaultIfEmpty(new Facts::ProjectCategoryStatistics())
                                        from firmCount in firmCounts.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId)
                                                                    .DefaultIfEmpty()
                                        select new FirmCategoryStatistics
-                                              {
-                                                  ProjectId = firm.ProjectId,
-                                                  FirmId = firm.FirmId,
-                                                  CategoryId = firm.CategoryId,
-                                                  Hits = firmStatistics.Hits,
-                                                  Shows = firmStatistics.Shows,
-                                                  FirmCount = firmCount.Count,
-                                                  AdvertisersShare = categoryStatistics.AdvertisersCount / firmCount.Count
-                                              };
+                                       {
+                                           ProjectId = firm.ProjectId,
+                                           FirmId = firm.FirmId,
+                                           CategoryId = firm.CategoryId,
+                                           Hits = firmStatistics.Hits,
+                                           Shows = firmStatistics.Shows,
+                                           FirmCount = firmCount.Count,
+                                           AdvertisersShare = Math.Min(1, (float)categoryStatistics.AdvertisersCount / firmCount.Count)
+                                       };
                             });
                 }
             }

@@ -19,14 +19,14 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
                                .Primary(
 
                                    MessageFlowMetadata.Config.For<ImportFactsFromErmFlow>()
-                                                      .Strategy<ImportFactsFromErmAccumulator>()
+                                                      .Accumulator<ImportFactsFromErmAccumulator>()
                                                       .Handler<ImportFactsFromErmHandler>()
                                                       .To.Primary().Flow<ImportFactsFromErmFlow>().Connect()
                                                       .To.Final().Flow<AggregatesFlow>().Connect()
                                                       .To.Final().Flow<StatisticsFlow>().Connect(),
 
                                    MessageFlowMetadata.Config.For<ImportFactsFromBitFlow>()
-                                                      .Strategy<ImportFactsFromBitAccumulator>()
+                                                      .Accumulator<ImportFactsFromBitAccumulator>()
                                                       .Handler<ImportFactsFromBitHandler>()
                                                       .To.Primary().Flow<ImportFactsFromBitFlow>().Connect()
                                                       .To.Final().Flow<StatisticsFlow>().Connect()
@@ -34,12 +34,12 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
                                .Final(
 
                                    MessageFlowMetadata.Config.For<AggregatesFlow>()
-                                                      .Strategy<AggregateOperationAccumulator<AggregatesFlow>>()
+                                                      .Accumulator<AggregateOperationAccumulator<AggregatesFlow>>()
                                                       .Handler<AggregateOperationAggregatableMessageHandler>()
                                                       .To.Final().Flow<AggregatesFlow>().Connect(),
 
                                    MessageFlowMetadata.Config.For<StatisticsFlow>()
-                                                      .Strategy<StatisticsOperationAccumulator<StatisticsFlow>>()
+                                                      .Accumulator<StatisticsOperationAccumulator<StatisticsFlow>>()
                                                       .Handler<StatisticsAggregatableMessageHandler>()
                                                       .To.Final().Flow<StatisticsFlow>().Connect()
 

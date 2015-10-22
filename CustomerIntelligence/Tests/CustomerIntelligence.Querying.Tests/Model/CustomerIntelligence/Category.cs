@@ -1,6 +1,6 @@
 ﻿namespace NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence
 {
-    public class ProjectCategory
+    public class Category
     {
         public long ProjectId { get; set; }
         

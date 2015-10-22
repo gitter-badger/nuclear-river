@@ -3,12 +3,21 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 
-using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
-
 using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Querying.Tests
 {
+    using NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence;
+
+    using CategoryGroup = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.CategoryGroup;
+    using Client = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.Client;
+    using ClientContact = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.ClientContact;
+    using Firm = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.Firm;
+    using FirmBalance = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.FirmBalance;
+    using FirmCategory = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.FirmCategory;
+    using Project = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.Project;
+    using Territory = NuClear.CustomerIntelligence.Querying.Tests.Model.CustomerIntelligence.Territory;
+
     [TestFixture]
     internal class EdmxBuilderModelTests : EdmxBuilderBaseFixture
     {
@@ -74,7 +83,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
                     .Include(x => x.Client)
                     .Include(x => x.Client.CategoryGroup)
                     .Include(x => x.Client.Contacts)
-                    .Include(x => x.Territory)
+                    .Include(x => x.Territories)
                     .OrderBy(x => x.Id)
                     .FirstOrDefault();
 
@@ -86,7 +95,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
                 Assert.That(firm.Client, Is.Not.Null.And.Property("Name").EqualTo("Client 1"));
                 Assert.That(firm.Client.CategoryGroup, Is.Not.Null);
                 Assert.That(firm.Client.Contacts, Is.Not.Null.And.Count.EqualTo(3));
-                Assert.That(firm.Territory, Is.Not.Null);
+                Assert.That(firm.Territories, Is.Not.Empty.And.Count.EqualTo(2));
             }
         }
 
@@ -101,6 +110,7 @@ namespace NuClear.CustomerIntelligence.Querying.Tests
             builder.Entity<FirmBalance>().HasKey(x => new { x.AccountId, x.FirmId });
             builder.Entity<FirmCategory>().HasKey(x => new { x.CategoryId, x.FirmId });
             builder.Entity<ClientContact>().HasKey(x => new { x.ContactId, x.ClientId });
+            builder.Entity<FirmTerritory>().HasKey(x => new { x.FirmAddressId, x.FirmId });
 
             var model = builder.Build(EffortProvider);
             model.Dump();

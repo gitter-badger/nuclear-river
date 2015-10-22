@@ -13,39 +13,30 @@ namespace NuClear.CustomerIntelligence.Domain
                     EnumTypeElement.Config.Name(EnumName.ContactRole)
                         .Member("Employee", 1)
                         .Member("InfluenceDecisions", 2)
-                        .Member("MakingDecisions", 3)
-                )
+                        .Member("MakingDecisions", 3)                )
                 .Elements(
                     EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
                         .HasKey("Id")
                         .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                         .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
-                    EntityElement.Config.Name(EntityName.Project).EntitySetName("Projects")
-                        .HasKey("Id")
-                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
-                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                        .Relation(EntityRelationElement.Config.Name("Categories")
-                            .DirectTo(
-                                EntityElement.Config.Name(EntityName.ProjectCategory).EntitySetName("ProjectCategories")
+
+                    EntityElement.Config.Name(EntityName.Category).EntitySetName("Categories")
                                     .HasKey("CategoryId")
                                     .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                                    .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
-                            ).AsMany().AsContainment()
-                        )
-                        .Relation(EntityRelationElement.Config.Name("Territories")
-                            .DirectTo(
-                                EntityElement.Config.Name(EntityName.ProjectTerritory)
+                                    .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32)),
+
+                    EntityElement.Config.Name(EntityName.Territory).EntitySetName("Territories")
                                     .HasKey("Id")
                                     .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
-                                    .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                            ).AsMany().AsContainment()
-                        )
-                        .Relation(EntityRelationElement.Config.Name("Firms")
-                            .DirectTo(
-                                EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
+                                    .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String)),
+
+                     EntityElement.Config.Name(EntityName.Firm).EntitySetName("Firms")
                                     .HasKey("Id")
                                     .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                                     .Property(EntityPropertyElement.Config.Name("CreatedOn").OfType(ElementaryTypeKind.DateTimeOffset))
                                     .Property(EntityPropertyElement.Config.Name("LastDisqualifiedOn").OfType(ElementaryTypeKind.DateTimeOffset).Nullable())
@@ -71,12 +62,13 @@ namespace NuClear.CustomerIntelligence.Domain
                                                 .Property(EntityPropertyElement.Config.Name("Hits").OfType(ElementaryTypeKind.Int64).Nullable())
                                                 .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64).Nullable())
                                         ).AsMany())
-                                    .Relation(EntityRelationElement.Config.Name("Territories")
-                                        .DirectTo(
-                                            EntityElement.Config.Name(EntityName.FirmTerritory)
-                                                .HasKey("TerritoryId")
-                                                .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64))
-                                        ).AsMany())
+                        .Relation(EntityRelationElement.Config.Name("Territories")
+                            .DirectTo(
+                                EntityElement.Config.Name(EntityName.FirmTerritory)
+                                    .HasKey("FirmAddressId")
+                                    .Property(EntityPropertyElement.Config.Name("FirmAddressId").OfType(ElementaryTypeKind.Int64))
+                                    .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64).Nullable())
+                            ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("CategoryGroup").DirectTo(EntityElement.Config.Name(EntityName.CategoryGroup)).AsOne())
                                     .Relation(EntityRelationElement.Config.Name("Client")
                                         .DirectTo(
@@ -97,11 +89,15 @@ namespace NuClear.CustomerIntelligence.Domain
                                                 )
                                         )
                                         .AsOneOptionally())
-                                    .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
-                                    .Relation(EntityRelationElement.Config.Name("Territory").DirectTo(EntityElement.Config.Name(EntityName.ProjectTerritory)).AsOne())
-                            )
-                            .AsMany().AsContainment()
-                        )
+                        .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64)),
+
+                    EntityElement.Config.Name(EntityName.Project).EntitySetName("Projects")
+                        .HasKey("Id")
+                        .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
+                        .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
+                        .Relation(EntityRelationElement.Config.Name("Categories").DirectTo(EntityElement.Config.Name(EntityName.Category)).AsMany().AsContainment())
+                        .Relation(EntityRelationElement.Config.Name("Territories").DirectTo(EntityElement.Config.Name(EntityName.Territory)).AsMany().AsContainment())
+                        .Relation(EntityRelationElement.Config.Name("Firms").DirectTo(EntityElement.Config.Name(EntityName.Firm)).AsMany().AsContainment())
             );
 
             private static readonly StructuralModelElementBuilder StoreModel =
@@ -122,7 +118,7 @@ namespace NuClear.CustomerIntelligence.Domain
                                  .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne()),
-                    EntityElement.Config.Name(TableName.ProjectTerritory)
+                    EntityElement.Config.Name(TableName.Territory)
                                  .HasKey("Id")
                                  .Property(EntityPropertyElement.Config.Name("Id").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
@@ -150,7 +146,6 @@ namespace NuClear.CustomerIntelligence.Domain
                                  .Property(EntityPropertyElement.Config.Name("AddressCount").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("OwnerId").OfType(ElementaryTypeKind.Int64))
                                  .Relation(EntityRelationElement.Config.Name("CategoryGroupId").DirectTo(EntityElement.Config.Name(TableName.CategoryGroup)).AsOne())
-                                 .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.ProjectTerritory)).AsOne())
                                  .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne())
                                  .Relation(EntityRelationElement.Config.Name("ClientId").DirectTo(EntityElement.Config.Name(TableName.Client)).AsOneOptionally()),
                     EntityElement.Config.Name(TableName.FirmBalance)
@@ -167,8 +162,9 @@ namespace NuClear.CustomerIntelligence.Domain
                                  .Property(EntityPropertyElement.Config.Name("Shows").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()),
                     EntityElement.Config.Name(TableName.FirmTerritory)
-                                 .HasKey("FirmId", "TerritoryId")
-                                 .Relation(EntityRelationElement.Config.Name("TerritoryId").DirectTo(EntityElement.Config.Name(TableName.ProjectTerritory)).AsOne())
+                                 .HasKey("FirmId", "FirmAddressId")
+                                 .Property(EntityPropertyElement.Config.Name("FirmAddressId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("TerritoryId").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()));
 
             public static readonly BoundedContextElement Context =
@@ -177,8 +173,8 @@ namespace NuClear.CustomerIntelligence.Domain
                     .StoreModel(StoreModel)
                     .Map(EntityName.CategoryGroup, TableName.CategoryGroup)
                     .Map(EntityName.Project, TableName.Project)
-                    .Map(EntityName.ProjectCategory, TableName.ProjectCategory)
-                    .Map(EntityName.ProjectTerritory, TableName.ProjectTerritory)
+                    .Map(EntityName.Category, TableName.ProjectCategory)
+                    .Map(EntityName.Territory, TableName.Territory)
                     .Map(EntityName.Firm, ViewName.Firm)
                     .Map(EntityName.FirmBalance, TableName.FirmBalance)
                     .Map(EntityName.FirmCategory, TableName.FirmCategory)
@@ -195,8 +191,8 @@ namespace NuClear.CustomerIntelligence.Domain
             {
                 public const string CategoryGroup = "CategoryGroup";
                 public const string Project = "Project";
-                public const string ProjectCategory = "ProjectCategory";
-                public const string ProjectTerritory = "Territory";
+                public const string Category = "Category";
+                public const string Territory = "Territory";
                 public const string Client = "Client";
                 public const string ClientContact = "ClientContact";
                 public const string Firm = "Firm";
@@ -210,7 +206,7 @@ namespace NuClear.CustomerIntelligence.Domain
                 public const string CategoryGroup = TableSchema + "." + "CategoryGroup";
                 public const string Project = TableSchema + "." + "Project";
                 public const string ProjectCategory = TableSchema + "." + "ProjectCategory";
-                public const string ProjectTerritory = TableSchema + "." + "Territory";
+                public const string Territory = TableSchema + "." + "Territory";
                 public const string FirmBalance = TableSchema + "." + "FirmBalance";
                 public const string FirmCategory = TableSchema + "." + "FirmCategory";
                 public const string FirmTerritory = TableSchema + "." + "FirmTerritory";

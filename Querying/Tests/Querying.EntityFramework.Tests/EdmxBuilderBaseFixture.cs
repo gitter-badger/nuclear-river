@@ -31,7 +31,7 @@ namespace NuClear.Querying.EntityFramework.Tests
             EffortProviderConfiguration.RegisterProvider();
         }
 
-        
+
         protected static DbProviderInfo EffortProvider
         {
             get
