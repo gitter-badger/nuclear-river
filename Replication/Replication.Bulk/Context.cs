@@ -35,19 +35,22 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 			Erm,
 			Facts,
             new FactsReplicationMetadataSource().Metadata.Values.Cast<HierarchyMetadata>().Single(),
-			FactProcessorFactory);
+			FactProcessorFactory,
+            Enumerable.Empty<string>());
 
 		public static readonly MassReplicationContext FactsToCustomerIntelligence = new MassReplicationContext(
 			Facts,
 			CustomerIntelligence,
             new AggregateConstructionMetadataSource().Metadata.Values.Cast<HierarchyMetadata>().Single(),
-			AggregateProcessorFactory);
+			AggregateProcessorFactory,
+            Enumerable.Empty<string>());
 
 		public static readonly MassReplicationContext FactsToCustomerIntelligenceStatistics = new MassReplicationContext(
 			Facts,
 			CustomerIntelligence,
             new StatisticsRecalculationMetadataSource().Metadata.Values.Cast<HierarchyMetadata>().Single(),
-			StatisticsProcessorFactory);
+			StatisticsProcessorFactory,
+            new [] { "bit.firmcategory" });
 
 		private static IMassProcessor CreateMassProcessor(Type massProcessorGenericType, Type entityType, params object[] args)
 		{

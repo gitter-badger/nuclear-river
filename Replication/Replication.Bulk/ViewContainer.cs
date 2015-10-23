@@ -22,12 +22,14 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
             _views = views;
         }
 
-        public static IDisposable TemporaryRemoveViews(Storage storage)
+        public static IDisposable TemporaryRemoveViews(Storage storage, IEnumerable<string> essentialViewNames)
         {
             var connectionString = GetConnectionString(storage);
             var database = GetDatabase(connectionString);
             var views = new List<StringCollection>();
-            foreach (var view in database.Views.Cast<View>().Where(v => !v.IsSystemObject).ToArray())
+            foreach (var view in database.Views.Cast<View>()
+                .Where(v => !v.IsSystemObject)
+                .Where(v => !essentialViewNames.Contains($"{v.Schema}.{v.Name}", StringComparer.InvariantCultureIgnoreCase)).ToArray())
             {
                 views.Add(view.Script());
                 view.Drop();

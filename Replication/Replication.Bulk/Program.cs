@@ -31,7 +31,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 	    private static void Replicate(MassReplicationContext context)
 	    {
 			Console.WriteLine($"{context.Source.ConnectionStringName} -> {context.Target.ConnectionStringName}");
-	        using (ViewContainer.TemporaryRemoveViews(context.Target))
+	        using (ViewContainer.TemporaryRemoveViews(context.Target, context.EssentialViews))
 	        {
                 Parallel.ForEach(context.Metadata, metadata => Replicate(context, metadata));
             }
