@@ -78,7 +78,7 @@ using NuClear.Storage.API.Writings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
-using NuClear.Storage.LinqToDB.Cud;
+using NuClear.Storage.LinqToDB.Writings;
 using NuClear.Storage.Readings;
 using NuClear.Storage.UseCases;
 using NuClear.Telemetry;
@@ -264,7 +264,7 @@ namespace NuClear.Replication.EntryPoint.DI
                                                                                   transactionOptions,
                                                                                   storageSettings.SqlCommandTimeout),
                                                          Lifetime.Singleton)
-                .RegisterType<ICudStrategyProvider, DynamicStrategyProvider>()
+                .RegisterType<IWritingStrategyFactory, WritingStrategyFactory>()
                 .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IQuery, Query>(entryPointSpecificLifetimeManagerFactory())
