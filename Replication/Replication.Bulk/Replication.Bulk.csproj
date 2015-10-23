@@ -120,11 +120,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Context.cs" />
+    <Compile Include="Model\MassReplicationMetadataSource.cs" />
+    <Compile Include="Metamodel\CommandLineFeature.cs" />
+    <Compile Include="Metamodel\DirectionFeature.cs" />
+    <Compile Include="Metamodel\EssentialViewFeature.cs" />
+    <Compile Include="Metamodel\FactoryFeature.cs" />
+    <Compile Include="Metamodel\MassReplicationMetadataBuilder.cs" />
+    <Compile Include="Metamodel\MassReplicationMetadataElement.cs" />
+    <Compile Include="Metamodel\MassReplicationMetadataKindIdentity.cs" />
+    <Compile Include="Metamodel\ReferenceFeature.cs" />
     <Compile Include="Processors\AggregateMassProcessor.cs" />
     <Compile Include="Processors\FactMassProcessor.cs" />
     <Compile Include="LinqToDbQuery.cs" />
-    <Compile Include="MassReplicationContext.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Processors\ProcessorHelper.cs" />
     <Compile Include="Processors\IMassProcessor.cs" />
