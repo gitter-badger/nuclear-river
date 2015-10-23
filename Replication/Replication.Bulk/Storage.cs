@@ -22,7 +22,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 			var connectionString = ConfigurationManager.ConnectionStrings[ConnectionStringName];
 			var connection = new DataConnection(connectionString.ProviderName, connectionString.ConnectionString);
 			connection.AddMappingSchema(MappingSchema);
-			connection.CommandTimeout = (int)TimeSpan.FromMinutes(3).TotalMilliseconds;
+			connection.CommandTimeout = (int)TimeSpan.FromMinutes(30).TotalMilliseconds;
 			return connection;
 		}
 	}
