@@ -22,6 +22,7 @@ using NuClear.Storage.API.ConnectionStrings;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
+using NuClear.Storage.LinqToDB.Writings;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests
 {
@@ -169,6 +170,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
             return new LinqToDBDomainContext(connections.Item1,
                                              connections.Item2,
                                              new ManagedConnectionStateScopeFactory(),
+                                             new WritingStrategyFactory(), 
                                              linqToDbModel.TransactionOptions,
                                              new NullPendingChangesHandlingStrategy());
         }
