@@ -59,6 +59,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Operations
             DeleteIdentity.Instance.SpecificFor(EntityTypeLegalPersonProfile.Instance),
             DeleteIdentity.Instance.SpecificFor(EntityTypeOrderPosition.Instance),
             DeleteIdentity.Instance.SpecificFor(EntityTypeCategoryFirmAddress.Instance),
+            DeleteIdentity.Instance.SpecificFor(EntityTypeContact.Instance),
 
             BulkDeleteIdentity.Instance.SpecificFor(EntityTypeFirmContact.Instance),
 
