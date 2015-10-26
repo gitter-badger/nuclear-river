@@ -60,7 +60,7 @@ namespace NuClear.AdvancedSearch.Web.OData.DI
             var tracer = Log4NetTracerBuilder.Use
                                              .DefaultXmlConfig
                                              .EventLog
-                                             .DB(connectionStringSettings.GetConnectionString(ConnectionStringName.Logging))
+                                             .Logstash(new Uri(connectionStringSettings.GetConnectionString(ConnectionStringName.Logging)))
                                              .Build;
 
             return container.RegisterInstance(tracer)
