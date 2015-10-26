@@ -3,9 +3,9 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\artifacts.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\servicebus.psm1" -DisableNameChecking
 
 Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] } {
@@ -52,7 +52,7 @@ function Get-ProductionConnectionString {
 
 function Get-ConvertUseCasesServiceTempDir  {
 	$packageInfo = Get-PackageInfo '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases'
-	$toolsDir = $packageInfo.VersionedDir
+	$toolsDir = Join-Path $packageInfo.VersionedDir 'tools'
 
 	$tempDir = Join-Path $Metadata.Common.Dir.Temp 'ConvertUseCasesService'
 	Copy-Item $toolsDir $tempDir -Force -Recurse
@@ -76,15 +76,28 @@ Task Create-Topics -Precondition { $Metadata['ServiceBus'] } {
 	}
 
 	$sourceConnectionString = Get-ConnectionString $config 'Source'
-	Create-Topic $sourceConnectionString $routeMetadata.SourceTopic
-	Create-Subscription $sourceConnectionString $routeMetadata.SourceTopic $routeMetadata.SourceSubscription
+	Create-Topic $sourceConnectionString $routeMetadata.SourceTopic -Properties @{
+		'EnableBatchedOperations' = $true
+		'SupportOrdering' = $true
+	}
+	Create-Subscription $sourceConnectionString $routeMetadata.SourceTopic $routeMetadata.SourceSubscription -Properties @{
+		'EnableBatchedOperations' = $true
+		'MaxDeliveryCount' = 0x7fffffff
+	}
 
 	$destConnectionString = Get-ConnectionString $config 'Dest'
 	Delete-Topic $destConnectionString 'topic.advancedsearch' # временно, потом удалить
 	Delete-Topic $destConnectionString 'topic.performedoperations(.*)import'
 
-	Create-Topic $destConnectionString $routeMetadata.DestTopic
-	Create-Subscription $destConnectionString $routeMetadata.DestTopic $routeMetadata.DestSubscription
+	Create-Topic $destConnectionString $routeMetadata.DestTopic -Properties @{
+		'EnableBatchedOperations' = $true
+		'SupportOrdering' = $true
+		'RequiresDuplicateDetection' = $true
+	}
+	Create-Subscription $destConnectionString $routeMetadata.DestTopic $routeMetadata.DestSubscription -Properties @{
+		'EnableBatchedOperations' = $true
+		'MaxDeliveryCount' = 0x7fffffff
+	}
 }
 
 Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService, Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] } {

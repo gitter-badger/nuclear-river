@@ -3,7 +3,7 @@
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.Context
 {
     public sealed class FactsSubDomain : ISubDomain
-	{
+    {
         private FactsSubDomain()
         {
         }

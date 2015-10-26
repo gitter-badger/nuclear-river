@@ -20,6 +20,8 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 
         IQueryable<FirmCategory> FirmCategories { get; }
 
+        IQueryable<FirmTerritory> FirmTerritories { get; }
+
         IQueryable<Project> Projects { get; }
 
         IQueryable<ProjectCategory> ProjectCategories { get; }

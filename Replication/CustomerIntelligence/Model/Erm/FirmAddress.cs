@@ -4,7 +4,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 {
     public sealed class FirmAddress : IErmObject
     {
-        public FirmAddress()
+	    public FirmAddress()
         {
             IsActive = true;
         }
@@ -13,7 +13,9 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Erm
 
         public long FirmId { get; set; }
 
-        public bool ClosedForAscertainment { get; set; }
+		public long? TerritoryId { get; set; }
+
+		public bool ClosedForAscertainment { get; set; }
 
         public bool IsActive { get; set; }
 

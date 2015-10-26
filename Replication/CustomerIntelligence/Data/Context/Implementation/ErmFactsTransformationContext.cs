@@ -164,7 +164,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   ClientId = firm.ClientId,
                                   OrganizationUnitId = firm.OrganizationUnitId,
                                   OwnerId = firm.OwnerId,
-                                  TerritoryId = firm.TerritoryId
                               };
             }
         }
@@ -178,6 +177,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                               {
                                   Id = firmAddress.Id,
                                   FirmId = firmAddress.FirmId,
+                                  TerritoryId = firmAddress.TerritoryId,
                               };
             }
         }

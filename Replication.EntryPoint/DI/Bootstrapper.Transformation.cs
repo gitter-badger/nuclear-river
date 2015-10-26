@@ -56,7 +56,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                 .RegisterType<StatisticsContext>(Lifetime.PerScope, 
                     new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.CustomerIntelligence)))
                 .RegisterType<StatisticsTransformationContext>(Lifetime.PerScope,
-                    new InjectionConstructor(new ResolvedParameter<IDataContext>(Scope.Facts)))
+                    new InjectionConstructor(new ResolvedParameter<BitFactsContext>()))
 
                 .RegisterType<ErmFactsTransformation>(Lifetime.PerScope,
                                                    new InjectionConstructor(

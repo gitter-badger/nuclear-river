@@ -55,6 +55,11 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
             get { return _context.GetTable<FirmCategory>(); }
         }
 
+        public IQueryable<FirmTerritory> FirmTerritories
+        {
+            get { return _context.GetTable<FirmTerritory>(); }
+        }
+
         public IQueryable<Project> Projects
         {
             get { return _context.GetTable<Project>(); }

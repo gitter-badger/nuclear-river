@@ -44,17 +44,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProcessing", "Replication.OperationsProcessing\Replication.OperationsProcessing.csproj", "{8E3D39D6-6BEE-4EDC-ACE0-8C24CA929164}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}"
-	ProjectSection(SolutionItems) = preProject
-		build\convertusecases.ps1 = build\convertusecases.ps1
-		build\default.ps1 = build\default.ps1
-		build\metadata.psm1 = build\metadata.psm1
-		build\metadata.servicebus.psm1 = build\metadata.servicebus.psm1
-		build\metadata.taskservice.psm1 = build\metadata.taskservice.psm1
-		build\metadata.transform.psm1 = build\metadata.transform.psm1
-		build\metadata.web.psm1 = build\metadata.web.psm1
-		build\replicate.ps1 = build\replicate.ps1
-		build\run-build.ps1 = build\run-build.ps1
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.OperationsProcessing.Tests", "Replication.OperationsProcessing.Tests\Replication.OperationsProcessing.Tests.csproj", "{19CFD12D-582D-4685-A40B-7E3A13B9C5D3}"
 EndProject
@@ -64,7 +53,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Settings", "Settings\Settin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Environments", "Environments", "{8F3C0046-1F47-4C8E-8B03-D35E96686C6F}"
 	ProjectSection(SolutionItems) = preProject
+		Environments\ConvertUseCases.Business.Russia.config = Environments\ConvertUseCases.Business.Russia.config
+		Environments\ConvertUseCases.Edu.Russia.config = Environments\ConvertUseCases.Edu.Russia.config
 		Environments\ConvertUseCases.Production.Russia.config = Environments\ConvertUseCases.Production.Russia.config
+		Environments\Erm.Business.Russia.config = Environments\Erm.Business.Russia.config
+		Environments\Erm.Edu.Russia.config = Environments\Erm.Edu.Russia.config
 		Environments\Erm.Production.Russia.config = Environments\Erm.Production.Russia.config
 		Environments\quartz.Production.Russia.config = Environments\quartz.Production.Russia.config
 	EndProjectSection
@@ -81,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8A6466
 		Environments\Common\Erm.Release.config = Environments\Common\Erm.Release.config
 		Environments\Common\log4net.Release.config = Environments\Common\log4net.Release.config
 	EndProjectSection
+EndProject
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "build", "build\build.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -148,6 +143,10 @@ Global
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4238D0C-3315-4449-B1AE-80F716D58D04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,5 +160,9 @@ Global
 		{25AACA77-648A-4462-8EC1-709963219C8E} = {44BFB6A0-6F47-4DC6-B6F6-6A3A36FF793F}
 		{F3C74BF1-8646-4DB6-AECB-42E10F8542B6} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
 		{8A646634-2535-493C-A699-90B4D1C40A83} = {8F3C0046-1F47-4C8E-8B03-D35E96686C6F}
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {D0CF69C9-AB27-4062-8B7A-D7391C65EFE3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal

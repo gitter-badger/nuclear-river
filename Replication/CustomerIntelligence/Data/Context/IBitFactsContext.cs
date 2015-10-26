@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-
-using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+﻿using System.Linq;
 
 namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context
 {
+    using Facts = NuClear.AdvancedSearch.Replication.CustomerIntelligence.Model.Facts;
+
     public interface IBitFactsContext
     {
-        IQueryable<FirmCategoryStatistics> FirmStatistics { get; }
-
-        IQueryable<ProjectCategoryStatistics> CategoryStatistics { get; }
+        IQueryable<Facts.FirmCategory> FirmCategory { get; }
+        IQueryable<Facts::FirmCategoryStatistics> FirmStatistics { get; }
+        IQueryable<Facts::ProjectCategoryStatistics> CategoryStatistics { get; }
     }
 }

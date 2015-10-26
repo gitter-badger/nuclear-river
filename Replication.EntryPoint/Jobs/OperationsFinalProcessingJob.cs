@@ -50,14 +50,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.Jobs
                 throw new InvalidOperationException(msg);
             }
 
-            using (Probe.Create("ETL2 Job"))
-            {
-                var targetFlows = Flows.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var targetFlow in targetFlows)
-                {
-                    ProcessFlow(targetFlow);
-                }
-            }
+            var targetFlows = Flows.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+	        foreach (var targetFlow in targetFlows)
+	        {
+		        using (Probe.Create(targetFlow))
+		        {
+			        ProcessFlow(targetFlow);
+		        }
+	        }
         }
 
         private void ProcessFlow(string flow)

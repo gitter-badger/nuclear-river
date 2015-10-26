@@ -30,7 +30,10 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data
                 config.Entity<FirmCategory>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.CategoryId).IsPrimaryKey()
                     .Property(x => x.FirmId).IsPrimaryKey();
-                config.Entity<Project>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
+				config.Entity<FirmTerritory>().HasSchemaName(CustomerIntelligenceSchema)
+					.Property(x => x.FirmId).IsPrimaryKey()
+					.Property(x => x.FirmAddressId).IsPrimaryKey();
+				config.Entity<Project>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<ProjectCategory>().HasSchemaName(CustomerIntelligenceSchema)
                     .Property(x => x.ProjectId).IsPrimaryKey()
                     .Property(x => x.CategoryId).IsPrimaryKey();

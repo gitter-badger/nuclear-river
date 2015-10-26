@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.QueryExecution.Tests
         [TestCase("Firm", "$filter=HasWebsite eq @value&@value=true", Result = "Firm[].Where($it => ($it.HasWebsite == True))", Description = "Поиск по наличию сайта.")]
         [TestCase("Firm", "$filter=AddressCount gt @amount&@amount=10", Result = "Firm[].Where($it => ($it.AddressCount > 10))", Description = "Поиск по количеству активных адресов.")]
         [TestCase("Firm", "$filter=CategoryGroup/Id eq @id&@id=12345", Result = "Firm[].Where($it => ($it.CategoryGroup.Id == Convert(12345)))", Description = "Поиск по ценовой категории фирмы.")]
-        [TestCase("Firm", "$filter=Territory/Id eq  @id&@id=12345", Result = "Firm[].Where($it => ($it.Territory.Id == Convert(12345)))", Description = "Поиск по территории.")]
+        [TestCase("Firm", "$filter=Territories/any(it: (it/TerritoryId eq 123) or (it/TerritoryId eq null))", Result = "Firm[].Where($it => $it.Territories.Any(it => ((it.TerritoryId == Convert(123)) OrElse (it.TerritoryId == null))))", Description = "Поиск по территории.")]
         [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id1)&@id1=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 1-го уровня.")]
         [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id2)&@id2=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 2-го уровня.")]
         [TestCase("Firm", "$filter=Categories/any(x:x/CategoryId eq @id3)&@id3=123", Result = "Firm[].Where($it => $it.Categories.Any(x => (x.CategoryId == Convert(123))))", Description = "Поиск по рубрике 3-го уровня.")]

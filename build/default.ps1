@@ -3,33 +3,19 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\artifacts.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\web.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 
+Include "$BuildToolsRoot\psake\tasks.ps1"
 Include 'convertusecases.ps1'
 
-Task Default -depends Hello
-Task Hello { "Билдскрипт запущен без цели, укажите цель" }
-
-Task Run-UnitTests {
-	$SolutionRelatedAllProjectsDir = '.'
-	
-	$projects = Find-Projects $SolutionRelatedAllProjectsDir '*Tests*'
-	foreach($project in $Projects){
-		$buildFileName = Create-BuildFile $project.FullName
-		Invoke-MSBuild $buildFileName
-	}
-
-	Run-UnitTests $projects
-}
-
-Task Build-OData -Precondition { $Metadata['Web.OData'] } {
+Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
 	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
-	Build-WebPackage $projectFileName 'Web.OData'
+	QueueBuild-WebPackage $projectFileName 'Web.OData'
 }
 Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 	Deploy-WebPackage 'Web.OData'
@@ -40,9 +26,9 @@ Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 	Take-WebsiteOffline 'Web.OData'
 }
 
-Task Build-TaskService -Precondition { $Metadata['Replication.EntryPoint'] } {
+Task QueueBuild-TaskService -Precondition { $Metadata['Replication.EntryPoint'] } {
 	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
-	Build-WinService $projectFileName 'Replication.EntryPoint'
+	QueueBuild-AppPackage $projectFileName 'Replication.EntryPoint'
 }
 
 Task Deploy-TaskService -Depends Import-WinServiceModule, Take-TaskServiceOffline -Precondition { $Metadata['Replication.EntryPoint'] } {
@@ -106,9 +92,10 @@ function Get-ReplicationConfig {
 }
 
 Task Build-Packages -depends `
-Build-OData, `
-Build-TaskService, `
-Build-ConvertUseCasesService
+QueueBuild-OData, `
+QueueBuild-TaskService, `
+Build-ConvertUseCasesService, `
+Build-Queue
 
 Task Deploy-Packages -depends `
 Take-ODataOffline, `

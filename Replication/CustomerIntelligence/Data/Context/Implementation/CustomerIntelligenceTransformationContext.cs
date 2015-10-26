@@ -107,7 +107,7 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   Id = firm.Id,
                                   Name = firm.Name,
                                   CreatedOn = firm.CreatedOn,
-                                  LastDisqualifiedOn = (firmClient != null ? firmClient.LastDisqualifiedOn : firm.LastDisqualifiedOn),
+                                  LastDisqualifiedOn = firm.LastDisqualifiedOn ?? (firmClient != null ? firmClient.LastDisqualifiedOn : null),
                                   LastDistributedOn = _ermContext.Orders.Where(o => o.FirmId == firm.Id).Select(d => d.EndDistributionDateFact).Cast<DateTimeOffset?>().Max(),
                                   HasPhone = firmsHavingPhone.Contains(firm.Id) || (firmClient != null && firmClient.HasPhone) || (firm.ClientId != null && clientsHavingPhone.Contains(firm.ClientId.Value)),
                                   HasWebsite = firmsHavingWebsite.Contains(firm.Id) || (firmClient != null && firmClient.HasWebsite) || (firm.ClientId != null && clientsHavingWebsite.Contains(firm.ClientId.Value)),
@@ -116,7 +116,6 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                                   ClientId = firm.ClientId,
                                   ProjectId = project.Id,
                                   OwnerId = firm.OwnerId,
-                                  TerritoryId = firm.TerritoryId
                               };
             }
         }
@@ -195,6 +194,17 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
 
                 // perform union using distinct
                 return level3.Union(level2).Union(level1);
+            }
+        }
+
+        public IQueryable<FirmTerritory> FirmTerritories
+        {
+            get
+            {
+                var territories = from x in _ermContext.FirmAddresses
+                                  select new FirmTerritory { FirmId = x.FirmId, FirmAddressId = x.Id, TerritoryId = x.TerritoryId };
+
+                return territories.Distinct();
             }
         }
 

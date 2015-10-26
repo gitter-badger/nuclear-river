@@ -15,7 +15,9 @@ if object_id('CustomerIntelligence.Contact') is not null drop table CustomerInte
 if object_id('CustomerIntelligence.ClientContact') is not null drop table CustomerIntelligence.ClientContact
 if object_id('CustomerIntelligence.FirmCategoryPartProject') is not null drop table CustomerIntelligence.FirmCategoryPartProject
 if object_id('CustomerIntelligence.FirmCategory') is not null drop table CustomerIntelligence.FirmCategory
+if object_id('CustomerIntelligence.FirmTerritory') is not null drop table CustomerIntelligence.FirmTerritory
 if object_id('CustomerIntelligence.FirmView', 'view') is not null drop view CustomerIntelligence.FirmView
+
 go
 
 
@@ -70,7 +72,6 @@ create table CustomerIntelligence.Firm(
     , ClientId bigint null
     , ProjectId bigint not null
     , OwnerId bigint not null
-    , TerritoryId bigint not null
     , constraint PK_Firms primary key (Id)
 )
 go
@@ -104,6 +105,15 @@ create table CustomerIntelligence.FirmCategory(
 )
 go
 
+-- FirmTerritory
+create table CustomerIntelligence.FirmTerritory(
+	FirmId bigint not null
+    , FirmAddressId bigint not null
+	, TerritoryId bigint null
+    , constraint PK_FirmTerritory primary key (FirmId, FirmAddressId)
+)
+go
+
 -- Client
 create table CustomerIntelligence.Client(
 	Id bigint not null
@@ -129,4 +139,55 @@ as
 select Firm.*, FirmActivity.LastActivityOn
 from CustomerIntelligence.Firm
 	inner join CustomerIntelligence.FirmActivity on FirmActivity.FirmId = Firm.Id
+go
+
+
+-- Идексы для клиента
+create nonclustered index IX_Quering_1
+on CustomerIntelligence.Firm (ProjectId,OwnerId,CreatedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_2
+on CustomerIntelligence.Firm (ProjectId,OwnerId,LastDistributedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_3
+on CustomerIntelligence.Firm (ProjectId,OwnerId,LastDisqualifiedOn)
+include (Id)
+go
+create nonclustered index IX_Quering_4
+on CustomerIntelligence.Firm (LastDistributedOn,ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_5
+on CustomerIntelligence.Firm (ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_6
+on CustomerIntelligence.Firm (HasWebsite,ProjectId,OwnerId)
+include (Id)
+go
+create nonclustered index IX_Quering_7
+on CustomerIntelligence.Firm (HasWebsite,ProjectId,OwnerId)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_8
+on CustomerIntelligence.Firm (ProjectId,OwnerId,AddressCount)
+include (Id)
+go
+create nonclustered index IX_Quering_9
+on CustomerIntelligence.Firm (ProjectId,OwnerId,AddressCount)
+include (Id,Name,LastDisqualifiedOn,ClientId)
+go
+create nonclustered index IX_Quering_10
+on CustomerIntelligence.FirmBalance (Balance)
+include (FirmId)
+go
+create nonclustered index IX_Quering_11
+on CustomerIntelligence.FirmActivity(LastActivityOn)
+include (FirmId)
+go
+create nonclustered index IX_Quering_12
+on CustomerIntelligence.ClientContact (Role)
+include (ClientId)
 go
