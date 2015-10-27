@@ -26,15 +26,15 @@ namespace NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.I
                        from categoryStatistics in _bitContext.CategoryStatistics.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty(new Facts::ProjectCategoryStatistics())
                        from firmCount in firmCounts.Where(x => x.CategoryId == firm.CategoryId && x.ProjectId == firm.ProjectId).DefaultIfEmpty()
                        select new CI::FirmCategoryStatistics
-                              {
-                                  ProjectId = firm.ProjectId,
-                                  FirmId = firm.FirmId,
-                                  CategoryId = firm.CategoryId,
-                                  Hits = firmStatistics.Hits,
-                                  Shows = firmStatistics.Shows,
-                                  FirmCount = firmCount.Count,
-                                  AdvertisersShare = Math.Min(1, (float)categoryStatistics.AdvertisersCount / firmCount.Count)
-                              };
+                           {
+                               ProjectId = firm.ProjectId,
+                               FirmId = firm.FirmId,
+                               CategoryId = firm.CategoryId,
+                               Hits = firmStatistics != null ? firmStatistics.Hits : 0,
+                               Shows = firmStatistics != null ? firmStatistics.Shows : 0,
+                               FirmCount = firmCount.Count,
+                               AdvertisersShare = Math.Min(1, (float)categoryStatistics.AdvertisersCount / firmCount.Count)
+                           };
             }
         }
     }

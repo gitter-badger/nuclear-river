@@ -5,18 +5,33 @@ using Moq;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context.Implementation;
+using NuClear.AdvancedSearch.Replication.Tests.Data;
 using NuClear.AdvancedSearch.Replication.Tests.Transformation;
 
 using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests.StatisticsTransformation
 {
-    using Facts = CustomerIntelligence.Model.Facts;
     using CI = CustomerIntelligence.Model;
+    using Facts = CustomerIntelligence.Model.Facts;
 
     [TestFixture, SetCulture("")]
     internal class StatisticsTransformationContextTests : BaseTransformationFixture
     {
+        [Test]
+        public void ShouldFillCategoriesWithoutStatisticsWithZeros()
+        {
+            FactsDb.Has(new Facts::FirmCategory { FirmId = 1, CategoryId = 1, ProjectId = 1 }); // Фирма без статистики
+            FactsDb.Has(new Facts::FirmCategory { FirmId = 2, CategoryId = 1, ProjectId = 1 }); // Фирма со статистикой
+            FactsDb.Has(new Facts::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, Hits = 100, Shows = 200 });
+            FactsDb.Has(new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 1, AdvertisersCount = 1 });
+
+            Transformation.Create(new BitFactsContext(FactsDb))
+                          .VerifyTransform(x => x.FirmCategoryStatistics, Inquire(
+                              new CI::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 0, Shows = 0 },
+                              new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 100, Shows = 200 }));
+        }
+
         [Test]
         public void ShouldTransformFirmCategoryStatistics()
         {
