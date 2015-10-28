@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkErmFacts")]
     internal class BulkLoadingOfFacts : BaseDataFixture
     {
         [Test]

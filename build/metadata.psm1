@@ -34,14 +34,41 @@ function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 	return $entryPointsMetadata
 }
 
+function Get-BulkToolMetadata ($UpdateSchemas){
+	$metadata = @{}
+
+	$arguments = @()
+	switch($UpdateSchemas){
+		'ERM' { $arguments += 'BulkErmFacts', 'BulkCustomerIntelligence', 'BulkStatistics' }
+		'BIT' { $arguments += 'BulkStatistics' }
+		'CustomerIntelligence' { $Categories += 'BulkCustomerIntelligence', 'BulkStatistics' }
+	}
+	$metadata += @{ 'Arguments' = ($arguments | select -Unique) }
+
+	return @{ 'Replication.Bulk' = $metadata }
+}
+
 function Get-UpdateSchemasMetadata ($UpdateSchemas) {
+	$metadata = @{}
 
 	[string[]]$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
 	if ($UpdateSchemas -and $UpdateSchemas.Count -ne 0){
-		return @{ 'UpdateSchemas' = $UpdateSchemas }
+
+		$metadata += @{
+			'UpdateSchemas' = @{
+				'Schemas' = $UpdateSchemas
+				'ConnectionString' = @{
+					'ERM' = 'CustomerIntelligence'
+					'BIT' = 'CustomerIntelligence'
+					'CustomerIntelligence' = 'CustomerIntelligence'
+				}
+			}
+		}
+		$metadata += Get-BulkToolMetadata $UpdateSchemas
+		return $metadata
 	}
 
-	return @{}
+	return $metadata
 }
 
 function Parse-EnvironmentMetadata ($Properties) {
@@ -88,7 +115,6 @@ $AllSchemas = @(
 	'ERM'
 	'BIT'
 	'CustomerIntelligence'
-	'Transport'
 )
 
 $AllEntryPoints = @(

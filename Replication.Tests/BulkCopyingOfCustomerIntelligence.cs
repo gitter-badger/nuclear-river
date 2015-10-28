@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkCustomerIntelligence")]
     internal class BulkCopyingOfCustomerIntelligence : BaseDataFixture
     {
         [Test]
@@ -82,6 +82,7 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         private void Reload<T>(Func<ICustomerIntelligenceContext, IEnumerable<T>> loader)
             where T : class
         {
+            Console.WriteLine($"{typeof(T).Name}...");
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
