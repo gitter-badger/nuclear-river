@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionStringFeature.cs" />
     <Compile Include="EntityTypeFeature.cs" />
     <Compile Include="Linq2DbSchemaFeature.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

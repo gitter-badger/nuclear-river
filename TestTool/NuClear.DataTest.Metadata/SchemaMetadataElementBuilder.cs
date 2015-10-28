@@ -14,17 +14,18 @@ namespace NuClear.DataTest.Metamodel
     public sealed class SchemaMetadataElementBuilder : MetadataElementBuilder<SchemaMetadataElementBuilder, SchemaMetadataElement>
     {
         private readonly List<IMetadataFeature> _features = new List<IMetadataFeature>();
-        private IConnectionStringIdentity _identity;
+        private string _id;
 
         protected override SchemaMetadataElement Create()
         {
-            return new SchemaMetadataElement(_identity, _features);
+            return new SchemaMetadataElement(_id, _features);
         }
 
-        public SchemaMetadataElementBuilder For<TConnectionStringIdentity>()
+        public SchemaMetadataElementBuilder For<TConnectionStringIdentity>(string id)
             where TConnectionStringIdentity : IdentityBase<TConnectionStringIdentity>, IConnectionStringIdentity, new()
         {
-            _identity = IdentityBase<TConnectionStringIdentity>.Instance;
+            _id = id;
+            _features.Add(new ConnectionStringFeature(IdentityBase<TConnectionStringIdentity>.Instance));
             return this;
         }
 

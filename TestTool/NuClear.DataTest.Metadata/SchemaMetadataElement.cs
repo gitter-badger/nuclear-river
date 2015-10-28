@@ -15,13 +15,11 @@ namespace NuClear.DataTest.Metamodel
     public sealed class SchemaMetadataElement : MetadataElement<SchemaMetadataElement, SchemaMetadataElementBuilder>
     {
         private IMetadataElementIdentity _identity;
-        private readonly IConnectionStringIdentity _connectionStringIdentity;
 
-        internal SchemaMetadataElement(IConnectionStringIdentity connectionStringIdentity, IEnumerable<IMetadataFeature> features)
+        internal SchemaMetadataElement(string id, IEnumerable<IMetadataFeature> features)
             : base(features)
         {
-            _identity = Metadata.Id.For<SchemaMetadataIdentity>(connectionStringIdentity.GetType().Name).Build().AsIdentity();
-            _connectionStringIdentity = connectionStringIdentity;
+            _identity = Metadata.Id.For<SchemaMetadataIdentity>(id).Build().AsIdentity();
         }
 
         public override IMetadataElementIdentity Identity => _identity;
@@ -31,7 +29,7 @@ namespace NuClear.DataTest.Metamodel
             _identity = actualMetadataElementIdentity;
         }
 
-        public IConnectionStringIdentity ConnectionStringIdentity => _connectionStringIdentity;
+        public IConnectionStringIdentity ConnectionStringIdentity => this.Feature<ConnectionStringFeature>().ConnectionStringIdentity;
 
         public MappingSchema Schema => this.Feature<Linq2DbSchemaFeature>().Schema;
 

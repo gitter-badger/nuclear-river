@@ -20,27 +20,27 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     public class SchemaMetadataSource : MetadataSourceBase<SchemaMetadataIdentity>
     {
         private static readonly SchemaMetadataElement Erm = SchemaMetadataElement.Config
-            .For<ErmConnectionStringIdentity>()
+            .For<ErmConnectionStringIdentity>("Erm")
             .HasSchema(Schema.Erm)
             .HasEntitiesFromNamespace(typeof(Erm::Account).Namespace);
 
         private static readonly SchemaMetadataElement Facts = SchemaMetadataElement.Config
-            .For<FactsConnectionStringIdentity>()
+            .For<FactsConnectionStringIdentity>("Facts")
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Facts::Account).Namespace);
 
         private static readonly SchemaMetadataElement CustomerIntelligence = SchemaMetadataElement.Config
-            .For<CustomerIntelligenceConnectionStringIdentity>()
+            .For<CustomerIntelligenceConnectionStringIdentity>("CustomerIntelligence")
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(CI::CategoryGroup).Namespace);
 
         private static readonly SchemaMetadataElement Bit = SchemaMetadataElement.Config
-            .For<BitConnectionStringIdentity>()
+            .For<BitConnectionStringIdentity>("Bit")
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Bit::FirmCategoryStatistics).Namespace);
 
         private static readonly SchemaMetadataElement Statistics = SchemaMetadataElement.Config
-            .For<StatisticsConnectionStringIdentity>()
+            .For<StatisticsConnectionStringIdentity>("Statistics")
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(Statistics::FirmCategoryStatistics).Namespace);
 
