@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using LinqToDB.Mapping;
-
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DataTest.Metamodel;
