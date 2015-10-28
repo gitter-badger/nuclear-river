@@ -81,10 +81,6 @@
       <Project>{2EBD563D-A59B-4FB8-AED6-0340D136F72C}</Project>
       <Name>Common.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\TestTool\NuClear.DataTest.Runner\NuClear.DataTest.Runner.csproj">
-      <Project>{59CA2C6D-9974-497D-BF2D-08C311824C7B}</Project>
-      <Name>NuClear.DataTest.Runner</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\TestTool\NuClear.DataTest.Metadata\NuClear.DataTest.Metamodel.csproj">
       <Project>{3e50db8d-999e-4a89-9b21-34d11b742e39}</Project>
       <Name>NuClear.DataTest.Metamodel</Name>
