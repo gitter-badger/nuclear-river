@@ -42,6 +42,7 @@ function Get-BulkToolMetadata ($UpdateSchemas){
 	$arguments = @()
 	switch($UpdateSchemas){
 		'ERM' { $arguments += @('-fact', '-ci', '-statistics') }
+		'BIT' { $arguments += @('-statistics') }
 		'CustomerIntelligence' { $arguments += @('-ci', '-statistics') }
 	}
 	$metadata += @{ 'Arguments' = ($arguments | select -Unique) }
@@ -50,16 +51,26 @@ function Get-BulkToolMetadata ($UpdateSchemas){
 }
 
 function Get-UpdateSchemasMetadata ($UpdateSchemas) {
+	$metadata = @{}
 
 	[string[]]$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
 	if ($UpdateSchemas -and $UpdateSchemas.Count -ne 0){
-		
-		$metadata = @{ 'UpdateSchemas' = $UpdateSchemas }
+
+		$metadata += @{
+			'UpdateSchemas' = @{
+				'Schemas' = $UpdateSchemas
+				'ConnectionString' = @{
+					'ERM' = 'Facts'
+					'BIT' = 'Facts'
+					'CustomerIntelligence' = 'CustomerIntelligence'
+				}
+			}
+		}
 		$metadata += Get-BulkToolMetadata $UpdateSchemas
 		return $metadata
 	}
 
-	return @{}
+	return $metadata
 }
 
 function Parse-EnvironmentMetadata ($Properties) {
@@ -106,7 +117,6 @@ $AllSchemas = @(
 	'ERM'
 	'BIT'
 	'CustomerIntelligence'
-	'Transport'
 )
 
 $AllEntryPoints = @(

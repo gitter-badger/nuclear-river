@@ -16,34 +16,18 @@ Task Update-Schemas -Precondition { $Metadata['UpdateSchemas'] } {
 	$configFileName = Join-Path $projectDir 'app.config'
 	[xml]$config = Get-TransformedConfig $configFileName 'Replication.Bulk'
 
-	$connectionString = Get-ConnectionString $config 'CustomerIntelligence'
-	Create-Database $connectionString
-
 	$sqlDir = Join-Path $Metadata.Common.Dir.Solution 'CustomerIntelligence\Schemas'
-	Update-Schemas $sqlDir $connectionString
+	Update-Schemas $config $sqlDir
 }
 
-function Create-Database ($connectionString) {
+function Update-Schemas ($config, $sqlDir) {
+	$updateSchemasMetadata = $Metadata['UpdateSchemas']
 
-	$builder = New-Object System.Data.Common.DbConnectionStringBuilder
-	$builder.set_ConnectionString($connectionString)
-	$initialCatalog = $builder['Initial Catalog']
-	$builder['Initial Catalog'] = $null
+	foreach ($schema in $updateSchemasMetadata.Schemas) {
 
-	$connection = Create-SqlConnection $builder.ConnectionString
+		$connectionString = Get-ConnectionString $config $updateSchemasMetadata.ConnectionString[$schema]
+		$connection = Create-SqlConnection $connectionString
 
-	$sql = Get-Content (Join-Path $Metadata.Common.Dir.Solution 'Replication\Schemas\Database.sql') -Raw
-	$sql = $sql -replace '\$\(Database\)', $initialCatalog
-
-	Write-Host "Database.sql..."
-	Execute-Sql $sql $connection
-}
-
-function Update-Schemas ($sqlDir, $connectionString) {
-
-	$connection = Create-SqlConnection $connectionString
-
-	foreach ($schema in $Metadata['UpdateSchemas']) {
 		$sql = Get-Content (Join-Path $sqlDir "$schema.sql") -Raw
 
 		Write-Host "$schema.sql..."
