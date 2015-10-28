@@ -28,7 +28,7 @@ namespace NuClear.DataTest.Runner.Command
             var existingDb = server.Databases[targetDbName];
             if (existingDb != null)
             {
-                throw new Exception($"Database {connectionString} already exists");
+                return;
             }
 
             var newDb = new Database(server, targetDbName);
