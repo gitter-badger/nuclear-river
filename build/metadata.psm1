@@ -39,9 +39,9 @@ function Get-BulkToolMetadata ($UpdateSchemas){
 
 	$arguments = @()
 	switch($UpdateSchemas){
-		'ERM' { $arguments += 'BulkErmFacts', 'BulkCustomerIntelligence', 'BulkStatistics' }
-		'BIT' { $arguments += 'BulkStatistics' }
-		'CustomerIntelligence' { $Categories += 'BulkCustomerIntelligence', 'BulkStatistics' }
+		'ERM' { $arguments += @('BulkErmFacts', 'BulkCustomerIntelligence', 'BulkStatistics') }
+		'CustomerIntelligence' { $arguments += @('BulkCustomerIntelligence', 'BulkStatistics') }
+		'BIT' { $arguments += @('BulkStatistics') }
 	}
 	$metadata += @{ 'Arguments' = ($arguments | select -Unique) }
 
