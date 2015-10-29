@@ -64,7 +64,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                  {
                                      Id = categoryGroup.Id,
                                      Name = categoryGroup.Name,
-                                     Rate = categoryGroup.Rate
+                                     Rate = (float)categoryGroup.Rate
                                  });
 
                     public static readonly MapSpecification<IQuery, IQueryable<CategoryFirmAddress>> CategoryFirmAddresses =

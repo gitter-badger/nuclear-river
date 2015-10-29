@@ -31,6 +31,19 @@ namespace NuClear.DataTest.Metamodel
 
         public IConnectionStringIdentity ConnectionStringIdentity => this.Feature<ConnectionStringFeature>().ConnectionStringIdentity;
 
+        public bool TryGetMasterConnectionString(out IConnectionStringIdentity connectionStringIdentity)
+        {
+            var feature = this.Features<MasterConnectionStringFeature>().FirstOrDefault();
+            if (feature != null)
+            {
+                connectionStringIdentity = feature.ConnectionStringIdentity;
+                return true;
+            }
+
+            connectionStringIdentity = null;
+            return false;
+        }
+
         public MappingSchema Schema => this.Feature<Linq2DbSchemaFeature>().Schema;
 
         public IReadOnlyCollection<Type> Entities => this.Features<EntityTypeFeature>().Select(x => x.Type).ToArray();

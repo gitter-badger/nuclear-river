@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using CustomerIntelligence.Replication.DataTest.Model.Identitites.Connections;
+
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DataTest.Metamodel;
@@ -19,6 +21,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     {
         private static readonly SchemaMetadataElement Erm = SchemaMetadataElement.Config
             .For<ErmConnectionStringIdentity>("Erm")
+            .HasMasterConnectionString<ErmMasterConnectionStringIdentity>()
             .HasSchema(Schema.Erm)
             .HasEntitiesFromNamespace(typeof(Erm::Account).Namespace);
 

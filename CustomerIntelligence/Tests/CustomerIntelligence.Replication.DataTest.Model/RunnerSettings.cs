@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 
+using CustomerIntelligence.Replication.DataTest.Model.Identitites.Connections;
+
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.Storage.API.ConnectionStrings;
 
@@ -20,7 +22,9 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                 { FactsConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["Facts"].ConnectionString },
                 { CustomerIntelligenceConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["CustomerIntelligence"].ConnectionString },
                 { BitConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["Bit"].ConnectionString },
-                { StatisticsConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["Statistics"].ConnectionString }
+                { StatisticsConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["Statistics"].ConnectionString },
+
+                { ErmMasterConnectionStringIdentity.Instance, configuration.ConnectionStrings.ConnectionStrings["ErmMaster"].ConnectionString },
             };
     }
 }

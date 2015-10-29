@@ -68,6 +68,7 @@
     <Compile Include="ConnectionStringFeature.cs" />
     <Compile Include="EntityTypeFeature.cs" />
     <Compile Include="Linq2DbSchemaFeature.cs" />
+    <Compile Include="MasterConnectionStringFeature.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaMetadataElement.cs" />
     <Compile Include="SchemaMetadataElementBuilder.cs" />

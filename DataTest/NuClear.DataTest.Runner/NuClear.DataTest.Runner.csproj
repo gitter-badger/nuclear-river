@@ -99,6 +99,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Command\ValidateDatabaseSchemataCommand.cs" />
     <Compile Include="Command\Command.cs" />
     <Compile Include="Command\CreateDatabaseSchemataCommand.cs" />
     <Compile Include="Command\DropDatabasesCommand.cs" />
@@ -106,6 +107,8 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Smo\DatabaseSchemaComparer.cs" />
+    <Compile Include="Smo\SmoExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

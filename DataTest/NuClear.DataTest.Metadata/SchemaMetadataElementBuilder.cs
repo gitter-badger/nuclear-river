@@ -53,5 +53,12 @@ namespace NuClear.DataTest.Metamodel
             _features.Add(new EntityTypeFeature(typeof(T)));
             return this;
         }
+
+        public SchemaMetadataElementBuilder HasMasterConnectionString<TConnectionStringIdentity>()
+            where TConnectionStringIdentity : IdentityBase<TConnectionStringIdentity>, IConnectionStringIdentity, new()
+        {
+            _features.Add(new MasterConnectionStringFeature(IdentityBase<TConnectionStringIdentity>.Instance));
+            return this;
+        }
     }
 }
