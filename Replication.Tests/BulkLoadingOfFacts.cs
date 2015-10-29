@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+using LinqToDB.Mapping;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
@@ -115,6 +118,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
+                var annotation = factDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
                 var context = new ErmFactsTransformationContext(new ErmContext(ermDb));
                 factDb.Reload(loader(context));
             }

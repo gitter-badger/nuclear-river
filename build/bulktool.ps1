@@ -21,13 +21,16 @@ Task Run-BulkTool -Precondition { $Metadata['Replication.Bulk'] } {
 
 	$assemblies = Get-ChildItem $artifactName -Filter "*Tests*.dll" -Recurse
 
-	$lastExitCode = Invoke-NUnit $assemblies.FullName -Arguments @(
-		'/include:' + [string]::Join(',', $Metadata['Replication.Bulk'].Arguments)
-		'/stoponerror'
-	)
+	foreach ($argument in $Metadata['Replication.Bulk'].Arguments){
 
-	if ($lastExitCode -ne 0){
-		throw "Error then running bulk tool"
+		$lastExitCode = Invoke-NUnit $assemblies.FullName -Arguments @(
+			'/include:' + $argument
+			'/stoponerror'
+		)
+
+		if ($lastExitCode -ne 0){
+			throw "Error then running bulk tool"
+		}
 	}
 }
 

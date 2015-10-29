@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+
+using LinqToDB.Mapping;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
@@ -23,10 +26,12 @@ namespace NuClear.AdvancedSearch.Replication.Tests
         private void Reload<T, TKey>(Func<IStatisticsContext, IEnumerable<T>> loader, Expression<Func<T, TKey>> keyExpression)
             where T : class
         {
-            Console.WriteLine($"{typeof(T).Name}...");
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
+                var annotation = ciDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
                 var context = new StatisticsTransformationContext(new BitFactsContext(factsDb));
                 ciDb.Reload(loader(context), keyExpression);
             }
