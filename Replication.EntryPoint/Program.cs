@@ -47,7 +47,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint
                                              .DefaultXmlConfig
                                              .Console
                                              .EventLog
-                                             .DB(settingsContainer.AsSettings<IConnectionStringSettings>().GetConnectionString(ConnectionStringName.Logging))
+                                             .Logstash(new Uri(settingsContainer.AsSettings<IConnectionStringSettings>().GetConnectionString(ConnectionStringName.Logging)))
                                              .Build;
 
             IUnityContainer container = null;
