@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
+using LinqToDB.Mapping;
 
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data;
 using NuClear.AdvancedSearch.Replication.CustomerIntelligence.Data.Context;
@@ -10,7 +13,7 @@ using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Tests
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkCustomerIntelligence")]
     internal class BulkCopyingOfCustomerIntelligence : BaseDataFixture
     {
         [Test]
@@ -85,6 +88,9 @@ namespace NuClear.AdvancedSearch.Replication.Tests
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
+                var annotation = ciDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
                 var context = new CustomerIntelligenceTransformationContext(new ErmFactsContext(factsDb));
                 ciDb.Reload(loader(context));
             }
