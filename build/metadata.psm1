@@ -6,14 +6,12 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.taskservice.psm1" -DisableNameChecking
-Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
 
 function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
 	$entryPointsMetadata = @{}
 	$entryPointsMetadata += Get-ServiceBusMetadata $Context
-	$entryPointsMetadata += Get-TransformMetadata $Context
 	
 	switch ($EntryPoints){
 		'Web.OData' {

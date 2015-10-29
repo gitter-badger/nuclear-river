@@ -2,6 +2,8 @@
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
+Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
+
 $DomainNames = @{
 	'Chile' = 'cl'
 	'Cyprus' = 'com.cy'
@@ -130,6 +132,7 @@ function Get-WebMetadata ($Context) {
 	$metadata += Get-IisAppPathMetadata $Context
 	$metadata += Get-TakeOfflineMetadata $Context
 	$metadata += Get-OptionsMetadata $Context
+	$metadata += Get-TransformMetadata $Context
 	
 	$metadata += @{
 		'EntrypointType' = 'Web'

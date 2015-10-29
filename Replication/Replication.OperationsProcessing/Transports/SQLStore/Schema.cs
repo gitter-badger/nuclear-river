@@ -1,4 +1,5 @@
-﻿using LinqToDB.Mapping;
+﻿using LinqToDB.DataProvider.SqlServer;
+using LinqToDB.Mapping;
 
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 
@@ -12,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         {
             get
             {
-                var schema = new MappingSchema();
+                var schema = new MappingSchema(new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
                 config.Entity<PerformedOperationFinalProcessing>()
