@@ -22,9 +22,9 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
             _views = views;
         }
 
-        public static IDisposable TemporaryRemoveViews(Storage storage, IEnumerable<string> essentialViewNames)
+        public static IDisposable TemporaryRemoveViews(StorageDescriptor storageDescriptor, IEnumerable<string> essentialViewNames)
         {
-            var connectionString = GetConnectionString(storage);
+            var connectionString = GetConnectionString(storageDescriptor);
             var database = GetDatabase(connectionString);
             var views = new List<StringCollection>();
             foreach (var view in database.Views.Cast<View>()
@@ -38,9 +38,9 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
             return new ViewContainer(connectionString, views);
         }
 
-        private static string GetConnectionString(Storage storage)
+        private static string GetConnectionString(StorageDescriptor storageDescriptor)
         {
-            return ConfigurationManager.ConnectionStrings[storage.ConnectionStringName].ConnectionString;
+            return ConfigurationManager.ConnectionStrings[storageDescriptor.ConnectionStringName].ConnectionString;
         }
 
         private static Database GetDatabase(string connectionString)

@@ -26,7 +26,7 @@ namespace NuClear.Replication.Core.Aggregates
             _query = query;
             _repository = repository;
             _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
-	        _valueObjectProcessors = _metadata.Features.OfType<IValueObjectFeature>().Select(valueObjectProcessorFactory.Create).ToArray();
+	        _valueObjectProcessors = _metadata.Features.OfType<IValueObjectMetadataElement>().Select(valueObjectProcessorFactory.Create).ToArray();
         }
 
         public void Initialize(IReadOnlyCollection<long> ids)
