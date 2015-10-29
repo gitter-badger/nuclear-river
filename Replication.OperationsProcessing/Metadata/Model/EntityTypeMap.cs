@@ -33,7 +33,8 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
                     .AddMapping<EntityTypeLegalPerson, Erm.LegalPerson>()
                     .AddMapping<EntityTypeOrder, Erm.Order>()
                     .AddMapping<EntityTypeProject, Erm.Project>()
-                    .AddMapping<EntityTypeTerritory, Erm.Territory>();
+                    .AddMapping<EntityTypeTerritory, Erm.Territory>()
+                    .AddAsVirtual(EntityTypeOrderPosition.Instance);
 
 		private static readonly Action<EntityTypeMappingRegistryBuilder> FactsTypeMap
             = builder => builder
