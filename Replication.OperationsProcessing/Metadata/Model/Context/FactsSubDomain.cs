@@ -2,9 +2,9 @@
 
 namespace NuClear.Replication.OperationsProcessing.Metadata.Model.Context
 {
-    public sealed class CustomerIntelligenceContext : IDomainContext
+    public sealed class FactsSubDomain : ISubDomain
     {
-        private CustomerIntelligenceContext()
+        private FactsSubDomain()
         {
         }
     }

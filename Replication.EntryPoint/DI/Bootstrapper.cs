@@ -47,6 +47,7 @@ using NuClear.Replication.OperationsProcessing.Metadata.Model;
 using NuClear.Replication.OperationsProcessing.Metadata.Operations;
 using NuClear.Replication.OperationsProcessing.Performance;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
+using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
@@ -66,15 +67,14 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
-            EntityTypeMap.Initialize();
-
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
                                  {
                                      new TaskServiceJobsMassProcessor(container),
                                  };
 
-            container.AttachQueryableContainerExtension()
+            container.RegisterContexts()
+					 .AttachQueryableContainerExtension()
                      .UseParameterResolvers(ParameterResolvers.Defaults)
                      .ConfigureMetadata()
                      .ConfigureSettingsAspects(settingsContainer)
@@ -90,7 +90,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
             return container;
         }
 
-        public static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
+		public static IUnityContainer ConfigureTracing(this IUnityContainer container, ITracer tracer, ITracerContextManager tracerContextManager)
         {
             return container.RegisterInstance(tracer)
                             .RegisterInstance(tracerContextManager);
@@ -157,6 +157,7 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                      .RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryWrapper), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
+                     .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(Lifetime.Singleton)
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
@@ -188,5 +189,12 @@ namespace NuClear.AdvancedSearch.Replication.EntryPoint.DI
                             .RegisterType<IMessageProcessingHandlerFactory, UnityMessageProcessingHandlerFactory>(Lifetime.PerScope)
                             .RegisterType<IMessageProcessingContextAccumulatorFactory, UnityMessageProcessingContextAccumulatorFactory>(Lifetime.PerScope);
         }
-    }
+
+		private static IUnityContainer RegisterContexts(this IUnityContainer container)
+		{
+			return container.RegisterInstance(EntityTypeMap.CreateErmContext())
+							.RegisterInstance(EntityTypeMap.CreateCustomerIntelligenceContext())
+							.RegisterInstance(EntityTypeMap.CreateFactsContext());
+		}
+	}
 }

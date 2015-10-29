@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using NuClear.Model.Common;
 using NuClear.Model.Common.Entities;
@@ -15,81 +13,87 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Model
 {
     public static class EntityTypeMap
     {
-        private static readonly Dictionary<IEntityType, Type> ErmTypeMap
-            = new[]
-                {
-                    CreateMapping<EntityTypeAppointment, Erm.Appointment>(),
-                    CreateMapping<EntityTypePhonecall, Erm.Phonecall>(),
-                    CreateMapping<EntityTypeTask, Erm.Task>(),
-                    CreateMapping<EntityTypeLetter, Erm.Letter>(),
-                    CreateMapping<EntityTypeAccount, Erm.Account>(),
-                    CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Erm.BranchOfficeOrganizationUnit>(),
-                    CreateMapping<EntityTypeCategory, Erm.Category>(),
-                    CreateMapping<EntityTypeCategoryFirmAddress, Erm.CategoryFirmAddress>(),
-                    CreateMapping<EntityTypeCategoryGroup, Erm.CategoryGroup>(),
-                    CreateMapping<EntityTypeCategoryOrganizationUnit, Erm.CategoryOrganizationUnit>(),
-                    CreateMapping<EntityTypeClient, Erm.Client>(),
-                    CreateMapping<EntityTypeContact, Erm.Contact>(),
-                    CreateMapping<EntityTypeFirm, Erm.Firm>(),
-                    CreateMapping<EntityTypeFirmAddress, Erm.FirmAddress>(),
-                    CreateMapping<EntityTypeFirmContact, Erm.FirmContact>(),
-                    CreateMapping<EntityTypeLegalPerson, Erm.LegalPerson>(),
-                    CreateMapping<EntityTypeOrder, Erm.Order>(),
-                    CreateMapping<EntityTypeProject, Erm.Project>(),
-                    CreateMapping<EntityTypeTerritory, Erm.Territory>(),
-                }.ToDictionary(pair => pair.Key, pair => pair.Value);
+        private static readonly Action<EntityTypeMappingRegistryBuilder> ErmTypeMap
+            = builder => builder
+					.AddMapping<EntityTypeAppointment, Erm.Appointment>()
+                    .AddMapping<EntityTypePhonecall, Erm.Phonecall>()
+					.AddMapping<EntityTypeTask, Erm.Task>()
+                    .AddMapping<EntityTypeLetter, Erm.Letter>()
+                    .AddMapping<EntityTypeAccount, Erm.Account>()
+                    .AddMapping<EntityTypeBranchOfficeOrganizationUnit, Erm.BranchOfficeOrganizationUnit>()
+                    .AddMapping<EntityTypeCategory, Erm.Category>()
+                    .AddMapping<EntityTypeCategoryFirmAddress, Erm.CategoryFirmAddress>()
+                    .AddMapping<EntityTypeCategoryGroup, Erm.CategoryGroup>()
+                    .AddMapping<EntityTypeCategoryOrganizationUnit, Erm.CategoryOrganizationUnit>()
+                    .AddMapping<EntityTypeClient, Erm.Client>()
+                    .AddMapping<EntityTypeContact, Erm.Contact>()
+                    .AddMapping<EntityTypeFirm, Erm.Firm>()
+                    .AddMapping<EntityTypeFirmAddress, Erm.FirmAddress>()
+                    .AddMapping<EntityTypeFirmContact, Erm.FirmContact>()
+                    .AddMapping<EntityTypeLegalPerson, Erm.LegalPerson>()
+                    .AddMapping<EntityTypeOrder, Erm.Order>()
+                    .AddMapping<EntityTypeProject, Erm.Project>()
+                    .AddMapping<EntityTypeTerritory, Erm.Territory>();
 
-        private static readonly Dictionary<IEntityType, Type> FactsTypeMap
-            = new[]
-                {
-                    CreateMapping<EntityTypeActivity, Facts.Activity>(),
-                    CreateMapping<EntityTypeAccount, Facts.Account>(),
-                    CreateMapping<EntityTypeBranchOfficeOrganizationUnit, Facts.BranchOfficeOrganizationUnit>(),
-                    CreateMapping<EntityTypeCategory, Facts.Category>(),
-                    CreateMapping<EntityTypeCategoryFirmAddress, Facts.CategoryFirmAddress>(),
-                    CreateMapping<EntityTypeCategoryGroup, Facts.CategoryGroup>(),
-                    CreateMapping<EntityTypeCategoryOrganizationUnit, Facts.CategoryOrganizationUnit>(),
-                    CreateMapping<EntityTypeClient, Facts.Client>(),
-                    CreateMapping<EntityTypeContact, Facts.Contact>(),
-                    CreateMapping<EntityTypeFirm, Facts.Firm>(),
-                    CreateMapping<EntityTypeFirmAddress, Facts.FirmAddress>(),
-                    CreateMapping<EntityTypeFirmContact, Facts.FirmContact>(),
-                    CreateMapping<EntityTypeLegalPerson, Facts.LegalPerson>(),
-                    CreateMapping<EntityTypeOrder, Facts.Order>(),
-                    CreateMapping<EntityTypeProject, Facts.Project>(),
-                    CreateMapping<EntityTypeTerritory, Facts.Territory>(),
-                }.ToDictionary(pair => pair.Key, pair => pair.Value);
+		private static readonly Action<EntityTypeMappingRegistryBuilder> FactsTypeMap
+            = builder => builder
+                    .AddMapping<EntityTypeActivity, Facts.Activity>()
+                    .AddMapping<EntityTypeAccount, Facts.Account>()
+                    .AddMapping<EntityTypeBranchOfficeOrganizationUnit, Facts.BranchOfficeOrganizationUnit>()
+                    .AddMapping<EntityTypeCategory, Facts.Category>()
+                    .AddMapping<EntityTypeCategoryFirmAddress, Facts.CategoryFirmAddress>()
+                    .AddMapping<EntityTypeCategoryGroup, Facts.CategoryGroup>()
+                    .AddMapping<EntityTypeCategoryOrganizationUnit, Facts.CategoryOrganizationUnit>()
+                    .AddMapping<EntityTypeClient, Facts.Client>()
+                    .AddMapping<EntityTypeContact, Facts.Contact>()
+                    .AddMapping<EntityTypeFirm, Facts.Firm>()
+                    .AddMapping<EntityTypeFirmAddress, Facts.FirmAddress>()
+                    .AddMapping<EntityTypeFirmContact, Facts.FirmContact>()
+                    .AddMapping<EntityTypeLegalPerson, Facts.LegalPerson>()
+                    .AddMapping<EntityTypeOrder, Facts.Order>()
+                    .AddMapping<EntityTypeProject, Facts.Project>()
+                    .AddMapping<EntityTypeTerritory, Facts.Territory>();
 
-        private static readonly Dictionary<IEntityType, Type> CustomerIntelligenceTypeMap
-            = new[]
-                {
-                    CreateMapping<EntityTypeCategoryGroup, CI.CategoryGroup>(),
-                    CreateMapping<EntityTypeClient, CI.Client>(),
-                    CreateMapping<EntityTypeContact, CI.ClientContact>(),
-                    CreateMapping<EntityTypeFirm, CI.Firm>(),
-                    CreateMapping<EntityTypeFirmBalance, CI.FirmBalance>(),
-                    CreateMapping<EntityTypeFirmCategory, CI.FirmCategory>(),
-                    CreateMapping<EntityTypeProject, CI.Project>(),
-                    CreateMapping<EntityTypeProjectCategory, CI.ProjectCategory>(),
-                    CreateMapping<EntityTypeTerritory, CI.Territory>(),
-                }.ToDictionary(pair => pair.Key, pair => pair.Value);
+		private static readonly Action<EntityTypeMappingRegistryBuilder> CustomerIntelligenceTypeMap
+            = builder => builder
+                    .AddMapping<EntityTypeCategoryGroup, CI.CategoryGroup>()
+                    .AddMapping<EntityTypeClient, CI.Client>()
+                    .AddMapping<EntityTypeContact, CI.ClientContact>()
+                    .AddMapping<EntityTypeFirm, CI.Firm>()
+                    .AddMapping<EntityTypeFirmBalance, CI.FirmBalance>()
+                    .AddMapping<EntityTypeFirmCategory, CI.FirmCategory>()
+                    .AddMapping<EntityTypeProject, CI.Project>()
+                    .AddMapping<EntityTypeProjectCategory, CI.ProjectCategory>()
+                    .AddMapping<EntityTypeTerritory, CI.Territory>();
 
-        public static void Initialize()
-        {
-            EntityTypeMappingRegistry.Initialize<ErmContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<ErmContext>(ErmTypeMap);
+	    public static IEntityTypeMappingRegistry<ErmSubDomain> CreateErmContext()
+	    {
+		    var builder = new EntityTypeMappingRegistryBuilder();
+		    ErmTypeMap.Invoke(builder);
+		    return builder.Create<ErmSubDomain>();
+	    }
 
-            EntityTypeMappingRegistry.Initialize<CustomerIntelligenceContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<CustomerIntelligenceContext>(CustomerIntelligenceTypeMap);
+	    public static IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> CreateCustomerIntelligenceContext()
+		{
+			var builder = new EntityTypeMappingRegistryBuilder();
+			CustomerIntelligenceTypeMap.Invoke(builder);
+			return builder.Create<CustomerIntelligenceSubDomain>();
+		}
 
-            EntityTypeMappingRegistry.Initialize<FactsContext>(Enumerable.Empty<IEntityType>(), Enumerable.Empty<Type>());
-            EntityTypeMappingRegistry.AddMappings<FactsContext>(FactsTypeMap);
-        }
-
-        private static KeyValuePair<IEntityType, Type> CreateMapping<TEntityType, TAggregateType>()
-            where TEntityType : IdentityBase<TEntityType>, IEntityType, new()
-        {
-            return new KeyValuePair<IEntityType, Type>(IdentityBase<TEntityType>.Instance, typeof(TAggregateType));
-        }
+		public static IEntityTypeMappingRegistry<FactsSubDomain> CreateFactsContext()
+		{
+			var builder = new EntityTypeMappingRegistryBuilder();
+			FactsTypeMap.Invoke(builder);
+			return builder.Create<FactsSubDomain>();
+		}
     }
+
+	public static class EntityTypeMappingRegistryBuilderExtensions
+	{
+		public static EntityTypeMappingRegistryBuilder AddMapping<TEntityType, TAggregateType>(this EntityTypeMappingRegistryBuilder registryBuilder)
+			where TEntityType : IdentityBase<TEntityType>, IEntityType, new()
+		{
+			return registryBuilder.AddMapping(IdentityBase<TEntityType>.Instance, typeof(TAggregateType));
+		}
+	}
 }
