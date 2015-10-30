@@ -1,42 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk.Tests
 {
-	[TestFixture]
-	public sealed class BulkReplication
-	{
-	    public static IEnumerable<TestCaseData> GetFactReplication()
-            => Program.GetReplicationActions("-fact").Select(tuple => new TestCaseData(tuple.Item2).SetName(tuple.Item1));
-
-	    public static IEnumerable<TestCaseData> GetCiReplication()
-            => Program.GetReplicationActions("-ci").Select(tuple => new TestCaseData(tuple.Item2).SetName(tuple.Item1));
-
-	    public static IEnumerable<TestCaseData> GetStatisticsReplication()
-	        => Program.GetReplicationActions("-statistics").Select(tuple => new TestCaseData(tuple.Item2).SetName(tuple.Item1));
-
+    [TestFixture]
+    public sealed class BulkReplication
+    {
         [Ignore("Use for bulk replication")]
-        [TestCaseSource(nameof(GetFactReplication))]
+        [Test]
         public void FactReplicationTest(Action replicationAction)
         {
+            Program.Main(new[] { "-fact" });
             replicationAction.Invoke();
         }
 
         [Ignore("Use for bulk replication")]
-        [TestCaseSource(nameof(GetCiReplication))]
+        [Test]
         public void CiReplicationTest(Action replicationAction)
         {
-            replicationAction.Invoke();
+            Program.Main(new[] { "-ci" });
         }
 
         [Ignore("Use for bulk replication")]
-        [TestCaseSource(nameof(GetStatisticsReplication))]
+        [Test]
         public void StatisticsReplicationTest(Action replicationAction)
         {
-            replicationAction.Invoke();
+            Program.Main(new[] { "-statistics" });
         }
     }
 }
