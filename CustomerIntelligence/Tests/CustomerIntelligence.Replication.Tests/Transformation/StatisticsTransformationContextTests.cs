@@ -15,6 +15,22 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
     internal class StatisticsTransformationContextTests : TransformationFixtureBase
     {
         [Test]
+        public void ShouldFillCategoriesWithoutStatisticsWithZeros()
+        {
+            SourceDb.Has(new Facts::FirmCategory { FirmId = 1, CategoryId = 1, ProjectId = 1 }); // Фирма без статистики
+            SourceDb.Has(new Facts::FirmCategory { FirmId = 2, CategoryId = 1, ProjectId = 1 }); // Фирма со статистикой
+            SourceDb.Has(new Facts::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, Hits = 100, Shows = 200 });
+            SourceDb.Has(new Facts::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 1, AdvertisersCount = 1 });
+
+            Transformation.Create(Query)
+                          .VerifyTransform(
+                              x => Specs.Map.Facts.ToStatistics.FirmCategoryStatistics.Map(x),
+                              Inquire(
+                                  new CI::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 0, Shows = 0 },
+                                  new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 100, Shows = 200 }));
+        }
+
+        [Test]
         public void ShouldTransformFirmCategoryStatistics()
         {
             SourceDb.Has(new Facts::FirmCategory { FirmId = 1, CategoryId = 1, ProjectId = 1 },
@@ -28,8 +44,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                               x => Specs.Map.Facts.ToStatistics.FirmCategoryStatistics.Map(x),
                               Inquire(
                                   new CI::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 10000, Shows = 20000 },
-                                  new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = null, Shows = null },
-                                  new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 2, ProjectId = 1, AdvertisersShare = 0f, FirmCount = 1, Hits = null, Shows = null }));
+                                  new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 1, ProjectId = 1, AdvertisersShare = 0.5f, FirmCount = 2, Hits = 0, Shows = 0 },
+                                  new CI::FirmCategoryStatistics { FirmId = 2, CategoryId = 2, ProjectId = 1, AdvertisersShare = 0f, FirmCount = 1, Hits = 0, Shows = 0 }));
         }
 
         [Test]

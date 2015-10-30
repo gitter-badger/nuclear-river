@@ -6,7 +6,6 @@ Import-Module "$BuildToolsRoot\modules\msbuild.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\artifacts.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
-Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
 
@@ -14,21 +13,6 @@ Include "$BuildToolsRoot\psake\tasks.ps1"
 Include 'convertusecases.ps1'
 Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
-
-Task Default -depends Hello
-Task Hello { "Билдскрипт запущен без цели, укажите цель" }
-
-Task Run-UnitTests {
-	$SolutionRelatedAllProjectsDir = '.'
-	
-	$projects = Find-Projects $SolutionRelatedAllProjectsDir '*Tests*'
-	foreach($project in $Projects){
-		$buildFileName = Create-BuildFile $project.FullName
-		Invoke-MSBuild $buildFileName
-	}
-
-	Run-UnitTests $projects
-}
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
 	$projectFileName = Get-ProjectFileName 'Querying' 'Querying.Web.OData'

@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
+Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
 
 function Get-QuartzConfigMetadata ($Context){
 
@@ -117,6 +118,7 @@ function Get-TaskServiceMetadata ($Context) {
 	$metadata += Get-TargetHostsMetadata $Context
 	$metadata += Get-QuartzConfigMetadata $Context
 	$metadata += Get-ServiceNameMetadata $Context
+	$metadata += Get-TransformMetadata $Context
 	
 	$metadata += @{
 		'EntrypointType' = 'Desktop'

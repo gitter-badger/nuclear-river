@@ -26,7 +26,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
         {
             var aggregateMetadata = (AggregateMetadata<T>)metadataElement;
 
-            return new IBulkReplicator[] { new BulkReplicator<T>(_query, _dataConnection, aggregateMetadata.MapSpecificationProviderForSource.Invoke(Specs.Find.All<T>())) }
+            return new IBulkReplicator[] { new InsertsBulkReplicator<T>(_query, _dataConnection, aggregateMetadata.MapSpecificationProviderForSource.Invoke(Specs.Find.All<T>())) }
                 .Concat(aggregateMetadata.References
                                          .OfType<IValueObjectMetadataElement>()
                                          .SelectMany(valueObjectMetadata =>

@@ -4,31 +4,42 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
 
-function Get-XdtTransformMetadata($Context){
-	$xdt = @(
-		'Common\log4net.Release.config'
-		'Common\Erm.Release.config'
-	)
+function Get-XdtMetadata($Context){
+	$xdt = @()
 
-	switch($Context.EnvType){
-		'Test' {
-			$xdt += @(
-				"Templates\Erm.Test.$($Context.Country).config"
-				"Templates\ConvertUseCases.Test.$($Context.Country).config"
-				)
+
+	switch($Context.EntryPoint){
+		'ConvertUseCasesService' {
+			switch($Context.EnvType){
+				'Test' {
+					$xdt += @("Templates\ConvertUseCases.Test.$($Context.Country).config")
+				}
+				default {
+					$xdt += @("ConvertUseCases.$($Context.EnvType).$($Context.Country).config")
+				}
+			}
 		}
 		default {
 			$xdt += @(
-				"Erm.$($Context.EnvType).$($Context.Country).config"
-				"ConvertUseCases.$($Context.EnvType).$($Context.Country).config"
-				)
+				'Common\log4net.Release.config'
+				'Common\Erm.Release.config'
+			)
+
+			switch($Context.EnvType){
+				'Test' {
+					$xdt += @("Templates\Erm.Test.$($Context.Country).config")
+				}
+				default {
+					$xdt += @("Erm.$($Context.EnvType).$($Context.Country).config")
+				}
+			}
 		}
 	}
 
 	return $xdt
 }
 
-function Get-RegexTransformMetadata($Context){
+function Get-RegexMetadata($Context){
 
 	$regex = @{}
 
@@ -50,11 +61,11 @@ function Get-RegexTransformMetadata($Context){
 }
 
 function Get-TransformMetadata ($Context) {
-	
+
 	return @{
 		'Transform' = @{
-			'Xdt' = Get-XdtTransformMetadata $Context
-			'Regex' = Get-RegexTransformMetadata $Context
+			'Xdt' = Get-XdtMetadata $Context
+			'Regex' = Get-RegexMetadata $Context
 		}
 	}
 }

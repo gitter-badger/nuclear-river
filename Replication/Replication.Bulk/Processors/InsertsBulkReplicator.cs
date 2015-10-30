@@ -9,13 +9,13 @@ using NuClear.Storage.API.Specifications;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
 {
-	public sealed class BulkReplicator<T> : IBulkReplicator where T : class
+	public sealed class InsertsBulkReplicator<T> : IBulkReplicator where T : class
 	{
 		private readonly IQuery _source;
 		private readonly DataConnection _target;
 	    private readonly MapSpecification<IQuery, IEnumerable<T>> _mapSpecification;
 
-	    public BulkReplicator(IQuery source, DataConnection target, MapSpecification<IQuery, IEnumerable<T>> mapSpecification)
+	    public InsertsBulkReplicator(IQuery source, DataConnection target, MapSpecification<IQuery, IEnumerable<T>> mapSpecification)
 		{
 			_source = source;
 			_target = target;

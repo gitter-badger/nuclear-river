@@ -96,6 +96,7 @@
     <Compile Include="Processors\IBulkReplicatorFactory.cs" />
     <Compile Include="Processors\RoutingBulkReplicatorFactory.cs" />
     <Compile Include="Processors\StatisticsBulkReplicatorFactory.cs" />
+    <Compile Include="Processors\UpdatesBulkReplicator.cs" />
     <Compile Include="Processors\ValueObjectsBulkReplicatorFactory.cs" />
     <Compile Include="Specs.cs" />
     <Compile Include="Model\BulkReplicationMetadataSource.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="Metamodel\BulkReplicationMetadataKindIdentity.cs" />
     <Compile Include="Metamodel\ReferenceFeature.cs" />
     <Compile Include="LinqToDbQuery.cs" />
-    <Compile Include="Processors\BulkReplicator.cs" />
+    <Compile Include="Processors\InsertsBulkReplicator.cs" />
     <Compile Include="Processors\IMassProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

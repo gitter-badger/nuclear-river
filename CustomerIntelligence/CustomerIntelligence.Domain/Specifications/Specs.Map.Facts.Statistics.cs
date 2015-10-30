@@ -40,8 +40,8 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                            ProjectId = firm.ProjectId,
                                            FirmId = firm.FirmId,
                                            CategoryId = firm.CategoryId,
-                                           Hits = firmStatistics.Hits,
-                                           Shows = firmStatistics.Shows,
+                                           Hits = firmStatistics != null ? firmStatistics.Hits : 0,
+                                           Shows = firmStatistics != null ? firmStatistics.Shows : 0,
                                            FirmCount = firmCount.Count,
                                            AdvertisersShare = Math.Min(1, (float)categoryStatistics.AdvertisersCount / firmCount.Count)
                                        };
