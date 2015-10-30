@@ -140,6 +140,7 @@ namespace NuClear.Replication.OperationsProcessing.Metadata.Operations
             TransferLocksToAccountIdentity.Instance.NonCoupled(),
             ImportCategoryOrganizationUnitIdentity.Instance.NonCoupled(),
             SetMainFirmIdentity.Instance.NonCoupled(),
+            ActualizeActiveLocksIdentity.Instance.NonCoupled(),
 
             // эти операции станут disallowed после того как фирмы будем брать из InfoRussia
             ImportCardForErmIdentity.Instance.NonCoupled(),

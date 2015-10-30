@@ -165,6 +165,7 @@
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeDeal.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeBuilding.cs" />
     <Compile Include="Metadata\Model\EntityTypes\EntityTypeOrderPosition.cs" />
+    <Compile Include="Metadata\Operations\ActualizeActiveLocksIdentity.cs" />
     <Compile Include="Metadata\Operations\ActualizeOrderAmountToWithdrawIdentity.cs" />
     <Compile Include="Metadata\Operations\ApplyOrderDiscountIdentity.cs" />
     <Compile Include="Metadata\Operations\CalculateClientPromisingIdentity.cs" />

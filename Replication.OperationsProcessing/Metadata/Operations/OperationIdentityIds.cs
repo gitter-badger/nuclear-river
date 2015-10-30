@@ -29,5 +29,6 @@
         public const int SetMainFirmIdentity = 20002;
         public const int TransferLocksToAccountIdentity = 15903;
         public const int UpdateOrderFinancialPerformanceIdentity = 15110;
+        public const int ActualizeActiveLocksIdentity = 15904;
     }
 }
