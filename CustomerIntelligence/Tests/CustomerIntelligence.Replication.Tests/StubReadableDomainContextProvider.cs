@@ -7,6 +7,7 @@ using LinqToDB.Data;
 using NuClear.Storage.Core;
 using NuClear.Storage.LinqToDB;
 using NuClear.Storage.LinqToDB.Connections;
+using NuClear.Storage.LinqToDB.Writings;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests
 {
@@ -29,6 +30,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
             return new LinqToDBDomainContext(connection,
                                              dataContext,
                                              new NullIManagedConnectionStateScopeFactory(),
+                                             new WritingStrategyFactory(), 
                                              new TransactionOptions
                                              {
                                                  IsolationLevel = IsolationLevel.ReadCommitted,

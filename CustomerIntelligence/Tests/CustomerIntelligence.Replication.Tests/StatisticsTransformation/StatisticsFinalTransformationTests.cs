@@ -58,7 +58,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.StatisticsTransformatio
                 new Statistics::FirmCategoryStatistics { FirmId = 11, CategoryId = 100, },
                 new Statistics::FirmCategoryStatistics { FirmId = 11, CategoryId = 101, },
                 new Statistics::FirmCategoryStatistics { FirmId = 12, CategoryId = 100, },
-                new Statistics::FirmCategoryStatistics { FirmId = 10, CategoryId = 100, Shows = 2, Hits = 1, AdvertisersShare = 2f / 1, FirmCount = 1 },
+                new Statistics::FirmCategoryStatistics { FirmId = 10, CategoryId = 100, Shows = 2, Hits = 1, AdvertisersShare = 1f, FirmCount = 1 },
                 new Statistics::FirmCategoryStatistics { FirmId = 10, CategoryId = 101, },
             };
 

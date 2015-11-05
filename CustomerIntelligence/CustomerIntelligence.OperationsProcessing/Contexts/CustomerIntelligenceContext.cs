@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Contexts
 {
-    public sealed class ErmContext : ITypeMappingContext
+    public sealed class ErmContext : IDomainContext
     {
         private ErmContext()
         {

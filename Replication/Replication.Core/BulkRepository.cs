@@ -2,6 +2,7 @@
 
 using NuClear.Replication.Core.API;
 using NuClear.Storage.API.Writings;
+using NuClear.Telemetry.Probing;
 
 namespace NuClear.Replication.Core
 {
@@ -17,24 +18,33 @@ namespace NuClear.Replication.Core
 
         public void Create(IEnumerable<TTarget> objects)
         {
-            _repository.AddRange(objects);
-            _repository.Save();
+            using (Probe.Create("Inserting", typeof(TTarget).Name))
+            {
+                _repository.AddRange(objects);
+                _repository.Save();
+            }
         }
 
         public void Update(IEnumerable<TTarget> objects)
         {
-            foreach (var obj in objects)
+            using (Probe.Create("Updating", typeof(TTarget).Name))
             {
-                _repository.Update(obj);
-            }
+                foreach (var obj in objects)
+                {
+                    _repository.Update(obj);
+                }
 
-            _repository.Save();
+                _repository.Save();
+            }
         }
 
         public void Delete(IEnumerable<TTarget> objects)
         {
-            _repository.DeleteRange(objects);
-            _repository.Save();
+            using (Probe.Create("Deleting", typeof(TTarget).Name))
+            {
+                _repository.DeleteRange(objects);
+                _repository.Save();
+            }
         }
     }
 }

@@ -1,3 +1,4 @@
+using LinqToDB.DataProvider.SqlServer;
 using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Model.CI;
@@ -13,7 +14,7 @@ namespace NuClear.CustomerIntelligence.Storage
         {
             get
             {
-                var schema = new MappingSchema();
+                var schema = new MappingSchema(new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
                 config.Entity<CategoryGroup>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();

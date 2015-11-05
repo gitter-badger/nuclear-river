@@ -27,7 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Querying.Web.OData", "Query
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{3E0E1141-0E55-4BB4-AA1F-80BF236D43B2}"
 	ProjectSection(SolutionItems) = preProject
-		Replication\Schemas\Database.sql = Replication\Schemas\Database.sql
 		Replication\Schemas\Transport.sql = Replication\Schemas\Transport.sql
 	EndProjectSection
 EndProject
@@ -243,5 +242,8 @@ Global
 		{04BC80F1-62A5-489C-916A-9F090AED7CF9} = {814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}
 		{59CA2C6D-9974-497D-BF2D-08C311824C7B} = {F5B8A835-963F-4D4B-BD84-62FBE8B45B7D}
 		{3E50DB8D-999E-4A89-9B21-34D11B742E39} = {F5B8A835-963F-4D4B-BD84-62FBE8B45B7D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal

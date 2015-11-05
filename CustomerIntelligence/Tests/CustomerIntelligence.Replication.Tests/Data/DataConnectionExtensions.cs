@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.Mapping;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.Data
 {
@@ -16,18 +16,21 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Data
             db.GetTable<T>().Delete();
             db.BulkCopy(new BulkCopyOptions { BulkCopyTimeout = Settings.SqlBulkCopyTimeout }, data);
         }
-       
-        public static void Truncate<T>(this DataConnection connection)
-        {
-            if (!connection.DataProvider.Name.StartsWith(ProviderName.SqlServer, StringComparison.Ordinal))
-            {
-                return;
-            }
 
-            var annotation = connection.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).FirstOrDefault();
-            if (annotation != null)
+        public static void Reload<T, TKey>(this DataConnection db, IEnumerable<T> data, Expression<Func<T, TKey>> keyExpression)
+            where T : class
+        {
+            ITable<T> temptable = null;
+            try
             {
-                connection.Execute(string.Format("truncate table [{0}].[{1}]", annotation.Schema, annotation.Name ?? typeof(T).Name));
+                var datatable = db.GetTable<T>();
+                temptable = db.CreateTable<T>($"#{Guid.NewGuid():N}");
+                temptable.BulkCopy(new BulkCopyOptions { BulkCopyTimeout = Settings.SqlBulkCopyTimeout }, data);
+                temptable.Join(datatable, keyExpression, keyExpression, (x, y) => x).Update(datatable, x => x);
+            }
+            finally
+            {
+                temptable?.DropTable();
             }
         }
     }

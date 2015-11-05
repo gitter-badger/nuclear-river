@@ -37,7 +37,6 @@ namespace NuClear.Replication.EntryPoint.Jobs
 
         public int BatchSize { get; set; }
         public string Flow { get; set; }
-        public int? TimeSafetyOffsetHours { get; set; }
 
         protected override void ExecuteInternal(IJobExecutionContext context)
         {
@@ -79,8 +78,7 @@ namespace NuClear.Replication.EntryPoint.Jobs
                                                                      MessageProcessingStage.Accumulation,
                                                                      MessageProcessingStage.Handling
                                                                  },
-                                            FirstFaultTolerantStage = MessageProcessingStage.None,
-                                            TimeSafetyOffsetHours = TimeSafetyOffsetHours,
+                                            FirstFaultTolerantStage = MessageProcessingStage.None
                                         };
 
                 messageFlowProcessor = _messageFlowProcessorFactory.CreateSync<IPerformedOperationsFlowProcessorSettings>(messageFlowMetadata, processorSettings);
