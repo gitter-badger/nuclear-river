@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Reflection;
 
 using Microsoft.SqlServer.Management.Smo;
@@ -13,17 +12,19 @@ namespace NuClear.DataTest.Runner.Command
     public sealed class CreateDatabasesCommand : Command
     {
         private readonly ConnectionStringSettingsAspect _settings;
+        private readonly SmoConnectionFactory _smoConnectionFactory;
 
-        public CreateDatabasesCommand(Assembly targetAssembly, IMetadataProvider metadataProvider)
+        public CreateDatabasesCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettings, SmoConnectionFactory smoConnectionFactory)
             : base(targetAssembly, metadataProvider)
         {
-            _settings = TargetAssembly.GetConnectionStrings();
+            _settings = connectionStringSettings;
+            _smoConnectionFactory = smoConnectionFactory;
         }
 
         protected override void Execute(SchemaMetadataElement metadataElement)
         {
             var connectionString = _settings.GetConnectionString(metadataElement.ConnectionStringIdentity);
-            var server = ConnectToServer(connectionString);
+            var server = _smoConnectionFactory.CreateServerConnection(metadataElement.ConnectionStringIdentity);
             var targetDbName = GetDatabaseName(connectionString);
             var existingDb = server.Databases[targetDbName];
             if (existingDb != null)
@@ -38,19 +39,6 @@ namespace NuClear.DataTest.Runner.Command
         private string GetDatabaseName(string connectionString)
         {
             return new SqlConnectionStringBuilder(connectionString).InitialCatalog;
-        }
-
-        private Server ConnectToServer(string connectionString)
-        {
-            var server = new Server();
-            var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString) { InitialCatalog = "" };
-            server.ConnectionContext.ConnectionString = connectionStringBuilder.ConnectionString;
-            if (!server.ConnectionContext.IsOpen)
-            {
-                server.ConnectionContext.Connect();
-            }
-
-            return server;
         }
     }
 }

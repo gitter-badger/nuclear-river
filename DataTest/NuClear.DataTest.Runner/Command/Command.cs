@@ -5,7 +5,7 @@ using NuClear.Metamodeling.Provider;
 
 namespace NuClear.DataTest.Runner.Command
 {
-    public abstract class Command
+    public abstract class Command : ICommand
     {
         protected Command(Assembly targetAssembly, IMetadataProvider metadataProvider)
         {

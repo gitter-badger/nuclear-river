@@ -1,8 +1,16 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Configuration;
+using System.Linq;
+using System.Reflection;
 
+using Microsoft.Practices.Unity;
+
+using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Runner.Command;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
+using NuClear.Metamodeling.Provider.Sources;
+using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.DataTest.Runner
 {
@@ -10,21 +18,40 @@ namespace NuClear.DataTest.Runner
     {
         public static void Main(string[] args)
         {
-            var assemblyRef = AssemblyName.GetAssemblyName(args[0]);
-            var assembly = Assembly.Load(assemblyRef);
-            var metadataProvider = new MetadataProvider(assembly.GetMetadataSources(), new IMetadataProcessor[0]);
+            var container = new UnityContainer();
 
-            var command0 = new DropDatabasesCommand(assembly, metadataProvider);
-            command0.Execute();
+            var assembly = Assembly.Load(AssemblyName.GetAssemblyName(args[0]));
+            var metadataProvider = new MetadataProvider(assembly.GetExportedTypes()
+                                                                .Where(t => typeof(IMetadataSource).IsAssignableFrom(t))
+                                                                .Select(x => (IMetadataSource)container.Resolve(x))
+                                                                .ToArray(),
+                                                        new IMetadataProcessor[0]);
 
-            var command1 = new CreateDatabasesCommand(assembly, metadataProvider);
-            command1.Execute();
+            container.RegisterInstance<Assembly>(assembly);
+            container.RegisterInstance<IMetadataProvider>(metadataProvider);
+            container.RegisterInstance<Configuration>(ConfigurationManager.OpenExeConfiguration(assembly.Location));
+            container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
+            container.RegisterType<DataConnectionFactory>();
+            container.RegisterType<SmoConnectionFactory>();
 
-            var command2 = new CreateDatabaseSchemataCommand(assembly, metadataProvider);
-            command2.Execute();
+            var createDatabases = container.Resolve<CreateDatabasesCommand>();
+            var dropDatabases = container.Resolve<DropDatabasesCommand>();
+            var createSchemata = container.Resolve<CreateDatabaseSchemataCommand>();
+            var runTests = container.Resolve<RunTestsCommand>();
+            var validateSchemata = container.Resolve<ValidateDatabaseSchemataCommand>();
+            
+            try
+            {
+                dropDatabases.Execute();
+            }
+            catch (Exception)
+            {
+            }
 
-            var command3 = new ValidateDatabaseSchemataCommand(assembly, metadataProvider);
-            command3.Execute();
+            createDatabases.Execute();
+            createSchemata.Execute();
+            //validateSchemata.Execute();
+            runTests.Execute();
         }
     }
 }

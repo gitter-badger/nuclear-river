@@ -91,6 +91,8 @@
   <ItemGroup>
     <Compile Include="BulkLoading\BulkLoadingOfStatistics.cs" />
     <Compile Include="BulkLoading\BulkLoadingFixtureBase.cs" />
+    <Compile Include="BulkLoading\ILoader.cs" />
+    <Compile Include="BulkLoading\Loader.cs" />
     <Compile Include="DynamicMock.cs" />
     <Compile Include="MockLinqToDbDataBuilder.cs" />
     <Compile Include="QueryableExtensions.cs" />

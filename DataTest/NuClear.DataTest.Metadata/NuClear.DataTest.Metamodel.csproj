@@ -65,6 +65,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataConnectionFactory.cs" />
+    <Compile Include="Dsl\TestCaseMetadataBuilder.cs" />
+    <Compile Include="Dsl\TestCaseMetadataElement.cs" />
+    <Compile Include="Dsl\ActMetadataElement.cs" />
+    <Compile Include="Dsl\ActMetadataElementBuilder.cs" />
+    <Compile Include="Dsl\ArrangeMetadataElement.cs" />
+    <Compile Include="Dsl\ArrangeMetadataElementBuilder.cs" />
+    <Compile Include="Dsl\ArrangeMetadataElementBuilderExtensions.cs" />
+    <Compile Include="Dsl\ITestAction.cs" />
+    <Compile Include="Dsl\TestCaseMetadataIdentity.cs" />
     <Compile Include="ConnectionStringFeature.cs" />
     <Compile Include="EntityTypeFeature.cs" />
     <Compile Include="Linq2DbSchemaFeature.cs" />

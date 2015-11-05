@@ -66,6 +66,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkReplication.cs" />
+    <Compile Include="PefillStatisticsContext.cs" />
+    <Compile Include="TestCaseMetadataSource.Project.cs" />
+    <Compile Include="TestCaseMetadataSource.Firm.cs" />
+    <Compile Include="TestCaseMetadataSource.Directions.cs" />
+    <Compile Include="TestCaseMetadataSource.cs" />
     <Compile Include="Identitites\Connections\ErmMasterConnectionStringIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunnerSettings.cs" />
@@ -95,6 +101,10 @@
     <ProjectReference Include="..\..\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
       <Project>{FA1074A6-B89D-45DF-9B73-6881BEF46E33}</Project>
       <Name>CustomerIntelligence.Storage</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CustomerIntelligence.Replication.Tests\CustomerIntelligence.Replication.Tests.csproj">
+      <Project>{25AACA77-648A-4462-8EC1-709963219C8E}</Project>
+      <Name>CustomerIntelligence.Replication.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

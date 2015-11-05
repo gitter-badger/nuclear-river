@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
 
 using LinqToDB.Data;
-using LinqToDB.Mapping;
 
 using NUnit.Framework;
 
@@ -22,43 +18,18 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 #endif
         }
 
-        private readonly ConcurrentDictionary<ConnectionStringSettings, DataConnection> _connections = new ConcurrentDictionary<ConnectionStringSettings, DataConnection>();
+        protected readonly ILoader _loader;
 
-        [TearDown]
-        public void FixtureTearDown()
+        public BulkLoadingFixtureBase(ILoader loader)
         {
-            foreach (var connection in _connections.Values.Select(x => x.Connection))
-            {
-                connection.Close();
-            }
-
-            _connections.Clear();
+            _loader = loader;
         }
 
-        protected DataConnection CreateConnection(string connectionStringName, MappingSchema schema)
+        [TestFixtureTearDown]
+        public void FixtureTearDown()
         {
-            var connectionSettings = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (connectionSettings == null)
-            {
-                throw new ArgumentException("The connection settings was not found.", "connectionStringName");
-            }
-
-            return _connections.GetOrAdd(
-                connectionSettings,
-                settings =>
-                {
-                    var provider = DataConnection.GetDataProvider(settings.Name);
-                    var connection = provider.CreateConnection(settings.ConnectionString);
-                    connection.Open();
-
-                    var dataConnection = new DataConnection(provider, connection).AddMappingSchema(schema);
-                    if (Settings.SqlCommandTimeout.HasValue)
-                    {
-                        dataConnection.CommandTimeout = Settings.SqlCommandTimeout.Value;
-                    }
-
-                    return dataConnection;
-                });
+            var disposableLoader = _loader as IDisposable;
+            disposableLoader?.Dispose();
         }
     }
 }

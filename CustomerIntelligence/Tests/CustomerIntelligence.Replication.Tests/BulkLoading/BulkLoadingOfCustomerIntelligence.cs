@@ -1,20 +1,27 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 
 using NuClear.CustomerIntelligence.Domain.Specifications;
-using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Storage.API.Readings;
-using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
-    internal class BulkLoadingOfCustomerIntelligence : BulkLoadingFixtureBase
+    public class BulkLoadingOfCustomerIntelligence : BulkLoadingFixtureBase
     {
+        public BulkLoadingOfCustomerIntelligence()
+            : this(new Loader("FactsSqlServer", Schema.Facts, "CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
+        {
+        }
+
+        public BulkLoadingOfCustomerIntelligence(ILoader loader)
+            : base(loader)
+        {
+        }
+
         [Test]
         public void ReloadFirms()
         {
@@ -78,12 +85,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
         private void Reload<T>(Func<IQuery, IEnumerable<T>> loader)
             where T : class
         {
-            using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
-            using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
-            {
-                var query = new Query(new StubReadableDomainContextProvider((DbConnection)factsDb.Connection, factsDb));
-                ciDb.Reload(loader(query));
-            }
+            _loader.Reload(loader);
         }
     }
 }

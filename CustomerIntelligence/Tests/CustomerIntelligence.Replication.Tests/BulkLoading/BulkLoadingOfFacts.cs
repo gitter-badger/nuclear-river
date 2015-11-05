@@ -1,20 +1,27 @@
 using System;
-using System.Data.Common;
 using System.Linq;
 
 using NuClear.CustomerIntelligence.Domain.Specifications;
-using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Storage.API.Readings;
-using NuClear.Storage.Readings;
 
 using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
     [TestFixture, Explicit("It's used to copy the data in bulk.")]
-    internal class BulkLoadingOfFacts : BulkLoadingFixtureBase
+    public class BulkLoadingOfFacts : BulkLoadingFixtureBase
     {
+        public BulkLoadingOfFacts()
+            : this(new Loader("ErmSqlServer", Schema.Erm, "FactsSqlServer", Schema.Facts))
+        {
+        }
+
+        public BulkLoadingOfFacts(ILoader loader)
+            : base(loader)
+        {
+        }
+
         [Test]
         public void ReloadAccounts()
         {
@@ -114,12 +121,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
         private void Reload<T>(Func<IQuery, IQueryable<T>> loader)
             where T : class
         {
-            using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
-            using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
-            {
-                var query = new Query(new StubReadableDomainContextProvider((DbConnection)ermDb.Connection, ermDb));
-                factDb.Reload(loader(query));
-            }
+            _loader.Reload(loader);
         }
     }
 }

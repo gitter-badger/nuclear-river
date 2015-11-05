@@ -1,41 +1,34 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 
 using LinqToDB;
 using LinqToDB.Data;
-using LinqToDB.DataProvider.SqlServer;
 using LinqToDB.Mapping;
 
 using Microsoft.SqlServer.Management.Smo;
 
 using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Provider;
-using NuClear.Storage.API.ConnectionStrings;
-
-using DataType = LinqToDB.DataType;
-using SqlDataType = LinqToDB.SqlQuery.SqlDataType;
 
 namespace NuClear.DataTest.Runner.Command
 {
     public sealed class CreateDatabaseSchemataCommand : Command
     {
-        private readonly ConnectionStringSettingsAspect _settings;
+        private readonly DataConnectionFactory _dataConnectionFactory;
+        private readonly SmoConnectionFactory _smoConnectionFactory;
 
-        public CreateDatabaseSchemataCommand(Assembly targetAssembly, IMetadataProvider metadataProvider)
+        public CreateDatabaseSchemataCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, DataConnectionFactory dataConnectionFactory, SmoConnectionFactory smoConnectionFactory)
             : base(targetAssembly, metadataProvider)
         {
-            _settings = TargetAssembly.GetConnectionStrings();
+            _dataConnectionFactory = dataConnectionFactory;
+            _smoConnectionFactory = smoConnectionFactory;
         }
 
         protected override void Execute(SchemaMetadataElement metadataElement)
         {
-            var connectionString = _settings.GetConnectionString(metadataElement.ConnectionStringIdentity);
-            var database = ConnectToDatabase(connectionString);
-            var mappingSchema = new MappingSchema(new SqlServerMappingSchema(), metadataElement.Schema);
-            mappingSchema.SetDataType(typeof(decimal), new SqlDataType(DataType.Decimal, 19, 4));
-            using (var dataConnection = SqlServerTools.CreateDataConnection(connectionString).AddMappingSchema(mappingSchema))
+            var database = _smoConnectionFactory.CreateDatabaseConnection(metadataElement.ConnectionStringIdentity);
+            using (var dataConnection = _dataConnectionFactory.CreateConnection(metadataElement))
             {
                 var schemaNames = metadataElement.Entities
                                                  .Select(x => dataConnection.MappingSchema.GetAttribute<TableAttribute>(x)?.Schema)
@@ -68,19 +61,6 @@ namespace NuClear.DataTest.Runner.Command
             {
                 dataConnection.CreateTable<T>();
             }
-        }
-
-        private Database ConnectToDatabase(string connectionString)
-        {
-            var server = new Server();
-            var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString);
-            server.ConnectionContext.ConnectionString = connectionStringBuilder.ConnectionString;
-            if (!server.ConnectionContext.IsOpen)
-            {
-                server.ConnectionContext.Connect();
-            }
-
-            return server.Databases[connectionStringBuilder.InitialCatalog];
         }
     }
 }

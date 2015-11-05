@@ -14,12 +14,12 @@ namespace NuClear.DataTest.Runner.Command
 {
     internal sealed class ValidateDatabaseSchemataCommand : Command
     {
-        private readonly ConnectionStringSettingsAspect _settings;
+        private readonly SmoConnectionFactory _connectionFactory;
 
-        public ValidateDatabaseSchemataCommand(Assembly targetAssembly, IMetadataProvider metadataProvider)
+        public ValidateDatabaseSchemataCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, SmoConnectionFactory connectionFactory)
             : base(targetAssembly, metadataProvider)
         {
-            _settings = TargetAssembly.GetConnectionStrings();
+            _connectionFactory = connectionFactory;
         }
 
         protected override void Execute(SchemaMetadataElement metadataElement)
@@ -30,15 +30,16 @@ namespace NuClear.DataTest.Runner.Command
                 return;
             }
 
-            var connectionString = _settings.GetConnectionString(metadataElement.ConnectionStringIdentity);
-            var masterConnectionString = _settings.GetConnectionString(masterConnectionStringIdentity);
-
             var schemas = metadataElement.Entities
                                              .Select(x => metadataElement.Schema.GetAttribute<TableAttribute>(x)?.Schema)
                                              .Where(x => !string.IsNullOrEmpty(x))
                                              .Distinct();
 
-            var databaseSchemaComparer = new DatabaseSchemaComparer(connectionString, masterConnectionString, schemas);
+            var databaseSchemaComparer = new DatabaseSchemaComparer(
+                _connectionFactory.CreateDatabaseConnection(metadataElement.ConnectionStringIdentity),
+                _connectionFactory.CreateDatabaseConnection(masterConnectionStringIdentity),
+                schemas);
+
             var differences = databaseSchemaComparer.GetDifferences();
 
             var sb = new StringBuilder("Tables and vies not exist ot different in master database" + Environment.NewLine);

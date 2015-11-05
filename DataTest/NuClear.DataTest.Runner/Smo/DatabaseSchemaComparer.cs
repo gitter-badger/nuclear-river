@@ -8,14 +8,14 @@ namespace NuClear.DataTest.Runner.Smo
 {
     internal sealed class DatabaseSchemaComparer
     {
-        private readonly string _sourceConnectionString;
-        private readonly string _targetConnectionString;
+        private readonly Database _sourceDatabase;
+        private readonly Database _targetDatabase;
         private readonly IEnumerable<string> _schemas;
 
-        public DatabaseSchemaComparer(string sourceConnectionString, string targetConnectionString, IEnumerable<string> schemas)
+        public DatabaseSchemaComparer(Database sourceDatabase, Database targetDatabase, IEnumerable<string> schemas)
         {
-            _sourceConnectionString = sourceConnectionString;
-            _targetConnectionString = targetConnectionString;
+            _sourceDatabase = sourceDatabase;
+            _targetDatabase = targetDatabase;
             _schemas = schemas;
         }
 
@@ -27,13 +27,10 @@ namespace NuClear.DataTest.Runner.Smo
 
         public IEnumerable<TableViewTableTypeBase> GetDifferences()
         {
-            var sourceDatabase = _sourceConnectionString.GetDatabase();
-            var targetDatabase = _targetConnectionString.GetDatabase();
-
             var differences = _schemas.SelectMany(schema =>
             {
-                var sourceCompareObjects = sourceDatabase.GetTablesAndViewsFor(schema);
-                var targetCompareObjects = targetDatabase.GetTablesAndViewsFor(schema);
+                var sourceCompareObjects = _sourceDatabase.GetTablesAndViewsFor(schema);
+                var targetCompareObjects = _targetDatabase.GetTablesAndViewsFor(schema);
 
                 var schemaDifferences = GetDifferences(sourceCompareObjects, targetCompareObjects);
                 return schemaDifferences;
