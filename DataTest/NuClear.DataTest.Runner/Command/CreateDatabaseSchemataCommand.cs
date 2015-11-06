@@ -14,6 +14,9 @@ using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Provider;
 using NuClear.Storage.API.ConnectionStrings;
 
+using DataType = LinqToDB.DataType;
+using SqlDataType = LinqToDB.SqlQuery.SqlDataType;
+
 namespace NuClear.DataTest.Runner.Command
 {
     public sealed class CreateDatabaseSchemataCommand : Command
@@ -30,9 +33,10 @@ namespace NuClear.DataTest.Runner.Command
         {
             var connectionString = _settings.GetConnectionString(metadataElement.ConnectionStringIdentity);
             var database = ConnectToDatabase(connectionString);
-            using (var dataConnection = SqlServerTools.CreateDataConnection(connectionString))
+            var mappingSchema = new MappingSchema(new SqlServerMappingSchema(), metadataElement.Schema);
+            mappingSchema.SetDataType(typeof(decimal), new SqlDataType(DataType.Decimal, 19, 4));
+            using (var dataConnection = SqlServerTools.CreateDataConnection(connectionString).AddMappingSchema(mappingSchema))
             {
-                dataConnection.AddMappingSchema(new MappingSchema(new SqlServerMappingSchema(), metadataElement.Schema));
                 var schemaNames = metadataElement.Entities
                                                  .Select(x => dataConnection.MappingSchema.GetAttribute<TableAttribute>(x)?.Schema)
                                                  .Where(x => !string.IsNullOrEmpty(x) && database.Schemas[x] == null)
