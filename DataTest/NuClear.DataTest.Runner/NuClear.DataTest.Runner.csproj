@@ -56,7 +56,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="linq2db, Version=1.0.7.3, Culture=neutral, PublicKeyToken=f19f8aed7feff67e, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\linq2db.1.0.7.4-alpha\lib\net45\linq2db.dll</HintPath>
+      <HintPath>..\..\packages\linq2db.1.0.7.4-beta\lib\net45\linq2db.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.SqlServer.ConnectionInfo, Version=12.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -109,7 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NuClear.DataTest.Metadata\NuClear.DataTest.Metamodel.csproj">
