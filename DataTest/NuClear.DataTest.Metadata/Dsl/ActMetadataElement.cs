@@ -11,15 +11,13 @@ namespace NuClear.DataTest.Metamodel.Dsl
 {
     public sealed class ActMetadataElement : MetadataElement<ActMetadataElement, ActMetadataElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
-
         public ActMetadataElement(IEnumerable<IMetadataFeature> features)
             : base(features)
         {
             var sourceContexts = string.Join(",", features.OfType<SourceContextFeature>().OrderBy(x => x.Context).Select(x => x.Context));
             var destinationContexts = string.Join(",", features.OfType<TargetContextFeature>().OrderBy(x => x.Context).Select(x => x.Context));
 
-            _identity = new Uri(Path.Combine($"From[{sourceContexts}]", $"To[{destinationContexts}]"), UriKind.Relative).AsIdentity();
+            Identity = new Uri(Path.Combine($"From[{sourceContexts}]", $"To[{destinationContexts}]"), UriKind.Relative).AsIdentity();
         }
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
@@ -27,8 +25,7 @@ namespace NuClear.DataTest.Metamodel.Dsl
             throw new NotSupportedException();
         }
 
-        public override IMetadataElementIdentity Identity
-            => _identity;
+        public override IMetadataElementIdentity Identity { get; }
 
         public IReadOnlyCollection<string> Requirements
             => Features.OfType<RequiredContextFeature>().Select(x => x.Context).ToArray();

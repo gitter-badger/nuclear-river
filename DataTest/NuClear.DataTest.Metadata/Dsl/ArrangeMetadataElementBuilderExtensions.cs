@@ -1,5 +1,6 @@
 ﻿namespace NuClear.DataTest.Metamodel.Dsl
 {
+    // Аналогичная хрень легко добавляется для специфики ERM итп
     public static class ArrangeMetadataElementBuilderExtensions
     {
         public static ArrangeMetadataElementBuilder CustomerIntelligence(this ArrangeMetadataElementBuilder builder, params object[] data)

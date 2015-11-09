@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Aspects.Features;
 
 namespace NuClear.DataTest.Metamodel.Dsl
 {
@@ -20,5 +18,8 @@ namespace NuClear.DataTest.Metamodel.Dsl
         {
             return new ArrangeMetadataElement(_name, Features);
         }
+
+        public ArrangeMetadataElementBuilder IncludeSharedDictionary(ArrangeMetadataElement dictionaryArrange)
+            => WithFeatures(dictionaryArrange.Features.ToArray());
     }
 }

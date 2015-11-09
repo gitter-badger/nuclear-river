@@ -12,26 +12,21 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 
     public sealed partial class TestCaseMetadataSource
     {
-        private static readonly ArrangeMetadataElement ProjectAggregate
-            = ArrangeMetadataElement.Config
+        private static ArrangeMetadataElement ProjectAggregate
+            => ArrangeMetadataElement.Config
                 .Name(nameof(ProjectAggregate))
+                .IncludeSharedDictionary(CategoryDictionary)
+                .IncludeSharedDictionary(CategoryGroupDictionary)
                 .CustomerIntelligence(
                     new CI::Project { Id = 1, Name = "ProjectOne" },
-                    new CI::ProjectCategory { ProjectId = 1, CategoryId = 1, Name = "Category Name", Level = 1, ParentId = null },
-                    new CI::CategoryGroup {Id = 1, Name = "CategoryGroup Name", Rate = 1})
+                    new CI::ProjectCategory { ProjectId = 1, CategoryId = 1, Name = "Category 1 level 1", Level = 1, ParentId = null })
                 .Fact(
                     new Facts::Project { Id = 1, Name = "ProjectOne", OrganizationUnitId = 1 },
                     new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 },
-                    new Facts::CategoryOrganizationUnit { Id = 1, CategoryId = 1, CategoryGroupId = 1, OrganizationUnitId = 1 },
-                    new Facts::Category { Id = 1, Level = 1, Name = "Category Name", ParentId = null },
-                    new Facts::CategoryGroup { Id = 1, Name = "CategoryGroup Name", Rate = 1 }
-                    )
+                    new Facts::CategoryOrganizationUnit { Id = 1, CategoryId = 1, CategoryGroupId = 1, OrganizationUnitId = 1 })
                 .Erm(
                     new Erm::Project { Id = 1, IsActive = true, Name = "ProjectOne", OrganizationUnitId = 1 },
                     new Erm::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1, IsActive = true, IsDeleted = false },
-                    new Erm::CategoryOrganizationUnit { Id = 1, CategoryId = 1, CategoryGroupId = 1, OrganizationUnitId = 1, IsActive = true, IsDeleted = false},
-                    new Erm::Category { Id = 1, Level = 1, Name = "Category Name", ParentId = null, IsActive = true, IsDeleted = false},
-                    new Erm::CategoryGroup { Id = 1, Name = "CategoryGroup Name", Rate = 1, IsActive = true, IsDeleted = false });
-
+                    new Erm::CategoryOrganizationUnit { Id = 1, CategoryId = 1, CategoryGroupId = 1, OrganizationUnitId = 1, IsActive = true, IsDeleted = false});
     }
 }

@@ -10,12 +10,10 @@ namespace NuClear.DataTest.Metamodel.Dsl
 {
     public sealed class ArrangeMetadataElement : MetadataElement<ArrangeMetadataElement, ArrangeMetadataElementBuilder>
     {
-        private IMetadataElementIdentity _identity;
-
         public ArrangeMetadataElement(string name, IEnumerable<IMetadataFeature> features)
             : base(features)
         {
-            _identity = new Uri(name, UriKind.Relative).AsIdentity();
+            Identity = new Uri(name, UriKind.Relative).AsIdentity();
         }
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
@@ -23,8 +21,7 @@ namespace NuClear.DataTest.Metamodel.Dsl
             throw new NotSupportedException();
         }
 
-        public override IMetadataElementIdentity Identity 
-            => _identity;
+        public override IMetadataElementIdentity Identity { get; }
 
         public IEnumerable<string> Contexts
             => Features.OfType<ContextStateFeature>().Select(x => x.Context).Distinct();
