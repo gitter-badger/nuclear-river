@@ -27,8 +27,8 @@ namespace NuClear.DataTest.Runner.Smo
 
         public IEnumerable<TableViewTableTypeBase> GetDifferences()
         {
-            var sourceDatabase = _sourceConnectionString.GetDatabase();
-            var targetDatabase = _targetConnectionString.GetDatabase();
+            var sourceDatabase = _sourceConnectionString.GetDatabase().PrefetchTablesAndViews();
+            var targetDatabase = _targetConnectionString.GetDatabase().PrefetchTablesAndViews();
 
             var differences = _schemas.SelectMany(schema =>
             {
@@ -44,9 +44,12 @@ namespace NuClear.DataTest.Runner.Smo
 
         private static IEnumerable<TableViewTableTypeBase> GetDifferences(IEnumerable<TableViewTableTypeBase> sources, IEnumerable<TableViewTableTypeBase> targets)
         {
-            var differences = sources.Join(targets.DefaultIfEmpty(), source => source.Name, target => target.Name, (source, target) =>
+            var targetsDictionary = targets.ToDictionary(x => x.Name);
+
+            var differences = sources.Select(source =>
             {
-                if (target == null)
+                TableViewTableTypeBase target;
+                if (!targetsDictionary.TryGetValue(source.Name, out target))
                 {
                     return source;
                 }
