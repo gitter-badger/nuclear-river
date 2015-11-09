@@ -69,9 +69,12 @@ namespace NuClear.DataTest.Runner.Smo
 
         private static IEnumerable<Column> GetDifferences(IEnumerable<Column> sources, IEnumerable<Column> targets)
         {
-            var differences = sources.Join(targets.DefaultIfEmpty(), source => source.Name, target => target.Name, (source, target) =>
+            var targetsDictionary = targets.ToDictionary(x => x.Name);
+
+            var differences = sources.Select(source =>
             {
-                if (target == null)
+                Column target;
+                if (!targetsDictionary.TryGetValue(source.Name, out target))
                 {
                     return source;
                 }
