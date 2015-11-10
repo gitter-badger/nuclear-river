@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
+
+using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
@@ -12,7 +15,7 @@ using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkCustomerIntelligence")]
     internal class BulkLoadingOfCustomerIntelligence : BulkLoadingFixtureBase
     {
         [Test]
@@ -81,6 +84,9 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
             using (var factsDb = CreateConnection("FactsSqlServer", Schema.Facts))
             using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
+                var annotation = ciDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
                 var query = new Query(new StubReadableDomainContextProvider((DbConnection)factsDb.Connection, factsDb));
                 ciDb.Reload(loader(query));
             }

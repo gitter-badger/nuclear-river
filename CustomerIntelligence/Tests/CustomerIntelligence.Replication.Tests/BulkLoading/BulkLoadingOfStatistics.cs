@@ -3,6 +3,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 
+using LinqToDB.Mapping;
+
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
@@ -13,7 +15,7 @@ using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkStatistics")]
     internal class BulkLoadingOfStatistics : BulkLoadingFixtureBase
     {
         [Test]
@@ -25,11 +27,14 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
         private void Reload<T, TKey>(Func<IQuery, IQueryable<T>> loader, Expression<Func<T, TKey>> keyExpression)
             where T : class
         {
-            using (var ermDb = CreateConnection("FactsSqlServer", Schema.Erm))
-            using (var factDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.Facts))
+            using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
+            using (var ciDb = CreateConnection("CustomerIntelligenceSqlServer", Schema.CustomerIntelligence))
             {
-                var query = new Query(new StubReadableDomainContextProvider((DbConnection)ermDb.Connection, ermDb));
-                factDb.Reload(loader(query), keyExpression);
+                var annotation = ciDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
+                var query = new Query(new StubReadableDomainContextProvider((DbConnection)factDb.Connection, factDb));
+                ciDb.Reload(loader(query), keyExpression);
             }
         }
     }

@@ -12,6 +12,7 @@ using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.CustomerIntelligence.OperationsProcessing;
+using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.CustomerIntelligence.OperationsProcessing.Final;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DI.Unity.Config;
@@ -47,6 +48,7 @@ using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Metamodeling.Validators;
+using NuClear.Model.Common.Entities;
 using NuClear.Model.Common.Operations.Identity;
 using NuClear.OperationsLogging.Transports.ServiceBus.Serialization.ProtoBuf;
 using NuClear.OperationsProcessing.Transports.ServiceBus.Primary;
@@ -99,8 +101,6 @@ namespace NuClear.Replication.EntryPoint.DI
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)
         {
-			EntityTypeMap.Initialize();
-
             IUnityContainer container = new UnityContainer();
             var massProcessors = new IMassProcessor[]
                                  {
@@ -108,7 +108,8 @@ namespace NuClear.Replication.EntryPoint.DI
                                  };
             var storageSettings = settingsContainer.AsSettings<ISqlStoreSettingsAspect>();
 
-            container.AttachQueryableContainerExtension()
+            container.RegisterContexts()
+                     .AttachQueryableContainerExtension()
                      .UseParameterResolvers(ParameterResolvers.Defaults)
                      .ConfigureMetadata()
                      .ConfigureSettingsAspects(settingsContainer)
@@ -207,6 +208,9 @@ namespace NuClear.Replication.EntryPoint.DI
             container.RegisterTypeWithDependencies(typeof(CorporateBusOperationsReceiver), Lifetime.PerScope, null)
                      .RegisterTypeWithDependencies(typeof(ServiceBusOperationsReceiverTelemetryDecorator), Lifetime.PerScope, null)
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, ProtoBufTypeModelForTrackedUseCaseConfigurator>(Lifetime.Singleton)
+                     .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(
+                         Lifetime.Singleton,
+                         new InjectionFactory(x => x.Resolve<TrackedUseCaseConfigurator>(new DependencyOverride<IEntityTypeMappingRegistry<ISubDomain>>(new ResolvedParameter(typeof(IEntityTypeMappingRegistry<ErmSubDomain>))))))
                      .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
 
             // final
@@ -241,10 +245,10 @@ namespace NuClear.Replication.EntryPoint.DI
 
         private static IUnityContainer ConfigureStorage(this IUnityContainer container, ISqlStoreSettingsAspect storageSettings, Func<LifetimeManager> entryPointSpecificLifetimeManagerFactory)
         {
-			// разрешаем update на таблицу состоящую только из Primary Keys
-			LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;
+            // разрешаем update на таблицу состоящую только из Primary Keys
+            LinqToDB.Common.Configuration.Linq.IgnoreEmptyUpdate = true;
 
-			var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
+            var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
 
             return container
                 .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
@@ -315,6 +319,13 @@ namespace NuClear.Replication.EntryPoint.DI
                 };
 
             return container.RegisterInstance<IConnectionStringIdentityResolver>(new ConnectionStringIdentityResolver(readConnectionStringNameMap, writeConnectionStringNameMap));
+        }
+
+        private static IUnityContainer RegisterContexts(this IUnityContainer container)
+        {
+            return container.RegisterInstance(EntityTypeMap.CreateErmContext())
+                            .RegisterInstance(EntityTypeMap.CreateCustomerIntelligenceContext())
+                            .RegisterInstance(EntityTypeMap.CreateFactsContext());
         }
 
         private static class Scope

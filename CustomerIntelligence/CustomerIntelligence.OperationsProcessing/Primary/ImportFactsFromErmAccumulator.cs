@@ -24,11 +24,13 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
     {
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
+        private readonly IEntityTypeMappingRegistry<FactsSubDomain> _registry;
 
-        public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmAccumulator(ITracer tracer, ITelemetryPublisher telemetryPublisher, IEntityTypeMappingRegistry<FactsSubDomain> registry)
         {
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
+            _registry = registry;
         }
 
         protected override OperationAggregatableMessage<FactOperation> Process(TrackedUseCase message)
@@ -83,7 +85,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                                                           var mappedKey = ErmToFactsTypeMap.MapErmToFacts(y.Key);
 
                                                           Type entityType;
-                                                          var parsed = EntityTypeMap<FactsContext>.TryGetEntityType(mappedKey, out entityType);
+                                                          var parsed = _registry.TryGetEntityType(mappedKey, out entityType);
                                                           return Tuple.Create(parsed, entityType, y);
                                                       })
                                               .Where(y => y.Item1).ToArray();
