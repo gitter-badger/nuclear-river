@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Storage
+namespace NuClear.Replication.Bulk.Storage
 {
     internal class ViewContainer : IDisposable
     {

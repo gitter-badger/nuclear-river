@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using NuClear.Replication.Bulk;
+
+using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk.Tests
 {

@@ -3,7 +3,7 @@ using System;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Kinds;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
+namespace NuClear.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataKindIdentity : MetadataKindIdentityBase<BulkReplicationMetadataKindIdentity>
     {

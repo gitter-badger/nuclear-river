@@ -6,8 +6,9 @@ using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
+using NuClear.Replication.Bulk.Metadata;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
+namespace NuClear.CustomerIntelligence.Replication.Bulk
 {
     public sealed class BulkReplicationMetadataSource : MetadataSourceBase<BulkReplicationMetadataKindIdentity>
     {

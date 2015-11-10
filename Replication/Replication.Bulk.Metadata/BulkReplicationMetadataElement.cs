@@ -5,7 +5,7 @@ using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
+namespace NuClear.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataElement : MetadataElement<BulkReplicationMetadataElement, BulkReplicationMetadataBuilder>
     {

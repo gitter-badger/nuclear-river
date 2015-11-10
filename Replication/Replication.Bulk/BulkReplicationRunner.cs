@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using NuClear.AdvancedSearch.Replication.Bulk.Factories;
-using NuClear.AdvancedSearch.Replication.Bulk.Metadata;
-using NuClear.AdvancedSearch.Replication.Bulk.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
+using NuClear.Replication.Bulk.Factories;
+using NuClear.Replication.Bulk.Metadata;
+using NuClear.Replication.Bulk.Storage;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk
+namespace NuClear.Replication.Bulk
 {
     public sealed class BulkReplicationRunner
     {

@@ -6,11 +6,11 @@ using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
-using NuClear.AdvancedSearch.Replication.Bulk.Replicators;
 using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Bulk.Replicators;
 using NuClear.Storage.API.Readings;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Factories
+namespace NuClear.Replication.Bulk.Factories
 {
     public class AggregatesBulkReplicatorFactory<T> : IBulkReplicatorFactory where T : class, IIdentifiable
     {

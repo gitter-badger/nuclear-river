@@ -10,7 +10,7 @@ using LinqToDB.Data;
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Replicators
+namespace NuClear.Replication.Bulk.Replicators
 {
     public class UpdatesBulkReplicator<T> : IBulkReplicator where T : class
     {

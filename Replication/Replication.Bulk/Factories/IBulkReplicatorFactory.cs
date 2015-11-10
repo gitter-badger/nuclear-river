@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Replication.Bulk.Replicators;
 using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Bulk.Replicators;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Factories
+namespace NuClear.Replication.Bulk.Factories
 {
     public interface IBulkReplicatorFactory : IDisposable
     {

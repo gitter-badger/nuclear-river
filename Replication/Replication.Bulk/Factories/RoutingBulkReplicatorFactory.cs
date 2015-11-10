@@ -6,12 +6,12 @@ using System.Linq;
 using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
-using NuClear.AdvancedSearch.Replication.Bulk.Metadata;
-using NuClear.AdvancedSearch.Replication.Bulk.Replicators;
-using NuClear.AdvancedSearch.Replication.Bulk.Storage;
 using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Bulk.Metadata;
+using NuClear.Replication.Bulk.Replicators;
+using NuClear.Replication.Bulk.Storage;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Factories
+namespace NuClear.Replication.Bulk.Factories
 {
     public class RoutingBulkReplicatorFactory : IBulkReplicatorFactory
     {

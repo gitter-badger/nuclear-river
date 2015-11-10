@@ -1,6 +1,6 @@
 ﻿using NuClear.Storage.API.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk
+namespace NuClear.Replication.Bulk
 {
     public static class Specs
     {

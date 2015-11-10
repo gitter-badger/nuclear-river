@@ -5,7 +5,7 @@ using NuClear.Metamodeling.Elements.Concrete.References;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Kinds;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
+namespace NuClear.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataBuilder : MetadataElementBuilder<BulkReplicationMetadataBuilder, BulkReplicationMetadataElement>
     {
@@ -35,7 +35,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
         public BulkReplicationMetadataBuilder UsingMetadataOfKind<TIdentity>(params string[] segments)
             where TIdentity : MetadataKindIdentityBase<TIdentity>, new()
         {
-            var referencedElementId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<TIdentity>().Segments(segments);
+            var referencedElementId = NuClear.Metamodeling.Elements.Identities.Builder.Metadata.Id.For<TIdentity>().Segments(segments);
             Childs(MetadataReference.Config.For(referencedElementId));
             return this;
         }
