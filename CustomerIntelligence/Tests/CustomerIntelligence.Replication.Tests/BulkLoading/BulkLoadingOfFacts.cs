@@ -2,6 +2,8 @@ using System;
 using System.Data.Common;
 using System.Linq;
 
+using LinqToDB.Mapping;
+
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage;
@@ -12,7 +14,7 @@ using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkErmFacts")]
     internal class BulkLoadingOfFacts : BulkLoadingFixtureBase
     {
         [Test]
@@ -117,6 +119,9 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
             using (var ermDb = CreateConnection("ErmSqlServer", Schema.Erm))
             using (var factDb = CreateConnection("FactsSqlServer", Schema.Facts))
             {
+                var annotation = factDb.MappingSchema.GetAttributes<TableAttribute>(typeof(T)).Single();
+                Console.WriteLine($"[{annotation.Schema}].[{annotation.Name ?? typeof(T).Name}]..");
+
                 var query = new Query(new StubReadableDomainContextProvider((DbConnection)ermDb.Connection, ermDb));
                 factDb.Reload(loader(query));
             }

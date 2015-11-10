@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>5</LangVersion>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,11 +45,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\2GIS.NuClear.Metamodeling.1.6.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
+      <HintPath>..\..\packages\2GIS.NuClear.Metamodeling.2.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\2GIS.NuClear.Model.Common.1.2.3-Multiple-3f297c-110\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <HintPath>..\..\packages\2GIS.NuClear.Model.Common.2.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.OperationsLogging.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2c187db36f8b5f72, processorArchitecture=MSIL">
@@ -89,7 +89,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
+      <HintPath>..\..\packages\2GIS.NuClear.Tracing.API.1.0.3\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
@@ -112,10 +112,10 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateOperationExtensions.cs" />
-    <Compile Include="Contexts\CustomerIntelligenceContext.cs" />
-    <Compile Include="Contexts\ErmContext.cs" />
-    <Compile Include="Contexts\FactsContext.cs" />
+    <Compile Include="AggregateOperationSerializer.cs" />
+    <Compile Include="Contexts\CustomerIntelligenceSubDomain.cs" />
+    <Compile Include="Contexts\ErmSubDomain.cs" />
+    <Compile Include="Contexts\FactsSubDomain.cs" />
     <Compile Include="EntityTypeMap.cs" />
     <Compile Include="Final\AggregateOperationAccumulator.cs" />
     <Compile Include="Final\AggregateOperationAggregatableMessageHandler.cs" />
@@ -155,6 +155,7 @@
     <Compile Include="Identities\Flows\ImportFactsFromBitFlow.cs" />
     <Compile Include="Identities\Flows\ImportFactsFromErmFlow.cs" />
     <Compile Include="Identities\Flows\StatisticsFlow.cs" />
+    <Compile Include="Identities\Operations\ActualizeActiveLocksIdentity.cs" />
     <Compile Include="Identities\Operations\ActualizeOrderAmountToWithdrawIdentity.cs" />
     <Compile Include="Identities\Operations\ApplyOrderDiscountIdentity.cs" />
     <Compile Include="Identities\Operations\CalculateClientPromisingIdentity.cs" />
