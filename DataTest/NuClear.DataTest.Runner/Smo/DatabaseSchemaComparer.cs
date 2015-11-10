@@ -14,8 +14,8 @@ namespace NuClear.DataTest.Runner.Smo
 
         public DatabaseSchemaComparer(Database sourceDatabase, Database targetDatabase, IEnumerable<string> schemas)
         {
-            _sourceDatabase = sourceDatabase;
-            _targetDatabase = targetDatabase;
+            _sourceDatabase = sourceDatabase.PrefetchTablesAndViews();
+            _targetDatabase = targetDatabase.PrefetchTablesAndViews();
             _schemas = schemas;
         }
 
@@ -41,9 +41,12 @@ namespace NuClear.DataTest.Runner.Smo
 
         private static IEnumerable<TableViewTableTypeBase> GetDifferences(IEnumerable<TableViewTableTypeBase> sources, IEnumerable<TableViewTableTypeBase> targets)
         {
-            var differences = sources.Join(targets.DefaultIfEmpty(), source => source.Name, target => target.Name, (source, target) =>
+            var targetsDictionary = targets.ToDictionary(x => x.Name);
+
+            var differences = sources.Select(source =>
             {
-                if (target == null)
+                TableViewTableTypeBase target;
+                if (!targetsDictionary.TryGetValue(source.Name, out target))
                 {
                     return source;
                 }
@@ -63,9 +66,12 @@ namespace NuClear.DataTest.Runner.Smo
 
         private static IEnumerable<Column> GetDifferences(IEnumerable<Column> sources, IEnumerable<Column> targets)
         {
-            var differences = sources.Join(targets.DefaultIfEmpty(), source => source.Name, target => target.Name, (source, target) =>
+            var targetsDictionary = targets.ToDictionary(x => x.Name);
+
+            var differences = sources.Select(source =>
             {
-                if (target == null)
+                Column target;
+                if (!targetsDictionary.TryGetValue(source.Name, out target))
                 {
                     return source;
                 }

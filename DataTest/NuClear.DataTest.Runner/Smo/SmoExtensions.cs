@@ -10,6 +10,14 @@ namespace NuClear.DataTest.Runner.Smo
 {
     internal static class SmoExtensions
     {
+        public static Database PrefetchTablesAndViews(this Database database)
+        {
+            database.PrefetchObjects(typeof(Table));
+            database.PrefetchObjects(typeof(View));
+
+            return database;
+        }
+
         public static IEnumerable<TableViewTableTypeBase> GetTablesAndViewsFor(this Database database, string schema)
         {
             var tables = database.Tables.Cast<Table>().Where(x => !x.IsSystemObject).Where(x => x.Schema == schema);

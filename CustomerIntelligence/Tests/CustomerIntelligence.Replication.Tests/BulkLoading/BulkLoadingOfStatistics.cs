@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
+using LinqToDB.Mapping;
+
 using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Storage.API.Readings;
@@ -10,7 +12,7 @@ using NUnit.Framework;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 {
-    [TestFixture, Explicit("It's used to copy the data in bulk.")]
+    [TestFixture, Explicit("It's used to copy the data in bulk."), Category("BulkStatistics")]
     public class BulkLoadingOfStatistics : BulkLoadingFixtureBase
     {
         public BulkLoadingOfStatistics()
@@ -20,7 +22,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.BulkLoading
 
         public BulkLoadingOfStatistics(ILoader loader)
             : base(loader)
-        {
+    {
         }
 
         [Test]
