@@ -6,6 +6,7 @@ $ErrorActionPreference = 'Stop'
 
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.taskservice.psm1" -DisableNameChecking
+Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
 
 function Get-EntryPointsMetadata ($EntryPoints, $Context) {
@@ -34,7 +35,7 @@ function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 	return $entryPointsMetadata
 }
 
-function Get-BulkToolMetadata ($UpdateSchemas){
+function Get-BulkToolMetadata ($UpdateSchemas, $Context){
 	$metadata = @{}
 
 	$arguments = @()
@@ -45,10 +46,13 @@ function Get-BulkToolMetadata ($UpdateSchemas){
 	}
 	$metadata += @{ 'Arguments' = ($arguments | select -Unique) }
 
+	$Context.EntryPoint = 'Replication.Bulk'
+	$metadata += Get-TransformMetadata $Context
+
 	return @{ 'Replication.Bulk' = $metadata }
 }
 
-function Get-UpdateSchemasMetadata ($UpdateSchemas) {
+function Get-UpdateSchemasMetadata ($UpdateSchemas, $Context) {
 	$metadata = @{}
 
 	[string[]]$UpdateSchemas = $AllSchemas | where { $UpdateSchemas -contains $_ }
@@ -64,7 +68,7 @@ function Get-UpdateSchemasMetadata ($UpdateSchemas) {
 				}
 			}
 		}
-		$metadata += Get-BulkToolMetadata $UpdateSchemas
+		$metadata += Get-BulkToolMetadata $UpdateSchemas $Context
 		return $metadata
 	}
 
@@ -105,7 +109,7 @@ function Parse-EnvironmentMetadata ($Properties) {
 		if ($updateSchemas -isnot [array]){
 			$updateSchemas = $updateSchemas.Split(@(','), 'RemoveEmptyEntries')
 		}
-		$environmentMetadata += Get-UpdateSchemasMetadata $updateSchemas
+		$environmentMetadata += Get-UpdateSchemasMetadata $updateSchemas $context
 	}
 
 	return $environmentMetadata
