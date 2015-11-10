@@ -2,7 +2,7 @@
 
 using NuClear.Metamodeling.Elements.Aspects.Features;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metamodel
+namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
 {
     public class StorageDescriptorFeature : IMetadataFeature
     {

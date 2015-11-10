@@ -26,6 +26,7 @@ function Update-Schemas ($config, $sqlDir) {
 	foreach ($schema in $updateSchemasMetadata.Schemas) {
 
 		$connectionString = Get-ConnectionString $config $updateSchemasMetadata.ConnectionString[$schema]
+		Write-Host $connectionString
 		$connection = Create-SqlConnection $connectionString
 
 		$sql = Get-Content (Join-Path $sqlDir "$schema.sql") -Raw

@@ -1,36 +1,27 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Aspects.Features;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metamodel
+namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataElement : MetadataElement<BulkReplicationMetadataElement, BulkReplicationMetadataBuilder>
     {
         private IMetadataElementIdentity _identity;
 
-        public BulkReplicationMetadataElement(IEnumerable<IMetadataFeature> features) 
+        public BulkReplicationMetadataElement(string commandLineKey, string essentialViewName, IEnumerable<IMetadataFeature> features) 
             : base(features)
         {
-            var commandLine = GetFeature<CommandLineFeature>();
-            _identity = Metadata.Id.For<BulkReplicationMetadataKindIdentity>(commandLine.Key).Build().AsIdentity();
+            _identity = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<BulkReplicationMetadataKindIdentity>(commandLineKey).Build().AsIdentity();
+            EssentialView = essentialViewName;
         }
 
         public override IMetadataElementIdentity Identity => _identity;
-
         
-        public string CommandLineKey => GetFeature<CommandLineFeature>().Key;
-
-        public IEnumerable<string> EssentialViews => Features.OfType<EssentialViewFeature>().Select(feature => feature.ViewName);
+        public string EssentialView { get; }
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity) => _identity = actualMetadataElementIdentity;
-
-        private T GetFeature<T>()
-        {
-            return Features.OfType<T>().Single();
-        }
     }
 }

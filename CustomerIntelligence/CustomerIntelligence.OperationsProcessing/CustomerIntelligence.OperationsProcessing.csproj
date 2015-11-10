@@ -112,7 +112,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateOperationSerializer.cs" />
     <Compile Include="Contexts\CustomerIntelligenceSubDomain.cs" />
     <Compile Include="Contexts\ErmSubDomain.cs" />
     <Compile Include="Contexts\FactsSubDomain.cs" />

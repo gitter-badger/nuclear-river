@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-using NuClear.AdvancedSearch.Replication.Bulk.Model;
+using NuClear.AdvancedSearch.Replication.Bulk.Metadata;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
@@ -26,11 +26,11 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 		{
 		    var runner = new BulkReplicationRunner(DefaultProvider);
             foreach (var mode in args)
-		    {
+            {
                 var sw = Stopwatch.StartNew();
                 runner.Run(mode);
                 Console.WriteLine($"{mode}, {sw.ElapsedMilliseconds}ms");
             }
-		}
+        }
     }
 }

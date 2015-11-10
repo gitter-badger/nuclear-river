@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Identities;
-using NuClear.AdvancedSearch.Replication.Bulk.Metamodel;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Model
+namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataSource : MetadataSourceBase<BulkReplicationMetadataKindIdentity>
     {

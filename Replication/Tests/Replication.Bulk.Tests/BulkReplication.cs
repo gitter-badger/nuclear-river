@@ -1,6 +1,4 @@
-﻿using System;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk.Tests
 {
@@ -9,22 +7,21 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Tests
     {
         [Ignore("Use for bulk replication")]
         [Test]
-        public void FactReplicationTest(Action replicationAction)
+        public void FactReplicationTest()
         {
             Program.Main(new[] { "-fact" });
-            replicationAction.Invoke();
         }
 
         [Ignore("Use for bulk replication")]
         [Test]
-        public void CiReplicationTest(Action replicationAction)
+        public void CiReplicationTest()
         {
             Program.Main(new[] { "-ci" });
         }
 
         [Ignore("Use for bulk replication")]
         [Test]
-        public void StatisticsReplicationTest(Action replicationAction)
+        public void StatisticsReplicationTest()
         {
             Program.Main(new[] { "-statistics" });
         }

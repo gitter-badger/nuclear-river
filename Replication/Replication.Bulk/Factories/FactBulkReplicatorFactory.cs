@@ -4,10 +4,11 @@ using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.AdvancedSearch.Replication.Bulk.Replicators;
 using NuClear.Metamodeling.Elements;
 using NuClear.Storage.API.Readings;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
+namespace NuClear.AdvancedSearch.Replication.Bulk.Factories
 {
     public class FactBulkReplicatorFactory<T> : IBulkReplicatorFactory where T : class, IIdentifiable
     {
@@ -24,6 +25,10 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
         {
             var factMetadata = (FactMetadata<T>)metadataElement;
             return new[] { new InsertsBulkReplicator<T>(_query, _dataConnection, factMetadata.MapSpecificationProviderForSource.Invoke(Specs.Find.All<T>())) };
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

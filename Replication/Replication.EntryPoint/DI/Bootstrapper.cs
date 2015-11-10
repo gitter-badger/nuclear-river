@@ -42,6 +42,7 @@ using NuClear.Messaging.Transports.CorporateBus;
 using NuClear.Messaging.Transports.CorporateBus.API;
 using NuClear.Messaging.Transports.ServiceBus;
 using NuClear.Messaging.Transports.ServiceBus.API;
+using NuClear.Messaging.Transports.ServiceBus.LockRenewer;
 using NuClear.Metamodeling.Domain.Processors.Concrete;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
@@ -68,10 +69,10 @@ using NuClear.Replication.EntryPoint.Settings;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
-using NuClear.Security;
 using NuClear.Security.API;
 using NuClear.Security.API.UserContext;
 using NuClear.Security.API.UserContext.Identity;
+using NuClear.Security;
 using NuClear.Settings.API;
 using NuClear.Settings.Unity;
 using NuClear.Storage.API.ConnectionStrings;
@@ -95,8 +96,6 @@ using TransportSchema = NuClear.Replication.OperationsProcessing.Transports.SQLS
 
 namespace NuClear.Replication.EntryPoint.DI
 {
-    using NuClear.Messaging.Transports.ServiceBus.LockRenewer;
-
     public static class Bootstrapper
     {
         public static IUnityContainer ConfigureUnity(ISettingsContainer settingsContainer, ITracer tracer, ITracerContextManager tracerContextManager)

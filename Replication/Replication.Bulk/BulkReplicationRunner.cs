@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-using NuClear.AdvancedSearch.Replication.Bulk.Metamodel;
-using NuClear.AdvancedSearch.Replication.Bulk.Processors;
+using NuClear.AdvancedSearch.Replication.Bulk.Factories;
+using NuClear.AdvancedSearch.Replication.Bulk.Metadata;
+using NuClear.AdvancedSearch.Replication.Bulk.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
@@ -20,20 +23,31 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
 
         public void Run(string mode)
         {
-            IMetadataElement bulkReplicationMetadata;
-            var id = Metadata.Id.For<BulkReplicationMetadataKindIdentity>(mode).Build().AsIdentity();
-            _metadataProvider.TryGetMetadata(id.Id, out bulkReplicationMetadata);
+            IMetadataElement metadataElement;
+            var id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<BulkReplicationMetadataKindIdentity>(mode).Build().AsIdentity();
+            if (!_metadataProvider.TryGetMetadata(id.Id, out metadataElement))
+            {
+                throw new NotSupportedException("Bulk replication metadata cannot be found");
+            }
 
-            Parallel.ForEach(bulkReplicationMetadata.Elements,
-                             element =>
-                             {
-                                 var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(element);
-                                 var replicators = bulkReplicatorFactory.Create(element);
-                                 foreach (var replicator in replicators)
+            var bulkReplicationMetadata = (BulkReplicationMetadataElement)metadataElement;
+
+            var storageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
+            using (ViewContainer.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, new[] { bulkReplicationMetadata.EssentialView }))
+            {
+                Parallel.ForEach(metadataElement.Elements,
+                                 element =>
                                  {
-                                     replicator.Replicate();
-                                 }
-                             });
+                                     using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(element))
+                                     {
+                                         var replicators = bulkReplicatorFactory.Create(element);
+                                         foreach (var replicator in replicators)
+                                         {
+                                             replicator.Replicate();
+                                         }
+                                     }
+                                 });
+            }
         }
     }
 }

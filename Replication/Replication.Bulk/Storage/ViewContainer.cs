@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk
+namespace NuClear.AdvancedSearch.Replication.Bulk.Storage
 {
     internal class ViewContainer : IDisposable
     {
@@ -22,9 +22,9 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
             _views = views;
         }
 
-        public static IDisposable TemporaryRemoveViews(StorageDescriptor storageDescriptor, IEnumerable<string> essentialViewNames)
+        public static IDisposable TemporaryRemoveViews(string connectionStringName, IEnumerable<string> essentialViewNames)
         {
-            var connectionString = GetConnectionString(storageDescriptor);
+            var connectionString = GetConnectionString(connectionStringName);
             var database = GetDatabase(connectionString);
             var views = new List<StringCollection>();
             foreach (var view in database.Views.Cast<View>()
@@ -38,9 +38,9 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
             return new ViewContainer(connectionString, views);
         }
 
-        private static string GetConnectionString(StorageDescriptor storageDescriptor)
+        private static string GetConnectionString(string connectionStringName)
         {
-            return ConfigurationManager.ConnectionStrings[storageDescriptor.ConnectionStringName].ConnectionString;
+            return ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
         }
 
         private static Database GetDatabase(string connectionString)

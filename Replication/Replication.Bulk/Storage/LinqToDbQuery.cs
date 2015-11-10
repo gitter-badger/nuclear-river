@@ -6,7 +6,7 @@ using LinqToDB;
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk
+namespace NuClear.AdvancedSearch.Replication.Bulk.Storage
 {
     public sealed class LinqToDbQuery : IQuery
     {

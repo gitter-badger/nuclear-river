@@ -1,4 +1,4 @@
-﻿namespace NuClear.AdvancedSearch.Replication.Bulk.Metamodel
+﻿namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
 {
     public enum ReplicationDirection
     {

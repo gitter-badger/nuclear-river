@@ -5,15 +5,18 @@ using NuClear.Metamodeling.Elements.Concrete.References;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Kinds;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Metamodel
+namespace NuClear.AdvancedSearch.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataBuilder : MetadataElementBuilder<BulkReplicationMetadataBuilder, BulkReplicationMetadataElement>
     {
+        private string _commandLineKey;
+        private string _essentialViewName;
+
         public BulkReplicationMetadataBuilder DefinesReplication => this;
 
         public BulkReplicationMetadataBuilder CommandlineKey(string key)
         {
-            AddFeatures(new CommandLineFeature(key));
+            _commandLineKey = key;
             return this;
         }
 
@@ -32,20 +35,20 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Metamodel
         public BulkReplicationMetadataBuilder UsingMetadataOfKind<TIdentity>(params string[] segments)
             where TIdentity : MetadataKindIdentityBase<TIdentity>, new()
         {
-            var referencedElementId = Metadata.Id.For<TIdentity>().Segments(segments);
+            var referencedElementId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<TIdentity>().Segments(segments);
             Childs(MetadataReference.Config.For(referencedElementId));
             return this;
         }
 
         public BulkReplicationMetadataBuilder EssentialView(string viewName)
         {
-            AddFeatures(new EssentialViewFeature(viewName));
+            _essentialViewName = viewName;
             return this;
         }
 
         protected override BulkReplicationMetadataElement Create()
         {
-            return new BulkReplicationMetadataElement(Features);
+            return new BulkReplicationMetadataElement(_commandLineKey, _essentialViewName, Features);
         }
     }
 }
