@@ -136,12 +136,13 @@
       <HintPath>..\packages\2GIS.NuClear.ResourceUtilities.1.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.ResourceUtilities.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="2GIS.NuClear.Security">
-      <HintPath>..\packages\2GIS.NuClear.Security.1.1.0\lib\net451\2GIS.NuClear.Security.dll</HintPath>
+    <Reference Include="2GIS.NuClear.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
+      <HintPath>..\packages\2GIS.NuClear.Security.1.1.1\lib\net451\2GIS.NuClear.Security.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Security.API, Version=2.0.0.0, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\2GIS.NuClear.Security.API.1.1.0\lib\net451\2GIS.NuClear.Security.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Security.API.1.1.1\lib\net451\2GIS.NuClear.Security.API.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
       <HintPath>..\packages\2GIS.NuClear.Settings.1.1.0\lib\net451\2GIS.NuClear.Settings.dll</HintPath>
@@ -159,14 +160,14 @@
       <HintPath>..\packages\2GIS.NuClear.Telemetry.0.12.0\lib\net451\2GIS.NuClear.Telemetry.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.2\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Tracing.API.1.0.3\lib\portable-net451+win81+wpa81\2GIS.NuClear.Tracing.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.Environment">
       <HintPath>..\packages\2GIS.NuClear.Tracing.Environment.1.0.2\lib\net451\2GIS.NuClear.Tracing.Environment.dll</HintPath>
     </Reference>
     <Reference Include="2GIS.NuClear.Tracing.Log4Net, Version=0.0.0.0, Culture=neutral, PublicKeyToken=343b5b3423ae5030, processorArchitecture=MSIL">
-      <HintPath>..\packages\2GIS.NuClear.Tracing.Log4Net.1.0.2-logstash-d948a2-160\lib\net451\2GIS.NuClear.Tracing.Log4Net.dll</HintPath>
+      <HintPath>..\packages\2GIS.NuClear.Tracing.Log4Net.1.0.3\lib\net451\2GIS.NuClear.Tracing.Log4Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
@@ -201,7 +202,7 @@
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
     <Reference Include="log4net.Ext.Json, Version=1.2.13.29, Culture=neutral, PublicKeyToken=28ae40ac5f6ca219, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.Ext.Json.1.2.13.1.2.13.20140804-custom\lib\net35-full\log4net.Ext.Json.dll</HintPath>
+      <HintPath>..\packages\log4net.Ext.Json.1.2.13.1.2.13.20151101\lib\net35-full\log4net.Ext.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
