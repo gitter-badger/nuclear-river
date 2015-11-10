@@ -17,31 +17,40 @@ using NuClear.Metamodeling.Provider.Sources;
 
 namespace NuClear.AdvancedSearch.Replication.Bulk
 {
-	public sealed class Program
-	{
-	    private static readonly MetadataProvider DefaultProvider
-	        = new MetadataProvider(
-	            new IMetadataSource[]
-	            {
-	                new MassReplicationMetadataSource(),
-	                new FactsReplicationMetadataSource(),
-	                new AggregateConstructionMetadataSource(),
-	                new StatisticsRecalculationMetadataSource(),
-	            },
-	            new IMetadataProcessor[] { });
+    public sealed class Program
+    {
+        private static readonly MetadataProvider DefaultProvider
+            = new MetadataProvider(
+                new IMetadataSource[]
+                {
+                    new MassReplicationMetadataSource(),
+                    new FactsReplicationMetadataSource(),
+                    new AggregateConstructionMetadataSource(),
+                    new StatisticsRecalculationMetadataSource(),
+                },
+                new IMetadataProcessor[] { });
 
-		public static void Main(string[] args)
-		{
-		    foreach (var replicationMetadataKey in args)
-		    {
-		        var actions = GetReplicationActions(replicationMetadataKey);
-                Parallel.ForEach(actions, action => action.Item2.Invoke());
-            }
-		}
-
-        public static IEnumerable<Tuple<string, Action>> GetReplicationActions(string key)
+        public static void Main(string[] args)
         {
-            var element = GetMassReplicationMetadata(key);
+            foreach (var replicationMetadataKey in args)
+            {
+                var context = GetMassReplicationMetadata(replicationMetadataKey);
+                var actions = GetReplicationActions(context);
+                using (ViewContainer.TemporaryRemoveViews(context.Target, context.EssentialViews))
+                {
+                    Parallel.ForEach(actions, action => action.Item2.Invoke());
+                }
+            }
+        }
+
+        public static IEnumerable<Tuple<string, Action>> GetReplicationActions(string replicationMetadataKey)
+        {
+            var context = GetMassReplicationMetadata(replicationMetadataKey);
+            return GetReplicationActions(context);
+        }
+
+        public static IEnumerable<Tuple<string, Action>> GetReplicationActions(MassReplicationMetadataElement element)
+        {
             return GetReplicationMetadata(element.MetadataReference)
                 .Select(metadata => Tuple.Create(metadata.Identity.Id.ToString(), new Action(() => Replicate(element, metadata))));
         }
@@ -56,15 +65,15 @@ namespace NuClear.AdvancedSearch.Replication.Bulk
         }
 
         private static IEnumerable<IMetadataElement> GetReplicationMetadata(Uri uri)
-	    {
+        {
             IMetadataElement replicationMetadata;
             DefaultProvider.TryGetMetadata(uri, out replicationMetadata);
 
             return ((HierarchyMetadata)replicationMetadata).Elements;
-	    }
+        }
 
-	    private static void Replicate(MassReplicationMetadataElement massReplicationMetadata, IMetadataElement concreteMetadata)
-	    {
+        private static void Replicate(MassReplicationMetadataElement massReplicationMetadata, IMetadataElement concreteMetadata)
+        {
             using (var source = massReplicationMetadata.Source.CreateConnection())
             using (var target = massReplicationMetadata.Target.CreateConnection())
             {
