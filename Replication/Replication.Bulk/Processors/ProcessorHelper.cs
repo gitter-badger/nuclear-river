@@ -28,7 +28,7 @@ namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
             try
             {
                 var sourceQueryable = mapSpecificationProviderForSource.Invoke(_spec).Map(_source);
-                var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
+                var options = new BulkCopyOptions { BulkCopyTimeout = 1800 };
                 _target.GetTable<T>().Delete();
                 _target.BulkCopy(options, sourceQueryable);
             }
