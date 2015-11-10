@@ -23,7 +23,6 @@ using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
-using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.API;
 using NuClear.OperationsProcessing.API.Primary;
 using NuClear.Telemetry;

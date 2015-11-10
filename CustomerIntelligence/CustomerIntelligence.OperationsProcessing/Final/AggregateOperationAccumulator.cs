@@ -5,6 +5,7 @@ using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing;
+using NuClear.Replication.OperationsProcessing.Final;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
 {
