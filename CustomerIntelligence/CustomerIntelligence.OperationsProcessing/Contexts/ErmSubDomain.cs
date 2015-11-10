@@ -2,9 +2,9 @@
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Contexts
 {
-    public sealed class CustomerIntelligenceContext : IDomainContext
+    public sealed class ErmSubDomain : ISubDomain
     {
-        private CustomerIntelligenceContext()
+        private ErmSubDomain()
         {
         }
     }
