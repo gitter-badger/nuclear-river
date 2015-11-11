@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,33 +7,29 @@ using System.Reflection;
 using LinqToDB;
 using LinqToDB.Data;
 
-using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
-namespace NuClear.AdvancedSearch.Replication.Bulk.Processors
+namespace NuClear.Replication.Bulk.Replicators
 {
-	public class StatisticsMassProcessor<T> : IMassProcessor 
-		where T : class, new()
-	{
-		private readonly StatisticsRecalculationMetadata<T> _info;
-	    private readonly FindSpecification<T> _spec;
-	    private readonly DataConnection _target;
-	    private readonly IQuery _source;
+    public class UpdatesBulkReplicator<T> : IBulkReplicator where T : class
+    {
+        private readonly IQuery _source;
+        private readonly DataConnection _target;
+        private readonly MapSpecification<IQuery, IEnumerable<T>> _mapSpecification;
 
-	    public StatisticsMassProcessor(StatisticsRecalculationMetadata<T> info, IQuery query, DataConnection connection)
-		{
-			_info = info;
-            _source = query;
-            _target = connection;
-            _spec = new FindSpecification<T>(x => true);
+        public UpdatesBulkReplicator(IQuery source, DataConnection target, MapSpecification<IQuery, IEnumerable<T>> mapSpecification)
+        {
+            _source = source;
+            _target = target;
+            _mapSpecification = mapSpecification;
         }
 
-		public void Process()
-		{
+        public void Replicate()
+        {
             try
             {
-                var sourceQueryable = _info.MapSpecificationProviderForSource.Invoke(_spec).Map(_source);
+                var sourceQueryable = _mapSpecification.Map(_source);
                 var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
 
                 var temptable = _target.CreateTable<T>($"#{Guid.NewGuid():N}");
