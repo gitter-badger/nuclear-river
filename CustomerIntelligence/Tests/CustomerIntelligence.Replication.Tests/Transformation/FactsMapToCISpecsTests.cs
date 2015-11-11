@@ -60,7 +60,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
                          new Facts::Project { Id = 2, OrganizationUnitId = 2 })
                     .Has(new Facts::Firm { Id = 1, Name = "1st firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, OrganizationUnitId = 1 },
-                         new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = dayAgo, ClientId = 1, OrganizationUnitId = 2 })
+                         new Facts::Firm { Id = 2, Name = "2nd firm", CreatedOn = monthAgo, LastDisqualifiedOn = null, ClientId = 1, OrganizationUnitId = 2 })
                     .Has(new Facts::FirmAddress { Id = 1, FirmId = 1, TerritoryId = 1 },
                          new Facts::FirmAddress { Id = 2, FirmId = 1, TerritoryId = 2 })
                     .Has(new Facts::Client { Id = 1, LastDisqualifiedOn = now })
@@ -68,7 +68,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     .Has(new Facts::Order { FirmId = 1, EndDistributionDateFact = dayAgo });
 
 			// TODO: split into several tests
-            Transformation.Create(Query)
+			Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.Firms.Map(x).ById(1),
                                            Inquire(new CI::Firm { Name = "1st firm" }),
                                            x => new { x.Name },

@@ -4,29 +4,6 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
 {
     public static class Settings
     {
-        private const int DefaultSqlBulkCopyTimeout = 30;
-
-        public static int SqlBulkCopyTimeout
-        {
-            get
-            {
-                if (sqlBulkCopyTimeout == null)
-                {
-                    int timeout;
-                    var timeoutValue = ConfigurationManager.AppSettings["SqlBulkCopyTimeout"];
-                    if (timeoutValue != null && int.TryParse(timeoutValue, out timeout))
-                    {
-                        sqlBulkCopyTimeout = timeout;
-                    }
-                    else
-                    {
-                        sqlBulkCopyTimeout = DefaultSqlBulkCopyTimeout;
-                    }
-                }
-                return sqlBulkCopyTimeout.Value;
-            }
-        }
-
         public static int? SqlCommandTimeout
         {
             get
@@ -41,7 +18,5 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
                 return null;
             }
         }
-
-        private static int? sqlBulkCopyTimeout;
     }
 }

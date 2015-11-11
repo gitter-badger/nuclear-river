@@ -100,7 +100,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                                   Id = firm.Id,
                                                   Name = firm.Name,
                                                   CreatedOn = firm.CreatedOn,
-                                                  LastDisqualifiedOn = client.LastDisqualifiedOn ?? firm.LastDisqualifiedOn,
+                                                  LastDisqualifiedOn = firm.LastDisqualifiedOn ?? client.LastDisqualifiedOn,
                                                   LastDistributedOn = q.For<Facts::Order>()
                                                                        .Where(order => order.FirmId == firm.Id)
                                                                        .Select(order => order.EndDistributionDateFact)

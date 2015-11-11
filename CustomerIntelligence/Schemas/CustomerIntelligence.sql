@@ -9,6 +9,7 @@ if object_id('CustomerIntelligence.Territory') is not null drop table CustomerIn
 if object_id('CustomerIntelligence.Firm') is not null drop table CustomerIntelligence.Firm
 if object_id('CustomerIntelligence.FirmBalance') is not null drop table CustomerIntelligence.FirmBalance
 if object_id('CustomerIntelligence.FirmActivity') is not null drop table CustomerIntelligence.FirmActivity
+if object_id('CustomerIntelligence.FirmTerritory') is not null drop table CustomerIntelligence.FirmTerritory
 if object_id('CustomerIntelligence.FirmCategoryPartFirm') is not null drop table CustomerIntelligence.FirmCategoryPartFirm
 if object_id('CustomerIntelligence.Client') is not null drop table CustomerIntelligence.Client
 if object_id('CustomerIntelligence.Contact') is not null drop table CustomerIntelligence.Contact

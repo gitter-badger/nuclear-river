@@ -3,7 +3,6 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
-using NuClear.AdvancedSearch.Common.Metadata.Features;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
@@ -26,7 +25,7 @@ namespace NuClear.Replication.Core.Aggregates
             _query = query;
             _repository = repository;
             _aggregateChangesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, _query);
-            _valueObjectProcessors = _metadata.Features.OfType<IValueObjectFeature>().Select(valueObjectProcessorFactory.Create).ToArray();
+            _valueObjectProcessors = _metadata.Features.OfType<IValueObjectMetadataElement>().Select(valueObjectProcessorFactory.Create).ToArray();
         }
 
         public void Initialize(IReadOnlyCollection<long> ids)
