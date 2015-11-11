@@ -14,8 +14,6 @@ namespace NuClear.Replication.Bulk.Metadata
         private readonly List<string> _essentialViewNames = new List<string>();
         private string _commandLineKey;
         
-        public BulkReplicationMetadataBuilder DefinesReplication => this;
-
         public BulkReplicationMetadataBuilder CommandlineKey(string key)
         {
             _commandLineKey = key;

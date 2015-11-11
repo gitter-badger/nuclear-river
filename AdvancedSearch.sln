@@ -105,7 +105,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{97E65C1F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Bulk.Tests", "Replication\Tests\Replication.Bulk.Tests\Replication.Bulk.Tests.csproj", "{104947C0-9C1C-4C5D-A14E-6B50C00589FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.Replication.Bulk", "CustomerIntelligence\CustomerIntelligence.Replication.Bulk\CustomerIntelligence.Replication.Bulk.csproj", "{0AF71AE8-390E-4911-B243-255536509210}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.StateInitialization", "CustomerIntelligence\CustomerIntelligence.StateInitialization\CustomerIntelligence.StateInitialization.csproj", "{0AF71AE8-390E-4911-B243-255536509210}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Bulk.Metadata", "Replication\Replication.Bulk.Metadata\Replication.Bulk.Metadata.csproj", "{2838EB06-45E9-453F-B80A-BE042DCC23C9}"
 EndProject

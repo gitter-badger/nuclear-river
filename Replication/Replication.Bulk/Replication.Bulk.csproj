@@ -128,9 +128,9 @@
       <Project>{B0A258D5-7387-4FB2-BA18-B51550DA3F0B}</Project>
       <Name>CustomerIntelligence.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\CustomerIntelligence\CustomerIntelligence.Replication.Bulk\CustomerIntelligence.Replication.Bulk.csproj">
+    <ProjectReference Include="..\..\CustomerIntelligence\CustomerIntelligence.StateInitialization\CustomerIntelligence.StateInitialization.csproj">
       <Project>{0af71ae8-390e-4911-b243-255536509210}</Project>
-      <Name>CustomerIntelligence.Replication.Bulk</Name>
+      <Name>CustomerIntelligence.StateInitialization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Replication.Bulk.Metadata\Replication.Bulk.Metadata.csproj">
       <Project>{2838eb06-45e9-453f-b80a-be042dcc23c9}</Project>

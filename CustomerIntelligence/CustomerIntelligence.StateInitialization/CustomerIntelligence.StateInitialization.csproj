@@ -7,8 +7,8 @@
     <ProjectGuid>{0AF71AE8-390E-4911-B243-255536509210}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuClear.CustomerIntelligence.Replication.Bulk</RootNamespace>
-    <AssemblyName>2GIS.NuClear.CustomerIntelligence.Replication.Bulk</AssemblyName>
+    <RootNamespace>NuClear.CustomerIntelligence.StateInitialization</RootNamespace>
+    <AssemblyName>2GIS.NuClear.CustomerIntelligence.StateInitialization</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

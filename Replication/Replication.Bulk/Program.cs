@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 using NuClear.CustomerIntelligence.Domain;
-using NuClear.CustomerIntelligence.Replication.Bulk;
+using NuClear.CustomerIntelligence.StateInitialization;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
