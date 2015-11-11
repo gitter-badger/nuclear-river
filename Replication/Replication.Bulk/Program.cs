@@ -4,6 +4,7 @@ using System.Diagnostics;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.StateInitialization;
 using NuClear.Metamodeling.Processors;
+using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
 
@@ -20,7 +21,7 @@ namespace NuClear.Replication.Bulk
 	                new AggregateConstructionMetadataSource(),
 	                new StatisticsRecalculationMetadataSource(),
 	            },
-	            new IMetadataProcessor[] { });
+	            new IMetadataProcessor[] { new ReferencesEvaluatorProcessor()  });
 
 		public static void Main(string[] args)
 		{

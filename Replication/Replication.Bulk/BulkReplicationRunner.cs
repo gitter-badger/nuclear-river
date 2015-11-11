@@ -35,7 +35,7 @@ namespace NuClear.Replication.Bulk
                 Parallel.ForEach(bulkReplicationMetadata.Elements,
                                  element =>
                                  {
-                                     using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(element))
+                                     using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(bulkReplicationMetadata))
                                      {
                                          var replicators = bulkReplicatorFactory.Create(element);
                                          foreach (var replicator in replicators)

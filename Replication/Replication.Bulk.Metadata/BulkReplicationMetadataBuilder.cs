@@ -35,7 +35,7 @@ namespace NuClear.Replication.Bulk.Metadata
         public BulkReplicationMetadataBuilder UsingMetadataOfKind<TIdentity>(params string[] segments)
             where TIdentity : MetadataKindIdentityBase<TIdentity>, new()
         {
-            var referencedElementId = NuClear.Metamodeling.Elements.Identities.Builder.Metadata.Id.For<TIdentity>().Segments(segments);
+            var referencedElementId = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<TIdentity>().Segments(segments);
             Childs(MetadataReference.Config.For(referencedElementId));
             return this;
         }

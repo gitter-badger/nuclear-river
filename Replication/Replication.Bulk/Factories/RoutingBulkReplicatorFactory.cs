@@ -7,6 +7,7 @@ using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Metamodeling.Elements;
+using NuClear.Metamodeling.Elements.Concrete.References;
 using NuClear.Replication.Bulk.Metadata;
 using NuClear.Replication.Bulk.Replicators;
 using NuClear.Replication.Bulk.Storage;
@@ -33,7 +34,7 @@ namespace NuClear.Replication.Bulk.Factories
             _targetDataConnection = targetDataConnection;
         }
 
-        public static IBulkReplicatorFactory Create(IMetadataElement bulkReplicationMetadata)
+        public static IBulkReplicatorFactory Create(BulkReplicationMetadataElement bulkReplicationMetadata)
         {
             var sourceStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.From);
             var targetStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
