@@ -7,7 +7,6 @@ using LinqToDB.Data;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.Metamodeling.Elements;
-using NuClear.Metamodeling.Elements.Concrete.References;
 using NuClear.Replication.Bulk.Metadata;
 using NuClear.Replication.Bulk.Replicators;
 using NuClear.Replication.Bulk.Storage;
@@ -24,8 +23,8 @@ namespace NuClear.Replication.Bulk.Factories
             {
                 { typeof(FactMetadata<>), typeof(FactBulkReplicatorFactory<>) },
                 { typeof(AggregateMetadata<>), typeof(AggregatesBulkReplicatorFactory<>) },
-                { typeof(ValueObjectMetadataElement<>), typeof(ValueObjectMetadataElement<>) },
-                { typeof(StatisticsRecalculationMetadata<>), typeof(ValueObjectMetadataElement<>) }
+                { typeof(ValueObjectMetadataElement<>), typeof(ValueObjectsBulkReplicatorFactory<>) },
+                { typeof(StatisticsRecalculationMetadata<>), typeof(StatisticsBulkReplicatorFactory<>) }
             };
 
         private RoutingBulkReplicatorFactory(DataConnection sourceDataConnection, DataConnection targetDataConnection)
