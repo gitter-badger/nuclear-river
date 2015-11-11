@@ -30,7 +30,7 @@ namespace NuClear.Replication.Bulk.Replicators
             try
             {
                 var sourceQueryable = _mapSpecification.Map(_source);
-                var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
+                var options = new BulkCopyOptions { BulkCopyTimeout = 1800 };
 
                 var temptable = _target.CreateTable<T>($"#{Guid.NewGuid():N}");
                 temptable.BulkCopy(options, sourceQueryable);
