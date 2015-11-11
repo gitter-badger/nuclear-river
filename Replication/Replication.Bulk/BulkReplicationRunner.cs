@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,9 +31,10 @@ namespace NuClear.Replication.Bulk
             }
 
             var storageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
+            var context = bulkReplicationMetadata.Elements.Single();
             using (ViewContainer.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, bulkReplicationMetadata.EssentialViews))
             {
-                Parallel.ForEach(bulkReplicationMetadata.Elements,
+                Parallel.ForEach(context.Elements,
                                  element =>
                                  {
                                      using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(bulkReplicationMetadata))
