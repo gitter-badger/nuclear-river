@@ -28,7 +28,7 @@ namespace NuClear.Replication.Bulk.Factories
             var aggregateMetadata = (AggregateMetadata<T>)metadataElement;
 
             return new IBulkReplicator[] { new InsertsBulkReplicator<T>(_query, _dataConnection, aggregateMetadata.MapSpecificationProviderForSource.Invoke(Specs.Find.All<T>())) }
-                .Concat(aggregateMetadata.References
+                .Concat(aggregateMetadata.Elements
                                          .OfType<IValueObjectMetadataElement>()
                                          .SelectMany(valueObjectMetadata =>
                                                      {
