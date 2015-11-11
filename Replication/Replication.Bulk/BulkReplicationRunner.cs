@@ -39,11 +39,15 @@ namespace NuClear.Replication.Bulk
                                  {
                                      using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(bulkReplicationMetadata))
                                      {
+                                         var sw = Stopwatch.StartNew();
                                          var replicators = bulkReplicatorFactory.Create(element);
                                          foreach (var replicator in replicators)
                                          {
                                              replicator.Replicate();
                                          }
+
+                                         sw.Stop();
+                                         Console.WriteLine($"{element.Identity.Id}: {sw.Elapsed.TotalSeconds} seconds");
                                      }
                                  });
             }
