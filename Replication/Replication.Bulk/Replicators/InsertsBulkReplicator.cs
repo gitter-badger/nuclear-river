@@ -10,31 +10,31 @@ using NuClear.Storage.API.Specifications;
 namespace NuClear.Replication.Bulk.Replicators
 {
 	public sealed class InsertsBulkReplicator<T> : IBulkReplicator where T : class
-	{
-		private readonly IQuery _source;
-		private readonly DataConnection _target;
+    {
+        private readonly IQuery _source;
+        private readonly DataConnection _target;
 	    private readonly MapSpecification<IQuery, IEnumerable<T>> _mapSpecification;
 
 	    public InsertsBulkReplicator(IQuery source, DataConnection target, MapSpecification<IQuery, IEnumerable<T>> mapSpecification)
-		{
-			_source = source;
-			_target = target;
+        {
+            _source = source;
+            _target = target;
 	        _mapSpecification = mapSpecification;
-		}
+        }
 
 		public void Replicate()
-		{
-		    try
-		    {
+        {
+            try
+            {
                 var sourceQueryable = _mapSpecification.Map(_source);
-                var options = new BulkCopyOptions { BulkCopyTimeout = 300 };
+                var options = new BulkCopyOptions { BulkCopyTimeout = 1800 };
                 _target.GetTable<T>().Delete();
                 _target.BulkCopy(options, sourceQueryable);
             }
             catch (Exception ex)
-		    {
-		        throw new Exception($"Can not process entity type {typeof(T).Name}", ex);
-		    }
-		}
-	}
+            {
+                throw new Exception($"Can not process entity type {typeof(T).Name}", ex);
+            }
+        }
+    }
 }
