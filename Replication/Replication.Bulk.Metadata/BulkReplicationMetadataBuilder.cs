@@ -1,4 +1,6 @@
-﻿using LinqToDB.Mapping;
+﻿using System.Collections.Generic;
+
+using LinqToDB.Mapping;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Concrete.References;
@@ -9,9 +11,9 @@ namespace NuClear.Replication.Bulk.Metadata
 {
     public sealed class BulkReplicationMetadataBuilder : MetadataElementBuilder<BulkReplicationMetadataBuilder, BulkReplicationMetadataElement>
     {
+        private readonly List<string> _essentialViewNames = new List<string>();
         private string _commandLineKey;
-        private string _essentialViewName;
-
+        
         public BulkReplicationMetadataBuilder DefinesReplication => this;
 
         public BulkReplicationMetadataBuilder CommandlineKey(string key)
@@ -42,13 +44,13 @@ namespace NuClear.Replication.Bulk.Metadata
 
         public BulkReplicationMetadataBuilder EssentialView(string viewName)
         {
-            _essentialViewName = viewName;
+            _essentialViewNames.Add(viewName);
             return this;
         }
 
         protected override BulkReplicationMetadataElement Create()
         {
-            return new BulkReplicationMetadataElement(_commandLineKey, _essentialViewName, Features);
+            return new BulkReplicationMetadataElement(_commandLineKey, _essentialViewNames, Features);
         }
     }
 }

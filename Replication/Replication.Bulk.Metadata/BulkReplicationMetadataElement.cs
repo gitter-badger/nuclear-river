@@ -11,16 +11,16 @@ namespace NuClear.Replication.Bulk.Metadata
     {
         private IMetadataElementIdentity _identity;
 
-        public BulkReplicationMetadataElement(string commandLineKey, string essentialViewName, IEnumerable<IMetadataFeature> features) 
+        public BulkReplicationMetadataElement(string commandLineKey, IReadOnlyCollection<string> essentialViewNames, IEnumerable<IMetadataFeature> features) 
             : base(features)
         {
             _identity = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<BulkReplicationMetadataKindIdentity>(commandLineKey).Build().AsIdentity();
-            EssentialView = essentialViewName;
+            EssentialViews = essentialViewNames;
         }
 
         public override IMetadataElementIdentity Identity => _identity;
         
-        public string EssentialView { get; }
+        public IReadOnlyCollection<string> EssentialViews { get; }
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity) => _identity = actualMetadataElementIdentity;
     }

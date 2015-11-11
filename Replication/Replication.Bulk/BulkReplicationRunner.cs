@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 
-using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
@@ -23,19 +22,17 @@ namespace NuClear.Replication.Bulk
 
         public void Run(string mode)
         {
-            IMetadataElement metadataElement;
+            BulkReplicationMetadataElement bulkReplicationMetadata;
             var id = Metamodeling.Elements.Identities.Builder.Metadata.Id.For<BulkReplicationMetadataKindIdentity>(mode).Build().AsIdentity();
-            if (!_metadataProvider.TryGetMetadata(id.Id, out metadataElement))
+            if (!_metadataProvider.TryGetMetadata(id.Id, out bulkReplicationMetadata))
             {
                 throw new NotSupportedException("Bulk replication metadata cannot be found");
             }
 
-            var bulkReplicationMetadata = (BulkReplicationMetadataElement)metadataElement;
-
             var storageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
-            using (ViewContainer.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, new[] { bulkReplicationMetadata.EssentialView }))
+            using (ViewContainer.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, bulkReplicationMetadata.EssentialViews))
             {
-                Parallel.ForEach(metadataElement.Elements,
+                Parallel.ForEach(bulkReplicationMetadata.Elements,
                                  element =>
                                  {
                                      using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(element))
