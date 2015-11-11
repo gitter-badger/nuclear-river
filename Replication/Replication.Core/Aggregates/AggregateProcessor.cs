@@ -3,7 +3,6 @@ using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
-using NuClear.AdvancedSearch.Common.Metadata.Features;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
