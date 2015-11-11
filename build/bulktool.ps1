@@ -13,8 +13,9 @@ Task QueueBuild-BulkTool -Precondition { $Metadata['Replication.Bulk'] } {
 Task Run-BulkTool -Precondition { $Metadata['Replication.Bulk'] } {
 	$artifactName = Get-Artifacts 'Replication.Bulk'
 
-	$exePath = Join-Path $artifactName '2GIS.NuClear.AdvancedSearch.Replication.Bulk.exe'
+	$exePath = Join-Path $artifactName '2GIS.NuClear.Replication.Bulk.exe'
 
+	Write-Host 'Invoke bulktool with' $Metadata['Replication.Bulk'].Arguments
 	& $exePath $Metadata['Replication.Bulk'].Arguments | Write-Host
 
 	if ($LastExitCode -ne 0) {
