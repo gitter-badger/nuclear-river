@@ -18,7 +18,7 @@ namespace NuClear.DataTest.Runner.Command
         protected override void Execute(SchemaMetadataElement metadataElement)
         {
             var existingDb = _smoConnectionFactory.CreateDatabaseConnection(metadataElement.ConnectionStringIdentity);
-            existingDb?.Drop();
+            existingDb?.Parent.KillDatabase(existingDb.Name);
         }
     }
 }

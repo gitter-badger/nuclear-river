@@ -39,15 +39,8 @@ namespace NuClear.DataTest.Runner
             var createSchemata = container.Resolve<CreateDatabaseSchemataCommand>();
             var runTests = container.Resolve<RunTestsCommand>();
             var validateSchemata = container.Resolve<ValidateDatabaseSchemataCommand>();
-            
-            try
-            {
-                dropDatabases.Execute();
-            }
-            catch (Exception)
-            {
-            }
 
+            dropDatabases.Execute();
             createDatabases.Execute();
             createSchemata.Execute();
             //validateSchemata.Execute();
