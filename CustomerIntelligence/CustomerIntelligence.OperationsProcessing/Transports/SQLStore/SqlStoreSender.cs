@@ -5,7 +5,6 @@ using System.Linq;
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Messaging.API.Flows;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
-using NuClear.Replication.OperationsProcessing.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 using NuClear.Storage.API.Writings;
 using NuClear.Telemetry.Probing;

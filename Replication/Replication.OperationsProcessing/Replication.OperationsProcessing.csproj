@@ -170,7 +170,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Final\AggregateOperationSerializer.cs" />
     <Compile Include="Identities\Operations\DestroyAggregateOperationIdentity.cs" />
     <Compile Include="Identities\Operations\InitializeAggregateOperationIdentity.cs" />
     <Compile Include="Identities\Operations\RecalculateAggregateOperationIdentity.cs" />

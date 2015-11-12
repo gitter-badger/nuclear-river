@@ -1,23 +1,24 @@
 ﻿using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
+using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.Messaging.API.Flows;
 using NuClear.Messaging.API.Processing.Actors.Accumulators;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing;
-using NuClear.Replication.OperationsProcessing.Final;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
 {
-    public sealed class AggregateOperationAccumulator<TMessageFlow> : MessageProcessingContextAccumulatorBase<TMessageFlow, PerformedOperationsFinalProcessingMessage, OperationAggregatableMessage<AggregateOperation>>
+    public sealed class AggregateOperationAccumulator<TMessageFlow> :
+        MessageProcessingContextAccumulatorBase<TMessageFlow, PerformedOperationsFinalProcessingMessage, OperationAggregatableMessage<AggregateOperation>>
         where TMessageFlow : class, IMessageFlow, new()
     {
-	    private readonly AggregateOperationSerializer _serializer;
+        private readonly AggregateOperationSerializer _serializer;
 
-	    public AggregateOperationAccumulator(AggregateOperationSerializer serializer)
-	    {
-		    _serializer = serializer;
-	    }
+        public AggregateOperationAccumulator(AggregateOperationSerializer serializer)
+        {
+            _serializer = serializer;
+        }
 
         protected override OperationAggregatableMessage<AggregateOperation> Process(PerformedOperationsFinalProcessingMessage message)
         {
@@ -25,11 +26,11 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
             var oldestOperation = message.FinalProcessings.Min(x => x.CreatedOn);
 
             return new OperationAggregatableMessage<AggregateOperation>
-            {
-                TargetFlow = MessageFlow,
-                Operations = operations,
-                OperationTime = oldestOperation,
-            };
+                   {
+                       TargetFlow = MessageFlow,
+                       Operations = operations,
+                       OperationTime = oldestOperation,
+                   };
         }
     }
 }

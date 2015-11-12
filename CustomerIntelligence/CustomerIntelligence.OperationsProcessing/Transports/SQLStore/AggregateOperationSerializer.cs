@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
+using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
 
-namespace NuClear.Replication.OperationsProcessing.Final
+namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 {
     public sealed class AggregateOperationSerializer
     {
-        private readonly IEntityTypeMappingRegistry<ISubDomain> _registry;
+        private readonly IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> _registry;
 
         private static readonly Dictionary<Guid, Type> OperationIdRegistry =
             new Dictionary<Guid, Type>
@@ -25,7 +26,7 @@ namespace NuClear.Replication.OperationsProcessing.Final
         private static readonly Dictionary<Type, Guid> OperationTypeRegistry =
             OperationIdRegistry.ToDictionary(x => x.Value, x => x.Key);
 
-        public AggregateOperationSerializer(IEntityTypeMappingRegistry<ISubDomain> registry)
+        public AggregateOperationSerializer(IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> registry)
         {
             _registry = registry;
         }
