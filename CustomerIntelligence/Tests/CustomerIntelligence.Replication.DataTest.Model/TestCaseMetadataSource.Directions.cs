@@ -22,7 +22,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                               .Source("Bit")
                               .Target("Statistics")
                               .Require("CustomerIntelligence")
-                              .Action<PefillStatisticsContext>()
+                              .Action<PrefillStatisticsContext>()
                               .Action<BulkReplication<BulkLoadingOfStatistics>>();
     }
 }

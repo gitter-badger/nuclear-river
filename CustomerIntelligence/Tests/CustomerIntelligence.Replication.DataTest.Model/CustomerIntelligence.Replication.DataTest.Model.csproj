@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkReplication.cs" />
-    <Compile Include="PefillStatisticsContext.cs" />
+    <Compile Include="PrefillStatisticsContext.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryDictionary.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryGroupDictionary.cs" />
     <Compile Include="TestCaseMetadataSource.Project.cs" />
