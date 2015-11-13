@@ -126,6 +126,10 @@
     <Compile Include="Comparer\CompareResult.cs" />
     <Compile Include="Comparer\IReader.cs" />
     <Compile Include="Comparer\MessageFormatter.cs" />
+    <Compile Include="Observer\ITestResult.cs" />
+    <Compile Include="Observer\ITestStatusObserver.cs" />
+    <Compile Include="Observer\TeamCityTestStatusObserver.cs" />
+    <Compile Include="Observer\TestResultStatus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Smo\DatabaseSchemaComparer.cs" />

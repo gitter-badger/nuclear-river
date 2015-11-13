@@ -13,6 +13,12 @@ Include "$BuildToolsRoot\psake\tasks.ps1"
 Include 'convertusecases.ps1'
 Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
+Include 'datatest.ps1'
+
+Task Run-DataTests {
+	$projects = Find-Projects '.' '*DataTest.Model*'
+	Run-DataTests $projects 'UnitTests'
+}
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
 	$projectFileName = Get-ProjectFileName 'Querying' 'Querying.Web.OData'

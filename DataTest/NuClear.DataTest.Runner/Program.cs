@@ -7,6 +7,7 @@ using Microsoft.Practices.Unity;
 
 using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Runner.Command;
+using NuClear.DataTest.Runner.Observer;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
 using NuClear.Metamodeling.Provider.Sources;
@@ -31,6 +32,7 @@ namespace NuClear.DataTest.Runner
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();
+            container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
 
             var createDatabases = container.Resolve<CreateDatabasesCommand>();
             var dropDatabases = container.Resolve<DropDatabasesCommand>();

@@ -11,6 +11,7 @@ using Microsoft.Practices.Unity;
 using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Metamodel.Dsl;
 using NuClear.DataTest.Runner.Comparer;
+using NuClear.DataTest.Runner.Observer;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider;
 
@@ -20,13 +21,15 @@ namespace NuClear.DataTest.Runner.Command
     {
         private readonly IUnityContainer _container;
         private readonly DataConnectionFactory _dataConnectionFactory;
+        private readonly ITestStatusObserver _observer;
         private readonly Dictionary<Uri, IMetadataElement> _testMetadata;
         private readonly Dictionary<string, SchemaMetadataElement> _schemaMetadata;
 
-        public RunTestsCommand(IMetadataProvider metadataProvider, IUnityContainer container, DataConnectionFactory dataConnectionFactory)
+        public RunTestsCommand(IMetadataProvider metadataProvider, IUnityContainer container, DataConnectionFactory dataConnectionFactory, ITestStatusObserver observer)
         {
             _container = container;
             _dataConnectionFactory = dataConnectionFactory;
+            _observer = observer;
 
             _testMetadata = metadataProvider.GetMetadataSet<TestCaseMetadataIdentity>().Metadata;
             _schemaMetadata = metadataProvider.GetMetadataSet<SchemaMetadataIdentity>().Metadata.Values.Cast<SchemaMetadataElement>().ToDictionary(x => x.Context, x => x);
@@ -36,9 +39,18 @@ namespace NuClear.DataTest.Runner.Command
         {
             foreach (var test in _testMetadata.Values.OfType<TestCaseMetadataElement>())
             {
-                Arrange(test);
-                Act(test);
-                Assert(test);
+                _observer.Started(test);
+                try
+                {
+                    Arrange(test);
+                    Act(test);
+                    Assert(test);
+                    _observer.Succeeded(test);
+                }
+                catch (Exception ex)
+                {
+                    _observer.Asserted(test, ex);
+                }
             }
         }
 
