@@ -14,6 +14,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
         {
             yield return With(MinimalFirmAggregate).Do(ErmToFact, FactToCi, BitToStatistics);
             yield return With(ProjectAggregate).Do(ErmToFact, FactToCi);
+            yield return With(BornToFail).Do(ErmToFact);
         }
 
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata

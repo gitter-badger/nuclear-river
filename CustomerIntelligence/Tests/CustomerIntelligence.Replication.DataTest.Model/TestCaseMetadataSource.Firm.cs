@@ -46,5 +46,11 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, ProjectId = 1, AdvertisersShare = null, Hits = null, Shows = null, FirmCount = null },
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, ProjectId = 1, Hits = 10, Shows = 20, AdvertisersShare = 1, FirmCount = 1 },
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 4, ProjectId = 1, Hits = 0, Shows = 0, AdvertisersShare = 0, FirmCount = 1 });
+
+        private static ArrangeMetadataElement BornToFail
+            => ArrangeMetadataElement.Config
+                .Name(nameof(BornToFail))
+                .Erm(
+                    new Erm::Firm { Id = 1, ClientId = null, ClosedForAscertainment = false, CreatedOn = DateTimeOffset.MinValue, IsActive = true, IsDeleted = false, LastDisqualifyTime = null, Name = "FirmName", OrganizationUnitId = 1, OwnerId = 27 });
     }
 }
