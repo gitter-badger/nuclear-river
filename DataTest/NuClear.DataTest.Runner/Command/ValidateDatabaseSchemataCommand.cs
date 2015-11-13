@@ -16,8 +16,8 @@ namespace NuClear.DataTest.Runner.Command
     {
         private readonly SmoConnectionFactory _connectionFactory;
 
-        public ValidateDatabaseSchemataCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, SmoConnectionFactory connectionFactory)
-            : base(targetAssembly, metadataProvider)
+        public ValidateDatabaseSchemataCommand(IMetadataProvider metadataProvider, SmoConnectionFactory connectionFactory)
+            : base(metadataProvider)
         {
             _connectionFactory = connectionFactory;
         }

@@ -27,9 +27,7 @@ namespace NuClear.DataTest.Runner
                                                                 .ToArray(),
                                                         new IMetadataProcessor[0]);
 
-            container.RegisterInstance<Assembly>(assembly);
             container.RegisterInstance<IMetadataProvider>(metadataProvider);
-            container.RegisterInstance<Configuration>(ConfigurationManager.OpenExeConfiguration(assembly.Location));
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();

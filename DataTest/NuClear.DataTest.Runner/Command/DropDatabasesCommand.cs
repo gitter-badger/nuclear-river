@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-using NuClear.DataTest.Metamodel;
+﻿using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.DataTest.Runner.Command
@@ -9,8 +7,8 @@ namespace NuClear.DataTest.Runner.Command
     {
         private readonly SmoConnectionFactory _smoConnectionFactory;
 
-        public DropDatabasesCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, SmoConnectionFactory smoConnectionFactory)
-            : base(targetAssembly, metadataProvider)
+        public DropDatabasesCommand(IMetadataProvider metadataProvider, SmoConnectionFactory smoConnectionFactory)
+            : base(metadataProvider)
         {
             _smoConnectionFactory = smoConnectionFactory;
         }

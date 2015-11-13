@@ -1,21 +1,16 @@
-﻿using System.Reflection;
-
-using NuClear.DataTest.Metamodel;
+﻿using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Provider;
 
 namespace NuClear.DataTest.Runner.Command
 {
     public abstract class Command : ICommand
     {
-        protected Command(Assembly targetAssembly, IMetadataProvider metadataProvider)
+        protected Command(IMetadataProvider metadataProvider)
         {
-            TargetAssembly = targetAssembly;
             MetadataSet = metadataProvider.GetMetadataSet<SchemaMetadataIdentity>();
         }
 
         protected MetadataSet MetadataSet { get; }
-
-        protected Assembly TargetAssembly { get; }
 
         public void Execute()
         {

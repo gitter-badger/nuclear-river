@@ -1,5 +1,4 @@
 ﻿using System.Data.SqlClient;
-using System.Reflection;
 
 using Microsoft.SqlServer.Management.Smo;
 
@@ -14,8 +13,8 @@ namespace NuClear.DataTest.Runner.Command
         private readonly ConnectionStringSettingsAspect _settings;
         private readonly SmoConnectionFactory _smoConnectionFactory;
 
-        public CreateDatabasesCommand(Assembly targetAssembly, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettings, SmoConnectionFactory smoConnectionFactory)
-            : base(targetAssembly, metadataProvider)
+        public CreateDatabasesCommand(IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettings, SmoConnectionFactory smoConnectionFactory)
+            : base(metadataProvider)
         {
             _settings = connectionStringSettings;
             _smoConnectionFactory = smoConnectionFactory;
