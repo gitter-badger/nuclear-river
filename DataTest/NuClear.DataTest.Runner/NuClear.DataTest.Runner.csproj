@@ -128,6 +128,7 @@
     <Compile Include="Comparer\MessageFormatter.cs" />
     <Compile Include="Observer\ITestResult.cs" />
     <Compile Include="Observer\ITestStatusObserver.cs" />
+    <Compile Include="Observer\ConsoleTestStatusObserver.cs" />
     <Compile Include="Observer\TeamCityTestStatusObserver.cs" />
     <Compile Include="Observer\TestResultStatus.cs" />
     <Compile Include="Program.cs" />

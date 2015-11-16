@@ -32,8 +32,11 @@ namespace NuClear.DataTest.Runner
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();
+#if DEBUG
+            container.RegisterType<ITestStatusObserver, ConsoleTestStatusObserver>();
+#else
             container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
-
+#endif
             var createDatabases = container.Resolve<CreateDatabasesCommand>();
             var dropDatabases = container.Resolve<DropDatabasesCommand>();
             var createSchemata = container.Resolve<CreateDatabaseSchemataCommand>();
