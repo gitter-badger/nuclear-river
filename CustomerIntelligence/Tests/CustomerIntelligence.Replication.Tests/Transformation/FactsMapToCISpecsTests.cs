@@ -154,7 +154,9 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
         [Test]
         public void ShouldTransformFirmBalance()
         {
-            SourceDb.Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 },
+                         new Facts::Project { Id = 2, OrganizationUnitId = 2 })
+                    .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 },
                          new Facts::Firm { Id = 2, ClientId = 2, OrganizationUnitId = 2 },
                          new Facts::Firm { Id = 3, ClientId = 1, OrganizationUnitId = 1 })
                     .Has(new Facts::Client { Id = 1 },
@@ -169,9 +171,11 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 
             Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmBalances.Map(x).Where(b => new long[] { 1, 2, 3 }.Contains(b.FirmId)).OrderBy(fb => fb.FirmId),
-                                           Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1 },
-                                                   new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3 },
-                                                   new CI::FirmBalance { FirmId = 3, Balance = 123, AccountId = 1 }),
+                                           Inquire(new CI::FirmBalance { FirmId = 1, Balance = 123, AccountId = 1, ProjectId = 1 },
+                                                   new CI::FirmBalance { FirmId = 2, Balance = 345, AccountId = 3, ProjectId = 2 },
+                                                   new CI::FirmBalance { FirmId = 3, Balance = 123, AccountId = 1, ProjectId = 1 },
+                                                   new CI::FirmBalance { FirmId = 1, Balance = 234, AccountId = 2, ProjectId = 2 },
+                                                   new CI::FirmBalance { FirmId = 3, Balance = 234, AccountId = 2, ProjectId = 2 }),
                                            "The balance should be processed.");
         }
 
