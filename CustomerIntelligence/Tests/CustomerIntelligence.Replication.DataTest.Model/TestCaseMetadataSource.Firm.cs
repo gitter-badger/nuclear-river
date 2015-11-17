@@ -47,6 +47,17 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, ProjectId = 1, Hits = 10, Shows = 20, AdvertisersShare = 1, FirmCount = 1 },
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 4, ProjectId = 1, Hits = 0, Shows = 0, AdvertisersShare = 0, FirmCount = 1 });
 
+        private static ArrangeMetadataElement FirmWithActivity
+            => ArrangeMetadataElement.Config
+                .Name(nameof(FirmWithActivity))
+                .IncludeSharedDictionary(MinimalFirmAggregate)
+                .Erm(
+                    new Erm::Phonecall { Id = 1, IsActive = true, IsDeleted = false, Status = 2, ModifiedOn = DateTimeOffset.Parse("2010-01-01") },
+                    new Erm::PhonecallReference { ActivityId = 1, Reference = 1, ReferencedObjectId = 1, ReferencedType = 146 })
+                .Fact(
+                    new Facts::Activity { Id = 1, FirmId = 1, ModifiedOn = DateTimeOffset.Parse("2010-01-01") })
+                .Mutate(m => m.Update<CI::FirmActivity>(x => x.FirmId == 1, x => x.LastActivityOn = DateTimeOffset.Parse("2010-01-01")));
+
         private static ArrangeMetadataElement BornToFail
             => ArrangeMetadataElement.Config
                 .Name(nameof(BornToFail))

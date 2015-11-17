@@ -12,7 +12,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     {
         private static IEnumerable<IEnumerable<TestCaseMetadataElement>> Tests()
         {
-            yield return With(MinimalFirmAggregate).Do(ErmToFact, FactToCi, BitToStatistics);
+            yield return With(FirmWithActivity, MinimalFirmAggregate).Do(ErmToFact, FactToCi, BitToStatistics);
             yield return With(ProjectAggregate).Do(ErmToFact, FactToCi);
             yield return With(BornToFail).Do(ErmToFact);
         }
