@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using Moq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
-using NuClear.AdvancedSearch.Common.Metadata.Features;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Metamodeling.Elements;
@@ -179,15 +178,15 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     .Has(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 123 },
                          new CI::FirmBalance { FirmId = 3, Balance = 123 });
 
-	        Transformation.Create(Query)
-	                      .Recalculate<CI::Firm>(1, 2, 3)
-						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1, ProjectId = 1 }))))
-						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2, ProjectId = 1 }))))
-						  .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3, ProjectId = 1 }))))
-						  .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, AccountId = 1, Balance = 123 }))))
-						  .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 456 }))))
-	                      .Verify<CI::FirmBalance>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
-		}
+            Transformation.Create(Query)
+                          .Recalculate<CI::Firm>(1, 2, 3)
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1, ProjectId = 1 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2, ProjectId = 1 }))))
+                          .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3, ProjectId = 1 }))))
+                          .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, AccountId = 1, Balance = 123 }))))
+                          .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 456 }))))
+                          .Verify<CI::FirmBalance>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
+        }
 
         [Test]
         public void ShouldRecalculateFirmHavingCategory()
@@ -201,9 +200,9 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                          new Facts::FirmAddress { Id = 2, FirmId = 2 });
             SourceDb.Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 1 },
                          new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 2 });
-                    SourceDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 },
-                         new Facts::Firm { Id = 2, OrganizationUnitId = 1 },
-                         new Facts::Firm { Id = 3, OrganizationUnitId = 1 });
+            SourceDb.Has(new Facts::Firm { Id = 1, OrganizationUnitId = 1 },
+                 new Facts::Firm { Id = 2, OrganizationUnitId = 1 },
+                 new Facts::Firm { Id = 3, OrganizationUnitId = 1 });
 
             TargetDb.Has(new CI::Firm { Id = 1 },
                          new CI::Firm { Id = 2 },
@@ -363,7 +362,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 
             Transformation.Create(Query)
                           .Destroy<CI::Territory>(1)
-                          .Verify<CI::Territory>(m => m.Delete(It.Is(Predicate.Match(new CI::Territory { Id = 1 } ))));
+                          .Verify<CI::Territory>(m => m.Delete(It.Is(Predicate.Match(new CI::Territory { Id = 1 }))));
         }
 
         [Test]
@@ -444,14 +443,14 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 return Verify<T>(expression, times, null);
             }
 
-            public Transformation Verify<T>(Expression<Action<IRepository<T>>> expression, Func<Times> times, string failMessage) 
+            public Transformation Verify<T>(Expression<Action<IRepository<T>>> expression, Func<Times> times, string failMessage)
                 where T : class
             {
                 _repositoryFactory.Verify(expression, times, failMessage);
                 return this;
             }
 
-            private Transformation Do<TAggregate>(Action<AggregateProcessor<TAggregate>> action) 
+            private Transformation Do<TAggregate>(Action<AggregateProcessor<TAggregate>> action)
                 where TAggregate : class, IIdentifiable
             {
                 var aggregateType = typeof(TAggregate);
@@ -473,12 +472,12 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 where TAggregate : class, IIdentifiable
             {
                 private readonly IQuery _query;
-	            private readonly IRepositoryFactory _repositoryFactory;
+                private readonly IRepositoryFactory _repositoryFactory;
 
                 public Factory(IQuery query, IRepositoryFactory repositoryFactory)
                 {
                     _query = query;
-	                _repositoryFactory = repositoryFactory;
+                    _repositoryFactory = repositoryFactory;
                 }
 
                 public IAggregateProcessor Create(IMetadataElement aggregateMetadata)
@@ -486,12 +485,12 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     return new AggregateProcessor<TAggregate>((AggregateMetadata<TAggregate>)aggregateMetadata, this, _query, _repositoryFactory.Create<TAggregate>());
                 }
 
-				public IValueObjectProcessor Create(IValueObjectFeature metadata)
-				{
-					var processorType = typeof(ValueObjectProcessor<>).MakeGenericType(metadata.ValueObjectType);
-					return (IValueObjectProcessor)Activator.CreateInstance(processorType, metadata, _query, _repositoryFactory.Create(metadata.ValueObjectType));
-				}
-			}
+                public IValueObjectProcessor Create(IValueObjectMetadataElement metadata)
+                {
+                    var processorType = typeof(ValueObjectProcessor<>).MakeGenericType(metadata.ValueObjectType);
+                    return (IValueObjectProcessor)Activator.CreateInstance(processorType, metadata, _query, _repositoryFactory.Create(metadata.ValueObjectType));
+                }
+            }
         }
 
         #endregion

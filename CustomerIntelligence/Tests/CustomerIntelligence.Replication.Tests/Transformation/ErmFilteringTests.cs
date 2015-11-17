@@ -108,7 +108,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     .Entity(new FirmAddress { Id = 2, IsActive = false }, false, "неактивный")
                     .Entity(new FirmAddress { Id = 3, IsDeleted = true }, false, "удалённый")
                     .Entity(new FirmAddress { Id = 4, IsActive = false, IsDeleted = true }, false, "неактивный и удалённый")
-                    .Entity(new FirmAddress { Id = 5, ClosedForAscertainment = true }, true, "скрытый до выяснения"),
+                    .Entity(new FirmAddress { Id = 5, ClosedForAscertainment = true }, false, "скрытый до выяснения"),
 
                 For(Specs.Find.Erm.LegalPersons())
                     .Entity(new LegalPerson { Id = 1 }, true, "по умолчанию")

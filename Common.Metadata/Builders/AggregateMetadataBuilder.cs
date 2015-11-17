@@ -45,7 +45,7 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
             MapToObjectsSpecProvider<TValueObject, TValueObject> mapSpecificationProviderForTarget = 
                 specification => new MapSpecification<IQuery, IEnumerable<TValueObject>>(q => targetMappingSpecification.Map(q).Where(specification));
             
-            AddFeatures(new ValueObjectFeature<TValueObject>(mapSpecificationProviderForSource, mapSpecificationProviderForTarget, findSpecificationProvider));
+            Childs(new ValueObjectMetadataElement<TValueObject>(mapSpecificationProviderForSource, mapSpecificationProviderForTarget, findSpecificationProvider));
             return this;
         }
     }

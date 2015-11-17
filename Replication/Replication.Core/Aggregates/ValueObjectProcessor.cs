@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Common.Metadata;
-using NuClear.AdvancedSearch.Common.Metadata.Features;
+using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
@@ -13,11 +13,11 @@ namespace NuClear.Replication.Core.Aggregates
         where T : class, IObject
     {
         private readonly IBulkRepository<T> _repository;
-        private readonly ValueObjectFeature<T> _metadata;
+        private readonly ValueObjectMetadataElement<T> _metadata;
         private readonly DataChangesDetector<T, T> _changesDetector;
 
         // TODO {all, 15.09.2015}: Имеет смысл избавить *Processor от зависимостей IQuery, I*Info, заменить на DataChangesDetector
-        public ValueObjectProcessor(ValueObjectFeature<T> metadata, IQuery query, IBulkRepository<T> repository)
+        public ValueObjectProcessor(ValueObjectMetadataElement<T> metadata, IQuery query, IBulkRepository<T> repository)
         {
             _metadata = metadata;
             _repository = repository;

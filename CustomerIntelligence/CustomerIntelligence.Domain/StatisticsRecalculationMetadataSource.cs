@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
@@ -14,6 +15,8 @@ using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
 
 namespace NuClear.CustomerIntelligence.Domain
 {
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines", Justification = "Reviewed. Suppression is OK here.")]
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1115:ParameterMustFollowComma", Justification = "Reviewed. Suppression is OK here.")]
     public class StatisticsRecalculationMetadataSource : MetadataSourceBase<StatisticsRecalculationMetadataIdentity>
     {
         private readonly IReadOnlyDictionary<Uri, IMetadataElement> _metadata;

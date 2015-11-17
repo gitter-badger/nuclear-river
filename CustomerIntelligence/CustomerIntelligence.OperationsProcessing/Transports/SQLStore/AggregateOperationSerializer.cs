@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
@@ -11,9 +9,9 @@ using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
 
-namespace NuClear.CustomerIntelligence.OperationsProcessing
+namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 {
-    public class AggregateOperationSerializer
+    public sealed class AggregateOperationSerializer
     {
         private readonly IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> _registry;
 

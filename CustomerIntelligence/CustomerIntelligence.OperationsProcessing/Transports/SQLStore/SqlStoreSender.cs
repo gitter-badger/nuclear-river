@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
-using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.Messaging.API.Flows;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -18,7 +17,10 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
         private readonly IRepository<PerformedOperationFinalProcessing> _repository;
         private readonly AggregateOperationSerializer _aggregateOperationSerializer;
 
-        public SqlStoreSender(IIdentityGenerator identityGenerator, IRepository<PerformedOperationFinalProcessing> repository, AggregateOperationSerializer aggregateOperationSerializer)
+        public SqlStoreSender(
+            IIdentityGenerator identityGenerator,
+            IRepository<PerformedOperationFinalProcessing> repository,
+            AggregateOperationSerializer aggregateOperationSerializer)
         {
             _identityGenerator = identityGenerator;
             _repository = repository;
@@ -54,7 +56,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
             _repository.Save();
         }
 
-        private PerformedOperationFinalProcessing SerializeMessage(RecalculateStatisticsOperation operation, IMessageFlow targetFlow)
+        private static PerformedOperationFinalProcessing SerializeMessage(RecalculateStatisticsOperation operation, IMessageFlow targetFlow)
         {
             return new PerformedOperationFinalProcessing
             {
