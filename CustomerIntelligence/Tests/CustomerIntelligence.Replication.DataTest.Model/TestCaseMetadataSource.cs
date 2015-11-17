@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 using NuClear.DataTest.Metamodel.Dsl;
 using NuClear.Metamodeling.Elements;
@@ -10,35 +11,29 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 {
     public sealed partial class TestCaseMetadataSource : MetadataSourceBase<TestCaseMetadataIdentity>
     {
-        private static IEnumerable<IEnumerable<TestCaseMetadataElement>> Tests()
-        {
-            yield return With(FirmWithActivity, MinimalFirmAggregate).Do(ErmToFact, FactToCi, BitToStatistics);
-            yield return With(ProjectAggregate).Do(ErmToFact, FactToCi);
-            yield return With(BornToFail).Do(ErmToFact);
-        }
-
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata
-            => Tests()
-                .SelectMany(x => x)
-                .ToDictionary(x => x.Identity.Id, x => (IMetadataElement)x);
+            => Tests().ToDictionary(x => x.Identity.Id, x => (IMetadataElement)x);
 
-        private static IEnumerable<ArrangeMetadataElement> With(params ArrangeMetadataElement[] elements)
+        private static IEnumerable<TestCaseMetadataElement> Tests()
         {
-            return elements;
+            var acts = new[] { ErmToFact, FactToCi, BitToStatistics };
+
+            var tests = from arrangeMetadataElement in ScanForDatasets()
+                        from actMetadataElement in acts
+                        where actMetadataElement.Requirements.All(requirement => arrangeMetadataElement.Contexts.Contains(requirement))
+                              && arrangeMetadataElement.Contexts.Contains(actMetadataElement.Target)
+                        select new TestCaseMetadataElement(arrangeMetadataElement, actMetadataElement);
+
+            return tests.OrderBy(x => x.Identity.Id.ToString());
         }
-    }
 
-    internal static class Extensions
-    {
-        public static IEnumerable<TestCaseMetadataElement> Do(this IEnumerable<ArrangeMetadataElement> arranges, params ActMetadataElement[] acts)
+        private static IEnumerable<ArrangeMetadataElement> ScanForDatasets()
         {
-            foreach (var arrangeMetadataElement in arranges)
-            {
-                foreach (var actMetadataElement in acts)
-                {
-                    yield return new TestCaseMetadataElement(arrangeMetadataElement, actMetadataElement);
-                }
-            }
+            return typeof(TestCaseMetadataSource)
+                .GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(property => property.PropertyType == typeof(ArrangeMetadataElement))
+                .Select(property => property.GetValue(null))
+                .Cast<ArrangeMetadataElement>();
         }
     }
 }

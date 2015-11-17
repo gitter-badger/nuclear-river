@@ -12,6 +12,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 
     public sealed partial class TestCaseMetadataSource
     {
+        // ReSharper disable once UnusedMember.Local
         private static ArrangeMetadataElement MinimalFirmAggregate
             => ArrangeMetadataElement.Config
                 .Name(nameof(MinimalFirmAggregate))
@@ -47,6 +48,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, ProjectId = 1, Hits = 10, Shows = 20, AdvertisersShare = 1, FirmCount = 1 },
                     new Statistics::FirmCategoryStatistics { FirmId = 1, CategoryId = 4, ProjectId = 1, Hits = 0, Shows = 0, AdvertisersShare = 0, FirmCount = 1 });
 
+        // ReSharper disable once UnusedMember.Local
         private static ArrangeMetadataElement FirmWithActivity
             => ArrangeMetadataElement.Config
                 .Name(nameof(FirmWithActivity))
@@ -58,10 +60,12 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                     new Facts::Activity { Id = 1, FirmId = 1, ModifiedOn = DateTimeOffset.Parse("2010-01-01") })
                 .Mutate(m => m.Update<CI::FirmActivity>(x => x.FirmId == 1, x => x.LastActivityOn = DateTimeOffset.Parse("2010-01-01")));
 
+        // ReSharper disable once UnusedMember.Local
         private static ArrangeMetadataElement BornToFail
             => ArrangeMetadataElement.Config
                 .Name(nameof(BornToFail))
                 .Erm(
-                    new Erm::Firm { Id = 1, ClientId = null, ClosedForAscertainment = false, CreatedOn = DateTimeOffset.MinValue, IsActive = true, IsDeleted = false, LastDisqualifyTime = null, Name = "FirmName", OrganizationUnitId = 1, OwnerId = 27 });
+                    new Erm::Firm { Id = 1, ClientId = null, ClosedForAscertainment = false, CreatedOn = DateTimeOffset.MinValue, IsActive = true, IsDeleted = false, LastDisqualifyTime = null, Name = "FirmName", OrganizationUnitId = 1, OwnerId = 27 })
+                .Fact();
     }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-using NuClear.DataTest.Metamodel.Dsl;
+﻿using NuClear.DataTest.Metamodel.Dsl;
 
 namespace CustomerIntelligence.Replication.DataTest.Model
 {
@@ -12,6 +10,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 
     public sealed partial class TestCaseMetadataSource
     {
+        // ReSharper disable once UnusedMember.Local
         private static ArrangeMetadataElement ProjectAggregate
             => ArrangeMetadataElement.Config
                 .Name(nameof(ProjectAggregate))
