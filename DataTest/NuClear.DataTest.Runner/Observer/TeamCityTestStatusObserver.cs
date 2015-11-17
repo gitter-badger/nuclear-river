@@ -29,6 +29,12 @@ namespace NuClear.DataTest.Runner.Observer
             FinishTest(test);
         }
 
+        public void Ignored(TestCaseMetadataElement test)
+        {
+            Console.WriteLine(new TeamCityMessage("testIgnored")
+                                  .WithProperty("name", ResolveTestId(test)));
+        }
+
         public void Succeeded(TestCaseMetadataElement test)
         {
             FinishTest(test);

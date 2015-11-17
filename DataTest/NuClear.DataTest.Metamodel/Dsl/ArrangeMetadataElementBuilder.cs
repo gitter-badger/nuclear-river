@@ -21,5 +21,8 @@ namespace NuClear.DataTest.Metamodel.Dsl
 
         public ArrangeMetadataElementBuilder IncludeSharedDictionary(ArrangeMetadataElement dictionaryArrange)
             => WithFeatures(dictionaryArrange.Features.ToArray());
+
+        public ArrangeMetadataElementBuilder Ignored()
+            => WithFeatures(new ArrangeMetadataElement.IgnoreFeature());
     }
 }

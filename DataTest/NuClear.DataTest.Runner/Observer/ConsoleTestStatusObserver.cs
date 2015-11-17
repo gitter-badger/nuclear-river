@@ -16,6 +16,11 @@ namespace NuClear.DataTest.Runner.Observer
             Console.WriteLine(exception.Message);
         }
 
+        public void Ignored(TestCaseMetadataElement test)
+        {
+            Console.WriteLine("Ignored: " + test.Identity.Id);
+        }
+
         public void Succeeded(TestCaseMetadataElement test)
         {
             Console.WriteLine("Ok: " + test.Identity.Id);

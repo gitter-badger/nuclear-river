@@ -44,6 +44,13 @@ namespace NuClear.DataTest.Runner.Command
             foreach (var test in _testMetadata.Values.OfType<TestCaseMetadataElement>())
             {
                 _observer.Started(test);
+
+                if (test.Arrange.IsIgnored)
+                {
+                    _observer.Ignored(test);
+                    continue;
+                }
+
                 try
                 {
                     Arrange(test);

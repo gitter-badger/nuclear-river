@@ -66,6 +66,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                 .Name(nameof(BornToFail))
                 .Erm(
                     new Erm::Firm { Id = 1, ClientId = null, ClosedForAscertainment = false, CreatedOn = DateTimeOffset.MinValue, IsActive = true, IsDeleted = false, LastDisqualifyTime = null, Name = "FirmName", OrganizationUnitId = 1, OwnerId = 27 })
-                .Fact();
+                .Fact()
+                .Ignored();
     }
 }

@@ -39,6 +39,9 @@ namespace NuClear.DataTest.Metamodel.Dsl
                            .ToDictionary(x => x.Key, x => (IReadOnlyCollection<object>)x.ToArray());
         }
 
+        public bool IsIgnored
+            => Features.OfType<IgnoreFeature>().Any();
+
         public sealed class ContextStateFeature : IMetadataFeature
         {
             public ContextStateFeature(string context, object[] data)
@@ -115,6 +118,10 @@ namespace NuClear.DataTest.Metamodel.Dsl
                            select item;
                 }
             }
+        }
+
+        public sealed class IgnoreFeature : IUniqueMetadataFeature
+        {
         }
     }
 }

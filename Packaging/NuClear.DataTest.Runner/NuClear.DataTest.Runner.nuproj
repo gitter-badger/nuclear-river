@@ -25,7 +25,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>2Gis.NuClear.DataTest.Runner</Id>
-    <Version>0.2.0-a</Version>
+    <Version>0.3.0-a</Version>
     <Title>2Gis.NuClear.DataTest.Runner</Title>
     <Authors>2GIS</Authors>
     <Owners>2GIS</Owners>

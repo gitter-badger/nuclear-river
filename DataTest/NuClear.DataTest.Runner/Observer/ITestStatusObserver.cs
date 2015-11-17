@@ -8,6 +8,7 @@ namespace NuClear.DataTest.Runner.Observer
     {
         void Started(TestCaseMetadataElement test);
         void Asserted(TestCaseMetadataElement test, Exception exception);
+        void Ignored(TestCaseMetadataElement test);
         void Succeeded(TestCaseMetadataElement test);
     }
 }
