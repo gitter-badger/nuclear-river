@@ -90,16 +90,12 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BulkLoading\BulkLoadingOfStatistics.cs" />
-    <Compile Include="BulkLoading\BulkLoadingFixtureBase.cs" />
     <Compile Include="DynamicMock.cs" />
     <Compile Include="MockLinqToDbDataBuilder.cs" />
     <Compile Include="QueryableExtensions.cs" />
     <Compile Include="SqliteDomainContextFactory.cs" />
     <Compile Include="SqliteEntityContainerNameResolver.cs" />
     <Compile Include="StatisticsTransformation\StatisticsFinalTransformationTests.cs" />
-    <Compile Include="BulkLoading\BulkLoadingOfCustomerIntelligence.cs" />
-    <Compile Include="BulkLoading\BulkLoadingOfFacts.cs" />
     <Compile Include="StubDomainContextProvider.cs" />
     <Compile Include="StubReadableDomainContextProvider.cs" />
     <Compile Include="Transformation\ErmFactsTransformationFixture.cs" />
@@ -123,7 +119,6 @@
     <Compile Include="MemoryMockQuery.cs" />
     <Compile Include="Transformation\OperationSortingFixture.cs" />
     <Compile Include="FixtureBase.cs" />
-    <Compile Include="Data\DataConnectionExtensions.cs" />
     <Compile Include="DataFixtureBase.cs" />
     <Compile Include="Data\NoSqlTrace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

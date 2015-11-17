@@ -26,11 +26,6 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
             FindSpecificationProvider = findSpecificationProvider;
         }
 
-        public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
-        {
-            _identity = actualMetadataElementIdentity;
-        }
-
         public override IMetadataElementIdentity Identity
         {
             get { return _identity; }
@@ -41,5 +36,10 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
         public MapToObjectsSpecProvider<T, T> MapSpecificationProviderForTarget { get; private set; }
 
         public Func<IReadOnlyCollection<long>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
+
+        public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
+        {
+            _identity = actualMetadataElementIdentity;
+        }
     }
 }

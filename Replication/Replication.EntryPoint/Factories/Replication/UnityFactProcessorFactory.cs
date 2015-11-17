@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Replication.Core.API.Facts;

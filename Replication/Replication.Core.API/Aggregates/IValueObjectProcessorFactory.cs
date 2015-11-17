@@ -1,9 +1,9 @@
-﻿using NuClear.AdvancedSearch.Common.Metadata.Features;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Elements;
 
 namespace NuClear.Replication.Core.API.Aggregates
 {
     public interface IValueObjectProcessorFactory
     {
-        IValueObjectProcessor Create(IValueObjectFeature metadata);
+        IValueObjectProcessor Create(IValueObjectMetadataElement metadata);
     }
 }
