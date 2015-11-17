@@ -1,6 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 
 using Microsoft.Practices.Unity;
@@ -32,11 +30,15 @@ namespace NuClear.DataTest.Runner
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();
-#if DEBUG
-            container.RegisterType<ITestStatusObserver, ConsoleTestStatusObserver>();
-#else
-            container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
-#endif
+            if (args.Contains("--teamcity"))
+            {
+                container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
+            }
+            else
+            {
+                container.RegisterType<ITestStatusObserver, ConsoleTestStatusObserver>();
+            }
+
             var createDatabases = container.Resolve<CreateDatabasesCommand>();
             var dropDatabases = container.Resolve<DropDatabasesCommand>();
             var createSchemata = container.Resolve<CreateDatabaseSchemataCommand>();

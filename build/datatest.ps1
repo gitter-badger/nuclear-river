@@ -43,7 +43,13 @@ function Run-DataTests ($Projects, $entryPointMetadataKey){
 		}
 	}
 	
-	& $RunnerPath $assemblies
+    $isTeamCity = Test-Path 'Env:\TEAMCITY_VERSION'
+    if($isTeamCity) {
+        & $RunnerPath $assemblies --teamcity
+    }
+    else {
+        & $RunnerPath $assemblies
+    }
 
 		if ($lastExitCode -ne 0) {
 		throw "Command failed with exit code $lastExitCode"
