@@ -101,22 +101,27 @@ namespace NuClear.DataTest.Runner.Command
 
         private void Arrange(TestCaseMetadataElement test)
         {
-            foreach (var context in test.Arrange.Contexts)
+            foreach (var context in test.Act.Requirements)
             {
-                var arrangeData = test.Act.Requirements.Contains(context)
+                var arrangeData = test.Arrange.Contexts.Contains(context)
                     ? new DictionaryReader(test.Arrange.GetData(context))
-                    : new DictionaryReader(new Dictionary<Type, IReadOnlyCollection<object>>());
+                    : new DictionaryReader();
 
-                var contextMetadata = _schemaMetadata[context];
+                SetupContext(_schemaMetadata[context], arrangeData);
+            }
 
-                using (var db = _dataConnectionFactory.CreateConnection(contextMetadata))
+            SetupContext(_schemaMetadata[test.Act.Target], new DictionaryReader());
+        }
+
+        private void SetupContext(SchemaMetadataElement contextMetadata, IReader contextData)
+        {
+            using (var db = _dataConnectionFactory.CreateConnection(contextMetadata))
+            {
+                foreach (var entityType in contextMetadata.Entities)
                 {
-                    foreach (var entityType in contextMetadata.Entities)
-                    {
-                        var helperType = typeof(ArrangeHelper<>).MakeGenericType(entityType);
-                        var helperInstance = (IArrangeHelper)Activator.CreateInstance(helperType);
-                        helperInstance.Arrange(db, arrangeData);
-                    }
+                    var helperType = typeof(ArrangeHelper<>).MakeGenericType(entityType);
+                    var helperInstance = (IArrangeHelper)Activator.CreateInstance(helperType);
+                    helperInstance.Arrange(db, contextData);
                 }
             }
         }
@@ -154,6 +159,11 @@ namespace NuClear.DataTest.Runner.Command
         private class DictionaryReader : IReader
         {
             private readonly IReadOnlyDictionary<Type, IReadOnlyCollection<object>> _data;
+
+            public DictionaryReader()
+                : this(new Dictionary<Type, IReadOnlyCollection<object>>())
+            {
+            }
 
             public DictionaryReader(IReadOnlyDictionary<Type, IReadOnlyCollection<object>> data)
             {
