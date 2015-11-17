@@ -44,4 +44,8 @@ function Run-DataTests ($Projects, $entryPointMetadataKey){
 	}
 	
 	& $RunnerPath $assemblies
+
+		if ($lastExitCode -ne 0) {
+		throw "Command failed with exit code $lastExitCode"
+	}
 }

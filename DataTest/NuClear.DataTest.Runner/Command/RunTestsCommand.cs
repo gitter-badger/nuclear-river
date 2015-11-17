@@ -33,7 +33,11 @@ namespace NuClear.DataTest.Runner.Command
 
             _testMetadata = metadataProvider.GetMetadataSet<TestCaseMetadataIdentity>().Metadata;
             _schemaMetadata = metadataProvider.GetMetadataSet<SchemaMetadataIdentity>().Metadata.Values.Cast<SchemaMetadataElement>().ToDictionary(x => x.Context, x => x);
+
+            AnyFailedTest = false;
         }
+
+        public bool AnyFailedTest { get; private set; }
 
         public void Execute()
         {
@@ -49,6 +53,7 @@ namespace NuClear.DataTest.Runner.Command
                 }
                 catch (Exception ex)
                 {
+                    AnyFailedTest = true;
                     _observer.Asserted(test, ex);
                 }
             }

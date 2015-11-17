@@ -17,7 +17,7 @@ namespace NuClear.DataTest.Runner
 {
     static class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             var container = new UnityContainer();
 
@@ -46,8 +46,10 @@ namespace NuClear.DataTest.Runner
             dropDatabases.Execute();
             createDatabases.Execute();
             createSchemata.Execute();
-            //validateSchemata.Execute();
+            validateSchemata.Execute();
             runTests.Execute();
+
+            return runTests.AnyFailedTest ? -1 : 0;
         }
     }
 }
