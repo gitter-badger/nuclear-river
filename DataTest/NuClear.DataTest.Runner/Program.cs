@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 using Microsoft.Practices.Unity;
 
@@ -30,6 +32,7 @@ namespace NuClear.DataTest.Runner
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();
+            container.RegisterInstance<CommandlineParameters>(ParceCommandline(args));
             if (args.Contains("--teamcity"))
             {
                 container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
@@ -45,13 +48,22 @@ namespace NuClear.DataTest.Runner
             var runTests = container.Resolve<RunTestsCommand>();
             var validateSchemata = container.Resolve<ValidateDatabaseSchemataCommand>();
 
-            dropDatabases.Execute();
-            createDatabases.Execute();
-            createSchemata.Execute();
-            validateSchemata.Execute();
+            //dropDatabases.Execute();
+            //createDatabases.Execute();
+            //createSchemata.Execute();
+            //validateSchemata.Execute();
             runTests.Execute();
 
             return runTests.AnyFailedTest ? -1 : 0;
+        }
+
+        private static CommandlineParameters ParceCommandline(string[] args)
+        {
+            // --key1=value1 --key2 = value two
+            var exp = new Regex(@"(--(?'key'.+?)=(?'value'.+?)(($)|(?=--)))");
+            var matches = exp.Matches(string.Join(" ", args));
+            var arguments = matches.Cast<Match>().ToDictionary(x => x.Groups["key"].Value.Trim(), x => x.Groups["value"].Value.Trim());
+            return new CommandlineParameters(arguments);
         }
     }
 }

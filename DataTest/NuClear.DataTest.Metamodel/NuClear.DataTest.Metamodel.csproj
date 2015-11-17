@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandlineParameters.cs" />
     <Compile Include="DataConnectionFactory.cs" />
     <Compile Include="Dsl\ArrangeMetadataElementExtensions.cs" />
     <Compile Include="Dsl\TestCaseMetadataBuilder.cs" />

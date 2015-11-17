@@ -1,5 +1,4 @@
-﻿using NuClear.CustomerIntelligence.Replication.Tests.BulkLoading;
-using NuClear.DataTest.Metamodel.Dsl;
+﻿using NuClear.DataTest.Metamodel.Dsl;
 
 namespace CustomerIntelligence.Replication.DataTest.Model
 {
@@ -9,13 +8,13 @@ namespace CustomerIntelligence.Replication.DataTest.Model
             ActMetadataElement.Config
                               .Source("Erm")
                               .Target("Facts")
-                              .Action<BulkReplication<BulkLoadingOfFacts>>();
+                              .Action<BulkReplicationAdapter<Facts>>();
 
         private static readonly ActMetadataElement FactToCi =
             ActMetadataElement.Config
                               .Source("Facts")
                               .Target("CustomerIntelligence")
-                              .Action<BulkReplication<BulkLoadingOfCustomerIntelligence>>();
+                              .Action<BulkReplicationAdapter<CustomerIntelligence>>();
 
         private static readonly ActMetadataElement BitToStatistics =
             ActMetadataElement.Config
@@ -23,6 +22,6 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                               .Target("Statistics")
                               .Require("CustomerIntelligence")
                               .Action<PrefillStatisticsContext>()
-                              .Action<BulkReplication<BulkLoadingOfStatistics>>();
+                              .Action<BulkReplicationAdapter<Statistics>>();
     }
 }

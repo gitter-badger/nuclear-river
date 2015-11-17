@@ -66,7 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BulkReplication.cs" />
+    <Compile Include="BulkReplicationAdapter.cs" />
     <Compile Include="PrefillStatisticsContext.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryDictionary.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryGroupDictionary.cs" />
@@ -103,10 +103,6 @@
     <ProjectReference Include="..\..\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
       <Project>{FA1074A6-B89D-45DF-9B73-6881BEF46E33}</Project>
       <Name>CustomerIntelligence.Storage</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CustomerIntelligence.Replication.Tests\CustomerIntelligence.Replication.Tests.csproj">
-      <Project>{25AACA77-648A-4462-8EC1-709963219C8E}</Project>
-      <Name>CustomerIntelligence.Replication.Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

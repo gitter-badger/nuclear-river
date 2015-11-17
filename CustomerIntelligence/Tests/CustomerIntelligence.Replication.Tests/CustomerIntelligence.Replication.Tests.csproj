@@ -90,8 +90,6 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BulkLoading\ILoader.cs" />
-    <Compile Include="BulkLoading\Loader.cs" />
     <Compile Include="DynamicMock.cs" />
     <Compile Include="MockLinqToDbDataBuilder.cs" />
     <Compile Include="QueryableExtensions.cs" />
