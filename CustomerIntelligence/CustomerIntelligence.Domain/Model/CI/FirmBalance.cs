@@ -2,6 +2,8 @@
 {
     public sealed class FirmBalance : ICustomerIntelligenceObject
     {
+        public long ProjectId { get; set; }
+
         public long FirmId { get; set; }
 
         public long AccountId { get; set; }
