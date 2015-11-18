@@ -15,7 +15,7 @@ Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
 Include 'datatest.ps1'
 
-Task Run-DataTests -Depends QueueBuild-BulkTool,Build-Packages -Precondition { $Metadata['Replication.Bulk'] } {
+Task Run-DataTests -Depends QueueBuild-BulkTool,Build-Queue -Precondition { $Metadata['Replication.Bulk'] } {
     $artifactName = Get-Artifacts 'Replication.Bulk'
     $artifactExecutable = Join-Path $artifactName '2GIS.NuClear.Replication.Bulk.exe'
 	$projects = Find-Projects '.' '*DataTest.Model*'
