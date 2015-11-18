@@ -7,23 +7,23 @@ $ErrorActionPreference = 'Stop'
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.taskservice.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.transform.psm1" -DisableNameChecking
-Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
+Import-Module "$PSScriptRoot\metadata.usecaseroute.psm1" -DisableNameChecking
 
 function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
 	$entryPointsMetadata = @{}
-	$entryPointsMetadata += Get-ServiceBusMetadata $Context
 	
+	# конвертер нужен всегда, чтобы из него подт€нуть connection strings дл€ Create-Topics
+	$Context.EntryPoint = 'ConvertUseCasesService'
+	$entryPointsMetadata += Get-TaskServiceMetadata $Context
+
 	switch ($EntryPoints){
 		'Web.OData' {
 			$Context.EntryPoint = $_
 			$entryPointsMetadata += Get-WebMetadata $Context
 		}
 
-		{ @(
-			'Replication.EntryPoint'
-			'ConvertUseCasesService'
-			) -contains $_} {
+		'Replication.EntryPoint' {
 			$Context.EntryPoint = $_
 			$entryPointsMetadata += Get-TaskServiceMetadata $Context
 		}
@@ -91,6 +91,7 @@ function Parse-EnvironmentMetadata ($Properties) {
 	$context.EnvironmentName = $environmentName
 
 	$context.UseCaseRoute = $Properties['UseCaseRoute']
+	$environmentMetadata += Get-UseCaseRouteMetadata $context
 
 	if ($Properties.ContainsKey('EntryPoints')){
 		$entryPoints = $Properties['EntryPoints']
@@ -98,6 +99,7 @@ function Parse-EnvironmentMetadata ($Properties) {
 		if ($entryPoints -and $entryPoints -isnot [array]){
 			$entryPoints = $entryPoints.Split(@(','), 'RemoveEmptyEntries')
 		}
+
 	} else {
 		$entryPoints = $AllEntryPoints
 	}
