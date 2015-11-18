@@ -19,6 +19,7 @@ namespace NuClear.DataTest.Runner
     {
         public static int Main(string[] args)
         {
+            var arguments = ParceCommandline(args);
             var container = new UnityContainer();
 
             var assembly = Assembly.Load(AssemblyName.GetAssemblyName(args[0]));
@@ -32,8 +33,11 @@ namespace NuClear.DataTest.Runner
             container.RegisterType(typeof(ConnectionStringSettingsAspect), assembly.GetExportedTypes().Single(t => typeof(ConnectionStringSettingsAspect).IsAssignableFrom(t)));
             container.RegisterType<DataConnectionFactory>();
             container.RegisterType<SmoConnectionFactory>();
-            container.RegisterInstance<CommandlineParameters>(ParceCommandline(args));
-            if (args.Contains("--teamcity"))
+            container.RegisterInstance<CommandlineParameters>(arguments);
+
+            string isTeamcityString;
+            bool isTeamcity;
+            if (arguments.TryGet("teamcity", out isTeamcityString) && bool.TryParse(isTeamcityString, out isTeamcity) && isTeamcity)
             {
                 container.RegisterType<ITestStatusObserver, TeamCityTestStatusObserver>();
             }
@@ -48,10 +52,10 @@ namespace NuClear.DataTest.Runner
             var runTests = container.Resolve<RunTestsCommand>();
             var validateSchemata = container.Resolve<ValidateDatabaseSchemataCommand>();
 
-            //dropDatabases.Execute();
-            //createDatabases.Execute();
-            //createSchemata.Execute();
-            //validateSchemata.Execute();
+            dropDatabases.Execute();
+            createDatabases.Execute();
+            createSchemata.Execute();
+            validateSchemata.Execute();
             runTests.Execute();
 
             return runTests.AnyFailedTest ? -1 : 0;
