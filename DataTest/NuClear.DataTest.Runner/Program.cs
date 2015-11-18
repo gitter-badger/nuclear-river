@@ -64,7 +64,7 @@ namespace NuClear.DataTest.Runner
         private static CommandlineParameters ParceCommandline(string[] args)
         {
             // --key1=value1 --key2 = value two
-            var exp = new Regex(@"(--(?'key'.+?)=(?'value'.+?)(($)|(?=--)))");
+            var exp = new Regex(@"(--(?'key'.+?)=(?'value'.+?)(($)|(?=\s--)))");
             var matches = exp.Matches(string.Join(" ", args));
             var arguments = matches.Cast<Match>().ToDictionary(x => x.Groups["key"].Value.Trim(), x => x.Groups["value"].Value.Trim());
             return new CommandlineParameters(arguments);

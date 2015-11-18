@@ -19,7 +19,7 @@ Task Run-DataTests -Depends QueueBuild-BulkTool,Build-Queue -Precondition { $Met
     $artifactName = Get-Artifacts 'Replication.Bulk'
     $artifactExecutable = Join-Path $artifactName '2GIS.NuClear.Replication.Bulk.exe'
 	$projects = Find-Projects '.' '*DataTest.Model*'
-	Run-DataTests $projects 'UnitTests' $artifactExecutable.
+	Run-DataTests $projects 'UnitTests' $artifactExecutable
 }
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
