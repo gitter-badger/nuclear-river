@@ -54,19 +54,16 @@ namespace NuClear.Replication.Core.Aggregates
                             if (operation == typeof(InitializeAggregate))
                             {
                                 processor.Initialize(aggregateIds);
-                                continue;
                             }
 
                             if (operation == typeof(RecalculateAggregate))
                             {
                                 processor.Recalculate(aggregateIds);
-                                continue;
                             }
 
                             if (operation == typeof(DestroyAggregate))
                             {
                                 processor.Destroy(aggregateIds);
-                                continue;
                             }
                         }
 
