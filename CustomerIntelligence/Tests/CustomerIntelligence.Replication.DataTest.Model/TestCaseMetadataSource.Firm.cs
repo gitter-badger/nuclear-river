@@ -24,6 +24,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
                     new CI::FirmCategory { FirmId = 1, CategoryId = 3 },
                     new CI::FirmCategory { FirmId = 1, CategoryId = 4 },
                     new CI::FirmActivity { FirmId = 1, LastActivityOn = null },
+                    new CI::FirmTerritory { FirmId = 1, FirmAddressId = 1, TerritoryId = 1 },
                     new CI::Project { Id = 1, Name = "ProjectOne" })
                 .Fact(
                     new Facts::Firm { Id = 1, ClientId = null, CreatedOn = DateTimeOffset.MinValue, LastDisqualifiedOn = null, Name = "FirmName", OrganizationUnitId = 1, OwnerId = 27 },
