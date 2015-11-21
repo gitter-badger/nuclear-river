@@ -1,0 +1,17 @@
+using NuClear.Telemetry;
+
+namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
+{
+    public sealed class BitStatisticsEntityProcessedCountIdentity : TelemetryIdentityBase<BitStatisticsEntityProcessedCountIdentity>
+    {
+        public override int Id
+        {
+            get { return 0; }
+        }
+
+        public override string Description
+        {
+            get { return " оличество прин€тых записей статистики из Bit"; }
+        }
+    }
+}

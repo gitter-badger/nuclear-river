@@ -15,7 +15,7 @@ Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
-	$projectFileName = Get-ProjectFileName '.' 'Web.OData'
+	$projectFileName = Get-ProjectFileName 'Querying' 'Querying.Web.OData'
 	QueueBuild-WebPackage $projectFileName 'Web.OData'
 }
 Task Deploy-OData -Depends Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
@@ -28,7 +28,7 @@ Task Take-ODataOffline -Precondition { $Metadata['Web.OData'] } {
 }
 
 Task QueueBuild-TaskService -Precondition { $Metadata['Replication.EntryPoint'] } {
-	$projectFileName = Get-ProjectFileName '.' 'Replication.EntryPoint'
+	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.EntryPoint'
 	QueueBuild-AppPackage $projectFileName 'Replication.EntryPoint'
 }
 
