@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-using LinqToDB;
+using LinqToDB.Data;
 
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
@@ -10,12 +10,14 @@ namespace NuClear.Replication.Bulk.Storage
 {
     public sealed class LinqToDbQuery : IQuery
     {
-        private readonly IDataContext _dataContext;
+        private readonly DataConnection _dataContext;
 
-        public LinqToDbQuery(IDataContext dataContext)
+        public LinqToDbQuery(DataConnection dataContext)
         {
             _dataContext = dataContext;
         }
+
+        public string LastQuery => _dataContext.LastQuery;
 
         public IQueryable For(Type objType)
         {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using LinqToDB;
 using LinqToDB.Data;
 
+using NuClear.Replication.Bulk.Storage;
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
@@ -33,7 +34,8 @@ namespace NuClear.Replication.Bulk.Replicators
             }
             catch (Exception ex)
             {
-                throw new Exception($"Can not process entity type {typeof(T).Name}", ex);
+                var linq2DBSource = _source as LinqToDbQuery;
+                throw new Exception($"Can not process entity type {typeof(T).Name}\n{linq2DBSource?.LastQuery}", ex);
             }
         }
     }
