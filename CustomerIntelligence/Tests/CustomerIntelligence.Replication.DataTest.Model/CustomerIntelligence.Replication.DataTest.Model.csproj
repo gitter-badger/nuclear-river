@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2Gis.NuClear.DataTest.Metamodel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\2GIS.NuClear.DataTest.0.9.0-local-000000-3025\lib\net46\2Gis.NuClear.DataTest.Metamodel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\2GIS.NuClear.Metamodeling.2.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
@@ -91,10 +95,6 @@
     <ProjectReference Include="..\..\..\Common.Metadata\Common.Metadata.csproj">
       <Project>{2EBD563D-A59B-4FB8-AED6-0340D136F72C}</Project>
       <Name>Common.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataTest\NuClear.DataTest.Metamodel\NuClear.DataTest.Metamodel.csproj">
-      <Project>{3e50db8d-999e-4a89-9b21-34d11b742e39}</Project>
-      <Name>NuClear.DataTest.Metamodel</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>

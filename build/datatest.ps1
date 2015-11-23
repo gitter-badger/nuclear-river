@@ -9,7 +9,7 @@ Import-Module "$BuildToolsRoot\modules\artifacts.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\unittests.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
 
-$RunnerPackageInfo = Get-PackageInfo '2Gis.NuClear.DataTest.Runner'
+$RunnerPackageInfo = Get-PackageInfo '2Gis.NuClear.DataTest'
 $RunnerPath = Join-Path $RunnerPackageInfo.VersionedDir "tools\2Gis.NuClear.DataTest.Runner.exe"
 
 function Run-DataTests ($Projects, $entryPointMetadataKey, $bulkToolExecutable){
