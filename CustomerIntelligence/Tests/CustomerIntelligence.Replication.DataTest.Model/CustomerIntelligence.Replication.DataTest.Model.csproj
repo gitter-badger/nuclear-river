@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="2Gis.NuClear.DataTest.Metamodel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\2GIS.NuClear.DataTest.0.10.0-local-000000-1346\lib\net46\2Gis.NuClear.DataTest.Metamodel.dll</HintPath>
+      <HintPath>..\..\..\packages\2GIS.NuClear.DataTest.0.13.0-prerelea-7f7c9b-27\lib\net46\2Gis.NuClear.DataTest.Metamodel.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
