@@ -31,7 +31,7 @@
     <Compile Include="convertusecases.ps1" />
     <Compile Include="default.ps1" />
     <Compile Include="metadata.psm1" />
-    <Compile Include="metadata.servicebus.psm1" />
+    <Compile Include="metadata.usecaseroute.psm1" />
     <Compile Include="metadata.taskservice.psm1" />
     <Compile Include="metadata.transform.psm1" />
     <Compile Include="metadata.web.psm1" />

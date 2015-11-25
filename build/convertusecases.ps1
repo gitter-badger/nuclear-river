@@ -8,7 +8,7 @@ Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\transform.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\servicebus.psm1" -DisableNameChecking
 
-Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] } {
+Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesService'] -and $Metadata['UseCaseRoute'] } {
 
 	$tempDir = Get-ConvertUseCasesServiceTempDir
 
@@ -16,7 +16,7 @@ Task Build-ConvertUseCasesService -Precondition { $Metadata['ConvertUseCasesServ
 	$transformedConfig = Get-TransformedConfig $configFileName 'ConvertUseCasesService'
 	$transformedConfig.Save($configFileName)
 
-	if ($Metadata['ServiceBus'] -and $Metadata.ServiceBus.UseCaseRoute -eq 'Production'){
+	if ($Metadata.UseCaseRoute.RouteName -match 'ERMProduction'){
 		Apply-ProductionConnectionString $configFileName
 	}
 
@@ -60,27 +60,26 @@ function Get-ConvertUseCasesServiceTempDir  {
 	return $tempDir
 }
 
-Task Create-Topics -Precondition { $Metadata['ServiceBus'] } {
+Task Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] -and $Metadata['UseCaseRoute'] } {
 
 	$artifacts = Get-Artifacts 'ConvertUseCasesService'
 	$configFileName = Join-Path $artifacts '2GIS.NuClear.AdvancedSearch.Tools.ConvertTrackedUseCases.exe.config'
 	[xml]$config = Get-Content $configFileName -Raw
 
-	$serviceBusMetadata = $Metadata.ServiceBus
-	$routeMetadata = $serviceBusMetadata.Routes[$serviceBusMetadata.UseCaseRoute]
+	$useCaseRouteMetadata = $Metadata.UseCaseRoute
 
-	if ($serviceBusMetadata.UseCaseRoute -ne 'Production'){
+	if ($useCaseRouteMetadata.RouteName -notmatch 'ERMProduction'){
 		$productionConnectionString = Get-ProductionConnectionString
-		$productionRouteMetadata = $serviceBusMetadata.Routes.Production
+		$productionRouteMetadata = $Metadata.ProductionUseCaseRoute
 		Delete-Subscription $productionConnectionString $productionRouteMetadata.SourceTopic $productionRouteMetadata.SourceSubscription
 	}
 
 	$sourceConnectionString = Get-ConnectionString $config 'Source'
-	Create-Topic $sourceConnectionString $routeMetadata.SourceTopic -Properties @{
+	Create-Topic $sourceConnectionString $useCaseRouteMetadata.SourceTopic -Properties @{
 		'EnableBatchedOperations' = $true
 		'SupportOrdering' = $true
 	}
-	Create-Subscription $sourceConnectionString $routeMetadata.SourceTopic $routeMetadata.SourceSubscription -Properties @{
+	Create-Subscription $sourceConnectionString $useCaseRouteMetadata.SourceTopic $useCaseRouteMetadata.SourceSubscription -Properties @{
 		'EnableBatchedOperations' = $true
 		'MaxDeliveryCount' = 0x7fffffff
 	}
@@ -89,20 +88,25 @@ Task Create-Topics -Precondition { $Metadata['ServiceBus'] } {
 	Delete-Topic $destConnectionString 'topic.advancedsearch' # временно, потом удалить
 	Delete-Topic $destConnectionString 'topic.performedoperations(.*)import'
 
-	Create-Topic $destConnectionString $routeMetadata.DestTopic -Properties @{
+	Create-Topic $destConnectionString $useCaseRouteMetadata.DestTopic -Properties @{
 		'EnableBatchedOperations' = $true
 		'SupportOrdering' = $true
 		'RequiresDuplicateDetection' = $true
 	}
-	Create-Subscription $destConnectionString $routeMetadata.DestTopic $routeMetadata.DestSubscription -Properties @{
+	Create-Subscription $destConnectionString $useCaseRouteMetadata.DestTopic $useCaseRouteMetadata.DestSubscription -Properties @{
 		'EnableBatchedOperations' = $true
 		'MaxDeliveryCount' = 0x7fffffff
 	}
 }
 
-Task Deploy-ConvertUseCasesService -Depends Build-ConvertUseCasesService, Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] } {
+Task Deploy-ConvertUseCasesService -Depends Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] -and $Metadata['UseCaseRoute'] } {
 	
 	Load-WinServiceModule 'ConvertUseCasesService'
 	Take-WinServiceOffline 'ConvertUseCasesService'
-	Deploy-WinService 'ConvertUseCasesService'
+
+	if ($Metadata.UseCaseRoute.RouteName -eq 'ERM'){
+		Remove-WinService 'ConvertUseCasesService'
+	} else {
+		Deploy-WinService 'ConvertUseCasesService'
+	}
 }
