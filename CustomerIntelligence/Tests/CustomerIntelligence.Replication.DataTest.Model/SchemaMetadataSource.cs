@@ -20,28 +20,33 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     public class SchemaMetadataSource : MetadataSourceBase<SchemaMetadataIdentity>
     {
         private static readonly SchemaMetadataElement Erm = SchemaMetadataElement.Config
-            .For<ErmConnectionStringIdentity>("Erm")
+            .For("Erm")
+            .HasConnectionString<ErmConnectionStringIdentity>()
             .HasMasterConnectionString<ErmMasterConnectionStringIdentity>()
             .HasSchema(Schema.Erm)
             .HasEntitiesFromNamespace(typeof(Erm::Account).Namespace);
 
         private static readonly SchemaMetadataElement Facts = SchemaMetadataElement.Config
-            .For<FactsConnectionStringIdentity>("Facts")
+            .For("Facts")
+            .HasConnectionString<FactsConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Facts::Account).Namespace);
 
         private static readonly SchemaMetadataElement CustomerIntelligence = SchemaMetadataElement.Config
-            .For<CustomerIntelligenceConnectionStringIdentity>("CustomerIntelligence")
+            .For("CustomerIntelligence")
+            .HasConnectionString<CustomerIntelligenceConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(CI::CategoryGroup).Namespace);
 
         private static readonly SchemaMetadataElement Bit = SchemaMetadataElement.Config
-            .For<BitConnectionStringIdentity>("Bit")
+            .For("Bit")
+            .HasConnectionString<BitConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Bit::FirmCategoryStatistics).Namespace);
 
         private static readonly SchemaMetadataElement Statistics = SchemaMetadataElement.Config
-            .For<StatisticsConnectionStringIdentity>("Statistics")
+            .For("Statistics")
+            .HasConnectionString<StatisticsConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(Statistics::FirmCategoryStatistics).Namespace);
 

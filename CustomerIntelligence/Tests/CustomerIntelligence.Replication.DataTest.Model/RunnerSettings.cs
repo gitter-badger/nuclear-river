@@ -10,9 +10,15 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 {
     public sealed class RunnerConnectionStringSettingsAspect : ConnectionStringSettingsAspect
     {
-        public RunnerConnectionStringSettingsAspect(Configuration configuration)
-            : base(CreateConnectionStringMappings(configuration))
+        public RunnerConnectionStringSettingsAspect()
+            : base(CreateConnectionStringMappings(GetTestAssemblyConfiguration()))
         {
+        }
+
+        private static Configuration GetTestAssemblyConfiguration()
+        {
+            var assemblyLocation = typeof(RunnerConnectionStringSettingsAspect).Assembly.Location;
+            return ConfigurationManager.OpenExeConfiguration(assemblyLocation);
         }
 
         private static IReadOnlyDictionary<IConnectionStringIdentity, string> CreateConnectionStringMappings(Configuration configuration) =>

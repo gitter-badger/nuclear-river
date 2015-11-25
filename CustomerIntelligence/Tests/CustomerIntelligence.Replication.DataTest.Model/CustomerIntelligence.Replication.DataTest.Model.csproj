@@ -31,12 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="2Gis.NuClear.DataTest.Metamodel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\2GIS.NuClear.DataTest.0.13.0-prerelea-7f7c9b-27\lib\net46\2Gis.NuClear.DataTest.Metamodel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="2GIS.NuClear.Metamodeling, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\2GIS.NuClear.Metamodeling.1.6.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
+      <HintPath>..\..\..\packages\2GIS.NuClear.Metamodeling.2.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Metamodeling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Model.Common, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3ad4d1ee93087517, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\2GIS.NuClear.Model.Common.1.2.1-Multiple-b1c461-54\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
+      <HintPath>..\..\..\packages\2GIS.NuClear.Model.Common.2.0.0\lib\portable-net451+win81+wpa81\2GIS.NuClear.Model.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="2GIS.NuClear.Settings.API, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5149c0be8b89ed8f, processorArchitecture=MSIL">
@@ -66,6 +70,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BulkReplicationAdapter.cs" />
+    <Compile Include="PrefillStatisticsContext.cs" />
+    <Compile Include="TestCaseMetadataSource.CategoryDictionary.cs" />
+    <Compile Include="TestCaseMetadataSource.CategoryGroupDictionary.cs" />
+    <Compile Include="TestCaseMetadataSource.Project.cs" />
+    <Compile Include="TestCaseMetadataSource.Firm.cs" />
+    <Compile Include="TestCaseMetadataSource.Directions.cs" />
+    <Compile Include="TestCaseMetadataSource.cs" />
     <Compile Include="Identitites\Connections\ErmMasterConnectionStringIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunnerSettings.cs" />
@@ -83,10 +95,6 @@
     <ProjectReference Include="..\..\..\Common.Metadata\Common.Metadata.csproj">
       <Project>{2EBD563D-A59B-4FB8-AED6-0340D136F72C}</Project>
       <Name>Common.Metadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataTest\NuClear.DataTest.Metadata\NuClear.DataTest.Metamodel.csproj">
-      <Project>{3e50db8d-999e-4a89-9b21-34d11b742e39}</Project>
-      <Name>NuClear.DataTest.Metamodel</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>
