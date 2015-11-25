@@ -117,17 +117,18 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
         [Test]
         public void ShouldInitializeFirmHavingBalance()
         {
-            SourceDb.Has(new Facts::Project { OrganizationUnitId = 1 })
+            SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 1 })
+
                     .Has(new Facts::Client { Id = 1 })
                     .Has(new Facts::BranchOfficeOrganizationUnit { Id = 1, OrganizationUnitId = 1 })
                     .Has(new Facts::LegalPerson { Id = 1, ClientId = 1 })
-                    .Has(new Facts::Account { LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1, Balance = 123.45m })
+                    .Has(new Facts::Account { Id = 1, LegalPersonId = 1, BranchOfficeOrganizationUnitId = 1, Balance = 123.45m })
                     .Has(new Facts::Firm { Id = 1, ClientId = 1, OrganizationUnitId = 1 });
 
             Transformation.Create(Query)
                           .Initialize<CI::Firm>(1)
-                          .Verify<CI::Firm>(m => m.Add(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1 }))))
-                          .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, Balance = 123.45m }))));
+                          .Verify<CI::Firm>(m => m.Add(It.Is(Predicate.Match(new CI::Firm { Id = 1, ProjectId = 1, ClientId = 1 }))))
+                          .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { ProjectId = 1, FirmId = 1, AccountId = 1, Balance = 123.45m }))));
         }
 
         [Test]
@@ -175,17 +176,17 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             TargetDb.Has(new CI::Firm { Id = 1 },
                          new CI::Firm { Id = 2 },
                          new CI::Firm { Id = 3 })
-                    .Has(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 123 },
-                         new CI::FirmBalance { FirmId = 3, Balance = 123 });
+                    .Has(new CI::FirmBalance { FirmId = 2, AccountId = 2, ProjectId = 1, Balance = 123 },
+                         new CI::FirmBalance { FirmId = 3, ProjectId = 1, Balance = 123 });
 
             Transformation.Create(Query)
                           .Recalculate<CI::Firm>(1, 2, 3)
                           .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 1, ClientId = 1, ProjectId = 1 }))))
                           .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 2, ClientId = 2, ProjectId = 1 }))))
                           .Verify<CI::Firm>(m => m.Update(It.Is(Predicate.Match(new CI::Firm { Id = 3, ProjectId = 1 }))))
-                          .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, AccountId = 1, Balance = 123 }))))
-                          .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, AccountId = 2, Balance = 456 }))))
-                          .Verify<CI::FirmBalance>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, Balance = 123 }))));
+                          .Verify<CI::FirmBalance>(m => m.Add(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 1, AccountId = 1, ProjectId = 1, Balance = 123 }))))
+                          .Verify<CI::FirmBalance>(m => m.Update(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 2, AccountId = 2, ProjectId = 1, Balance = 456 }))))
+                          .Verify<CI::FirmBalance>(m => m.Delete(It.Is(Predicate.Match(new CI::FirmBalance { FirmId = 3, ProjectId = 1, Balance = 123 }))));
         }
 
         [Test]

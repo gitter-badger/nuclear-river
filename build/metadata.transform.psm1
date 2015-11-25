@@ -2,7 +2,7 @@
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
-Import-Module "$PSScriptRoot\metadata.servicebus.psm1" -DisableNameChecking
+Import-Module "$PSScriptRoot\metadata.usecaseroute.psm1" -DisableNameChecking
 
 function Get-XdtMetadata($Context){
 	$xdt = @()
@@ -47,13 +47,10 @@ function Get-RegexMetadata($Context){
 		$regex += @{ '{EnvNum}' = $Context['Index'] }
 	}
 
-	$serviceBusMetadata = Get-ServiceBusMetadata $Context
-	if ($serviceBusMetadata.Count -ne 0){
-		$routeMetadata = $serviceBusMetadata.ServiceBus.Routes[$serviceBusMetadata.ServiceBus.UseCaseRoute]
-		$regex += @{
-			'{SourceTopic}' = $routeMetadata.SourceTopic
-			'{SourceSubscription}' = $routeMetadata.SourceSubscription
-			'{DestTopic}' = $routeMetadata.DestTopic
+	$useCaseRouteMetadata = Get-UseCaseRouteMetadata $Context
+	if ($useCaseRouteMetadata.Count -ne 0){
+		foreach($keyValuePair in $useCaseRouteMetadata.UseCaseRoute.GetEnumerator()){
+			$regex["{$($keyValuePair.Key)}"] = $keyValuePair.Value
 		}
 	}
 

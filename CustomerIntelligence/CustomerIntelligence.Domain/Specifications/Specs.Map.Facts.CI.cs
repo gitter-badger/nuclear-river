@@ -144,14 +144,14 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
 
                     public readonly static MapSpecification<IQuery, IQueryable<FirmBalance>> FirmBalances =
                         new MapSpecification<IQuery, IQueryable<FirmBalance>>(
-                            q => from account in q.For<Facts::Account>()
-                                 join legalPerson in q.For<Facts::LegalPerson>() on account.LegalPersonId equals legalPerson.Id
-                                 join client in q.For<Facts::Client>() on legalPerson.ClientId equals client.Id
-                                 join branchOfficeOrganizationUnit in q.For<Facts::BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals
-                                     branchOfficeOrganizationUnit.Id
-                                 join firm in q.For<Facts::Firm>() on branchOfficeOrganizationUnit.OrganizationUnitId equals firm.OrganizationUnitId
-                                 where firm.ClientId == client.Id
-                                 select new FirmBalance { AccountId = account.Id, FirmId = firm.Id, Balance = account.Balance });
+                            q => from firm in q.For<Facts::Firm>()
+                                 join client in q.For<Facts::Client>() on firm.ClientId equals client.Id
+                                 join legalPerson in q.For<Facts::LegalPerson>() on client.Id equals legalPerson.ClientId 
+                                 join account in q.For<Facts::Account>() on legalPerson.Id equals account.LegalPersonId
+                                 join branchOfficeOrganizationUnit in q.For<Facts::BranchOfficeOrganizationUnit>() on account.BranchOfficeOrganizationUnitId equals branchOfficeOrganizationUnit.Id 
+                                 join project in q.For<Facts::Project>() on branchOfficeOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
+                                 
+                                 select new FirmBalance { ProjectId = project.Id, FirmId = firm.Id, AccountId = account.Id, Balance = account.Balance });
 
                     public readonly static MapSpecification<IQuery, IQueryable<FirmCategory>> FirmCategories = 
                         new MapSpecification<IQuery, IQueryable<FirmCategory>>(

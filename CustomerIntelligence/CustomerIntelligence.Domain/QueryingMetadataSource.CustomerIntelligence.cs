@@ -50,6 +50,7 @@ namespace NuClear.CustomerIntelligence.Domain
                                             EntityElement.Config.Name(EntityName.FirmBalance)
                                                 .HasKey("AccountId")
                                                 .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
+                                                .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                                 .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
                                         ).AsMany())
                                     .Relation(EntityRelationElement.Config.Name("Categories")
@@ -151,6 +152,7 @@ namespace NuClear.CustomerIntelligence.Domain
                     EntityElement.Config.Name(TableName.FirmBalance)
                                  .HasKey("FirmId", "AccountId")
                                  .Property(EntityPropertyElement.Config.Name("AccountId").OfType(ElementaryTypeKind.Int64))
+                                 .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Balance").OfType(ElementaryTypeKind.Decimal))
                                  .Relation(EntityRelationElement.Config.Name("FirmId").DirectTo(EntityElement.Config.Name(ViewName.Firm)).AsOne()),
                     EntityElement.Config.Name(TableName.FirmCategory)

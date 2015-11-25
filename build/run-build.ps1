@@ -9,9 +9,8 @@ if ($Properties.Count -eq 0){
 	$Properties.EntryPoints = @(
 		#'Web.OData'
 		#'Replication.EntryPoint'
-		#'ConvertUseCasesService'
 	)
-	#$Properties.UseCaseRoute = 'Default'
+	#$Properties.UseCaseRoute = 'ERM'
 	#$Properties.UpdateSchemas = 'CustomerIntelligence'
 }
 
@@ -20,7 +19,7 @@ $ErrorActionPreference = 'Stop'
 #------------------------------
 cls
 
-$Properties.SemanticVersion = '0.0.1'
+$Properties.SemanticVersion = '0.0.2'
 $Properties.SolutionDir = Join-Path $PSScriptRoot '..'
 $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 
@@ -37,7 +36,7 @@ $Properties.BuildFile = Join-Path $PSScriptRoot 'default.ps1'
 	& $NugetPath @('restore', $solution.FullName, '-NonInteractive', '-Verbosity', 'quiet')
 }
 
-Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.2.14\tools\buildtools.psm1" -DisableNameChecking -Force
+Import-Module "$($Properties.SolutionDir)\packages\2GIS.NuClear.BuildTools.0.2.20\tools\buildtools.psm1" -DisableNameChecking -Force
 Import-Module "$PSScriptRoot\metadata.psm1" -DisableNameChecking -Force
 
 Add-Metadata (Parse-EnvironmentMetadata $Properties)

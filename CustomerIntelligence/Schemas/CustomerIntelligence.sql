@@ -89,6 +89,7 @@ go
 create table CustomerIntelligence.FirmBalance(
     FirmId bigint not null
     , AccountId bigint not null
+	, ProjectId bigint not null
     , Balance decimal(19,4) not null
     , constraint PK_FirmBalances primary key (FirmId, AccountId)
 )
@@ -181,7 +182,7 @@ on CustomerIntelligence.Firm (ProjectId,OwnerId,AddressCount)
 include (Id,Name,LastDisqualifiedOn,ClientId)
 go
 create nonclustered index IX_Quering_10
-on CustomerIntelligence.FirmBalance (Balance)
+on CustomerIntelligence.FirmBalance (ProjectId,Balance)
 include (FirmId)
 go
 create nonclustered index IX_Quering_11

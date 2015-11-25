@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 
 using Microsoft.ServiceBus;
@@ -42,9 +43,23 @@ namespace NuClear.Replication.EntryPoint.Jobs
 
         protected override void ExecuteInternal(IJobExecutionContext context)
         {
+            ReportMemoryUsage();
             ReportPrimaryProcessingQueueLength();
             ReportFinalProcessingQueueLength();
             ReportProbes();
+        }
+
+        private void ReportMemoryUsage()
+        {
+            try
+            {
+                var process = System.Diagnostics.Process.GetCurrentProcess();
+                _telemetry.Publish<ProcessPrivateMemorySizeIdentity>(process.PrivateMemorySize64);
+                _telemetry.Publish<ProcessWorkingSetIdentity>(process.WorkingSet64);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ReportProbes()
