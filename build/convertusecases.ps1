@@ -85,8 +85,8 @@ Task Create-Topics -Precondition { $Metadata['ConvertUseCasesService'] -and $Met
 	}
 
 	$destConnectionString = Get-ConnectionString $config 'Dest'
-	Delete-Topic $destConnectionString 'topic.advancedsearch' # временно, потом удалить
-	Delete-Topic $destConnectionString 'topic.performedoperations(.*)import'
+	#Delete-Topic $destConnectionString 'topic.advancedsearch' # временно, потом удалить
+	#Delete-Topic $destConnectionString 'topic.performedoperations(.*)import'
 
 	Create-Topic $destConnectionString $useCaseRouteMetadata.DestTopic -Properties @{
 		'EnableBatchedOperations' = $true
