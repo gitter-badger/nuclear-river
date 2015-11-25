@@ -113,7 +113,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.StatisticsTransformatio
             var metadata = (StatisticsRecalculationMetadata<T>)metadataSource.Metadata.Values.SelectMany(x => x.Elements).Single();
             repository = new Mock<IRepository<T>>();
 
-            return new StatisticsProcessor<T>(metadata, new MemoryMockQuery(data), new BulkRepository<T>(repository.Object));
+            return new StatisticsProcessor<T>(metadata, new MemoryMockQuery(data), new BulkRepository<T>(repository.Object), null);
         }
     }
 }

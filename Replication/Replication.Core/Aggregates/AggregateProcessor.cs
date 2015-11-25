@@ -30,7 +30,7 @@ namespace NuClear.Replication.Core.Aggregates
 
         public void Initialize(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids), EqualityComparer<long>.Default);
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
 
@@ -45,7 +45,7 @@ namespace NuClear.Replication.Core.Aggregates
         {
             ApplyChangesToValueObjects(ids);
 
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids), EqualityComparer<long>.Default);
 
             var createFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Difference.ToArray());
             var updateFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Intersection.ToArray());
@@ -64,7 +64,7 @@ namespace NuClear.Replication.Core.Aggregates
         {
             ApplyChangesToValueObjects(ids);
 
-            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _aggregateChangesDetector.DetectChanges(Specs.Map.ToIds<T>(), _metadata.FindSpecificationProvider.Invoke(ids), EqualityComparer<long>.Default);
 
             var deleteFilter = _metadata.FindSpecificationProvider.Invoke(mergeResult.Complement.ToArray());
 

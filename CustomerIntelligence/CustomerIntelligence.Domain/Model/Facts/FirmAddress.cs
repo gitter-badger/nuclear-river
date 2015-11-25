@@ -9,15 +9,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Facts
         public long FirmId { get; set; }
 
         public long? TerritoryId { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is FirmAddress && IdentifiableObjectEqualityComparer<FirmAddress>.Default.Equals(this, (FirmAddress)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<FirmAddress>.Default.GetHashCode(this);
-        }
     }
 }

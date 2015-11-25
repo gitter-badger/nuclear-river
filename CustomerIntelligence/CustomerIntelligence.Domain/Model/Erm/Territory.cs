@@ -1,6 +1,4 @@
-﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
-
-namespace NuClear.CustomerIntelligence.Domain.Model.Erm
+﻿namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class Territory : IErmObject
     {
@@ -16,15 +14,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public long OrganizationUnitId { get; set; }
 
         public bool IsActive { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Territory && IdentifiableObjectEqualityComparer<Territory>.Default.Equals(this, (Territory)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<Territory>.Default.GetHashCode(this);
-        }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Storage.API.Readings;
@@ -14,11 +15,13 @@ namespace NuClear.Replication.Core.Aggregates
         private readonly IBulkRepository<T> _repository;
         private readonly StatisticsRecalculationMetadata<T> _metadata;
         private readonly DataChangesDetector<T, T> _changesDetector;
+        private readonly IEqualityComparerFactory _equalityComparerFactory;
 
-        public StatisticsProcessor(StatisticsRecalculationMetadata<T> metadata, IQuery query, IBulkRepository<T> repository)
+        public StatisticsProcessor(StatisticsRecalculationMetadata<T> metadata, IQuery query, IBulkRepository<T> repository, IEqualityComparerFactory equalityComparerFactory)
         {
             _repository = repository;
             _metadata = metadata;
+            _equalityComparerFactory = equalityComparerFactory;
             _changesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, query);
         }
 
@@ -28,8 +31,8 @@ namespace NuClear.Replication.Core.Aggregates
 
             // —начала сравниением получаем различающиес€ записи,
             // затем получаем те из различающихс€, которые совпадают по идентификатору.
-            var intermediateResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), filter, _metadata.FieldComparer);
-            var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement);
+            var intermediateResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), filter, _equalityComparerFactory.CreateCompleteComparer<T>());
+            var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement, _equalityComparerFactory.CreateIdentityComparer<T>());
 
             // Ќаличие или отсутствие статистики - не повод создавать или удал€ть рубрики у фирм.
             // ѕоэтому только обновление.

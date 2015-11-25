@@ -25,7 +25,7 @@ namespace NuClear.Replication.Core
             _query = query;
         }
 
-        public MergeResult<TCompared> DetectChanges<TCompared>(MapSpecification<IEnumerable<TOutput>, IEnumerable<TCompared>> mapSpec, FindSpecification<TFilter> specification, IEqualityComparer<TCompared> comparer = null)
+        public MergeResult<TCompared> DetectChanges<TCompared>(MapSpecification<IEnumerable<TOutput>, IEnumerable<TCompared>> mapSpec, FindSpecification<TFilter> specification, IEqualityComparer<TCompared> comparer)
         {
             using (var scope = new TransactionScope(TransactionScopeOption.Suppress))
             {

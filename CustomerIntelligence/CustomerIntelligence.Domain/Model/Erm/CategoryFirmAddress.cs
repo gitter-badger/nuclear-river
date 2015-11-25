@@ -1,5 +1,3 @@
-using NuClear.AdvancedSearch.Common.Metadata.Model;
-
 namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class CategoryFirmAddress : IErmObject
@@ -18,15 +16,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is CategoryFirmAddress && IdentifiableObjectEqualityComparer<CategoryFirmAddress>.Default.Equals(this, (CategoryFirmAddress)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<CategoryFirmAddress>.Default.GetHashCode(this);
-        }
     }
 }

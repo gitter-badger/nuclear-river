@@ -34,7 +34,7 @@ namespace NuClear.Replication.Core.Facts
 
         public IReadOnlyCollection<IOperation> ApplyChanges(IReadOnlyCollection<long> ids)
         {
-            var changes = _changesDetector.DetectChanges(Specs.Map.ToIds<TFact>(), _factMetadata.FindSpecificationProvider.Invoke(ids));
+            var changes = _changesDetector.DetectChanges(Specs.Map.ToIds<TFact>(), _factMetadata.FindSpecificationProvider.Invoke(ids), EqualityComparer<long>.Default);
             var result = new List<IOperation>();
 
             var idsToCreate = changes.Difference.ToArray();

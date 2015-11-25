@@ -17,13 +17,11 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
              MapToObjectsSpecProvider<T, T> mapSpecificationProviderForSource,
             MapToObjectsSpecProvider<T, T> mapSpecificationProviderForTarget,
             Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> findSpecificationProvider,
-            IEqualityComparer<T> fieldComparer,
             IEnumerable<IMetadataFeature> features) : base(features)
         {
             MapSpecificationProviderForSource = mapSpecificationProviderForSource;
             MapSpecificationProviderForTarget = mapSpecificationProviderForTarget;
             FindSpecificationProvider = findSpecificationProvider;
-            FieldComparer = fieldComparer;
         }
 
         public override void ActualizeId(IMetadataElementIdentity actualMetadataElementIdentity)
@@ -41,7 +39,5 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
         public MapToObjectsSpecProvider<T, T> MapSpecificationProviderForTarget { get; private set; }
 
         public Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> FindSpecificationProvider { get; private set; }
-
-        public IEqualityComparer<T> FieldComparer { get; private set; }
     }
 }

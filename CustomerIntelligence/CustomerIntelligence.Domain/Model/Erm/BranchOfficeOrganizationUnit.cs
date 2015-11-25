@@ -1,5 +1,3 @@
-using NuClear.AdvancedSearch.Common.Metadata.Model;
-
 namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class BranchOfficeOrganizationUnit : IErmObject
@@ -16,15 +14,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is BranchOfficeOrganizationUnit && IdentifiableObjectEqualityComparer<BranchOfficeOrganizationUnit>.Default.Equals(this, (BranchOfficeOrganizationUnit)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<BranchOfficeOrganizationUnit>.Default.GetHashCode(this);
-        }
     }
 }

@@ -15,18 +15,20 @@ namespace NuClear.Replication.Core.Aggregates
         private readonly IBulkRepository<T> _repository;
         private readonly ValueObjectMetadataElement<T> _metadata;
         private readonly DataChangesDetector<T, T> _changesDetector;
+        private readonly IEqualityComparerFactory _equalityComparerFactory;
 
         // TODO {all, 15.09.2015}: Имеет смысл избавить *Processor от зависимостей IQuery, I*Info, заменить на DataChangesDetector
-        public ValueObjectProcessor(ValueObjectMetadataElement<T> metadata, IQuery query, IBulkRepository<T> repository)
+        public ValueObjectProcessor(ValueObjectMetadataElement<T> metadata, IQuery query, IBulkRepository<T> repository, IEqualityComparerFactory equalityComparerFactory)
         {
             _metadata = metadata;
             _repository = repository;
+            _equalityComparerFactory = equalityComparerFactory;
             _changesDetector = new DataChangesDetector<T, T>(_metadata.MapSpecificationProviderForSource, _metadata.MapSpecificationProviderForTarget, query);
         }
 
         public void ApplyChanges(IReadOnlyCollection<long> ids)
         {
-            var mergeResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), _metadata.FindSpecificationProvider.Invoke(ids));
+            var mergeResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), _metadata.FindSpecificationProvider.Invoke(ids), _equalityComparerFactory.CreateIdentityComparer<T>());
 
             _repository.Delete(mergeResult.Complement);
             _repository.Create(mergeResult.Difference);

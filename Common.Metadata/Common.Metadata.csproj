@@ -81,7 +81,7 @@
     <Compile Include="Identities\StatisticsRecalculationMetadataIdentity.cs" />
     <Compile Include="MapToObjectsSpecProvider.cs" />
     <Compile Include="Model\ICorporateBusDto.cs" />
-    <Compile Include="Model\IdentifiableObjectEqualityComparer.cs" />
+    <Compile Include="Model\IEqualityComparerFactory.cs" />
     <Compile Include="Model\IFactObject.cs" />
     <Compile Include="Model\IFactStatisticsObject.cs" />
     <Compile Include="Model\IIdentifiable.cs" />
