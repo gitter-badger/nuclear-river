@@ -186,6 +186,8 @@
     <Compile Include="Identities\Telemetry\FinalProcessingStatisticsQueueLengthIdentity.cs" />
     <Compile Include="Identities\Telemetry\PrimaryProcessingDelayIdentity.cs" />
     <Compile Include="Identities\Telemetry\PrimaryProcessingQueueLengthIdentity.cs" />
+    <Compile Include="Identities\Telemetry\ProcessPrivateMemorySizeIdentity.cs" />
+    <Compile Include="Identities\Telemetry\ProcessWorkingSetIdentity.cs" />
     <Compile Include="Identities\Telemetry\StatisticsEnqueuedOperationCountIdentity.cs" />
     <Compile Include="Identities\Telemetry\StatisticsProcessedOperationCountIdentity.cs" />
     <Compile Include="Identities\Telemetry\StatisticsProcessingDelayIdentity.cs" />
