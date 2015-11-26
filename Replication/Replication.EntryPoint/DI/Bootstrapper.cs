@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 
 using LinqToDB.Mapping;
@@ -7,6 +8,7 @@ using LinqToDB.Mapping;
 using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
+using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
@@ -14,6 +16,7 @@ using NuClear.CustomerIntelligence.Domain.Model.Facts;
 using NuClear.CustomerIntelligence.OperationsProcessing;
 using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.CustomerIntelligence.OperationsProcessing.Final;
+using NuClear.CustomerIntelligence.Storage;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DI.Unity.Config;
 using NuClear.DI.Unity.Config.RegistrationResolvers;
@@ -249,7 +252,16 @@ namespace NuClear.Replication.EntryPoint.DI
 
             var transactionOptions = new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero };
 
+            var schemaMapping = new Dictionary<string, MappingSchema>
+                                {
+                                    { Scope.Erm, Schema.Erm },
+                                    { Scope.Facts, Schema.Facts },
+                                    { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
+                                    { Scope.Transport, TransportSchema.Transport },
+                                };
+
             return container
+                .RegisterType<IEqualityComparerFactory, EqualityComparerFactory>(Lifetime.Singleton)
                 .RegisterType<IPendingChangesHandlingStrategy, NullPendingChangesHandlingStrategy>(Lifetime.Singleton)
                 .RegisterType<IStorageMappingDescriptorProvider, StorageMappingDescriptorProvider>(Lifetime.Singleton)
                 .RegisterType<IEntityContainerNameResolver, DefaultEntityContainerNameResolver>(Lifetime.Singleton)
@@ -258,16 +270,10 @@ namespace NuClear.Replication.EntryPoint.DI
                 .RegisterType<ScopedDomainContextsStore>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IReadableDomainContext, CachingReadableDomainContext>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IProcessingContext, ProcessingContext>(entryPointSpecificLifetimeManagerFactory())
-                .RegisterInstance<ILinqToDbModelFactory>(new LinqToDbModelFactory(new Dictionary<string, MappingSchema>
-                                                                                  {
-                                                                                      { Scope.Erm, Schema.Erm },
-                                                                                      { Scope.Facts, Schema.Facts },
-                                                                                      { Scope.CustomerIntelligence, Schema.CustomerIntelligence },
-                                                                                      { Scope.Transport, TransportSchema.Transport },
-                                                                                  },
-                                                                                  transactionOptions,
-                                                                                  storageSettings.SqlCommandTimeout),
-                                                         Lifetime.Singleton)
+                .RegisterInstance<ILinqToDbModelFactory>(
+                    new LinqToDbModelFactory(schemaMapping, transactionOptions, storageSettings.SqlCommandTimeout), Lifetime.Singleton)
+                .RegisterInstance<IObjectPropertyProvider>(
+                    new LinqToDbPropertyProvider(schemaMapping.Values.ToArray()), Lifetime.Singleton)
                 .RegisterType<IWritingStrategyFactory, WritingStrategyFactory>()
                 .RegisterType<IReadableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())
                 .RegisterType<IModifiableDomainContextFactory, LinqToDBDomainContextFactory>(entryPointSpecificLifetimeManagerFactory())

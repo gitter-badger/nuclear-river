@@ -86,6 +86,7 @@
     <Compile Include="Aggregates\ValueObjectProcessor.cs" />
     <Compile Include="BulkRepository.cs" />
     <Compile Include="DataChangesDetector.cs" />
+    <Compile Include="EqualityComparerFactory.cs" />
     <Compile Include="Facts\FactDependencyProcessor.cs" />
     <Compile Include="Facts\FactProcessor.cs" />
     <Compile Include="Facts\FactsReplicator.cs" />
