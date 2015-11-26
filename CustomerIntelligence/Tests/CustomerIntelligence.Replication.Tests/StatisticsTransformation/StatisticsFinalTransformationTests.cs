@@ -4,6 +4,7 @@ using Moq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.Storage;
 using NuClear.Replication.Core;
 using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
@@ -112,8 +113,9 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.StatisticsTransformatio
             var metadataSource = new StatisticsRecalculationMetadataSource();
             var metadata = (StatisticsRecalculationMetadata<T>)metadataSource.Metadata.Values.SelectMany(x => x.Elements).Single();
             repository = new Mock<IRepository<T>>();
+            var comparerFactory = new EqualityComparerFactory(new LinqToDbPropertyProvider(Schema.Erm, Schema.Facts, Schema.CustomerIntelligence));
 
-            return new StatisticsProcessor<T>(metadata, new MemoryMockQuery(data), new BulkRepository<T>(repository.Object), null);
+            return new StatisticsProcessor<T>(metadata, new MemoryMockQuery(data), new BulkRepository<T>(repository.Object), comparerFactory);
         }
     }
 }

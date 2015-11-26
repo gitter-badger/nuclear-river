@@ -6,7 +6,9 @@ using Moq;
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.Storage;
 using NuClear.Metamodeling.Elements;
+using NuClear.Replication.Core;
 using NuClear.Replication.Core.Aggregates;
 using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Storage.API.Readings;
@@ -404,12 +406,14 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             private readonly IQuery _query;
             private readonly VerifiableRepositoryFactory _repositoryFactory;
             private readonly AggregateConstructionMetadataSource _metadataSource;
+            private readonly EqualityComparerFactory _comparerFactory;
 
             private Transformation(IQuery query)
             {
                 _query = query;
                 _repositoryFactory = new VerifiableRepositoryFactory();
                 _metadataSource = new AggregateConstructionMetadataSource();
+                _comparerFactory = new EqualityComparerFactory(new LinqToDbPropertyProvider(Schema.Erm, Schema.Facts, Schema.CustomerIntelligence));
             }
 
             public static Transformation Create(IQuery query)
@@ -462,7 +466,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                     throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", aggregateType));
                 }
 
-                var factory = new Factory<TAggregate>(_query, _repositoryFactory);
+                var factory = new Factory<TAggregate>(_query, _repositoryFactory, _comparerFactory);
                 var processor = factory.Create(aggregateMetadata);
                 action.Invoke((AggregateProcessor<TAggregate>)processor);
 
@@ -474,11 +478,13 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             {
                 private readonly IQuery _query;
                 private readonly IRepositoryFactory _repositoryFactory;
+                private readonly EqualityComparerFactory _comparerFactory;
 
-                public Factory(IQuery query, IRepositoryFactory repositoryFactory)
+                public Factory(IQuery query, IRepositoryFactory repositoryFactory, EqualityComparerFactory comparerFactory)
                 {
                     _query = query;
                     _repositoryFactory = repositoryFactory;
+                    _comparerFactory = comparerFactory;
                 }
 
                 public IAggregateProcessor Create(IMetadataElement aggregateMetadata)
@@ -489,7 +495,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 public IValueObjectProcessor Create(IValueObjectMetadataElement metadata)
                 {
                     var processorType = typeof(ValueObjectProcessor<>).MakeGenericType(metadata.ValueObjectType);
-                    return (IValueObjectProcessor)Activator.CreateInstance(processorType, metadata, _query, _repositoryFactory.Create(metadata.ValueObjectType));
+                    return (IValueObjectProcessor)Activator.CreateInstance(processorType, metadata, _query, _repositoryFactory.Create(metadata.ValueObjectType), _comparerFactory);
                 }
             }
         }
