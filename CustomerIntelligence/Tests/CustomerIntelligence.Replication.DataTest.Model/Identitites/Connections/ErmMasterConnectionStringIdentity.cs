@@ -7,7 +7,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model.Identitites.Connection
     {
         public override int Id
         {
-            get { return 6; }
+            get { return 10; }
         }
 
         public override string Description
