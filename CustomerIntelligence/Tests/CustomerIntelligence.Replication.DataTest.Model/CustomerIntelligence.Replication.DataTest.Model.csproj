@@ -81,7 +81,7 @@
     <Compile Include="TestCaseMetadataSource.cs" />
     <Compile Include="Identitites\Connections\ErmMasterConnectionStringIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RunnerSettings.cs" />
+    <Compile Include="RunnerConnectionStringSettingsAspect.cs" />
     <Compile Include="SchemaMetadataSource.cs" />
   </ItemGroup>
   <ItemGroup>
