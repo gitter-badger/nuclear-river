@@ -3,18 +3,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-
-using LinqToDB;
-using LinqToDB.Data;
 
 using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Metamodel.Dsl;
 using NuClear.Metamodeling.Provider;
 using NuClear.Storage.API.ConnectionStrings;
-using NuClear.Storage.API.Readings;
-using NuClear.Storage.API.Specifications;
 
 namespace CustomerIntelligence.Replication.DataTest.Model
 {
@@ -35,7 +28,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
         private readonly ConnectionStringSettingsAspect _connectionStringSettingsAspect;
         private readonly CommandlineParameters _commandlineParameters;
         private readonly IDictionary<string, SchemaMetadataElement> _schemaMetadata;
-
+        private readonly AppDomainResolver _appDomainResolver;
 
         public BulkReplicationAdapter(ActMetadataElement metadata, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettingsAspect, CommandlineParameters commandlineParameters)
         {
@@ -43,6 +36,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
             _connectionStringSettingsAspect = connectionStringSettingsAspect;
             _commandlineParameters = commandlineParameters;
             _schemaMetadata = metadataProvider.GetMetadataSet<SchemaMetadataIdentity>().Metadata.Values.Cast<SchemaMetadataElement>().ToDictionary(x => x.Context, x => x);
+            _appDomainResolver = new AppDomainResolver();
         }
 
         public void Act()
@@ -77,7 +71,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
 
                 config.Save();
 
-                var childDomain = AppDomain.CreateDomain("bulk-tool", null, fileInfo.DirectoryName, "", false);
+                var childDomain = _appDomainResolver.GetDomainFor(_metadata, fileInfo);
                 childDomain.ExecuteAssembly(fileInfo.FullName, new[] { new T().Key });
             }
             finally 
