@@ -59,7 +59,7 @@ namespace CustomerIntelligence.Replication.DataTest.Model
             {
                 var contexts = new [] { _metadata.Source, _metadata.Target };
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
+                var connectionStringsSection = config.ConnectionStrings;
                 connectionStringsSection.ConnectionStrings.Clear();
 
                 foreach (var context in contexts)
