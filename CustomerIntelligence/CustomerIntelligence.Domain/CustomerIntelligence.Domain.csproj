@@ -48,6 +48,9 @@
     <Compile Include="Model\CI\FirmActivity.cs" />
     <Compile Include="Model\CI\FirmBalance.cs" />
     <Compile Include="Model\CI\FirmCategory.cs" />
+    <Compile Include="Model\ICustomerIntelligenceObject.cs" />
+    <Compile Include="Model\IErmObject.cs" />
+    <Compile Include="Model\IErmValueObject.cs" />
     <Compile Include="Model\Statistics\FirmCategoryStatistics.cs" />
     <Compile Include="Model\CI\FirmTerritory.cs" />
     <Compile Include="Model\CI\Project.cs" />
