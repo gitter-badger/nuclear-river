@@ -73,6 +73,8 @@
     <Compile Include="AppDomainResolver.cs" />
     <Compile Include="BulkReplicationAdapter.cs" />
     <Compile Include="ArrangeMetadataElementBuilderExtensions.cs" />
+    <Compile Include="ConnectionStringName.cs" />
+    <Compile Include="ContextName.cs" />
     <Compile Include="PrefillStatisticsContext.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryDictionary.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryGroupDictionary.cs" />
@@ -101,6 +103,10 @@
     <ProjectReference Include="..\..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
       <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>
       <Name>CustomerIntelligence.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\CustomerIntelligence.StateInitialization\CustomerIntelligence.StateInitialization.csproj">
+      <Project>{0af71ae8-390e-4911-b243-255536509210}</Project>
+      <Name>CustomerIntelligence.StateInitialization</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\CustomerIntelligence.Storage\CustomerIntelligence.Storage.csproj">
       <Project>{FA1074A6-B89D-45DF-9B73-6881BEF46E33}</Project>

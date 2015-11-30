@@ -9,6 +9,8 @@ using NuClear.DataTest.Metamodel.Dsl;
 using NuClear.Metamodeling.Provider;
 using NuClear.Storage.API.ConnectionStrings;
 
+using BulkToolConnectionStringName = NuClear.CustomerIntelligence.StateInitialization.ConnectionStringName;
+
 namespace CustomerIntelligence.Replication.DataTest.Model
 {
     public sealed class BulkReplicationAdapter<T> : ITestAction
@@ -17,11 +19,11 @@ namespace CustomerIntelligence.Replication.DataTest.Model
         private static readonly IReadOnlyDictionary<string, string> ConnectionStringMapping
             = new Dictionary<string, string>
               {
-                  { "Erm", "Erm" },
-                  { "Facts", "Facts" },
-                  { "Bit", "Facts" },
-                  { "CustomerIntelligence", "CustomerIntelligence" },
-                  { "Statistics", "CustomerIntelligence" }
+                  { ConnectionStringName.Erm, BulkToolConnectionStringName.Erm },
+                  { ConnectionStringName.Facts, BulkToolConnectionStringName.Facts },
+                  { ConnectionStringName.Bit, BulkToolConnectionStringName.Facts },
+                  { ConnectionStringName.CustomerIntelligence, BulkToolConnectionStringName.CustomerIntelligence },
+                  { ConnectionStringName.Statistics, BulkToolConnectionStringName.CustomerIntelligence }
               };
 
         private readonly ActMetadataElement _metadata;

@@ -25,7 +25,7 @@ namespace NuClear.CustomerIntelligence.Domain
             HierarchyMetadata aggregateConstructionMetadataRoot =
                 HierarchyMetadata
                     .Config
-                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>("Aggregates"))
+                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>(ReplicationMetadataName.Aggregates))
                     .Childs(AggregateMetadata<Firm>
                                 .Config
                                 .HasSource(Specs.Map.Facts.ToCI.Firms)

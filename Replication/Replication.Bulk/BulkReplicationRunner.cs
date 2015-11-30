@@ -15,10 +15,14 @@ namespace NuClear.Replication.Bulk
     public sealed class BulkReplicationRunner
     {
         private readonly IMetadataProvider _metadataProvider;
+        private readonly DataConnectionFactory _dataConnectionFactory;
+        private readonly ViewRemover _viewRemover;
 
-        public BulkReplicationRunner(IMetadataProvider metadataProvider)
+        public BulkReplicationRunner(IMetadataProvider metadataProvider, DataConnectionFactory dataConnectionFactory, ViewRemover viewRemover)
         {
             _metadataProvider = metadataProvider;
+            _dataConnectionFactory = dataConnectionFactory;
+            _viewRemover = viewRemover;
         }
 
         public void Run(string mode)
@@ -32,12 +36,12 @@ namespace NuClear.Replication.Bulk
 
             var storageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
             var context = bulkReplicationMetadata.Elements.Single();
-            using (ViewContainer.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, bulkReplicationMetadata.EssentialViews))
+            using (_viewRemover.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, bulkReplicationMetadata.EssentialViews))
             {
                 Parallel.ForEach(context.Elements,
                                  element =>
                                  {
-                                     using (var bulkReplicatorFactory = RoutingBulkReplicatorFactory.Create(bulkReplicationMetadata))
+                                     using (var bulkReplicatorFactory = CreateReplicatorFactory(bulkReplicationMetadata))
                                      {
                                          var sw = Stopwatch.StartNew();
                                          var replicators = bulkReplicatorFactory.Create(element);
@@ -51,6 +55,13 @@ namespace NuClear.Replication.Bulk
                                      }
                                  });
             }
+        }
+
+        private IBulkReplicatorFactory CreateReplicatorFactory(BulkReplicationMetadataElement bulkReplicationMetadata)
+        {
+            var sourceStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.From);
+            var targetStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
+            return new RoutingBulkReplicatorFactory(_dataConnectionFactory.CreateConnection(sourceStorageDescriptor), _dataConnectionFactory.CreateConnection(targetStorageDescriptor));
         }
     }
 }

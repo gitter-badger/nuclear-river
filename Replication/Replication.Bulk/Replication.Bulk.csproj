@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="BulkReplicationRunner.cs" />
     <Compile Include="Factories\AggregatesBulkReplicatorFactory.cs" />
+    <Compile Include="Factories\DataConnectionFactory.cs" />
     <Compile Include="Factories\FactBulkReplicatorFactory.cs" />
     <Compile Include="Replicators\IBulkReplicator.cs" />
     <Compile Include="Factories\IBulkReplicatorFactory.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="Replicators\InsertsBulkReplicator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Storage\ViewContainer.cs" />
+    <Compile Include="Storage\ViewRemover.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

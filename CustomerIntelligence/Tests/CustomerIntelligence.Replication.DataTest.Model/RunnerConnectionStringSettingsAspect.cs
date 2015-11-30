@@ -15,22 +15,22 @@ namespace CustomerIntelligence.Replication.DataTest.Model
         {
         }
 
-        private static ConnectionStringsSection GetTestAssemblyConnectionStrings()
+        private static ConnectionStringSettingsCollection GetTestAssemblyConnectionStrings()
         {
             var assemblyLocation = typeof(RunnerConnectionStringSettingsAspect).Assembly.Location;
-            return ConfigurationManager.OpenExeConfiguration(assemblyLocation).ConnectionStrings;
+            return ConfigurationManager.OpenExeConfiguration(assemblyLocation).ConnectionStrings.ConnectionStrings;
         }
 
-        private static IReadOnlyDictionary<IConnectionStringIdentity, string> CreateConnectionStringMappings(ConnectionStringsSection configuration) =>
+        private static IReadOnlyDictionary<IConnectionStringIdentity, string> CreateConnectionStringMappings(ConnectionStringSettingsCollection configuration) =>
             new Dictionary<IConnectionStringIdentity, string>
             {
-                { ErmConnectionStringIdentity.Instance, configuration.ConnectionStrings["Erm"].ConnectionString },
-                { FactsConnectionStringIdentity.Instance, configuration.ConnectionStrings["Facts"].ConnectionString },
-                { CustomerIntelligenceConnectionStringIdentity.Instance, configuration.ConnectionStrings["CustomerIntelligence"].ConnectionString },
-                { BitConnectionStringIdentity.Instance, configuration.ConnectionStrings["Bit"].ConnectionString },
-                { StatisticsConnectionStringIdentity.Instance, configuration.ConnectionStrings["Statistics"].ConnectionString },
+                { ErmConnectionStringIdentity.Instance, configuration[ConnectionStringName.Erm].ConnectionString },
+                { FactsConnectionStringIdentity.Instance, configuration[ConnectionStringName.Facts].ConnectionString },
+                { CustomerIntelligenceConnectionStringIdentity.Instance, configuration[ConnectionStringName.CustomerIntelligence].ConnectionString },
+                { BitConnectionStringIdentity.Instance, configuration[ConnectionStringName.Bit].ConnectionString },
+                { StatisticsConnectionStringIdentity.Instance, configuration[ConnectionStringName.Statistics].ConnectionString },
 
-                { ErmMasterConnectionStringIdentity.Instance, configuration.ConnectionStrings["ErmMaster"].ConnectionString },
+                { ErmMasterConnectionStringIdentity.Instance, configuration[ConnectionStringName.ErmMaster].ConnectionString },
             };
     }
 }

@@ -26,7 +26,7 @@ namespace NuClear.CustomerIntelligence.Domain
             HierarchyMetadata factsReplicationMetadataRoot =
                 HierarchyMetadata
                     .Config
-                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>("Facts"))
+                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>(ReplicationMetadataName.Facts))
                     .Childs(FactMetadata<Activity>
                                 .Config
                                 .HasSource(Specs.Map.Erm.ToFacts.Activities)

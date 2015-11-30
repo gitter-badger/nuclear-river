@@ -6,21 +6,21 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     {
         private static readonly ActMetadataElement ErmToFact =
             ActMetadataElement.Config
-                              .Source("Erm")
-                              .Target("Facts")
+                              .Source(ContextName.Erm)
+                              .Target(ContextName.Facts)
                               .Action<BulkReplicationAdapter<Facts>>();
 
         private static readonly ActMetadataElement FactToCi =
             ActMetadataElement.Config
-                              .Source("Facts")
-                              .Target("CustomerIntelligence")
+                              .Source(ContextName.Facts)
+                              .Target(ContextName.CustomerIntelligence)
                               .Action<BulkReplicationAdapter<CustomerIntelligence>>();
 
         private static readonly ActMetadataElement BitToStatistics =
             ActMetadataElement.Config
-                              .Source("Bit")
-                              .Target("Statistics")
-                              .Require("CustomerIntelligence")
+                              .Source(ContextName.Bit)
+                              .Target(ContextName.Statistics)
+                              .Require(ContextName.CustomerIntelligence)
                               .Action<PrefillStatisticsContext>()
                               .Action<BulkReplicationAdapter<Statistics>>();
     }

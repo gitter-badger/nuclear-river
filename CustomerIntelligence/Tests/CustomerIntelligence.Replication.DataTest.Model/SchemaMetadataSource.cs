@@ -20,32 +20,32 @@ namespace CustomerIntelligence.Replication.DataTest.Model
     public class SchemaMetadataSource : MetadataSourceBase<SchemaMetadataIdentity>
     {
         private static readonly SchemaMetadataElement Erm = SchemaMetadataElement.Config
-            .For("Erm")
+            .For(ContextName.Erm)
             .HasConnectionString<ErmConnectionStringIdentity>()
             .HasMasterConnectionString<ErmMasterConnectionStringIdentity>()
             .HasSchema(Schema.Erm)
             .HasEntitiesFromNamespace(typeof(Erm::Account).Namespace);
 
         private static readonly SchemaMetadataElement Facts = SchemaMetadataElement.Config
-            .For("Facts")
+            .For(ContextName.Facts)
             .HasConnectionString<FactsConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Facts::Account).Namespace);
 
         private static readonly SchemaMetadataElement CustomerIntelligence = SchemaMetadataElement.Config
-            .For("CustomerIntelligence")
+            .For(ContextName.CustomerIntelligence)
             .HasConnectionString<CustomerIntelligenceConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(CI::CategoryGroup).Namespace);
 
         private static readonly SchemaMetadataElement Bit = SchemaMetadataElement.Config
-            .For("Bit")
+            .For(ContextName.Bit)
             .HasConnectionString<BitConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Bit::FirmCategoryStatistics).Namespace);
 
         private static readonly SchemaMetadataElement Statistics = SchemaMetadataElement.Config
-            .For("Statistics")
+            .For(ContextName.Statistics)
             .HasConnectionString<StatisticsConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(Statistics::FirmCategoryStatistics).Namespace);
