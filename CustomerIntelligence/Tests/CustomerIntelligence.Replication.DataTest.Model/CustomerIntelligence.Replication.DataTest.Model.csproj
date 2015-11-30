@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="AppDomainResolver.cs" />
     <Compile Include="BulkReplicationAdapter.cs" />
+    <Compile Include="ArrangeMetadataElementBuilderExtensions.cs" />
     <Compile Include="PrefillStatisticsContext.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryDictionary.cs" />
     <Compile Include="TestCaseMetadataSource.CategoryGroupDictionary.cs" />
