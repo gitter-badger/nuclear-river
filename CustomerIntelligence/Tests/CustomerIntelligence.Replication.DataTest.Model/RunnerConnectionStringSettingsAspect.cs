@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 
-using CustomerIntelligence.Replication.DataTest.Model.Identitites.Connections;
-
+using NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.Storage.API.ConnectionStrings;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     public sealed class RunnerConnectionStringSettingsAspect : ConnectionStringSettingsAspect
     {

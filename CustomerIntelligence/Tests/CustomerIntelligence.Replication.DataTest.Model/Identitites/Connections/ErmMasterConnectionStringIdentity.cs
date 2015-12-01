@@ -1,7 +1,7 @@
 ﻿using NuClear.Model.Common;
 using NuClear.Storage.API.ConnectionStrings;
 
-namespace CustomerIntelligence.Replication.DataTest.Model.Identitites.Connections
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections
 {
     public sealed class ErmMasterConnectionStringIdentity : IdentityBase<ErmMasterConnectionStringIdentity>, IConnectionStringIdentity
     {

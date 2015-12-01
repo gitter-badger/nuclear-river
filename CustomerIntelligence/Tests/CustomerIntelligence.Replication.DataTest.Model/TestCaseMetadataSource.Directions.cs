@@ -1,6 +1,6 @@
 ﻿using NuClear.DataTest.Metamodel.Dsl;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     public sealed partial class TestCaseMetadataSource
     {

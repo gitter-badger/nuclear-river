@@ -12,7 +12,7 @@ Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
 $RunnerPackageInfo = Get-PackageInfo '2Gis.NuClear.DataTest'
 $RunnerPath = Join-Path $RunnerPackageInfo.VersionedDir "tools\2Gis.NuClear.DataTest.Runner.exe"
 
-function Run-DataTests ($Projects, $entryPointMetadataKey, $bulkToolExecutable){
+function Run-DataTests ($Projects, $entryPointMetadataKey){
 
 	if ($Projects -eq $null){
 		return
@@ -45,10 +45,10 @@ function Run-DataTests ($Projects, $entryPointMetadataKey, $bulkToolExecutable){
 	
     $isTeamCity = Test-Path 'Env:\TEAMCITY_VERSION'
     if($isTeamCity) {
-        & $RunnerPath $assemblies --teamcity=true --bulktool=$bulkToolExecutable
+        & $RunnerPath $assemblies --teamcity=true
     }
     else {
-        & $RunnerPath $assemblies --bulktool=$bulkToolExecutable
+        & $RunnerPath $assemblies
     }
 
 		if ($lastExitCode -ne 0) {

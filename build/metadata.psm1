@@ -46,10 +46,10 @@ function Get-BulkToolMetadata ($UpdateSchemas, $Context){
 	}
 	$metadata += @{ 'Arguments' = ($arguments | select -Unique) }
 
-	$Context.EntryPoint = 'Replication.Bulk'
+	$Context.EntryPoint = 'CustomerIntelligence.StateInitialization.EntryPoint'
 	$metadata += Get-TransformMetadata $Context
 
-	return @{ 'Replication.Bulk' = $metadata }
+	return @{ 'CustomerIntelligence.StateInitialization.EntryPoint' = $metadata }
 }
 
 function Get-UpdateSchemasMetadata ($UpdateSchemas, $Context) {

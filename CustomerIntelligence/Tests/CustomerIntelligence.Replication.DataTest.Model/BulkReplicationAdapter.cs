@@ -1,103 +1,58 @@
-using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 
+using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.StateInitialization;
 using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Metamodel.Dsl;
+using NuClear.Metamodeling.Processors;
+using NuClear.Metamodeling.Processors.Concrete;
 using NuClear.Metamodeling.Provider;
+using NuClear.Metamodeling.Provider.Sources;
+using NuClear.Replication.Bulk.Api;
+using NuClear.Replication.Bulk.Api.Storage;
 using NuClear.Storage.API.ConnectionStrings;
 
-using BulkToolConnectionStringName = NuClear.CustomerIntelligence.StateInitialization.ConnectionStringName;
+using DataConnectionFactory = NuClear.Replication.Bulk.Api.Factories.DataConnectionFactory;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     public sealed class BulkReplicationAdapter<T> : ITestAction
         where T : IKey, new()
     {
-        private static readonly IReadOnlyDictionary<string, string> ConnectionStringMapping
-            = new Dictionary<string, string>
-              {
-                  { ConnectionStringName.Erm, BulkToolConnectionStringName.Erm },
-                  { ConnectionStringName.Facts, BulkToolConnectionStringName.Facts },
-                  { ConnectionStringName.Bit, BulkToolConnectionStringName.Facts },
-                  { ConnectionStringName.CustomerIntelligence, BulkToolConnectionStringName.CustomerIntelligence },
-                  { ConnectionStringName.Statistics, BulkToolConnectionStringName.CustomerIntelligence }
-              };
+        private static readonly MetadataProvider DefaultProvider
+            = new MetadataProvider(
+                new IMetadataSource[]
+                {
+                    new BulkReplicationMetadataSource(),
+                    new FactsReplicationMetadataSource(),
+                    new AggregateConstructionMetadataSource(),
+                    new StatisticsRecalculationMetadataSource(),
+                },
+                new IMetadataProcessor[] { new ReferencesEvaluatorProcessor() });
 
-        private readonly ActMetadataElement _metadata;
-        private readonly ConnectionStringSettingsAspect _connectionStringSettingsAspect;
-        private readonly CommandlineParameters _commandlineParameters;
-        private readonly IDictionary<string, SchemaMetadataElement> _schemaMetadata;
-        private readonly AppDomainResolver _appDomainResolver;
+        private readonly IConnectionStringSettings _connectionStringSettings;
+        private readonly T _key;
 
-        public BulkReplicationAdapter(ActMetadataElement metadata, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettingsAspect, CommandlineParameters commandlineParameters)
+        public BulkReplicationAdapter(ActMetadataElement metadata, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettings)
         {
-            _metadata = metadata;
-            _connectionStringSettingsAspect = connectionStringSettingsAspect;
-            _commandlineParameters = commandlineParameters;
-            _schemaMetadata = metadataProvider.GetMetadataSet<SchemaMetadataIdentity>().Metadata.Values.Cast<SchemaMetadataElement>().ToDictionary(x => x.Context, x => x);
-            _appDomainResolver = new AppDomainResolver();
+            Debugger.Launch();
+
+            _key = new T();
+            _connectionStringSettings = MappedConnectionStringSettings.CreateMappedSettings(
+                connectionStringSettings,
+                metadata, 
+                metadataProvider.GetMetadataSet<SchemaMetadataIdentity>().Metadata.Values.Cast<SchemaMetadataElement>().ToDictionary(x => x.Context, x => x));
         }
 
         public void Act()
         {
-            string exePath;
-            if (!_commandlineParameters.TryGet("BulkTool", out exePath))
-            {
-                throw new Exception("BulkTool parameter not found");
-            }
+            var viewRemover = new ViewRemover(_connectionStringSettings);
+            var connectionFactory = new DataConnectionFactory(_connectionStringSettings);
+            var runner = new BulkReplicationRunner(DefaultProvider, connectionFactory, viewRemover);
 
-            var fileInfo = new FileInfo(exePath);
-            if (!fileInfo.Exists)
-            {
-                throw new Exception($"BulkTool not found at path {fileInfo.FullName}");
-            }
-
-            var oldConfig = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            try
-            {
-                var contexts = new [] { _metadata.Source, _metadata.Target };
-                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                var connectionStringsSection = config.ConnectionStrings;
-                connectionStringsSection.ConnectionStrings.Clear();
-
-                foreach (var context in contexts)
-                {
-                    var targetConnectionStringName = ConnectionStringMapping[context];
-                    var connectionString = _connectionStringSettingsAspect.GetConnectionString(_schemaMetadata[context].ConnectionStringIdentity);
-                    connectionStringsSection.ConnectionStrings.Add(new ConnectionStringSettings(targetConnectionStringName, connectionString, "SqlServer"));
-                }
-
-                config.Save();
-
-                var childDomain = _appDomainResolver.GetDomainFor(_metadata, fileInfo);
-                childDomain.ExecuteAssembly(fileInfo.FullName, new[] { new T().Key });
-            }
-            finally 
-            {
-                oldConfig.Save();
-            }
+            runner.Run(_key.Key);
         }
-    }
-
-    public interface IKey
-    {
-        string Key { get; }
-    }
-
-    public sealed class Facts : IKey
-    {
-        public string Key => "-fact";
-    }
-    public sealed class CustomerIntelligence : IKey
-    {
-        public string Key => "-ci";
-    }
-    public sealed class Statistics : IKey
-    {
-        public string Key => "-statistics";
     }
 }

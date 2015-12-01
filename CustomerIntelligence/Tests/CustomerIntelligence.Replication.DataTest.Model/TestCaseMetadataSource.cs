@@ -7,7 +7,7 @@ using NuClear.DataTest.Metamodel.Dsl;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     public sealed partial class TestCaseMetadataSource : MetadataSourceBase<TestCaseMetadataIdentity>
     {

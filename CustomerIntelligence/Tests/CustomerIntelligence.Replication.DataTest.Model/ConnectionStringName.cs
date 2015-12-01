@@ -1,4 +1,4 @@
-﻿namespace CustomerIntelligence.Replication.DataTest.Model
+﻿namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     internal static class ConnectionStringName
     {

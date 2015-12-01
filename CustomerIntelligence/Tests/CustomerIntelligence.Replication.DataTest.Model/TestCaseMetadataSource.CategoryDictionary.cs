@@ -1,6 +1,6 @@
 ﻿using NuClear.DataTest.Metamodel.Dsl;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
     using CI = NuClear.CustomerIntelligence.Domain.Model.CI;

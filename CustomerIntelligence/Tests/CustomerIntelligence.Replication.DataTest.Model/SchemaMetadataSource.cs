@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using CustomerIntelligence.Replication.DataTest.Model.Identitites.Connections;
-
+using NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
 
-namespace CustomerIntelligence.Replication.DataTest.Model
+namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
     using CI = NuClear.CustomerIntelligence.Domain.Model.CI;

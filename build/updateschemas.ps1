@@ -11,10 +11,10 @@ Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 
 Task Update-Schemas -Precondition { $Metadata['UpdateSchemas'] } {
 
-	$projectFileName = Get-ProjectFileName 'Replication' 'Replication.Bulk'
+	$projectFileName = Get-ProjectFileName 'CustomerIntelligence' 'CustomerIntelligence.StateInitialization.EntryPoint'
 	$projectDir = Split-Path $projectFileName
 	$configFileName = Join-Path $projectDir 'app.config'
-	[xml]$config = Get-TransformedConfig $configFileName 'Replication.Bulk'
+	[xml]$config = Get-TransformedConfig $configFileName 'CustomerIntelligence.StateInitialization.EntryPoint'
 
 	$sqlDir = Join-Path $Metadata.Common.Dir.Solution 'CustomerIntelligence\Schemas'
 	Update-Schemas $config $sqlDir
