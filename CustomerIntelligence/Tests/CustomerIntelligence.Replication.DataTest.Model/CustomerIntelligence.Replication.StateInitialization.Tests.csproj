@@ -74,6 +74,11 @@
     <Compile Include="ArrangeMetadataElementBuilderExtensions.cs" />
     <Compile Include="ConnectionStringName.cs" />
     <Compile Include="ContextName.cs" />
+    <Compile Include="Identitites\Connections\BitTestConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\CustomerIntelligenceTestConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\ErmTestConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\FactsTestConnectionStringIdentity.cs" />
+    <Compile Include="Identitites\Connections\StatisticsTestConnectionStringIdentity.cs" />
     <Compile Include="Keys.cs" />
     <Compile Include="MappedConnectionStringSettings.cs" />
     <Compile Include="PrefillStatisticsContext.cs" />
@@ -85,7 +90,7 @@
     <Compile Include="TestCaseMetadataSource.cs" />
     <Compile Include="Identitites\Connections\ErmMasterConnectionStringIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RunnerConnectionStringSettingsAspect.cs" />
+    <Compile Include="RunnerConnectionStringSettings.cs" />
     <Compile Include="SchemaMetadataSource.cs" />
   </ItemGroup>
   <ItemGroup>

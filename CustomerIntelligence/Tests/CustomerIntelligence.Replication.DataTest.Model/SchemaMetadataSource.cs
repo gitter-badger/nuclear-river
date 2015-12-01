@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections;
 using NuClear.CustomerIntelligence.Storage;
-using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DataTest.Metamodel;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
@@ -20,32 +19,32 @@ namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
     {
         private static readonly SchemaMetadataElement Erm = SchemaMetadataElement.Config
             .For(ContextName.Erm)
-            .HasConnectionString<ErmConnectionStringIdentity>()
+            .HasConnectionString<ErmTestConnectionStringIdentity>()
             .HasMasterConnectionString<ErmMasterConnectionStringIdentity>()
             .HasSchema(Schema.Erm)
             .HasEntitiesFromNamespace(typeof(Erm::Account).Namespace);
 
         private static readonly SchemaMetadataElement Facts = SchemaMetadataElement.Config
             .For(ContextName.Facts)
-            .HasConnectionString<FactsConnectionStringIdentity>()
+            .HasConnectionString<FactsTestConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Facts::Account).Namespace);
 
         private static readonly SchemaMetadataElement CustomerIntelligence = SchemaMetadataElement.Config
             .For(ContextName.CustomerIntelligence)
-            .HasConnectionString<CustomerIntelligenceConnectionStringIdentity>()
+            .HasConnectionString<CustomerIntelligenceTestConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(CI::CategoryGroup).Namespace);
 
         private static readonly SchemaMetadataElement Bit = SchemaMetadataElement.Config
             .For(ContextName.Bit)
-            .HasConnectionString<BitConnectionStringIdentity>()
+            .HasConnectionString<BitTestConnectionStringIdentity>()
             .HasSchema(Schema.Facts)
             .HasEntitiesFromNamespace(typeof(Bit::FirmCategoryStatistics).Namespace);
 
         private static readonly SchemaMetadataElement Statistics = SchemaMetadataElement.Config
             .For(ContextName.Statistics)
-            .HasConnectionString<StatisticsConnectionStringIdentity>()
+            .HasConnectionString<StatisticsTestConnectionStringIdentity>()
             .HasSchema(Schema.CustomerIntelligence)
             .HasEntitiesFromNamespace(typeof(Statistics::FirmCategoryStatistics).Namespace);
 

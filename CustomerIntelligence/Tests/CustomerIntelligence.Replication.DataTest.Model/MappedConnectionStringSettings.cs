@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DataTest.Metamodel;
 using NuClear.DataTest.Metamodel.Dsl;
@@ -13,11 +14,11 @@ namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
         private static readonly IReadOnlyDictionary<IConnectionStringIdentity, IConnectionStringIdentity> Mapping =
             new Dictionary<IConnectionStringIdentity, IConnectionStringIdentity>
             {
-                { ErmConnectionStringIdentity.Instance, ErmConnectionStringIdentity.Instance },
-                { FactsConnectionStringIdentity.Instance, FactsConnectionStringIdentity.Instance },
-                { BitConnectionStringIdentity.Instance, FactsConnectionStringIdentity.Instance },
-                { CustomerIntelligenceConnectionStringIdentity.Instance, CustomerIntelligenceConnectionStringIdentity.Instance },
-                { StatisticsConnectionStringIdentity.Instance, CustomerIntelligenceConnectionStringIdentity.Instance },
+                { ErmTestConnectionStringIdentity.Instance, ErmConnectionStringIdentity.Instance },
+                { FactsTestConnectionStringIdentity.Instance, FactsConnectionStringIdentity.Instance },
+                { BitTestConnectionStringIdentity.Instance, FactsConnectionStringIdentity.Instance },
+                { CustomerIntelligenceTestConnectionStringIdentity.Instance, CustomerIntelligenceConnectionStringIdentity.Instance },
+                { StatisticsTestConnectionStringIdentity.Instance, CustomerIntelligenceConnectionStringIdentity.Instance },
             };
 
         private readonly IConnectionStringSettings _connectionStringSettings;

@@ -3,16 +3,16 @@ using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests.Identitites.Connections
 {
-    internal sealed class ErmMasterConnectionStringIdentity : IdentityBase<ErmMasterConnectionStringIdentity>, IConnectionStringIdentity
+    internal sealed class FactsTestConnectionStringIdentity : IdentityBase<FactsTestConnectionStringIdentity>, IConnectionStringIdentity
     {
         public override int Id
         {
-            get { return 10; }
+            get { return 12; }
         }
 
         public override string Description
         {
-            get { return "Erm Master DB connnection string (state initialization testing scope)"; }
+            get { return "Facts DB connection string (state initialization testing scope)"; }
         }
     }
 }

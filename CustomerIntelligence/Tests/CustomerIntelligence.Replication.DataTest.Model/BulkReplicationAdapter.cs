@@ -37,8 +37,6 @@ namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 
         public BulkReplicationAdapter(ActMetadataElement metadata, IMetadataProvider metadataProvider, ConnectionStringSettingsAspect connectionStringSettings)
         {
-            Debugger.Launch();
-
             _key = new T();
             _connectionStringSettings = MappedConnectionStringSettings.CreateMappedSettings(
                 connectionStringSettings,
