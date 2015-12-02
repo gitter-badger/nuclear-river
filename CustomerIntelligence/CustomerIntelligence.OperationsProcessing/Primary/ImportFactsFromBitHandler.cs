@@ -57,7 +57,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                         var categoryStatisticsDto = dto as CategoryStatisticsDto;
                         if (categoryStatisticsDto != null)
                         {
-                            var categoryStatisticsImporter = _statisticsImporterFactory.Create(typeof(FirmStatisticsDto));
+                            var categoryStatisticsImporter = _statisticsImporterFactory.Create(typeof(CategoryStatisticsDto));
 
                             var calculateStatisticsOperations = categoryStatisticsImporter.Import(categoryStatisticsDto);
                             _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count);
