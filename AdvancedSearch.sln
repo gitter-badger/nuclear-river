@@ -111,6 +111,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerIntelligence.StateI
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Core.Tests", "Replication\Tests\Replication.Core.Tests\Replication.Core.Tests.csproj", "{37156BD5-AA7A-463C-9A8A-926F81D4B599}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A9028F36-80AC-4111-B38B-D40DA3CD43B8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -260,7 +262,8 @@ Global
 		{04BC80F1-62A5-489C-916A-9F090AED7CF9} = {814C4FAC-A5D7-4557-A0A4-E79FEBCE6156}
 		{55B42FA4-EC9E-4F22-95ED-C219637699FD} = {B2560A63-4013-4556-8DF7-26F711AEED01}
 		{C6DE2A90-B4B9-4CD5-AEF0-7E6607B102A0} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
-		{37156BD5-AA7A-463C-9A8A-926F81D4B599} = {97E65C1F-DDB0-4EAF-98BF-B1FDFD173DD5}
+		{37156BD5-AA7A-463C-9A8A-926F81D4B599} = {A9028F36-80AC-4111-B38B-D40DA3CD43B8}
+		{A9028F36-80AC-4111-B38B-D40DA3CD43B8} = {B2560A63-4013-4556-8DF7-26F711AEED01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45
