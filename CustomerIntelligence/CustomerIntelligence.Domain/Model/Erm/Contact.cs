@@ -1,5 +1,3 @@
-using NuClear.AdvancedSearch.Common.Metadata.Model;
-
 namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class Contact : IErmObject
@@ -30,15 +28,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Contact && IdentifiableObjectEqualityComparer<Contact>.Default.Equals(this, (Contact)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<Contact>.Default.GetHashCode(this);
-        }
     }
 }

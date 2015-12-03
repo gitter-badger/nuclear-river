@@ -20,15 +20,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is CategoryOrganizationUnit && IdentifiableObjectEqualityComparer<CategoryOrganizationUnit>.Default.Equals(this, (CategoryOrganizationUnit)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<CategoryOrganizationUnit>.Default.GetHashCode(this);
-        }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
-
 namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class Client : IErmObject
@@ -28,15 +26,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Client && IdentifiableObjectEqualityComparer<Client>.Default.Equals(this, (Client)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<Client>.Default.GetHashCode(this);
-        }
     }
 }

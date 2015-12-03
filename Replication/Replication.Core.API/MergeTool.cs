@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -9,11 +10,11 @@ namespace NuClear.Replication.Core.API
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppression is OK here.")]
     public static class MergeTool
     {
-        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2, IEqualityComparer<T> comparer = null)
+        public static MergeResult<T> Merge<T>(IEnumerable<T> data1, IEnumerable<T> data2, IEqualityComparer<T> comparer)
         {
             if (comparer == null)
             {
-                comparer = EqualityComparer<T>.Default;
+                throw new ArgumentNullException(nameof(comparer));
             }
 
             using (Probe.Create("Merging", typeof(T).Name))

@@ -14,7 +14,6 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
         private MapToObjectsSpecProvider<T, T> _mapSpecificationProviderForSource;
         private MapToObjectsSpecProvider<T, T> _mapSpecificationProviderForTarget;
         private Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> _findSpecificationProvider;
-        private IEqualityComparer<T> _equalityComparer;
 
         protected override StatisticsRecalculationMetadata<T> Create()
         {
@@ -22,7 +21,6 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
                 _mapSpecificationProviderForSource,
                 _mapSpecificationProviderForTarget,
                 _findSpecificationProvider,
-                _equalityComparer,
                 Features);
         }
 
@@ -41,12 +39,6 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
         public StatisticsRecalculationMetadataBuilder<T> HasFilter(Func<long, IReadOnlyCollection<long?>, FindSpecification<T>> findSpecificationProvider)
         {
             _findSpecificationProvider = findSpecificationProvider;
-            return this;
-        }
-
-        public StatisticsRecalculationMetadataBuilder<T> HasFieldComparer(IEqualityComparer<T> equalityComparer)
-        {
-            _equalityComparer = equalityComparer;
             return this;
         }
     }

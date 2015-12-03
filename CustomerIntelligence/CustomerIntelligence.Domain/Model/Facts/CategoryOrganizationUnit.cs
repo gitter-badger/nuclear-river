@@ -11,15 +11,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Facts
         public long CategoryGroupId { get; set; }
 
         public long OrganizationUnitId { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is CategoryOrganizationUnit && IdentifiableObjectEqualityComparer<CategoryOrganizationUnit>.Default.Equals(this, (CategoryOrganizationUnit)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<CategoryOrganizationUnit>.Default.GetHashCode(this);
-        }
     }
 }

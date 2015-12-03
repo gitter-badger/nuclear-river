@@ -35,8 +35,7 @@ namespace NuClear.CustomerIntelligence.Domain
                                     (projectId, categoryIds) =>
                                     categoryIds.Contains(null)
                                         ? Specs.Find.CI.FirmCategoryStatistics.ByProject(projectId)
-                                        : Specs.Find.CI.FirmCategoryStatistics.ByProjectAndCategories(projectId, categoryIds))
-                                .HasFieldComparer(new Statistics::FirmCategoryStatistics.FullEqualityComparer()));
+                                        : Specs.Find.CI.FirmCategoryStatistics.ByProjectAndCategories(projectId, categoryIds)));
 
             _metadata = new Dictionary<Uri, IMetadataElement> { { statisticsRecalculationMetadataRoot.Identity.Id, statisticsRecalculationMetadataRoot } };
         }

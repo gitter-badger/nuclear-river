@@ -1,6 +1,4 @@
-﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
-
-namespace NuClear.CustomerIntelligence.Domain.Model.Erm
+﻿namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class Category : IErmObject
     {
@@ -20,15 +18,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public bool IsActive { get; set; }
 
         public bool IsDeleted { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Category && IdentifiableObjectEqualityComparer<Category>.Default.Equals(this, (Category)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<Category>.Default.GetHashCode(this);
-        }
     }
 }

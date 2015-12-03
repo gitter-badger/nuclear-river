@@ -16,15 +16,5 @@ namespace NuClear.CustomerIntelligence.Domain.Model.Erm
         public long? OrganizationUnitId { get; set; }
 
         public bool IsActive { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Project && IdentifiableObjectEqualityComparer<Project>.Default.Equals(this, (Project)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return IdentifiableObjectEqualityComparer<Project>.Default.GetHashCode(this);
-        }
     }
 }
