@@ -6,6 +6,7 @@ using Moq;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.Domain;
+using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Processors;
 using NuClear.Metamodeling.Provider;
@@ -48,7 +49,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                                                      Mock.Of<IReplicationSettings>(),
                                                      provider,
                                                      factProcessorFactory.Object,
-                                                     new Facts::CustomerIntelligenceFactTypePriorityComparer());
+                                                     new CustomerIntelligenceFactTypePriorityComparer());
 
             SourceDb.Has(new Erm::Firm { Id = 2 })
                     .Has(new Erm::FirmAddress { Id = 1, FirmId = 1 }, new Erm::FirmAddress { Id = 2, FirmId = 2 });

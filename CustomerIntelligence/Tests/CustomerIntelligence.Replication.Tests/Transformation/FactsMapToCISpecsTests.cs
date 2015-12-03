@@ -9,8 +9,9 @@ using NuClear.Storage.API.Readings;
 
 using NUnit.Framework;
 
-using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
+using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
 using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
+using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {
@@ -185,15 +186,15 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             SourceDb.Has(new Facts::Category { Id = 1, Level = 1 },
                          new Facts::Category { Id = 2, Level = 2, ParentId = 1 },
                          new Facts::Category { Id = 3, Level = 3, ParentId = 2 },
-                         new Facts::Category { Id = 4, Level = 3, ParentId = 2 })
-                    .Has(new Facts::Firm { Id = 1 })
-                    .Has(new Facts::FirmAddress { Id = 1, FirmId = 1 },
-                         new Facts::FirmAddress { Id = 2, FirmId = 1 })
-                    .Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 },
-                         new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 4 })
-                    .Has(new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
-                         new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
-                         new Facts::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 });
+                         new Facts::Category { Id = 4, Level = 3, ParentId = 2 });
+            SourceDb.Has(new Facts::Firm { Id = 1 });
+            SourceDb.Has(new Facts::FirmAddress { Id = 1, FirmId = 1 },
+                         new Facts::FirmAddress { Id = 2, FirmId = 1 });
+            SourceDb.Has(new Facts::CategoryFirmAddress { Id = 1, FirmAddressId = 1, CategoryId = 3 },
+                         new Facts::CategoryFirmAddress { Id = 2, FirmAddressId = 2, CategoryId = 4 });
+            SourceDb.Has(new Bit::FirmCategoryStatistics { FirmId = 1, CategoryId = 1, Hits = 1, Shows = 1 },
+                         new Bit::FirmCategoryStatistics { FirmId = 1, CategoryId = 2, Hits = 2 },
+                         new Bit::FirmCategoryStatistics { FirmId = 1, CategoryId = 3, Shows = 2 });
 
             Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.FirmCategories.Map(x).Where(c => c.FirmId == 1),
@@ -226,7 +227,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                          new Facts::CategoryOrganizationUnit { Id = 2, OrganizationUnitId = 2, CategoryId = 4 })
                     .Has(new Facts::Category { Id = 3 },
                          new Facts::Category { Id = 4 })
-                    .Has(new Facts::ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 });
+                    .Has(new Bit::ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 });
 
             // Десять фирм в проекте, каждая с рубрикой #3
             for (var i = 0; i < 10; i++)

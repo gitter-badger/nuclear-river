@@ -1,13 +1,13 @@
 ﻿using LinqToDB.Mapping;
 
 using NuClear.Metamodeling.Elements.Aspects.Features;
+using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.Replication.Bulk.Metadata
 {
     public class StorageDescriptorFeature : IMetadataFeature
     {
-        
-        public StorageDescriptorFeature(ReplicationDirection direction, string connectionStringName, MappingSchema mappingSchema)
+        public StorageDescriptorFeature(ReplicationDirection direction, IConnectionStringIdentity connectionStringName, MappingSchema mappingSchema)
         {
             Direction = direction;
             ConnectionStringName = connectionStringName;
@@ -16,7 +16,7 @@ namespace NuClear.Replication.Bulk.Metadata
 
         public ReplicationDirection Direction { get; private set; }
         
-        public string ConnectionStringName { get; private set; }
+        public IConnectionStringIdentity ConnectionStringName { get; private set; }
 
         public MappingSchema MappingSchema { get; private set; }
     }

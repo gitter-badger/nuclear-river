@@ -12,7 +12,7 @@ using NuClear.Replication.Core.Facts;
 
 using NUnit.Framework;
 
-using Facts = NuClear.CustomerIntelligence.Domain.Model.Facts;
+using Bit = NuClear.CustomerIntelligence.Domain.Model.Bit;
 
 // ReSharper disable PossibleUnintendedReferenceComparison
 namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
@@ -45,8 +45,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                       };
 
             var query = new MemoryMockQuery(
-                new Facts.FirmCategoryStatistics { ProjectId = 1, FirmId = 7 },
-                new Facts.FirmCategoryStatistics { ProjectId = 2, FirmId = 8 });
+                new Bit::FirmCategoryStatistics { ProjectId = 1, FirmId = 7 },
+                new Bit::FirmCategoryStatistics { ProjectId = 2, FirmId = 8 });
 
             var metadataSource = new ImportStatisticsMetadataSource();
             IMetadataElement importStatisticsMetadata;
@@ -55,10 +55,10 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(FirmStatisticsDto)));
             }
 
-            var importer = new StatisticsFactImporter<Facts.FirmCategoryStatistics>(
-                (ImportStatisticsMetadata<Facts.FirmCategoryStatistics>)importStatisticsMetadata,
+            var importer = new StatisticsFactImporter<Bit::FirmCategoryStatistics>(
+                (ImportStatisticsMetadata<Bit::FirmCategoryStatistics>)importStatisticsMetadata,
                 query,
-                Mock.Of<IBulkRepository<Facts.FirmCategoryStatistics>>());
+                Mock.Of<IBulkRepository<Bit::FirmCategoryStatistics>>());
 
             var operations = importer.Import(dto).ToArray();
 
@@ -82,8 +82,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                                   }
             };
             var query = new MemoryMockQuery(
-                new Facts.ProjectCategoryStatistics { ProjectId = 1, CategoryId = 7 },
-                new Facts.ProjectCategoryStatistics { ProjectId = 2, CategoryId = 7 });
+                new Bit::ProjectCategoryStatistics { ProjectId = 1, CategoryId = 7 },
+                new Bit::ProjectCategoryStatistics { ProjectId = 2, CategoryId = 7 });
 
             var metadataSource = new ImportStatisticsMetadataSource();
             IMetadataElement importStatisticsMetadata;
@@ -92,10 +92,10 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(CategoryStatisticsDto)));
             }
 
-            var importer = new StatisticsFactImporter<Facts.ProjectCategoryStatistics>(
-                (ImportStatisticsMetadata<Facts.ProjectCategoryStatistics>)importStatisticsMetadata,
+            var importer = new StatisticsFactImporter<Bit::ProjectCategoryStatistics>(
+                (ImportStatisticsMetadata<Bit::ProjectCategoryStatistics>)importStatisticsMetadata,
                 query,
-                Mock.Of<IBulkRepository<Facts.ProjectCategoryStatistics>>());
+                Mock.Of<IBulkRepository<Bit::ProjectCategoryStatistics>>());
 
             var operations = importer.Import(dto).ToArray();
 

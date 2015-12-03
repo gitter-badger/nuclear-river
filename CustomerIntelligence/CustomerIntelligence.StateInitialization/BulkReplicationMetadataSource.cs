@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Identities;
+using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
@@ -17,20 +18,20 @@ namespace NuClear.CustomerIntelligence.StateInitialization
             {
                 BulkReplicationMetadataElement.Config
                                               .CommandlineKey("-fact")
-                                              .From("Erm", Schema.Erm)
-                                              .To("Facts", Schema.Facts)
-                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>("Facts"),
+                                              .From(ConnectionString.Erm, Schema.Erm)
+                                              .To(ConnectionString.Facts, Schema.Facts)
+                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>(ReplicationMetadataName.Facts),
 
                 BulkReplicationMetadataElement.Config
                                               .CommandlineKey("-ci")
-                                              .From("Facts", Schema.Facts)
-                                              .To("CustomerIntelligence", Schema.CustomerIntelligence)
-                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>("Aggregates"),
+                                              .From(ConnectionString.Facts, Schema.Facts)
+                                              .To(ConnectionString.CustomerIntelligence, Schema.CustomerIntelligence)
+                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>(ReplicationMetadataName.Aggregates),
 
                 BulkReplicationMetadataElement.Config
                                               .CommandlineKey("-statistics")
-                                              .From("Facts", Schema.Facts)
-                                              .To("CustomerIntelligence", Schema.CustomerIntelligence)
+                                              .From(ConnectionString.Facts, Schema.Facts)
+                                              .To(ConnectionString.CustomerIntelligence, Schema.CustomerIntelligence)
                                               .UsingMetadataOfKind<StatisticsRecalculationMetadataIdentity>()
                                               .EssentialView("bit.firmcategory")
             }.ToDictionary(x => x.Identity.Id, x => (IMetadataElement)x);

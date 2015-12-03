@@ -10,7 +10,7 @@ using NuClear.Metamodeling.Elements.Concrete.Hierarchy;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider.Sources;
 
-using CI = NuClear.CustomerIntelligence.Domain.Model.CI;
+using Statistics = NuClear.CustomerIntelligence.Domain.Model.Statistics;
 using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
 
 namespace NuClear.CustomerIntelligence.Domain
@@ -27,7 +27,7 @@ namespace NuClear.CustomerIntelligence.Domain
                 HierarchyMetadata
                     .Config
                     .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<StatisticsRecalculationMetadataIdentity>())
-                    .Childs(StatisticsRecalculationMetadata<CI::FirmCategoryStatistics>
+                    .Childs(StatisticsRecalculationMetadata<Statistics::FirmCategoryStatistics>
                                 .Config
                                 .HasSource(Specs.Map.Facts.ToStatistics.FirmCategoryStatistics)
                                 .HasTarget(Specs.Map.CI.ToStatistics.FirmCategoryStatistics)
@@ -36,7 +36,7 @@ namespace NuClear.CustomerIntelligence.Domain
                                     categoryIds.Contains(null)
                                         ? Specs.Find.CI.FirmCategoryStatistics.ByProject(projectId)
                                         : Specs.Find.CI.FirmCategoryStatistics.ByProjectAndCategories(projectId, categoryIds))
-                                .HasFieldComparer(new CI::FirmCategoryStatistics.FullEqualityComparer()));
+                                .HasFieldComparer(new Statistics::FirmCategoryStatistics.FullEqualityComparer()));
 
             _metadata = new Dictionary<Uri, IMetadataElement> { { statisticsRecalculationMetadataRoot.Identity.Id, statisticsRecalculationMetadataRoot } };
         }

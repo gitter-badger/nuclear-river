@@ -6,6 +6,7 @@ using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Concrete.References;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Kinds;
+using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.Replication.Bulk.Metadata
 {
@@ -20,15 +21,15 @@ namespace NuClear.Replication.Bulk.Metadata
             return this;
         }
 
-        public BulkReplicationMetadataBuilder From(string connectionStringName, MappingSchema mappingSchema)
+        public BulkReplicationMetadataBuilder From(IConnectionStringIdentity connectionString, MappingSchema mappingSchema)
         {
-            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.From,  connectionStringName, mappingSchema));
+            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.From,  connectionString, mappingSchema));
             return this;
         }
 
-        public BulkReplicationMetadataBuilder To(string connectionStringName, MappingSchema mappingSchema)
+        public BulkReplicationMetadataBuilder To(IConnectionStringIdentity connectionString, MappingSchema mappingSchema)
         {
-            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.To, connectionStringName, mappingSchema));
+            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.To, connectionString, mappingSchema));
             return this;
         }
         

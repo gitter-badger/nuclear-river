@@ -44,14 +44,14 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
 
                 public static partial class FirmCategoryStatistics
                 {
-                    public static FindSpecification<Model.CI.FirmCategoryStatistics> ByProject(long projectId)
+                    public static FindSpecification<Model.Statistics.FirmCategoryStatistics> ByProject(long projectId)
                     {
-                        return new FindSpecification<Model.CI.FirmCategoryStatistics>(x => x.ProjectId == projectId);
+                        return new FindSpecification<Model.Statistics.FirmCategoryStatistics>(x => x.ProjectId == projectId);
                     }
 
-                    public static FindSpecification<Model.CI.FirmCategoryStatistics> ByProjectAndCategories(long projectId, IReadOnlyCollection<long?> categoryIds)
+                    public static FindSpecification<Model.Statistics.FirmCategoryStatistics> ByProjectAndCategories(long projectId, IReadOnlyCollection<long?> categoryIds)
                     {
-                        return new FindSpecification<Model.CI.FirmCategoryStatistics>(x => x.ProjectId == projectId && categoryIds.Contains(x.CategoryId));
+                        return new FindSpecification<Model.Statistics.FirmCategoryStatistics>(x => x.ProjectId == projectId && categoryIds.Contains(x.CategoryId));
                     }
                 }
             }

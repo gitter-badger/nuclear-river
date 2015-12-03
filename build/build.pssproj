@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="datatest.ps1" />
     <Compile Include="bulktool.ps1" />
     <Compile Include="convertusecases.ps1" />
     <Compile Include="default.ps1" />

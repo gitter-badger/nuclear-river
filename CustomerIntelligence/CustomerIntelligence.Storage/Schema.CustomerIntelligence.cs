@@ -2,6 +2,7 @@ using LinqToDB.DataProvider.SqlServer;
 using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Model.CI;
+using NuClear.CustomerIntelligence.Domain.Model.Statistics;
 
 namespace NuClear.CustomerIntelligence.Storage
 {
