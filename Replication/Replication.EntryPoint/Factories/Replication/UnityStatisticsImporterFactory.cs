@@ -4,6 +4,7 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Metadata.Identities;
 using NuClear.Metamodeling.Elements;
+using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.Core.Facts;
@@ -30,7 +31,7 @@ namespace NuClear.Replication.EntryPoint.Factories.Replication
             }
 
             IMetadataElement importStatisticsMetadata;
-            if (!metadataSet.Metadata.Values.TryGetElementById(new Uri(statisticsDtoType.Name, UriKind.Relative), out importStatisticsMetadata))
+            if (!metadataSet.Metadata.Values.TryGetElementById(GetMetadataUri(statisticsDtoType), out importStatisticsMetadata))
             {
                 throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", statisticsDtoType));
             }
@@ -40,5 +41,8 @@ namespace NuClear.Replication.EntryPoint.Factories.Replication
             var processor = _unityContainer.Resolve(importerType, new DependencyOverride(importStatisticsMetadata.GetType(), importStatisticsMetadata));
             return (IStatisticsImporter)processor;
         }
+
+        private Uri GetMetadataUri(Type statisticsDtoType)
+            => ImportStatisticsMetadataIdentity.Instance.Id.WithRelative(new Uri(statisticsDtoType.Name, UriKind.Relative));
     }
 }
