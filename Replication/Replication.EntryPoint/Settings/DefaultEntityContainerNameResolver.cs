@@ -8,6 +8,7 @@ namespace NuClear.Replication.EntryPoint.Settings
     public class DefaultEntityContainerNameResolver : IEntityContainerNameResolver
     {
         private const string Erm = "Erm";
+        private const string Bit = "Bit";
         private const string Facts = "Facts";
         private const string CustomerIntelligence = "CustomerIntelligence";
         private const string Transport = "Transport";
@@ -18,8 +19,13 @@ namespace NuClear.Replication.EntryPoint.Settings
             {
                 return Erm;
             }
-            
+
             if (objType.Namespace.Contains(Facts))
+            {
+                return Facts;
+            }
+
+            if (objType.Namespace.EndsWith(Bit))
             {
                 return Facts;
             }
@@ -28,7 +34,7 @@ namespace NuClear.Replication.EntryPoint.Settings
             {
                 return Transport;
             }
-            
+
             return CustomerIntelligence;
         }
     }
