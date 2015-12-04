@@ -10,6 +10,7 @@ using NuClear.Replication.Core.API.Aggregates;
 using NuClear.Replication.OperationsProcessing;
 using NuClear.Replication.OperationsProcessing.Identities.Telemetry;
 using NuClear.Telemetry;
+using NuClear.Tracing.API;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
 {
@@ -17,11 +18,13 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
     {
         private readonly IStatisticsRecalculator _statisticsRecalculator;
         private readonly ITelemetryPublisher _telemetryPublisher;
+        private readonly ITracer _tracer;
 
-        public StatisticsAggregatableMessageHandler(IStatisticsRecalculator statisticsRecalculator, ITelemetryPublisher telemetryPublisher)
+        public StatisticsAggregatableMessageHandler(IStatisticsRecalculator statisticsRecalculator, ITelemetryPublisher telemetryPublisher, ITracer tracer)
         {
             _statisticsRecalculator = statisticsRecalculator;
             _telemetryPublisher = telemetryPublisher;
+            _tracer = tracer;
         }
 
         public IEnumerable<StageResult> Handle(IReadOnlyDictionary<Guid, List<IAggregatableMessage>> processingResultsMap)
@@ -45,6 +48,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
             }
             catch (Exception ex)
             {
+                _tracer.Error(ex, "Error when calculating statistics");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }

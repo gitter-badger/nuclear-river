@@ -49,7 +49,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
             }
             catch (Exception ex)
             {
-                _tracer.Error(ex, "Error then import facts for ERM");
+                _tracer.Error(ex, "Error when import facts for ERM");
                 return processingResultsMap.Keys.Select(bucketId => MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex));
             }
         }

@@ -15,7 +15,7 @@ Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
 Include 'datatest.ps1'
 
-Task Run-DataTests -Depends QueueBuild-BulkTool,Build-Queue -Precondition { $Metadata['CustomerIntelligence.StateInitialization.EntryPoint'] } {
+Task Run-DataTests {
 	$projects = Find-Projects '.' '*.StateInitialization.Tests*'
 	Run-DataTests $projects 'UnitTests'
 }

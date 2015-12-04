@@ -48,7 +48,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
             }
             catch (Exception ex)
             {
-                _tracer.Error(ex, "Error then calculating aggregates");
+                _tracer.Error(ex, "Error when calculating aggregates");
                 return MessageProcessingStage.Handling.ResultFor(bucketId).AsFailed().WithExceptions(ex);
             }
         }
