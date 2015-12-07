@@ -194,7 +194,7 @@
     <Compile Include="Primary\ImportFactsFromErmAccumulator.cs" />
     <Compile Include="Primary\ImportFactsFromErmHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatisticsOperationExtensions.cs" />
+    <Compile Include="Transports\SQLStore\StatisticsOperationSerializer.cs" />
     <Compile Include="Transports\SQLStore\AggregateOperationSerializer.cs" />
     <Compile Include="Transports\SQLStore\SqlStoreSender.cs" />
   </ItemGroup>

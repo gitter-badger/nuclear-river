@@ -26,11 +26,11 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Final
             var oldestOperation = message.FinalProcessings.Min(x => x.CreatedOn);
 
             return new OperationAggregatableMessage<AggregateOperation>
-                   {
-                       TargetFlow = MessageFlow,
-                       Operations = operations,
-                       OperationTime = oldestOperation,
-                   };
+            {
+                TargetFlow = MessageFlow,
+                Operations = operations,
+                OperationTime = oldestOperation,
+            };
         }
     }
 }

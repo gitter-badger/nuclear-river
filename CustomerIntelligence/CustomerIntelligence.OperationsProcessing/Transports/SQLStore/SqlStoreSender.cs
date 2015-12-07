@@ -16,22 +16,25 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
         private readonly IIdentityGenerator _identityGenerator;
         private readonly IRepository<PerformedOperationFinalProcessing> _repository;
         private readonly AggregateOperationSerializer _aggregateOperationSerializer;
+        private readonly StatisticsOperationSerializer _statisticsOperationSerializer;
 
         public SqlStoreSender(
             IIdentityGenerator identityGenerator,
             IRepository<PerformedOperationFinalProcessing> repository,
-            AggregateOperationSerializer aggregateOperationSerializer)
+            AggregateOperationSerializer aggregateOperationSerializer,
+            StatisticsOperationSerializer statisticsOperationSerializer)
         {
             _identityGenerator = identityGenerator;
             _repository = repository;
             _aggregateOperationSerializer = aggregateOperationSerializer;
+            _statisticsOperationSerializer = statisticsOperationSerializer;
         }
 
         public void Push(IEnumerable<RecalculateStatisticsOperation> operations, IMessageFlow targetFlow)
         {
             using (Probe.Create("Send Statistics Operations"))
             {
-                var transportMessages = operations.Select(operation => SerializeMessage(operation, targetFlow));
+                var transportMessages = operations.Select(operation => _statisticsOperationSerializer.Serialize(operation, targetFlow));
                 Save(transportMessages.ToArray());
             }
         }
@@ -54,17 +57,6 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 
             _repository.AddRange(transportMessages);
             _repository.Save();
-        }
-
-        private static PerformedOperationFinalProcessing SerializeMessage(RecalculateStatisticsOperation operation, IMessageFlow targetFlow)
-        {
-            return new PerformedOperationFinalProcessing
-            {
-                CreatedOn = DateTime.UtcNow,
-                MessageFlowId = targetFlow.Id,
-                Context = operation.Serialize().ToString(),
-                OperationId = operation.GetIdentity(),
-            };
         }
     }
 }

@@ -50,18 +50,23 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 
         public PerformedOperationFinalProcessing Serialize(AggregateOperation operation, IMessageFlow targetFlow)
         {
+            var entityType = _registry.GetEntityName(operation.AggregateType);
+            return new PerformedOperationFinalProcessing
+            {
+                CreatedOn = DateTime.UtcNow,
+                MessageFlowId = targetFlow.Id,
+                EntityId = operation.AggregateId,
+                EntityTypeId = entityType.Id,
+                OperationId = GetIdentity(operation),
+            };
+        }
+
+        private static Guid GetIdentity(AggregateOperation operation)
+        {
             Guid guid;
             if (OperationTypeRegistry.TryGetValue(operation.GetType(), out guid))
             {
-                var entityType = _registry.GetEntityName(operation.AggregateType);
-                return new PerformedOperationFinalProcessing
-                {
-                    CreatedOn = DateTime.UtcNow,
-                    MessageFlowId = targetFlow.Id,
-                    EntityId = operation.AggregateId,
-                    EntityTypeId = entityType.Id,
-                    OperationId = guid,
-                };
+                return guid;
             }
 
             throw new ArgumentException($"Unknown operation type {operation.GetType().Name}", nameof(operation));
