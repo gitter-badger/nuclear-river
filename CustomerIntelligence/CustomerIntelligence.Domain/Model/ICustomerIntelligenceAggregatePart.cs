@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model
 {
-    public interface ICustomerIntelligenceObject : IObject
+    public interface ICustomerIntelligenceAggregatePart : IAggregatePart
     {
     }
 }

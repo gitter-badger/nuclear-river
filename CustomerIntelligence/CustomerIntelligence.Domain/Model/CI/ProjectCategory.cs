@@ -2,10 +2,10 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class ProjectCategory : ICustomerIntelligenceObject
+    public sealed class ProjectCategory : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long ProjectId { get; set; }
-        
+
         public long CategoryId { get; set; }
 
         public string Name { get; set; }

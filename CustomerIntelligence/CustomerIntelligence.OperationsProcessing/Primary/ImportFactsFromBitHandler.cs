@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.CustomerIntelligence.Domain.DTO;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
 using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.Messaging.API.Processing;
@@ -44,25 +44,10 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                 {
                     foreach (var dto in message.Dtos)
                     {
-                        var firmStatisticsDto = dto as FirmStatisticsDto;
-                        if (firmStatisticsDto != null)
-                        {
-                            var firmStatisticsImporter = _statisticsImporterFactory.Create(typeof(FirmStatisticsDto));
-
-                            var calculateStatisticsOperations = firmStatisticsImporter.Import(firmStatisticsDto);
-                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(firmStatisticsDto.Firms.Count);
-                            _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
-                        }
-
-                        var categoryStatisticsDto = dto as CategoryStatisticsDto;
-                        if (categoryStatisticsDto != null)
-                        {
-                            var categoryStatisticsImporter = _statisticsImporterFactory.Create(typeof(CategoryStatisticsDto));
-
-                            var calculateStatisticsOperations = categoryStatisticsImporter.Import(categoryStatisticsDto);
-                            _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(categoryStatisticsDto.Categories.Count);
-                            _sender.Push(calculateStatisticsOperations, StatisticsFlow.Instance);
-                        }
+                        var importer = _statisticsImporterFactory.Create(dto.GetType());
+                        var opertaions = importer.Import(dto);
+                        _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(1);
+                        _sender.Push(opertaions.Cast<RecalculateStatisticsOperation>(), StatisticsFlow.Instance);
                     }
                 }
 

@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class ClientContact : ICustomerIntelligenceObject
+    public sealed class ClientContact : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long ClientId { get; set; }
 

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.CustomerIntelligence.Domain.Model;
 
 namespace NuClear.CustomerIntelligence.Domain.DTO
 {
-    public sealed class CategoryStatisticsDto : IStatisticsDto
+    public sealed class CategoryStatisticsDto : IBitDto
     {
         public long ProjectId { get; set; }
 

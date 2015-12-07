@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NuClear.AdvancedSearch.Common.Metadata.Model
+namespace NuClear.AdvancedSearch.Common.Metadata.Equality
 {
     public interface IEqualityComparerFactory
     {

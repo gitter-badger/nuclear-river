@@ -1,6 +1,6 @@
 ﻿namespace NuClear.AdvancedSearch.Common.Metadata.Model
 {
-    public interface IFactStatisticsObject : IObject
+    public interface IAggregatePart : IObject
     {
     }
 }

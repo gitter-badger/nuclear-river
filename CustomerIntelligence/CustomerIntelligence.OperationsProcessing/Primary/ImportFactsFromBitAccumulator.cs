@@ -28,7 +28,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
 
             var dtos = xmls.Select(x =>
                                    {
-                                       ICorporateBusDto dto;
+                                       IDataTransferObject dto;
                                        var parsed = TryParseXml(x, out dto);
                                        return Tuple.Create(parsed, dto);
                                    })
@@ -43,7 +43,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
             };
         }
 
-        private bool TryParseXml(XElement xml, out ICorporateBusDto dto)
+        private bool TryParseXml(XElement xml, out IDataTransferObject dto)
         {
             switch (xml.Name.LocalName.ToLowerInvariant())
             {
@@ -57,7 +57,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
             }
         }
 
-        private bool TryParseFirmPopularity(XElement xml, out ICorporateBusDto dto)
+        private bool TryParseFirmPopularity(XElement xml, out IDataTransferObject dto)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
             }
         }
 
-        private bool TryParseRubricPopularity(XElement xml, out ICorporateBusDto dto)
+        private bool TryParseRubricPopularity(XElement xml, out IDataTransferObject dto)
         {
             var branchElement = xml.Element("Branch");
             if (branchElement == null)

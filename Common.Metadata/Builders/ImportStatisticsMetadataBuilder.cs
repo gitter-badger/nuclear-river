@@ -8,25 +8,26 @@ using NuClear.Storage.API.Specifications;
 
 namespace NuClear.AdvancedSearch.Common.Metadata.Builders
 {
-    public class ImportStatisticsMetadataBuilder<T> : MetadataElementBuilder<ImportStatisticsMetadataBuilder<T>, ImportStatisticsMetadata<T>>
+    public class ImportStatisticsMetadataBuilder<T, TDto> : MetadataElementBuilder<ImportStatisticsMetadataBuilder<T, TDto>, ImportStatisticsMetadata<T, TDto>>
     {
         private Type _statisticsDtoType;
-        private Func<long, FindSpecification<T>> _findSpecificationProvider;
-        private MapSpecification<IStatisticsDto, IReadOnlyCollection<T>> _mapSpecification;
+        private Func<TDto, FindSpecification<T>> _findSpecificationProvider;
+        private IMapSpecification<TDto, IReadOnlyCollection<T>> _mapSpecification;
 
-        protected override ImportStatisticsMetadata<T> Create()
+        protected override ImportStatisticsMetadata<T, TDto> Create()
         {
-            return new ImportStatisticsMetadata<T>(_statisticsDtoType, _findSpecificationProvider, _mapSpecification, Features);
+            return new ImportStatisticsMetadata<T, TDto>(_statisticsDtoType, _findSpecificationProvider, _mapSpecification, Features);
         }
 
-        public ImportStatisticsMetadataBuilder<T> HasSource<TStatisticsDto>(MapSpecification<IStatisticsDto, IReadOnlyCollection<T>> mapSpecification)
+        public ImportStatisticsMetadataBuilder<T, TDto> HasSource<TStatisticsDto>(IMapSpecification<TDto, IReadOnlyCollection<T>> mapSpecification)
+            where TStatisticsDto : IDataTransferObject
         {
             _statisticsDtoType = typeof(TStatisticsDto);
             _mapSpecification = mapSpecification;
             return this;
         }
 
-        public ImportStatisticsMetadataBuilder<T> Aggregated(Func<long, FindSpecification<T>> findSpecificationProvider)
+        public ImportStatisticsMetadataBuilder<T, TDto> Aggregated(Func<TDto, FindSpecification<T>> findSpecificationProvider)
         {
             _findSpecificationProvider = findSpecificationProvider;
             return this;

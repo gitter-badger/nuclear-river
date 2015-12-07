@@ -55,8 +55,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(FirmStatisticsDto)));
             }
 
-            var importer = new StatisticsFactImporter<Bit::FirmCategoryStatistics>(
-                (ImportStatisticsMetadata<Bit::FirmCategoryStatistics>)importStatisticsMetadata,
+            var importer = new StatisticsFactImporter<Bit::FirmCategoryStatistics, FirmStatisticsDto>(
+                (ImportStatisticsMetadata<Bit::FirmCategoryStatistics, FirmStatisticsDto>)importStatisticsMetadata,
                 query,
                 Mock.Of<IBulkRepository<Bit::FirmCategoryStatistics>>());
 
@@ -92,8 +92,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
                 throw new NotSupportedException(string.Format("The aggregate of type '{0}' is not supported.", typeof(CategoryStatisticsDto)));
             }
 
-            var importer = new StatisticsFactImporter<Bit::ProjectCategoryStatistics>(
-                (ImportStatisticsMetadata<Bit::ProjectCategoryStatistics>)importStatisticsMetadata,
+            var importer = new StatisticsFactImporter<Bit::ProjectCategoryStatistics, CategoryStatisticsDto>(
+                (ImportStatisticsMetadata<Bit::ProjectCategoryStatistics, CategoryStatisticsDto>)importStatisticsMetadata,
                 query,
                 Mock.Of<IBulkRepository<Bit::ProjectCategoryStatistics>>());
 

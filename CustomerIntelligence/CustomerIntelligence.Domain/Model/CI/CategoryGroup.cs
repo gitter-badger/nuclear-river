@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class CategoryGroup : IIdentifiable, ICustomerIntelligenceObject
+    public sealed class CategoryGroup : ICustomerIntelligenceAggregatePart, IAggregateRoot
     {
         public long Id { get; set; }
 

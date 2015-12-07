@@ -1,10 +1,8 @@
 ﻿using System;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
-
 namespace NuClear.CustomerIntelligence.Domain.Model.Facts
 {
-    public sealed class Firm : IFactObject
+    public sealed class Firm : IErmFactObject
     {
         public long Id { get; set; }
 
