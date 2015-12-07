@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Интервал времени между постановкой операции пересчёта статистики в очередь и до её обработки, мс"; }
+            get { return "РРЅС‚РµСЂРІР°Р» РІСЂРµРјРµРЅРё РјРµР¶РґСѓ РїРѕСЃС‚Р°РЅРѕРІРєРѕР№ РѕРїРµСЂР°С†РёРё РїРµСЂРµСЃС‡С‘С‚Р° СЃС‚Р°С‚РёСЃС‚РёРєРё РІ РѕС‡РµСЂРµРґСЊ Рё РґРѕ РµС‘ РѕР±СЂР°Р±РѕС‚РєРё, РјСЃ"; }
         }
     }
 }

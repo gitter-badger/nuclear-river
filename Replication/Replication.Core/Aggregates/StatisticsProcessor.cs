@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 
 using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
@@ -29,13 +29,13 @@ namespace NuClear.Replication.Core.Aggregates
         {
             var filter = _metadata.FindSpecificationProvider.Invoke(projectId, categoryIds);
 
-            // Сначала сравниением получаем различающиеся записи,
-            // затем получаем те из различающихся, которые совпадают по идентификатору.
+            // РЎРЅР°С‡Р°Р»Р° СЃСЂР°РІРЅРёРµРЅРёРµРј РїРѕР»СѓС‡Р°РµРј СЂР°Р·Р»РёС‡Р°СЋС‰РёРµСЃСЏ Р·Р°РїРёСЃРё,
+            // Р·Р°С‚РµРј РїРѕР»СѓС‡Р°РµРј С‚Рµ РёР· СЂР°Р·Р»РёС‡Р°СЋС‰РёС…СЃСЏ, РєРѕС‚РѕСЂС‹Рµ СЃРѕРІРїР°РґР°СЋС‚ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ.
             var intermediateResult = _changesDetector.DetectChanges(Specs.Map.ZeroMapping<T>(), filter, _equalityComparerFactory.CreateCompleteComparer<T>());
             var changes = MergeTool.Merge(intermediateResult.Difference, intermediateResult.Complement, _equalityComparerFactory.CreateIdentityComparer<T>());
 
-            // Наличие или отсутствие статистики - не повод создавать или удалять рубрики у фирм.
-            // Поэтому только обновление.
+            // РќР°Р»РёС‡РёРµ РёР»Рё РѕС‚СЃСѓС‚СЃС‚РІРёРµ СЃС‚Р°С‚РёСЃС‚РёРєРё - РЅРµ РїРѕРІРѕРґ СЃРѕР·РґР°РІР°С‚СЊ РёР»Рё СѓРґР°Р»СЏС‚СЊ СЂСѓР±СЂРёРєРё Сѓ С„РёСЂРј.
+            // РџРѕСЌС‚РѕРјСѓ С‚РѕР»СЊРєРѕ РѕР±РЅРѕРІР»РµРЅРёРµ.
             _repository.Update(changes.Intersection);
         }
     }

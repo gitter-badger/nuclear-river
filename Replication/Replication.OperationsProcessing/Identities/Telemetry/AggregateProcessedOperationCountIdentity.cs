@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Количество обработанных операций над агрегатами"; }
+            get { return "РљРѕР»РёС‡РµСЃС‚РІРѕ РѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹С… РѕРїРµСЂР°С†РёР№ РЅР°Рґ Р°РіСЂРµРіР°С‚Р°РјРё"; }
         }
     }
 }

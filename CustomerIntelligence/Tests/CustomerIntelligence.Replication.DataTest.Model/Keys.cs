@@ -1,4 +1,4 @@
-namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
+﻿namespace NuClear.CustomerIntelligence.Replication.StateInitialization.Tests
 {
     public interface IKey
     {

@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 
 using NuClear.Messaging.API.Flows;
 
@@ -13,7 +13,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows
 
         public override string Description
         {
-            get { return "Поток изменений, вызывающих пересчёт статистики по рубрике проекта"; }
+            get { return "РџРѕС‚РѕРє РёР·РјРµРЅРµРЅРёР№, РІС‹Р·С‹РІР°СЋС‰РёС… РїРµСЂРµСЃС‡С‘С‚ СЃС‚Р°С‚РёСЃС‚РёРєРё РїРѕ СЂСѓР±СЂРёРєРµ РїСЂРѕРµРєС‚Р°"; }
         }
     }
 }

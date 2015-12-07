@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Интервал времени между завершением TUC в ERM и его обработкой в AS, мс"; }
+            get { return "РРЅС‚РµСЂРІР°Р» РІСЂРµРјРµРЅРё РјРµР¶РґСѓ Р·Р°РІРµСЂС€РµРЅРёРµРј TUC РІ ERM Рё РµРіРѕ РѕР±СЂР°Р±РѕС‚РєРѕР№ РІ AS, РјСЃ"; }
         }
     }
 }

@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Количество принятых записей статистики из Bit"; }
+            get { return "РљРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРёРЅСЏС‚С‹С… Р·Р°РїРёСЃРµР№ СЃС‚Р°С‚РёСЃС‚РёРєРё РёР· Bit"; }
         }
     }
 }

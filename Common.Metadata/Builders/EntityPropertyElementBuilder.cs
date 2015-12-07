@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Features;

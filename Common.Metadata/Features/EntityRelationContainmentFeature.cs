@@ -1,4 +1,4 @@
-using NuClear.Metamodeling.Elements.Aspects.Features;
+﻿using NuClear.Metamodeling.Elements.Aspects.Features;
 
 namespace NuClear.AdvancedSearch.Common.Metadata.Features
 {

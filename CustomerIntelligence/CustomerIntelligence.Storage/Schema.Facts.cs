@@ -1,4 +1,4 @@
-using LinqToDB.DataProvider.SqlServer;
+﻿using LinqToDB.DataProvider.SqlServer;
 using LinqToDB.Mapping;
 
 using NuClear.CustomerIntelligence.Domain.Model.Bit;

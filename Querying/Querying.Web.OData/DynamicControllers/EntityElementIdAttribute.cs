@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace NuClear.Querying.Web.OData.DynamicControllers
 {

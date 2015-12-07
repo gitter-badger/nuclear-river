@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -40,13 +40,13 @@ namespace NuClear.Querying.Web.OData.Controllers
                 throw new ArgumentException();
             }
 
-            // ограничение для серверного paging
+            // РѕРіСЂР°РЅРёС‡РµРЅРёРµ РґР»СЏ СЃРµСЂРІРµСЂРЅРѕРіРѕ paging
             PageSize = 100;
 
-            // убрали ограничение, вернуть когда в ODATA появится $filter=Id in [1, 2, 3]
+            // СѓР±СЂР°Р»Рё РѕРіСЂР°РЅРёС‡РµРЅРёРµ, РІРµСЂРЅСѓС‚СЊ РєРѕРіРґР° РІ ODATA РїРѕСЏРІРёС‚СЃСЏ $filter=Id in [1, 2, 3]
             MaxNodeCount = int.MaxValue;
 
-            // запреты
+            // Р·Р°РїСЂРµС‚С‹
             AllowedArithmeticOperators = AllowedArithmeticOperators.None;
             AllowedFunctions = AllowedFunctions.All | AllowedFunctions.Any;
         }

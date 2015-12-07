@@ -1,4 +1,4 @@
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Metadata.Features;
 using NuClear.Replication.Core.API.Facts;

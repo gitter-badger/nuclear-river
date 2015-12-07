@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -66,7 +66,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests
             get { return new LinqToDBRepositoryFactory(_stubDomainContextProvider); }
         }
 
-        [Obsolete("Нужно удалить")]
+        [Obsolete("РќСѓР¶РЅРѕ СѓРґР°Р»РёС‚СЊ")]
         protected static IQueryable<T> Inquire<T>(params T[] elements)
         {
             return elements.AsQueryable();

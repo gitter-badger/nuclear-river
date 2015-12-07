@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 
 using NuClear.Messaging.Transports.CorporateBus.Flows;
 
@@ -18,7 +18,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows
 
         public override string Description
         {
-            get { return "Поток статистики от OLAP"; }
+            get { return "РџРѕС‚РѕРє СЃС‚Р°С‚РёСЃС‚РёРєРё РѕС‚ OLAP"; }
         }
     }
 }

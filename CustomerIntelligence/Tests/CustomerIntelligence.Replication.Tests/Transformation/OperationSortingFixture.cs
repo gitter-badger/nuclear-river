@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.CustomerIntelligence.Domain.Model;
