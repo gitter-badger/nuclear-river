@@ -121,7 +121,14 @@ namespace NuClear.CustomerIntelligence.Domain
                             FactMetadata<Territory>
                                 .Config
                                 .HasSource(Specs.Map.Erm.ToFacts.Territories)
-                                .HasMatchedAggregate<CI::Territory>());
+                                .HasMatchedAggregate<CI::Territory>(),
+
+                            FactMetadata<SalesModelCategoryRestriction>
+                                .Config
+                                .HasSource(Specs.Map.Erm.ToFacts.SalesModelCategoryRestrictions)
+                                .HasDependentAggregate<CI::Project>(Specs.Map.Facts.ToProjectAggregate.BySalesModelCategoryRestriction)
+
+                                );
 
             _metadata = new Dictionary<Uri, IMetadataElement> { { factsReplicationMetadataRoot.Identity.Id, factsReplicationMetadataRoot } };
         }

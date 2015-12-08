@@ -16,6 +16,7 @@
         public const int CategoryGroup = 162;
         public const int Project = 158;
         public const int Territory = 191;
+        public const int SalesModelCategoryRestriction = 272;
 
         public const int Activity = 500;
         public const int Appointment = 501;

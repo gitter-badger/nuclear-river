@@ -87,6 +87,11 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                     return new FindSpecification<Territory>(x => x.IsActive);
                 }
 
+                public static FindSpecification<SalesModelCategoryRestriction> SalesModelCategoryRestrictions()
+                {
+                    return new FindSpecification<SalesModelCategoryRestriction>(x => true);
+                }
+
                 public static FindSpecification<Appointment> Appointments()
                 {
                     return new FindSpecification<Appointment>(x => x.IsActive && !x.IsDeleted && x.Status == ActivityStatusCompleted);

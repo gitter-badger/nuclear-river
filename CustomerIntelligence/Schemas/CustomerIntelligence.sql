@@ -46,6 +46,7 @@ create table CustomerIntelligence.ProjectCategory(
     , Name nvarchar(256) not null
     , [Level] int not null
     , ParentId bigint null
+	, SalesModel int not null
     , constraint PK_ProjectCategories primary key (ProjectId, CategoryId)
 )
 go

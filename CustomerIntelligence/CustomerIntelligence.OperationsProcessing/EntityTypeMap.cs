@@ -34,6 +34,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
                     .AddMapping<EntityTypeOrder, Erm.Order>()
                     .AddMapping<EntityTypeProject, Erm.Project>()
                     .AddMapping<EntityTypeTerritory, Erm.Territory>()
+                    .AddMapping<EntityTypeSalesModelCategoryRestriction, Erm.SalesModelCategoryRestriction>()
                     .AddAsVirtual(EntityTypeBuilding.Instance)
                     .AddAsVirtual(EntityTypeDeal.Instance)
                     .AddAsVirtual(EntityTypeOrderPosition.Instance)
@@ -58,7 +59,8 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
                     .AddMapping<EntityTypeLegalPerson, Facts.LegalPerson>()
                     .AddMapping<EntityTypeOrder, Facts.Order>()
                     .AddMapping<EntityTypeProject, Facts.Project>()
-                    .AddMapping<EntityTypeTerritory, Facts.Territory>();
+                    .AddMapping<EntityTypeTerritory, Facts.Territory>()
+                    .AddMapping<EntityTypeSalesModelCategoryRestriction, Facts.SalesModelCategoryRestriction>();
 
         private static readonly Action<EntityTypeMappingRegistryBuilder> CustomerIntelligenceTypeMap
             = builder => builder

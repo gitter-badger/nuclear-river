@@ -14,7 +14,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
             {
                 public static class ToFacts
                 {
-                    public static readonly MapSpecification<IQuery, IQueryable<Activity>> Activities = 
+                    public static readonly MapSpecification<IQuery, IQueryable<Activity>> Activities =
                         new MapSpecification<IQuery, IQueryable<Activity>>(
                             q =>
                             {
@@ -188,6 +188,17 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                      Id = territory.Id,
                                      Name = territory.Name,
                                      OrganizationUnitId = territory.OrganizationUnitId
+                                 });
+
+                    public static readonly MapSpecification<IQuery, IQueryable<SalesModelCategoryRestriction>> SalesModelCategoryRestrictions =
+                        new MapSpecification<IQuery, IQueryable<SalesModelCategoryRestriction>>(
+                            q => from x in q.For(Find.Erm.SalesModelCategoryRestrictions())
+                                 select new SalesModelCategoryRestriction
+                                 {
+                                     Id = x.Id,
+                                     CategoryId = x.CategoryId,
+                                     ProjectId = x.ProjectId,
+                                     SalesModel = x.SalesModel
                                  });
 
                     private static IQueryable<Activity> MapToActivity<T, TReference>(
