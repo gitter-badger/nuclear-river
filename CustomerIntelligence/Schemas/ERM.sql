@@ -21,6 +21,7 @@ if object_id('ERM.LegalPerson') is not null drop table ERM.LegalPerson
 if object_id('ERM.Order') is not null drop table ERM.[Order]
 if object_id('ERM.Project') is not null drop table ERM.Project
 if object_id('ERM.Territory') is not null drop table ERM.Territory
+if object_id('ERM.SalesModelCategoryRestriction') is not null drop table ERM.SalesModelCategoryRestriction
 go
 
 
@@ -213,6 +214,16 @@ create table ERM.Territory(
     , Name nvarchar(256) not null
     , OrganizationUnitId bigint not null
     , constraint PK_Territories primary key (Id)
+)
+go
+
+-- SalesModelCategoryRestriction
+create table ERM.SalesModelCategoryRestriction(
+    Id bigint not null
+    , CategoryId bigint not null
+    , ProjectId  bigint not null
+    , SalesModel int not null
+    , constraint PK_SalesModelCategoryRestrictions primary key (Id)
 )
 go
 

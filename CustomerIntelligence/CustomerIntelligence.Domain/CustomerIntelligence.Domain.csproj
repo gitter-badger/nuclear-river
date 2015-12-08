@@ -49,6 +49,8 @@
     <Compile Include="Model\CI\FirmActivity.cs" />
     <Compile Include="Model\CI\FirmBalance.cs" />
     <Compile Include="Model\CI\FirmCategory.cs" />
+    <Compile Include="Model\Erm\SalesModelCategoryRestriction.cs" />
+    <Compile Include="Model\Facts\SalesModelCategoryRestriction.cs" />
     <Compile Include="Model\ICustomerIntelligenceAggregatePart.cs" />
     <Compile Include="Model\IBitFactObject.cs" />
     <Compile Include="Model\IErmFactObject.cs" />

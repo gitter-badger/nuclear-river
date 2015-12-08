@@ -215,6 +215,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                             q => from project in q.For<Facts::Project>()
                                  join categoryOrganizationUnit in q.For<Facts::CategoryOrganizationUnit>() on project.OrganizationUnitId equals categoryOrganizationUnit.OrganizationUnitId
                                  join category in q.For<Facts::Category>() on categoryOrganizationUnit.CategoryId equals category.Id
+                                 from restriction in q.For<Facts::SalesModelCategoryRestriction>().Where(x => x.ProjectId == project.Id && x.CategoryId == category.Id).DefaultIfEmpty()
                                  select new ProjectCategory
                                  {
                                      ProjectId = project.Id,
@@ -222,6 +223,7 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                                      Name = category.Name,
                                      Level = category.Level,
                                      ParentId = category.ParentId,
+                                     SalesModel = restriction == null ? 0 : restriction.SalesModel
                                  });
 
                     public readonly static MapSpecification<IQuery, IQueryable<Territory>> Territories =

@@ -13,7 +13,12 @@ namespace NuClear.CustomerIntelligence.Domain
                     EnumTypeElement.Config.Name(EnumName.ContactRole)
                         .Member("Employee", 1)
                         .Member("InfluenceDecisions", 2)
-                        .Member("MakingDecisions", 3)                )
+                        .Member("MakingDecisions", 3),
+                    EnumTypeElement.Config.Name(EnumName.SalesModel)
+                        .Member("NotSet", 0)
+                        .Member("CPS", 10)
+                        .Member("FH", 11)
+                        .Member("MFH", 12))
                 .Elements(
                     EntityElement.Config.Name(EntityName.CategoryGroup).EntitySetName("CategoryGroups")
                         .HasKey("Id")
@@ -25,7 +30,8 @@ namespace NuClear.CustomerIntelligence.Domain
                                     .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("ProjectId").OfType(ElementaryTypeKind.Int64))
                                     .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
-                                    .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32)),
+                                    .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
+                                    .Property(EntityPropertyElement.Config.Name("SalesModel").OfType<EnumTypeElement>(EnumTypeElement.Config.Name(EnumName.SalesModel))),
 
                     EntityElement.Config.Name(EntityName.Territory).EntitySetName("Territories")
                                     .HasKey("Id")
@@ -117,6 +123,7 @@ namespace NuClear.CustomerIntelligence.Domain
                                  .Property(EntityPropertyElement.Config.Name("CategoryId").OfType(ElementaryTypeKind.Int64))
                                  .Property(EntityPropertyElement.Config.Name("Name").OfType(ElementaryTypeKind.String))
                                  .Property(EntityPropertyElement.Config.Name("Level").OfType(ElementaryTypeKind.Int32))
+                                 .Property(EntityPropertyElement.Config.Name("SalesModel").OfType(ElementaryTypeKind.Int32))
                                  .Property(EntityPropertyElement.Config.Name("ParentId").OfType(ElementaryTypeKind.Int64).Nullable())
                                  .Relation(EntityRelationElement.Config.Name("ProjectId").DirectTo(EntityElement.Config.Name(TableName.Project)).AsOne()),
                     EntityElement.Config.Name(TableName.Territory)
@@ -187,6 +194,7 @@ namespace NuClear.CustomerIntelligence.Domain
             private static class EnumName
             {
                 public const string ContactRole = "ContactRole";
+                public const string SalesModel = "SalesModel";
             }
 
             private static class EntityName

@@ -46,6 +46,10 @@
       <HintPath>..\..\packages\2GIS.NuClear.Storage.API.1.2.1\lib\portable-net451+win81+wpa81\2GIS.NuClear.Storage.API.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="2GIS.NuClear.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=3a6ebfac29de6b7d, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\2GIS.NuClear.Utils.1.0.10\lib\portable-net451+win81+wpa81\2GIS.NuClear.Utils.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -68,7 +72,7 @@
       <Name>Replication.Bulk.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\CustomerIntelligence.Domain\CustomerIntelligence.Domain.csproj">
-      <Project>{b0a258d5-7387-4fb2-ba18-b51550da3f0b}</Project>
+      <Project>{B0A258D5-7387-4FB2-BA18-B51550DA3F0B}</Project>
       <Name>CustomerIntelligence.Domain</Name>
     </ProjectReference>
     <ProjectReference Include="..\CustomerIntelligence.StateInitialization\CustomerIntelligence.StateInitialization.csproj">

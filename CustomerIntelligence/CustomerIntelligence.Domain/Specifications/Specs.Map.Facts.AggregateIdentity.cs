@@ -307,9 +307,15 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
                     public static MapSpecification<IQuery, IEnumerable<long>> ByCategoryOrganizationUnit(FindSpecification<CategoryOrganizationUnit> specification)
                     {
                         return new MapSpecification<IQuery, IEnumerable<long>>(
-                            q => from categoryOrganizationUnit in q.For(specification)
+                            q => (from categoryOrganizationUnit in q.For(specification)
                                  join project in q.For<Project>() on categoryOrganizationUnit.OrganizationUnitId equals project.OrganizationUnitId
-                                 select project.Id);
+                                 select project.Id).Distinct());
+                    }
+
+                    public static MapSpecification<IQuery, IEnumerable<long>> BySalesModelCategoryRestriction(FindSpecification<SalesModelCategoryRestriction> specification)
+                    {
+                        return new MapSpecification<IQuery, IEnumerable<long>>(
+                            q => (from restriction in q.For(specification) select restriction.ProjectId).Distinct());
                     }
                 }
 

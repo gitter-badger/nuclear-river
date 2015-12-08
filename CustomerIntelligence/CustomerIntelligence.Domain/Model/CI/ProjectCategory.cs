@@ -13,5 +13,7 @@ namespace NuClear.CustomerIntelligence.Domain.Model.CI
         public int Level { get; set; }
 
         public long? ParentId { get; set; }
+
+        public int SalesModel { get; set; }
     }
 }
