@@ -1,8 +1,8 @@
-Set-StrictMode -Version Latest
+п»їSet-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 #------------------------------
 
-# TODO Это временное решение, правильное решение - это создание отдельного сервиса инфраструктуры, общего для advanced search и для ERM
+# TODO Р­С‚Рѕ РІСЂРµРјРµРЅРЅРѕРµ СЂРµС€РµРЅРёРµ, РїСЂР°РІРёР»СЊРЅРѕРµ СЂРµС€РµРЅРёРµ - СЌС‚Рѕ СЃРѕР·РґР°РЅРёРµ РѕС‚РґРµР»СЊРЅРѕРіРѕ СЃРµСЂРІРёСЃР° РёРЅС„СЂР°СЃС‚СЂСѓРєС‚СѓСЂС‹, РѕР±С‰РµРіРѕ РґР»СЏ advanced search Рё РґР»СЏ ERM
 
 Import-Module "$PSScriptRoot\metadata.web.psm1" -DisableNameChecking
 Import-Module "$PSScriptRoot\metadata.taskservice.psm1" -DisableNameChecking
@@ -13,7 +13,7 @@ function Get-EntryPointsMetadata ($EntryPoints, $Context) {
 
 	$entryPointsMetadata = @{}
 	
-	# конвертер нужен всегда, чтобы из него подтянуть connection strings для Create-Topics
+	# РєРѕРЅРІРµСЂС‚РµСЂ РЅСѓР¶РµРЅ РІСЃРµРіРґР°, С‡С‚РѕР±С‹ РёР· РЅРµРіРѕ РїРѕРґС‚СЏРЅСѓС‚СЊ connection strings РґР»СЏ Create-Topics
 	$Context.EntryPoint = 'ConvertUseCasesService'
 	$entryPointsMetadata += Get-TaskServiceMetadata $Context
 

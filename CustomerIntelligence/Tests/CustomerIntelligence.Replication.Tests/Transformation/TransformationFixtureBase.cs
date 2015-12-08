@@ -1,4 +1,4 @@
-using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {

@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 
 using NuClear.Messaging.API.Flows;
 
@@ -13,7 +13,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows
 
         public override string Description
         {
-            get { return "Маркер для потока выполненных операций в системе обеспечивающих репликацию изменений в домен Customer Intelligence"; }
+            get { return "РњР°СЂРєРµСЂ РґР»СЏ РїРѕС‚РѕРєР° РІС‹РїРѕР»РЅРµРЅРЅС‹С… РѕРїРµСЂР°С†РёР№ РІ СЃРёСЃС‚РµРјРµ РѕР±РµСЃРїРµС‡РёРІР°СЋС‰РёС… СЂРµРїР»РёРєР°С†РёСЋ РёР·РјРµРЅРµРЅРёР№ РІ РґРѕРјРµРЅ Customer Intelligence"; }
         }
     }
 }

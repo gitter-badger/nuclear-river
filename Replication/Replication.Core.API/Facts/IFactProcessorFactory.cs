@@ -1,4 +1,4 @@
-using NuClear.Metamodeling.Elements;
+﻿using NuClear.Metamodeling.Elements;
 
 namespace NuClear.Replication.Core.API.Facts
 {

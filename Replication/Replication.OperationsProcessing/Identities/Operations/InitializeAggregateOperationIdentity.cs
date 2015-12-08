@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 
 using NuClear.Model.Common.Operations.Identity;
 
@@ -15,7 +15,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Operations
 
         public override string Description
         {
-            get { return "Операция инициализации агрегата"; }
+            get { return "РћРїРµСЂР°С†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё Р°РіСЂРµРіР°С‚Р°"; }
         }
     }
 }

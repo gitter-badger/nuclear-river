@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+﻿using NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {

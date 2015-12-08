@@ -1,4 +1,4 @@
-namespace NuClear.CustomerIntelligence.Domain.Model.Erm
+﻿namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class LegalPerson : IErmObject
     {

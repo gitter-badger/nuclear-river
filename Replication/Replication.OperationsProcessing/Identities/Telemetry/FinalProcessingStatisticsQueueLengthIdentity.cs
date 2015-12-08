@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Размер очереди ETL2 (статистика)"; }
+            get { return "Р Р°Р·РјРµСЂ РѕС‡РµСЂРµРґРё ETL2 (СЃС‚Р°С‚РёСЃС‚РёРєР°)"; }
         }
     }
 }

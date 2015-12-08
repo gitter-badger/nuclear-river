@@ -1,4 +1,4 @@
-using NuClear.Telemetry;
+п»їusing NuClear.Telemetry;
 
 namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 {
@@ -11,7 +11,7 @@ namespace NuClear.Replication.OperationsProcessing.Identities.Telemetry
 
         public override string Description
         {
-            get { return "Количество принятых CUD операций из ERM"; }
+            get { return "РљРѕР»РёС‡РµСЃС‚РІРѕ РїСЂРёРЅСЏС‚С‹С… CUD РѕРїРµСЂР°С†РёР№ РёР· ERM"; }
         }
     }
 }

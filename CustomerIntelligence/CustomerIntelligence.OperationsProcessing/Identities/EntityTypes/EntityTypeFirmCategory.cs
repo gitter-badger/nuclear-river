@@ -1,4 +1,4 @@
-using NuClear.CustomerIntelligence.Domain;
+﻿using NuClear.CustomerIntelligence.Domain;
 using NuClear.Model.Common.Entities;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Identities.EntityTypes

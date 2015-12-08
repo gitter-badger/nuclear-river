@@ -1,4 +1,4 @@
-using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
+﻿using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.Storage.API.ConnectionStrings;
 
 namespace NuClear.CustomerIntelligence.StateInitialization

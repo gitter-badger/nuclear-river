@@ -1,4 +1,4 @@
-using System.Data.Entity.Core.Metadata.Edm;
+﻿using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 
 namespace NuClear.Querying.EntityFramework.Tests

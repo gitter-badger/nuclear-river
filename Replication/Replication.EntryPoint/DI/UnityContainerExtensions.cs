@@ -1,4 +1,4 @@
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 
 using NuClear.DI.Unity.Config;
 

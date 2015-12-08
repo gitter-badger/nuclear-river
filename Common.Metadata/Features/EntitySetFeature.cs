@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using NuClear.Metamodeling.Elements.Aspects.Features;
 
