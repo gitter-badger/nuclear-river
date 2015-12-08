@@ -30,6 +30,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeFirm.Instance),
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeFirmAddress.Instance),
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeCategoryFirmAddress.Instance),
+            BulkCreateIdentity.Instance.SpecificFor(EntityTypeSalesModelCategoryRestriction.Instance),
             BulkCreateIdentity.Instance.SpecificFor(EntityTypeLock.Instance),
 
             UpdateIdentity.Instance.SpecificFor(EntityTypeOrder.Instance),
@@ -63,6 +64,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
             DeleteIdentity.Instance.SpecificFor(EntityTypeContact.Instance),
 
             BulkDeleteIdentity.Instance.SpecificFor(EntityTypeFirmContact.Instance),
+            BulkDeleteIdentity.Instance.SpecificFor(EntityTypeSalesModelCategoryRestriction.Instance),
 
             ActivateIdentity.Instance.SpecificFor(EntityTypeLegalPerson.Instance),
 
@@ -142,6 +144,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing
             ImportCategoryOrganizationUnitIdentity.Instance.NonCoupled(),
             SetMainFirmIdentity.Instance.NonCoupled(),
             ActualizeActiveLocksIdentity.Instance.NonCoupled(),
+            ImportAdvModelInRubricInfoIdentity.Instance.NonCoupled(),
 
             // эти операции станут disallowed после того как фирмы будем брать из InfoRussia
             ImportCardForErmIdentity.Instance.NonCoupled(),

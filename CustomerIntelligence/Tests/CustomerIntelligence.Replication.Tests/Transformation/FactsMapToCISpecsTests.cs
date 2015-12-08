@@ -225,6 +225,7 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
             SourceDb.Has(new Facts::Project { Id = 1, OrganizationUnitId = 2 })
                     .Has(new Facts::CategoryOrganizationUnit { Id = 1, OrganizationUnitId = 2, CategoryId = 3 },
                          new Facts::CategoryOrganizationUnit { Id = 2, OrganizationUnitId = 2, CategoryId = 4 })
+                    .Has(new Facts::SalesModelCategoryRestriction { Id = 1, ProjectId = 1, CategoryId = 3, SalesModel = 10})
                     .Has(new Facts::Category { Id = 3 },
                          new Facts::Category { Id = 4 })
                     .Has(new Bit::ProjectCategoryStatistics { ProjectId = 1, AdvertisersCount = 1, CategoryId = 3 });
@@ -239,8 +240,8 @@ namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 
             Transformation.Create(Query)
                           .VerifyTransform(x => Specs.Map.Facts.ToCI.ProjectCategories.Map(x).Where(c => c.ProjectId == 1),
-                                           Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3 },
-                                                   new CI::ProjectCategory { ProjectId = 1, CategoryId = 4 }));
+                                           Inquire(new CI::ProjectCategory { ProjectId = 1, CategoryId = 3, SalesModel = 10},
+                                                   new CI::ProjectCategory { ProjectId = 1, CategoryId = 4, SalesModel = 0}));
         }
 
         [Test]

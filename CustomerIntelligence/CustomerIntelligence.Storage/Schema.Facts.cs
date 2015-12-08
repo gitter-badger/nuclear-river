@@ -36,6 +36,7 @@ namespace NuClear.CustomerIntelligence.Storage
                 config.Entity<Order>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Project>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
                 config.Entity<Territory>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
+                config.Entity<SalesModelCategoryRestriction>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();
 
                 config.Entity<FirmCategoryStatistics>().HasSchemaName(BitSchema)
                       .Property(x => x.FirmId).IsPrimaryKey()

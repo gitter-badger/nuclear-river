@@ -52,6 +52,7 @@ namespace NuClear.CustomerIntelligence.Storage
                     .Property(x => x.Id).IsPrimaryKey()
                     .Property(x => x.Name).HasColumnName("DisplayName");
                 config.Entity<Territory>().HasSchemaName(BusinessDirectorySchema).HasTableName("Territories").Property(x => x.Id).IsPrimaryKey();
+                config.Entity<SalesModelCategoryRestriction>().HasSchemaName(BusinessDirectorySchema).HasTableName("SalesModelCategoryRestrictions").Property(x => x.Id).IsPrimaryKey();
 
                 config.Entity<Appointment>()
                       .HasSchemaName(ActivitySchema).HasTableName("AppointmentBase")
