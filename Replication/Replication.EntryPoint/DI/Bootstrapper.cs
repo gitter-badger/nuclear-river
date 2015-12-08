@@ -9,6 +9,7 @@ using Microsoft.Practices.Unity;
 
 using NuClear.AdvancedSearch.Common.Identities.Connections;
 using NuClear.AdvancedSearch.Common.Metadata.Equality;
+using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Aggregates.Storage.DI.Unity;
 using NuClear.Assembling.TypeProcessing;
 using NuClear.CustomerIntelligence.Domain;
@@ -16,6 +17,8 @@ using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.CustomerIntelligence.OperationsProcessing;
 using NuClear.CustomerIntelligence.OperationsProcessing.Contexts;
 using NuClear.CustomerIntelligence.OperationsProcessing.Final;
+using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
+using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.CustomerIntelligence.Storage;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;
 using NuClear.DI.Unity.Config;
@@ -69,6 +72,7 @@ using NuClear.Replication.EntryPoint.Factories.Messaging.Receiver;
 using NuClear.Replication.EntryPoint.Factories.Messaging.Transformer;
 using NuClear.Replication.EntryPoint.Factories.Replication;
 using NuClear.Replication.EntryPoint.Settings;
+using NuClear.Replication.OperationsProcessing.Transports;
 using NuClear.Replication.OperationsProcessing.Transports.CorporateBus;
 using NuClear.Replication.OperationsProcessing.Transports.ServiceBus;
 using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
@@ -213,7 +217,11 @@ namespace NuClear.Replication.EntryPoint.DI
                      .RegisterOne2ManyTypesPerTypeUniqueness<IRuntimeTypeModelConfigurator, TrackedUseCaseConfigurator>(
                          Lifetime.Singleton,
                          new InjectionFactory(x => x.Resolve<TrackedUseCaseConfigurator>(new DependencyOverride<IEntityTypeMappingRegistry<ISubDomain>>(new ResolvedParameter(typeof(IEntityTypeMappingRegistry<ErmSubDomain>))))))
-                     .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null);
+                     .RegisterTypeWithDependencies(typeof(BinaryEntireBrokeredMessage2TrackedUseCaseTransformer), Lifetime.Singleton, null)
+                     .RegisterType<IOperationSender<AggregateOperation>, SqlStoreSender<AggregateOperation, AggregatesFlow>>(Lifetime.PerScope)
+                     .RegisterType<IOperationSender<RecalculateStatisticsOperation>, SqlStoreSender<RecalculateStatisticsOperation, StatisticsFlow>>(Lifetime.PerScope)
+                     .RegisterType<IOperationSerializer<AggregateOperation>, AggregateOperationSerializer>()
+                     .RegisterType<IOperationSerializer<RecalculateStatisticsOperation>, StatisticsOperationSerializer>();
 
             // final
             container.RegisterTypeWithDependencies(typeof(SqlStoreReceiverTelemetryDecorator), Lifetime.PerScope, null)

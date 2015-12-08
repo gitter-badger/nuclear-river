@@ -4,14 +4,13 @@ using System.Linq;
 using System.Transactions;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
-using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
-using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.OperationsProcessing;
 using NuClear.Replication.OperationsProcessing.Identities.Telemetry;
+using NuClear.Replication.OperationsProcessing.Transports;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
@@ -20,13 +19,20 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
     public sealed class ImportFactsFromErmHandler : IMessageProcessingHandler
     {
         private readonly IFactsReplicator _factsReplicator;
-        private readonly SqlStoreSender _sender;
+        private readonly IOperationSender<AggregateOperation> _aggregateSender;
+        private readonly IOperationSender<RecalculateStatisticsOperation> _statisticsSender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromErmHandler(IFactsReplicator factsReplicator, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromErmHandler(
+            IFactsReplicator factsReplicator,
+            IOperationSender<AggregateOperation> aggregateSender,
+            IOperationSender<RecalculateStatisticsOperation> statisticsSender, 
+            ITracer tracer,
+            ITelemetryPublisher telemetryPublisher)
         {
-            _sender = sender;
+            _aggregateSender = aggregateSender;
+            _statisticsSender = statisticsSender;
             _tracer = tracer;
             _telemetryPublisher = telemetryPublisher;
             _factsReplicator = factsReplicator;
@@ -58,7 +64,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
         {
             _tracer.Debug("Handing fact operations started");
             var result = _factsReplicator.Replicate(operations);
-            
+
             _telemetryPublisher.Publish<ErmProcessedOperationCountIdentity>(operations.Count);
 
             var statistics = result.OfType<RecalculateStatisticsOperation>().ToArray();
@@ -69,11 +75,11 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                                                               new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
             {
                 _tracer.Debug("Pushing events for statistics recalculation");
-                _sender.Push(statistics, StatisticsFlow.Instance);
+                _statisticsSender.Push(statistics);
                 _telemetryPublisher.Publish<StatisticsEnqueuedOperationCountIdentity>(statistics.Length);
 
                 _tracer.Debug("Pushing events for aggregates recalculation");
-                _sender.Push(aggregates, AggregatesFlow.Instance);
+                _aggregateSender.Push(aggregates);
                 _telemetryPublisher.Publish<AggregateEnqueuedOperationCountIdentity>(aggregates.Length);
 
                 pushTransaction.Complete();

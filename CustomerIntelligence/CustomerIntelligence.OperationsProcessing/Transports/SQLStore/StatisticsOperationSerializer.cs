@@ -7,10 +7,11 @@ using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Messaging.API.Flows;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 {
-    public sealed class StatisticsOperationSerializer
+    public sealed class StatisticsOperationSerializer : IOperationSerializer<RecalculateStatisticsOperation>
     {
         private static readonly Dictionary<Guid, Type> OperationIdRegistry =
             new Dictionary<Guid, Type>

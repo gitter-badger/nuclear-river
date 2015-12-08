@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
-using NuClear.CustomerIntelligence.OperationsProcessing.Identities.Flows;
-using NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore;
 using NuClear.Messaging.API.Processing;
 using NuClear.Messaging.API.Processing.Actors.Handlers;
 using NuClear.Messaging.API.Processing.Stages;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Replication.OperationsProcessing.Identities.Telemetry;
 using NuClear.Replication.OperationsProcessing.Primary;
+using NuClear.Replication.OperationsProcessing.Transports;
 using NuClear.Telemetry;
 using NuClear.Tracing.API;
 
@@ -19,11 +18,15 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
     public sealed class ImportFactsFromBitHandler : IMessageProcessingHandler
     {
         private readonly IStatisticsImporterFactory _statisticsImporterFactory;
-        private readonly SqlStoreSender _sender;
+        private readonly IOperationSender<RecalculateStatisticsOperation> _sender;
         private readonly ITracer _tracer;
         private readonly ITelemetryPublisher _telemetryPublisher;
 
-        public ImportFactsFromBitHandler(IStatisticsImporterFactory statisticsImporterFactory, SqlStoreSender sender, ITracer tracer, ITelemetryPublisher telemetryPublisher)
+        public ImportFactsFromBitHandler(
+            IStatisticsImporterFactory statisticsImporterFactory,
+            IOperationSender<RecalculateStatisticsOperation> sender, 
+            ITracer tracer, 
+            ITelemetryPublisher telemetryPublisher)
         {
             _statisticsImporterFactory = statisticsImporterFactory;
             _sender = sender;
@@ -47,7 +50,7 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                         var importer = _statisticsImporterFactory.Create(dto.GetType());
                         var opertaions = importer.Import(dto);
                         _telemetryPublisher.Publish<BitStatisticsEntityProcessedCountIdentity>(1);
-                        _sender.Push(opertaions.Cast<RecalculateStatisticsOperation>(), StatisticsFlow.Instance);
+                        _sender.Push(opertaions.Cast<RecalculateStatisticsOperation>());
                     }
                 }
 

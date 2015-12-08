@@ -8,10 +8,11 @@ using NuClear.Messaging.API.Flows;
 using NuClear.Model.Common.Entities;
 using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Replication.OperationsProcessing.Identities.Operations;
+using NuClear.Replication.OperationsProcessing.Transports.SQLStore;
 
 namespace NuClear.CustomerIntelligence.OperationsProcessing.Transports.SQLStore
 {
-    public sealed class AggregateOperationSerializer
+    public sealed class AggregateOperationSerializer : IOperationSerializer<AggregateOperation>
     {
         private readonly IEntityTypeMappingRegistry<CustomerIntelligenceSubDomain> _registry;
 
