@@ -13,6 +13,6 @@ namespace NuClear.Replication.OperationsProcessing.Primary
         public override Guid Id { get { return Guid.Empty; } }
         public IMessageFlow TargetFlow { get; set; }
 
-        public IReadOnlyCollection<ICorporateBusDto> Dtos { get; set; }
+        public IReadOnlyCollection<IDataTransferObject> Dtos { get; set; }
     }
 }

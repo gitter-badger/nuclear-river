@@ -3,7 +3,7 @@ using System.Reflection;
 
 using Moq;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Equality;
 
 using NUnit.Framework;
 

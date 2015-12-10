@@ -15,7 +15,7 @@ namespace NuClear.Replication.EntryPoint.Factories.Replication
     {
         private readonly IUnityContainer _unityContainer;
         private readonly IMetadataProvider _metadataProvider;
-        
+
         public UnityStatisticsImporterFactory(IUnityContainer unityContainer, IMetadataProvider metadataProvider)
         {
             _unityContainer = unityContainer;
@@ -37,7 +37,7 @@ namespace NuClear.Replication.EntryPoint.Factories.Replication
             }
 
             var statisticsType = importStatisticsMetadata.GetType().GenericTypeArguments[0];
-            var importerType = typeof(StatisticsFactImporter<>).MakeGenericType(statisticsType);
+            var importerType = typeof(StatisticsFactImporter<,>).MakeGenericType(statisticsType, statisticsDtoType);
             var processor = _unityContainer.Resolve(importerType, new DependencyOverride(importStatisticsMetadata.GetType(), importStatisticsMetadata));
             return (IStatisticsImporter)processor;
         }

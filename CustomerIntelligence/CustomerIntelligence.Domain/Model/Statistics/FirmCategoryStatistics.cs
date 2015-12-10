@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-using NuClear.AdvancedSearch.Common.Metadata.Model;
+﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
 
 namespace NuClear.CustomerIntelligence.Domain.Model.Statistics
 {
-    public sealed class FirmCategoryStatistics : ICustomerIntelligenceObject
+    public sealed class FirmCategoryStatistics : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long ProjectId { get; set; }
 

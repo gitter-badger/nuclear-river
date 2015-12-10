@@ -4,38 +4,55 @@ using System.Transactions;
 
 using NuClear.AdvancedSearch.Common.Metadata.Elements;
 using NuClear.AdvancedSearch.Common.Metadata.Model;
-using NuClear.AdvancedSearch.Common.Metadata.Model.Operations;
 using NuClear.Replication.Core.API;
 using NuClear.Replication.Core.API.Facts;
 using NuClear.Storage.API.Readings;
 
 namespace NuClear.Replication.Core.Facts
 {
-    public class StatisticsFactImporter<T> : IStatisticsImporter where T : class 
+    public class StatisticsFactImporter<T, TDto> : IStatisticsImporter
+        where T : class
+        where TDto : class
     {
-        private readonly ImportStatisticsMetadata<T> _importStatisticsMetadata;
+        private readonly ImportStatisticsMetadata<T, TDto> _importStatisticsMetadata;
         private readonly IQuery _query;
         private readonly IBulkRepository<T> _repository;
 
-        public StatisticsFactImporter(ImportStatisticsMetadata<T> importStatisticsMetadata, IQuery query, IBulkRepository<T> repository)
+        public StatisticsFactImporter(ImportStatisticsMetadata<T, TDto> importStatisticsMetadata, IQuery query, IBulkRepository<T> repository)
         {
             _importStatisticsMetadata = importStatisticsMetadata;
             _query = query;
             _repository = repository;
         }
 
-        public IReadOnlyCollection<RecalculateStatisticsOperation> Import(IStatisticsDto statisticsDto)
+        public IReadOnlyCollection<IOperation> Import(IDataTransferObject dto)
+        {
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto));
+            }
+
+            var typedDto = dto as TDto;
+            if (typedDto == null)
+            {
+                throw new ArgumentException($"Expected dto of type {typeof(TDto).Name} but got {dto.GetType().Name}", nameof(dto));
+            }
+
+            return Import(typedDto);
+        }
+
+        private IReadOnlyCollection<IOperation> Import(TDto statisticsDto)
         {
             using (var transaction = new TransactionScope(TransactionScopeOption.Required,
                                                           new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted, Timeout = TimeSpan.Zero }))
             {
-                _repository.Delete(_query.For(_importStatisticsMetadata.FindSpecificationProvider.Invoke(statisticsDto.ProjectId)));
+                _repository.Delete(_query.For(_importStatisticsMetadata.FindSpecificationProvider.Invoke(statisticsDto)));
                 _repository.Create(_importStatisticsMetadata.MapSpecification.Map(statisticsDto));
 
                 transaction.Complete();
             }
 
-            return new[] { new RecalculateStatisticsOperation { ProjectId = statisticsDto.ProjectId } };
+            return _importStatisticsMetadata.RecalculationSpecification.Map(statisticsDto);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace NuClear.CustomerIntelligence.Domain.Model.CI
+﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
+
+namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class ProjectCategory : ICustomerIntelligenceObject
+    public sealed class ProjectCategory : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long ProjectId { get; set; }
 

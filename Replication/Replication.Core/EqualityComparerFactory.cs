@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
+using NuClear.AdvancedSearch.Common.Metadata.Equality;
 
 namespace NuClear.Replication.Core
 {

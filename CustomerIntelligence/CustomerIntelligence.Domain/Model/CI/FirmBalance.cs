@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class FirmBalance : ICustomerIntelligenceObject
+    public sealed class FirmBalance : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long ProjectId { get; set; }
 

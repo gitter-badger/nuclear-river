@@ -12,7 +12,7 @@ using NuClear.Storage.API.Readings;
 namespace NuClear.Replication.Core.Facts
 {
     public class FactProcessor<TFact> : IFactProcessor 
-        where TFact : class, IFactObject
+        where TFact : class, IIdentifiable
     {
         private readonly IQuery _query;
         private readonly IBulkRepository<TFact> _repository;

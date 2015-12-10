@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class Territory : IIdentifiable, ICustomerIntelligenceObject
+    public sealed class Territory : ICustomerIntelligenceAggregatePart, IAggregateEntity
     {
         public long Id { get; set; }
 

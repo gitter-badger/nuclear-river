@@ -1,8 +1,6 @@
-﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
-
-namespace NuClear.CustomerIntelligence.Domain.Model.Bit
+﻿namespace NuClear.CustomerIntelligence.Domain.Model.Bit
 {
-    public class FirmCategoryStatistics : IFactStatisticsObject
+    public class FirmCategoryStatistics : IBitFactObject
     {
         public long FirmId { get; set; }
 

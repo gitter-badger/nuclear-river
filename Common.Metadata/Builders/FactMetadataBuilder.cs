@@ -75,21 +75,5 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Builders
             AddFeatures(new DirectlyDependentAggregateFeature<T>(mapSpecificationProviderOnCreate, mapSpecificationProviderOnUpdate, mapSpecificationProviderOnDelete));
             return this;
         }
-
-        public FactMetadataBuilder<T> LeadsToStatisticsCalculation(Func<FindSpecification<T>, MapSpecification<IQuery, IEnumerable<Tuple<long, long?>>>> provider)
-        {
-            MapToObjectsSpecProvider<T, IOperation> mapSpecificationProvider =
-                specification => new MapSpecification<IQuery, IEnumerable<IOperation>>(
-                                     q => provider.Invoke(specification)
-                                                  .Map(q)
-                                                  .Select(tuple => new RecalculateStatisticsOperation
-                                                                   {
-                                                                       ProjectId = tuple.Item1,
-                                                                       CategoryId = tuple.Item2
-                                                                   }));
-
-            AddFeatures(new DependentStatisticsFeature<T>(mapSpecificationProvider));
-            return this;
-        }
     }
 }

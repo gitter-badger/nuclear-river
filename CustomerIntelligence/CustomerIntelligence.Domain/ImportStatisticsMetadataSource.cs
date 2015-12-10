@@ -25,22 +25,22 @@ namespace NuClear.CustomerIntelligence.Domain
                 HierarchyMetadata
                     .Config
                     .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ImportStatisticsMetadataIdentity>())
-                    .Childs(ImportStatisticsMetadata<Bit::FirmCategoryStatistics>
+                    .Childs(ImportStatisticsMetadata<Bit::FirmCategoryStatistics, FirmStatisticsDto>
                                 .Config
                                 .HasSource<FirmStatisticsDto>(Specs.Map.Bit.FirmCategoryStatistics())
-                                .Aggregated(Specs.Find.Bit.FirmCategoryStatistics.ByProject),
+                                .Aggregated(Specs.Find.Bit.FirmCategoryStatistics.ByBitDto)
+                                .LeadsToProjectStatisticsCalculation(),
 
-                            ImportStatisticsMetadata<Bit::ProjectCategoryStatistics>
+                            ImportStatisticsMetadata<Bit::ProjectCategoryStatistics, CategoryStatisticsDto>
                                 .Config
                                 .HasSource<CategoryStatisticsDto>(Specs.Map.Bit.ProjectCategoryStatistics())
-                                .Aggregated(Specs.Find.Bit.ProjectCategoryStatistics.ByProject));
+                                .Aggregated(Specs.Find.Bit.ProjectCategoryStatistics.ByBitDto)
+                                .LeadsToProjectStatisticsCalculation());
 
             _metadata = new Dictionary<Uri, IMetadataElement> { { importStatisticsMetadataRoot.Identity.Id, importStatisticsMetadataRoot } };
         }
 
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata
-        {
-            get { return _metadata; }
-        }
+            => _metadata;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using NuClear.AdvancedSearch.Common.Metadata.Model;
 using NuClear.CustomerIntelligence.Domain.DTO;
 using NuClear.Storage.API.Specifications;
 
@@ -15,40 +14,38 @@ namespace NuClear.CustomerIntelligence.Domain.Specifications
         {
             public static partial class Bit
             {
-                public static MapSpecification<IStatisticsDto, IReadOnlyCollection<Bit::FirmCategoryStatistics>> FirmCategoryStatistics()
+                public static IMapSpecification<FirmStatisticsDto, IReadOnlyCollection<Bit::FirmCategoryStatistics>> FirmCategoryStatistics()
                 {
-                    return new MapSpecification<IStatisticsDto, IReadOnlyCollection<Bit::FirmCategoryStatistics>>(
+                    return new MapSpecification<FirmStatisticsDto, IReadOnlyCollection<Bit::FirmCategoryStatistics>>(
                         dto =>
                         {
-                            var statisticsDto = (FirmStatisticsDto)dto;
-                            return statisticsDto.Firms
-                                                .SelectMany(x => x.Categories.Select(y => new Bit::FirmCategoryStatistics
-                                                                                          {
-                                                                                              ProjectId = statisticsDto.ProjectId,
-                                                                                              FirmId = x.FirmId,
-                                                                                              CategoryId = y.CategoryId,
-                                                                                              Hits = y.Hits,
-                                                                                              Shows = y.Shows,
-                                                                                          }))
-                                                .ToArray();
+                            return dto.Firms
+                                        .SelectMany(x => x.Categories.Select(y => new Bit::FirmCategoryStatistics
+                                            {
+                                                ProjectId = dto.ProjectId,
+                                                FirmId = x.FirmId,
+                                                CategoryId = y.CategoryId,
+                                                Hits = y.Hits,
+                                                Shows = y.Shows,
+                                            }))
+                                        .ToArray();
                         });
                 }
 
-                public static MapSpecification<IStatisticsDto, IReadOnlyCollection<Bit::ProjectCategoryStatistics>> ProjectCategoryStatistics()
+                public static IMapSpecification<CategoryStatisticsDto, IReadOnlyCollection<Bit::ProjectCategoryStatistics>> ProjectCategoryStatistics()
                 {
-                    return new MapSpecification<IStatisticsDto, IReadOnlyCollection<Bit::ProjectCategoryStatistics>>(
+                    return new MapSpecification<CategoryStatisticsDto, IReadOnlyCollection<Bit::ProjectCategoryStatistics>>(
                         dto =>
-                        {
-                            var statisticsDto = (CategoryStatisticsDto)dto;
-                            return statisticsDto.Categories
-                                                .Select(x => new Bit::ProjectCategoryStatistics
-                                                             {
-                                                                 ProjectId = statisticsDto.ProjectId,
-                                                                 CategoryId = x.CategoryId,
-                                                                 AdvertisersCount = x.AdvertisersCount
-                                                             })
-                                                .ToArray();
-                        });
+                            {
+                                return dto.Categories
+                                          .Select(x => new Bit::ProjectCategoryStatistics
+                                              {
+                                                  ProjectId = dto.ProjectId,
+                                                  CategoryId = x.CategoryId,
+                                                  AdvertisersCount = x.AdvertisersCount
+                                              })
+                                          .ToArray();
+                            });
                 }
             }
         }

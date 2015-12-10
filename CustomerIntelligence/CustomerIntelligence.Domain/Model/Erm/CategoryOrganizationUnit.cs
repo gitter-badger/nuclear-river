@@ -1,6 +1,4 @@
-﻿using NuClear.AdvancedSearch.Common.Metadata.Model;
-
-namespace NuClear.CustomerIntelligence.Domain.Model.Erm
+﻿namespace NuClear.CustomerIntelligence.Domain.Model.Erm
 {
     public sealed class CategoryOrganizationUnit : IErmObject
     {

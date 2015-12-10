@@ -2,7 +2,7 @@
 
 namespace NuClear.CustomerIntelligence.Domain.Model.CI
 {
-    public sealed class FirmTerritory : ICustomerIntelligenceObject
+    public sealed class FirmTerritory : ICustomerIntelligenceAggregatePart, IAggregateValueObject
     {
         public long FirmId { get; set; }
 
