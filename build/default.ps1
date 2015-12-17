@@ -8,17 +8,14 @@ Import-Module "$BuildToolsRoot\modules\deploy.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\nuget.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\metadata.psm1" -DisableNameChecking
 Import-Module "$BuildToolsRoot\modules\entrypoint.psm1" -DisableNameChecking
+Import-Module "$BuildToolsRoot\modules\buildqueue.psm1" -DisableNameChecking
 
-Include "$BuildToolsRoot\psake\tasks.ps1"
+Include "$BuildToolsRoot\psake\nuget.ps1"
+Include "$BuildToolsRoot\psake\unittests.ps1"
 Include 'convertusecases.ps1'
 Include 'updateschemas.ps1'
 Include 'bulktool.ps1'
 Include 'datatest.ps1'
-
-Task Run-DataTests {
-	$projects = Find-Projects '.' '*.StateInitialization.Tests*'
-	Run-DataTests $projects 'UnitTests'
-}
 
 Task QueueBuild-OData -Precondition { $Metadata['Web.OData'] } {
 	$projectFileName = Get-ProjectFileName 'Querying' 'Querying.Web.OData'
@@ -49,6 +46,15 @@ Task Take-TaskServiceOffline -Depends Import-WinServiceModule -Precondition { $M
 Task Import-WinServiceModule {
 	Load-WinServiceModule 'Replication.EntryPoint'
 }
+
+Task Build-Queue { Invoke-MSBuildQueue }
+
+Task Run-DataTests {
+	$projects = Find-Projects '.' '*.StateInitialization.Tests*'
+	Run-DataTests $projects 'UnitTests'
+}
+
+Task Validate-PullRequest -depends Run-UnitTests, Run-DataTests
 
 Task Build-Packages -depends `
 Build-ConvertUseCasesService, `
