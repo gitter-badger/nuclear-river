@@ -113,6 +113,29 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Replication.Core.Tests", "R
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A9028F36-80AC-4111-B38B-D40DA3CD43B8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ValidationRules", "ValidationRules", "{8C2CFAF4-1282-494F-A7BB-2653593839DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schemas", "Schemas", "{1F115A52-C900-4C2E-9B83-375E1A71C831}"
+	ProjectSection(SolutionItems) = preProject
+		ValidationRules\Schemas\Messages.sql = ValidationRules\Schemas\Messages.sql
+		ValidationRules\Schemas\PriceContext.Aggregates.sql = ValidationRules\Schemas\PriceContext.Aggregates.sql
+		ValidationRules\Schemas\PriceContext.Facts.sql = ValidationRules\Schemas\PriceContext.Facts.sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.Storage", "ValidationRules\ValidationRules.Storage\ValidationRules.Storage.csproj", "{E799A2EE-408F-467A-8B50-FC729E92D3F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.StateInitialization", "ValidationRules\ValidationRules.StateInitialization\ValidationRules.StateInitialization.csproj", "{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.StateInitialization.EntryPoint", "ValidationRules\ValidationRules.StateInitialization.EntryPoint\ValidationRules.StateInitialization.EntryPoint.csproj", "{007E4716-14A6-457E-991C-66AFFD9D212E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.OperationsProcessing", "ValidationRules\ValidationRules.OperationsProcessing\ValidationRules.OperationsProcessing.csproj", "{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.Domain", "ValidationRules\ValidationRules.Domain\ValidationRules.Domain.csproj", "{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6AB1908A-A1C0-4568-8A76-73030B2A0B5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidationRules.Replication.Tests", "ValidationRules\Tests\ValidationRules.Replication.Tests\ValidationRules.Replication.Tests.csproj", "{0AC56434-B3DA-48FB-B896-96E45D3122CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -227,6 +250,30 @@ Global
 		{37156BD5-AA7A-463C-9A8A-926F81D4B599}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37156BD5-AA7A-463C-9A8A-926F81D4B599}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37156BD5-AA7A-463C-9A8A-926F81D4B599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E799A2EE-408F-467A-8B50-FC729E92D3F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E799A2EE-408F-467A-8B50-FC729E92D3F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E799A2EE-408F-467A-8B50-FC729E92D3F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E799A2EE-408F-467A-8B50-FC729E92D3F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{007E4716-14A6-457E-991C-66AFFD9D212E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{007E4716-14A6-457E-991C-66AFFD9D212E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{007E4716-14A6-457E-991C-66AFFD9D212E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{007E4716-14A6-457E-991C-66AFFD9D212E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AC56434-B3DA-48FB-B896-96E45D3122CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC56434-B3DA-48FB-B896-96E45D3122CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC56434-B3DA-48FB-B896-96E45D3122CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC56434-B3DA-48FB-B896-96E45D3122CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -264,6 +311,14 @@ Global
 		{C6DE2A90-B4B9-4CD5-AEF0-7E6607B102A0} = {C80A3A09-DFCA-4FDE-8835-39F047FFA4BB}
 		{37156BD5-AA7A-463C-9A8A-926F81D4B599} = {A9028F36-80AC-4111-B38B-D40DA3CD43B8}
 		{A9028F36-80AC-4111-B38B-D40DA3CD43B8} = {B2560A63-4013-4556-8DF7-26F711AEED01}
+		{1F115A52-C900-4C2E-9B83-375E1A71C831} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{E799A2EE-408F-467A-8B50-FC729E92D3F3} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{9E9B56F6-6CE7-4134-8FEA-7D7D0D0D0C7F} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{007E4716-14A6-457E-991C-66AFFD9D212E} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{6C1F4B07-10E4-4072-929A-0FDCDF53BF1B} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{855B881B-8AF1-4E7D-9CB4-9BD8232AAFBC} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{6AB1908A-A1C0-4568-8A76-73030B2A0B5D} = {8C2CFAF4-1282-494F-A7BB-2653593839DF}
+		{0AC56434-B3DA-48FB-B896-96E45D3122CE} = {6AB1908A-A1C0-4568-8A76-73030B2A0B5D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45
