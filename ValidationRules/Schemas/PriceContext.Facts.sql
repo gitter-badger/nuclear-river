@@ -6,6 +6,7 @@ if object_id('PriceContext.AssociatedPosition') is not null drop table PriceCont
 if object_id('PriceContext.DeniedPosition') is not null drop table PriceContext.DeniedPosition
 if object_id('PriceContext.Order') is not null drop table PriceContext.[Order]
 if object_id('PriceContext.OrderPosition') is not null drop table PriceContext.OrderPosition
+if object_id('PriceContext.OrderPositionAdvertisement') is not null drop table PriceContext.OrderPositionAdvertisement
 if object_id('PriceContext.OrganizationUnit') is not null drop table PriceContext.OrganizationUnit
 if object_id('PriceContext.Price') is not null drop table PriceContext.Price
 if object_id('PriceContext.PricePosition') is not null drop table PriceContext.PricePosition
@@ -22,6 +23,7 @@ create table PriceContext.AssociatedPositionsGroup(
 go
 
 create table PriceContext.AssociatedPosition(
+    Id bigint not null,
     AssociatedPositionsGroupId bigint not null,
     PositionId bigint not null,
     ObjectBindingType int not null
@@ -29,6 +31,7 @@ create table PriceContext.AssociatedPosition(
 go
 
 create table PriceContext.DeniedPosition(
+    Id bigint not null,
     PositionId bigint not null,
     PositionDeniedId bigint not null,
     ObjectBindingType int not null,
