@@ -13,7 +13,7 @@ namespace NuClear.Replication.OperationsProcessing.Transports.SQLStore
         {
             get
             {
-                var schema = new MappingSchema(new SqlServerMappingSchema());
+                var schema = new MappingSchema(nameof(Transport), new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
                 config.Entity<PerformedOperationFinalProcessing>()
