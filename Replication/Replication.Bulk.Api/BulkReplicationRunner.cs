@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
+using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
 using NuClear.Metamodeling.Elements.Identities.Builder;
 using NuClear.Metamodeling.Provider;
@@ -38,22 +39,27 @@ namespace NuClear.Replication.Bulk.Api
             var context = bulkReplicationMetadata.Elements.Single();
             using (_viewRemover.TemporaryRemoveViews(storageDescriptor.ConnectionStringName, bulkReplicationMetadata.EssentialViews))
             {
-                Parallel.ForEach(context.Elements,
-                                 element =>
-                                 {
-                                     using (var bulkReplicatorFactory = CreateReplicatorFactory(bulkReplicationMetadata))
-                                     {
-                                         var sw = Stopwatch.StartNew();
-                                         var replicators = bulkReplicatorFactory.Create(element);
-                                         foreach (var replicator in replicators)
-                                         {
-                                             replicator.Replicate();
-                                         }
+                //Parallel.ForEach(element => Replicate(bulkReplicationMetadata, element));
+                foreach (var element in context.Elements)
+                {
+                    Replicate(bulkReplicationMetadata, element);
+                }
+            }
+        }
 
-                                         sw.Stop();
-                                         Console.WriteLine($"{element.Identity.Id}: {sw.Elapsed.TotalSeconds} seconds");
-                                     }
-                                 });
+        private void Replicate(BulkReplicationMetadataElement bulkReplicationMetadata, IMetadataElement element)
+        {
+            using (var bulkReplicatorFactory = CreateReplicatorFactory(bulkReplicationMetadata))
+            {
+                var sw = Stopwatch.StartNew();
+                var replicators = bulkReplicatorFactory.Create(element);
+                foreach (var replicator in replicators)
+                {
+                    replicator.Replicate();
+                }
+
+                sw.Stop();
+                Console.WriteLine($"{element.Identity.Id}: {sw.Elapsed.TotalSeconds} seconds");
             }
         }
 
