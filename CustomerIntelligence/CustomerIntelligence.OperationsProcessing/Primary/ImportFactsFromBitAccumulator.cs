@@ -81,8 +81,8 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                                 var rubricDto = new FirmStatisticsDto.FirmDto.CategoryDto
                                 {
                                     CategoryId = (long)y.Attribute("Code"),
-                                    Hits = (long)clickCountAttr,
-                                    Shows = (long)impressionCountAttr
+                                    Hits = int.Parse(clickCountAttr.Value),
+                                    Shows = int.Parse(impressionCountAttr.Value),
                                 };
 
                                 return rubricDto;

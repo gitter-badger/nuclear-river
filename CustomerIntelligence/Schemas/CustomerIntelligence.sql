@@ -100,8 +100,8 @@ go
 create table CustomerIntelligence.FirmCategory(
 	FirmId bigint not null
 	, CategoryId bigint not null
-    , Hits bigint null
-    , Shows bigint null
+    , Hits int null
+    , Shows int null
     , FirmCount int null
     , AdvertisersShare float null
     , constraint PK_FirmCategoryPartFirm primary key (FirmId, CategoryId)
