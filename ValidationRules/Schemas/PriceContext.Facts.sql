@@ -119,3 +119,17 @@ create table PriceContext.Category(
     ParentId bigint not null,
 )
 go
+
+create table PriceContext.GlobalAssociatedPosition(
+    MasterPositionId bigint not null,
+    AssociatedPositionId bigint not null,
+    ObjectBindingType int not null
+)
+go
+
+create table PriceContext.GlobalDeniedPosition(
+    MasterPositionId bigint not null,
+    DeniedPositionId bigint not null,
+    ObjectBindingType int not null
+)
+go

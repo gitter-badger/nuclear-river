@@ -22,6 +22,13 @@ namespace NuClear.ValidationRules.StateInitialization
                                               .From(ErmConnectionStringIdentity.Instance, Schema.Erm)
                                               .To(FactsConnectionStringIdentity.Instance, Schema.Facts)
                                               .UsingMetadataOfKind<ReplicationMetadataIdentity>("PriceContext.Facts"),
+
+                BulkReplicationMetadataElement.Config
+                                              .CommandlineKey("-config")
+                                              .From(@"C:\dev\erm\CompositionRoots\Source\2Gis.Erm.API.WCF.OrderValidation\orderValidation.config")
+                                              .To(FactsConnectionStringIdentity.Instance, Schema.Facts)
+                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>("PriceContext.Config"),
+
             }.ToDictionary(x => x.Identity.Id, x => (IMetadataElement)x);
 
         public override IReadOnlyDictionary<Uri, IMetadataElement> Metadata => Elements;
