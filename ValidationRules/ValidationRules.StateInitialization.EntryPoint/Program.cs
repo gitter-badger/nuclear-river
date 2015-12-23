@@ -20,7 +20,8 @@ namespace NuClear.ValidationRules.StateInitialization.EntryPoint
                 new IMetadataSource[]
                 {
                     new BulkReplicationMetadataSource(),
-                    new FactsReplicationMetadataSource()
+                    new FactsReplicationMetadataSource(),
+                    new ImportOrderValidationConfigMetadataSource(),
                 },
                 new IMetadataProcessor[] { new ReferencesEvaluatorProcessor() });
 

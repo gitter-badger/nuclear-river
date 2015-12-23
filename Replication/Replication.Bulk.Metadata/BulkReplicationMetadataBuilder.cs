@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using LinqToDB.Mapping;
 
@@ -14,7 +15,7 @@ namespace NuClear.Replication.Bulk.Metadata
     {
         private readonly List<string> _essentialViewNames = new List<string>();
         private string _commandLineKey;
-        
+
         public BulkReplicationMetadataBuilder CommandlineKey(string key)
         {
             _commandLineKey = key;
@@ -23,7 +24,13 @@ namespace NuClear.Replication.Bulk.Metadata
 
         public BulkReplicationMetadataBuilder From(IConnectionStringIdentity connectionString, MappingSchema mappingSchema)
         {
-            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.From,  connectionString, mappingSchema));
+            AddFeatures(new StorageDescriptorFeature(ReplicationDirection.From, connectionString, mappingSchema));
+            return this;
+        }
+
+        public BulkReplicationMetadataBuilder From(IConnectionStringIdentity connectionString, Type parserType)
+        {
+            AddFeatures(new ConfigStorageDescriptorFeature(ReplicationDirection.From, connectionString, parserType));
             return this;
         }
 
@@ -32,7 +39,7 @@ namespace NuClear.Replication.Bulk.Metadata
             AddFeatures(new StorageDescriptorFeature(ReplicationDirection.To, connectionString, mappingSchema));
             return this;
         }
-        
+
         public BulkReplicationMetadataBuilder UsingMetadataOfKind<TIdentity>(params string[] segments)
             where TIdentity : MetadataKindIdentityBase<TIdentity>, new()
         {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Elements.Identities;
@@ -65,9 +64,13 @@ namespace NuClear.Replication.Bulk.Api
 
         private IBulkReplicatorFactory CreateReplicatorFactory(BulkReplicationMetadataElement bulkReplicationMetadata)
         {
-            var sourceStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.From);
-            var targetStorageDescriptor = bulkReplicationMetadata.Features.OfType<StorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
-            return new RoutingBulkReplicatorFactory(_dataConnectionFactory.CreateConnection(sourceStorageDescriptor), _dataConnectionFactory.CreateConnection(targetStorageDescriptor));
+            var sourceStorageDescriptor = bulkReplicationMetadata.Features.OfType<IStorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.From);
+            var source = _dataConnectionFactory.CreateStorage(sourceStorageDescriptor);
+
+            var targetStorageDescriptor = bulkReplicationMetadata.Features.OfType<IStorageDescriptorFeature>().Single(x => x.Direction == ReplicationDirection.To);
+            var target = _dataConnectionFactory.CreateStorage(targetStorageDescriptor);
+
+            return new RoutingBulkReplicatorFactory(source, target);
         }
     }
 }

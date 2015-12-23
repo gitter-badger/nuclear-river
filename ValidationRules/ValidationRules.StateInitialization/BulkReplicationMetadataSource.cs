@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NuClear.AdvancedSearch.Common.Metadata.Identities;
-using NuClear.ValidationRules.Domain;
 using NuClear.ValidationRules.Storage;
 using NuClear.Metamodeling.Elements;
 using NuClear.Metamodeling.Provider.Sources;
 using NuClear.Replication.Bulk.Metadata;
+using NuClear.ValidationRules.Domain.Dto;
 using NuClear.ValidationRules.Storage.Identitites.Connections;
 
 namespace NuClear.ValidationRules.StateInitialization
@@ -25,7 +25,7 @@ namespace NuClear.ValidationRules.StateInitialization
 
                 BulkReplicationMetadataElement.Config
                                               .CommandlineKey("-config")
-                                              .From(@"C:\dev\erm\CompositionRoots\Source\2Gis.Erm.API.WCF.OrderValidation\orderValidation.config")
+                                              .From(OrderValidationConfigIdentity.Instance, typeof(OrderValidationConfigParser))
                                               .To(FactsConnectionStringIdentity.Instance, Schema.Facts)
                                               .UsingMetadataOfKind<ReplicationMetadataIdentity>("PriceContext.Config"),
 

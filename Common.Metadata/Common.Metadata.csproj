@@ -80,6 +80,7 @@
     <Compile Include="Identities\ImportStatisticsMetadataIdentity.cs" />
     <Compile Include="Identities\ReplicationMetadataIdentity.cs" />
     <Compile Include="Identities\StatisticsRecalculationMetadataIdentity.cs" />
+    <Compile Include="IConfigParser.cs" />
     <Compile Include="MapToObjectsSpecProvider.cs" />
     <Compile Include="Model\IAggregateEntity.cs" />
     <Compile Include="Model\IAggregatePart.cs" />

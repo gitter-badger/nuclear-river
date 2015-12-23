@@ -16,51 +16,54 @@ namespace NuClear.ValidationRules.Storage
                 var schema = new MappingSchema(new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
-
                 config.Entity<AssociatedPositionsGroup>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
-
-                config.Entity<AssociatedPosition>().HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.AssociatedPositionsGroupId)
-                    .HasPrimaryKey(x => x.PositionId);
-
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
+                config.Entity<AssociatedPosition>()
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<DeniedPosition>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.PriceId)
-                    .HasPrimaryKey(x => x.PositionId)
-                    .HasPrimaryKey(x => x.PositionDeniedId);
-
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<Order>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<OrderPosition>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<OrderPositionAdvertisement>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<OrganizationUnit>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<Price>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<PricePosition>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<Project>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<Position>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<PositionCategory>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
                 config.Entity<Category>()
-                    .HasSchemaName(PriceContextSchema)
-                    .HasPrimaryKey(x => x.Id);
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.Id);
+
+                config.Entity<GlobalAssociatedPosition>()
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.AssociatedPositionId)
+                      .HasPrimaryKey(x => x.MasterPositionId);
+                config.Entity<GlobalDeniedPosition>()
+                      .HasSchemaName(PriceContextSchema)
+                      .HasPrimaryKey(x => x.DeniedPositionId)
+                      .HasPrimaryKey(x => x.MasterPositionId);
 
                 return schema;
             }

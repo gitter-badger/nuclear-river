@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\OrderValidationConfig.cs" />
+    <Compile Include="Dto\OrderValidationConfigParser.cs" />
     <Compile Include="ImportOrderValidationConfigMetadataSource.cs" />
     <Compile Include="Model\Facts\GlobalAssociatedPosition.cs" />
     <Compile Include="Model\Facts\GlobalDeniedPosition.cs" />

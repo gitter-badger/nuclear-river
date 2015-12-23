@@ -94,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkReplicationRunner.cs" />
+    <Compile Include="Factories\ImportStatisticsBulkReplicatorFactory.cs" />
+    <Compile Include="Storage\DatabaseStorage.cs" />
     <Compile Include="Factories\AggregatesBulkReplicatorFactory.cs" />
     <Compile Include="Factories\DataConnectionFactory.cs" />
     <Compile Include="Factories\FactBulkReplicatorFactory.cs" />
@@ -101,6 +103,8 @@
     <Compile Include="Factories\RoutingBulkReplicatorFactory.cs" />
     <Compile Include="Factories\StatisticsBulkReplicatorFactory.cs" />
     <Compile Include="Factories\ValueObjectsBulkReplicatorFactory.cs" />
+    <Compile Include="Storage\FileStorage.cs" />
+    <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Replicators\IBulkReplicator.cs" />
     <Compile Include="Replicators\InsertsBulkReplicator.cs" />
