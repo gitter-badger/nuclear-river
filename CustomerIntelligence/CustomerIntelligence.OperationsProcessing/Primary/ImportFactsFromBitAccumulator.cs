@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -81,8 +81,8 @@ namespace NuClear.CustomerIntelligence.OperationsProcessing.Primary
                                 var rubricDto = new FirmStatisticsDto.FirmDto.CategoryDto
                                 {
                                     CategoryId = (long)y.Attribute("Code"),
-                                    Hits = (long)clickCountAttr,
-                                    Shows = (long)impressionCountAttr
+                                    Hits = (int)clickCountAttr,
+                                    Shows = (int)impressionCountAttr,
                                 };
 
                                 return rubricDto;
