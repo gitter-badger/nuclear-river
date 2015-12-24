@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Domain.Model;
 using NuClear.CustomerIntelligence.Domain.Model.Erm;
-using NuClear.CustomerIntelligence.Domain.Specifications;
 using NuClear.Storage.API.Readings;
 using NuClear.Storage.API.Specifications;
 
 using NUnit.Framework;
+
+using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {

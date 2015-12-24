@@ -63,6 +63,7 @@
     <Compile Include="Elements\StructuralModelElement.cs" />
     <Compile Include="Elements\StructuralModelTypeKind.cs" />
     <Compile Include="Elements\UriExtensions.cs" />
+    <Compile Include="EntityTypeIds.cs" />
     <Compile Include="Features\MapSpecificationFeature.cs" />
     <Compile Include="Features\DependentStatisticsFeature.cs" />
     <Compile Include="Features\DirectlyDependentAggregateFeature.cs" />

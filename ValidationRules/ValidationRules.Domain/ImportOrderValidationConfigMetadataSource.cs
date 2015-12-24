@@ -17,23 +17,25 @@ namespace NuClear.ValidationRules.Domain
 {
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines", Justification = "Reviewed. Suppression is OK here.")]
     [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1115:ParameterMustFollowComma", Justification = "Reviewed. Suppression is OK here.")]
-    public class ImportOrderValidationConfigMetadataSource : MetadataSourceBase<ReplicationMetadataIdentity>
+    public class ImportOrderValidationConfigMetadataSource : MetadataSourceBase<ImportStatisticsMetadataIdentity>
     {
         public ImportOrderValidationConfigMetadataSource()
         {
             HierarchyMetadata importStatisticsMetadataRoot =
                 HierarchyMetadata
                     .Config
-                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ReplicationMetadataIdentity>("PriceContext.Config"))
+                    .Id.Is(Metamodeling.Elements.Identities.Builder.Metadata.Id.For<ImportStatisticsMetadataIdentity>())
                     .Childs(ImportStatisticsMetadata<GlobalAssociatedPosition, OrderValidationConfig>
                                 .Config
                                 .HasSource(Specs.Map.Config.ToFacts.GlobalAssociatedPosition)
-                                .Aggregated(dto => new FindSpecification<GlobalAssociatedPosition>(entity => true)),
+                                .Aggregated(dto => new FindSpecification<GlobalAssociatedPosition>(entity => true))
+                                .FakeOperationsProvider(),
 
                             ImportStatisticsMetadata<GlobalDeniedPosition, OrderValidationConfig>
                                 .Config
                                 .HasSource(Specs.Map.Config.ToFacts.GlobalDeniedPosition)
-                                .Aggregated(dto => new FindSpecification<GlobalDeniedPosition>(entity => true)));
+                                .Aggregated(dto => new FindSpecification<GlobalDeniedPosition>(entity => true))
+                                .FakeOperationsProvider());
 
             Metadata = new Dictionary<Uri, IMetadataElement> { { importStatisticsMetadataRoot.Identity.Id, importStatisticsMetadataRoot } };
         }

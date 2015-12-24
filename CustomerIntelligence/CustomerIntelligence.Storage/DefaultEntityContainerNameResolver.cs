@@ -1,9 +1,8 @@
 ﻿using System;
 
-using NuClear.OperationsProcessing.Transports.SQLStore.Final;
 using NuClear.Storage.Core;
 
-namespace NuClear.Replication.EntryPoint.Settings
+namespace NuClear.CustomerIntelligence.Storage
 {
     public class DefaultEntityContainerNameResolver : IEntityContainerNameResolver
     {
@@ -30,7 +29,7 @@ namespace NuClear.Replication.EntryPoint.Settings
                 return Facts;
             }
 
-            if (objType == typeof(PerformedOperationFinalProcessing))
+            if (objType.Name == "PerformedOperationFinalProcessing")
             {
                 return Transport;
             }

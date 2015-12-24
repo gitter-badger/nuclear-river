@@ -15,6 +15,7 @@ using LinqToDB.Expressions;
 using LinqToDB.Mapping;
 using LinqToDB.SqlQuery;
 
+using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.CustomerIntelligence.Replication.Tests.Data;
 using NuClear.CustomerIntelligence.Storage.Identitites.Connections;

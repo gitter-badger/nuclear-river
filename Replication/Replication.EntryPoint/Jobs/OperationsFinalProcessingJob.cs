@@ -51,13 +51,13 @@ namespace NuClear.Replication.EntryPoint.Jobs
             }
 
             var targetFlows = Flows.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-	        foreach (var targetFlow in targetFlows)
-	        {
-		        using (Probe.Create(targetFlow))
-		        {
-			        ProcessFlow(targetFlow);
-		        }
-	        }
+            foreach (var targetFlow in targetFlows)
+            {
+                using (Probe.Create(targetFlow))
+                {
+                    ProcessFlow(targetFlow);
+                }
+            }
         }
 
         private void ProcessFlow(string flow)

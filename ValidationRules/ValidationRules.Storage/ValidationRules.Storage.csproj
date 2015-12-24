@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultEntityContainerNameResolver.cs" />
     <Compile Include="Identitites\Connections\ErmConnectionStringIdentity.cs" />
     <Compile Include="Identitites\Connections\OrderValidationConfigIdentity.cs" />
     <Compile Include="Identitites\Connections\FactsConnectionStringIdentity.cs" />

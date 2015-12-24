@@ -24,7 +24,7 @@ namespace NuClear.AdvancedSearch.Common.Metadata.Elements
             IMapSpecification<TDto, IReadOnlyCollection<T>> mapSpecification,
             IEnumerable<IMetadataFeature> features) : base(features)
         {
-            _identity = new Uri($"{typeof(T).Name}/{typeof(TDto).Name}", UriKind.Relative).AsIdentity();
+            _identity = new Uri($"{typeof(TDto).Name}/{typeof(T).Name}", UriKind.Relative).AsIdentity();
             _findSpecificationProvider = findSpecificationProvider;
             _mapSpecification = mapSpecification;
         }

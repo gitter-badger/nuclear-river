@@ -1,5 +1,6 @@
 ﻿using System;
 
+using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.CustomerIntelligence.Domain;
 using NuClear.Model.Common.Entities;
 

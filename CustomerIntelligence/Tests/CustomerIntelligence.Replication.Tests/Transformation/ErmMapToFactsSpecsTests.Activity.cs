@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 
+using NuClear.AdvancedSearch.Common.Metadata;
 using NuClear.CustomerIntelligence.Domain;
-using NuClear.CustomerIntelligence.Domain.Specifications;
 
 using NUnit.Framework;
 
 using Erm = NuClear.CustomerIntelligence.Domain.Model.Erm;
+using Specs = NuClear.CustomerIntelligence.Domain.Specifications.Specs;
 
 namespace NuClear.CustomerIntelligence.Replication.Tests.Transformation
 {

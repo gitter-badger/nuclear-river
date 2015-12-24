@@ -1,4 +1,4 @@
-﻿namespace NuClear.CustomerIntelligence.Domain
+﻿namespace NuClear.AdvancedSearch.Common.Metadata
 {
     public static class EntityTypeIds
     {
