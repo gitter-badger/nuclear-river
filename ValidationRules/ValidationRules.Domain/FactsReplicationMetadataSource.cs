@@ -59,10 +59,6 @@ namespace NuClear.ValidationRules.Domain
                                 .Config
                                 .HasSource(Specs.Map.Erm.ToFacts.Position),
 
-                            FactMetadata<PositionCategory>
-                                .Config
-                                .HasSource(Specs.Map.Erm.ToFacts.PositionCategory),
-
                             FactMetadata<Price>
                                 .Config
                                 .HasSource(Specs.Map.Erm.ToFacts.Price),

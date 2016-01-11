@@ -15,22 +15,21 @@ namespace NuClear.ValidationRules.StateInitialization.EntryPoint
 {
     public sealed class Program
     {
-        private static readonly MetadataProvider DefaultProvider
-            = new MetadataProvider(
-                new IMetadataSource[]
-                {
-                    new BulkReplicationMetadataSource(),
-                    new FactsReplicationMetadataSource(),
-                    new ImportOrderValidationConfigMetadataSource(),
-                },
-                new IMetadataProcessor[] { new ReferencesEvaluatorProcessor() });
-
         public static void Main(string[] args)
         {
+            var metadataProvider = new MetadataProvider(
+                    new IMetadataSource[]
+                    {
+                        new BulkReplicationMetadataSource(),
+                        new FactsReplicationMetadataSource(),
+                        new ImportOrderValidationConfigMetadataSource(),
+                    },
+                    new IMetadataProcessor[] { new ReferencesEvaluatorProcessor() });
+
             var connectionStringSettings = new StateInitializationConnectionStringSettings(ConfigurationManager.ConnectionStrings);
             var viewRemover = new ViewRemover(connectionStringSettings);
             var connectionFactory = new DataConnectionFactory(connectionStringSettings);
-            var runner = new BulkReplicationRunner(DefaultProvider, connectionFactory, viewRemover);
+            var runner = new BulkReplicationRunner(metadataProvider, connectionFactory, viewRemover);
 
             foreach (var mode in args)
             {

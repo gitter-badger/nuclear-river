@@ -28,7 +28,6 @@ namespace NuClear.ValidationRules.Storage
                 config.Entity<PricePosition>().HasSchemaName(BillingSchema).HasTableName("PricePositions").HasPrimaryKey(x => x.Id);
                 config.Entity<Project>().HasSchemaName(BillingSchema).HasTableName("Projects").HasPrimaryKey(x => x.Id);
                 config.Entity<Position>().HasSchemaName(BillingSchema).HasTableName("Positions").HasPrimaryKey(x => x.Id);
-                config.Entity<PositionCategory>().HasSchemaName(BillingSchema).HasTableName("PositionCategories").HasPrimaryKey(x => x.Id);
                 config.Entity<Category>().HasSchemaName(BusinessDirectorySchema).HasTableName("Categories").HasPrimaryKey(x => x.Id);
 
                 return schema;

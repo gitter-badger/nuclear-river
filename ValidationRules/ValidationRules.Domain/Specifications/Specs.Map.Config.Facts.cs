@@ -25,6 +25,7 @@ namespace NuClear.ValidationRules.Domain.Specifications
                                     ObjectBindingType = Parce(master.BindingType),
                                 })).ToArray());
 
+                    // todo: в denied positions должна быть избыточность, симметричные пары тоже должны импортироваться
                     public static readonly MapSpecification<OrderValidationConfig, IReadOnlyCollection<GlobalDeniedPosition>> GlobalDeniedPosition =
                         new MapSpecification<OrderValidationConfig, IReadOnlyCollection<GlobalDeniedPosition>>(
                             config => config.Positions.SelectMany(position => position.DeniedPositions.Select(denied => new GlobalDeniedPosition

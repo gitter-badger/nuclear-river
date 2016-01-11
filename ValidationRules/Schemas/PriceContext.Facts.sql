@@ -12,7 +12,6 @@ if object_id('PriceContext.Price') is not null drop table PriceContext.Price
 if object_id('PriceContext.PricePosition') is not null drop table PriceContext.PricePosition
 if object_id('PriceContext.Project') is not null drop table PriceContext.Project
 if object_id('PriceContext.Position') is not null drop table PriceContext.Position
-if object_id('PriceContext.PositionCategory') is not null drop table PriceContext.PositionCategory
 if object_id('PriceContext.Category') is not null drop table PriceContext.Category
 go
 
@@ -101,16 +100,9 @@ go
 
 create table PriceContext.Position(
     Id bigint not null,
-    PositionCategoryId bigint not null, -- в erm назван CategoryId
     IsControlledByAmount bit not null,
     IsComposite bit not null,
     Name nvarchar(max) not null
-)
-go
-
-create table PriceContext.PositionCategory(
-    Id bigint not null,
-    Name nvarchar(max) not null,
 )
 go
 

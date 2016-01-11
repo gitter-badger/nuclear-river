@@ -27,7 +27,7 @@ namespace NuClear.ValidationRules.StateInitialization
                                               .CommandlineKey("-config")
                                               .From(OrderValidationConfigIdentity.Instance, typeof(OrderValidationConfigParser))
                                               .To(FactsConnectionStringIdentity.Instance, Schema.Facts)
-                                              .UsingMetadataOfKind<ReplicationMetadataIdentity>("PriceContext.Config"),
+                                              .UsingMetadataOfKind<ImportStatisticsMetadataIdentity>("PriceContext.Config"),
 
             }.ToDictionary(x => x.Identity.Id, x => (IMetadataElement)x);
 

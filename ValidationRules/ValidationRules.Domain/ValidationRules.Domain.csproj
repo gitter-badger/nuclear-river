@@ -79,7 +79,6 @@
     <Compile Include="Model\Erm\OrderPositionAdvertisement.cs" />
     <Compile Include="Model\Erm\OrganizationUnit.cs" />
     <Compile Include="Model\Erm\Position.cs" />
-    <Compile Include="Model\Erm\PositionCategory.cs" />
     <Compile Include="Model\Erm\Price.cs" />
     <Compile Include="Model\Erm\PricePosition.cs" />
     <Compile Include="Model\Erm\Project.cs" />
@@ -92,7 +91,6 @@
     <Compile Include="Model\Facts\OrderPositionAdvertisement.cs" />
     <Compile Include="Model\Facts\OrganizationUnit.cs" />
     <Compile Include="Model\Facts\Position.cs" />
-    <Compile Include="Model\Facts\PositionCategory.cs" />
     <Compile Include="Model\Facts\Price.cs" />
     <Compile Include="Model\Facts\PricePosition.cs" />
     <Compile Include="Model\Facts\Project.cs" />

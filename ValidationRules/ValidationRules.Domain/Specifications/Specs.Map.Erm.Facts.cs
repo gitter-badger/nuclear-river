@@ -71,12 +71,6 @@ namespace NuClear.ValidationRules.Domain.Specifications
                                   .Where(entity => entity.IsActive && !entity.IsDeleted)
                                   .Select(Transform.Position));
 
-                    public static readonly MapSpecification<IQuery, IQueryable<Facts::PositionCategory>> PositionCategory =
-                        new MapSpecification<IQuery, IQueryable<Facts::PositionCategory>>(
-                            q => q.For<Erm::PositionCategory>()
-                                  .Where(entity => entity.IsActive && !entity.IsDeleted)
-                                  .Select(Transform.PositionCategory));
-
                     public static readonly MapSpecification<IQuery, IQueryable<Facts::Price>> Price =
                         new MapSpecification<IQuery, IQueryable<Facts::Price>>(
                             q => q.For<Erm::Price>()
@@ -177,15 +171,7 @@ namespace NuClear.ValidationRules.Domain.Specifications
                                     Id = x.Id,
                                     Name = x.Name,
                                     IsComposite = x.IsComposite,
-                                    IsControlledByAmount = x.IsControlledByAmount,
-                                    PositionCategoryId = x.CategoryId,
-                                };
-
-                        public static readonly Expression<Func<Erm::PositionCategory, Facts::PositionCategory>> PositionCategory =
-                            x => new Facts::PositionCategory
-                                {
-                                    Id = x.Id,
-                                    Name = x.Name,
+                                    IsControlledByAmount = x.IsControlledByAmount
                                 };
 
                         public static readonly Expression<Func<Erm::Price, Facts::Price>> Price =
