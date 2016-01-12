@@ -17,7 +17,7 @@ namespace NuClear.CustomerIntelligence.Storage
         {
             get
             {
-                var schema = new MappingSchema(new SqlServerMappingSchema());
+                var schema = new MappingSchema(nameof(Erm), new SqlServerMappingSchema());
 
                 // NOTE: ERM хранит даты в UTC с использованием типа datetime, уберем неодназначность выставив UTC явно
                 schema.SetConvertExpression<DateTime, DateTime>(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));

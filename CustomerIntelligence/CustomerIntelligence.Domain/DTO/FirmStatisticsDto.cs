@@ -19,8 +19,8 @@ namespace NuClear.CustomerIntelligence.Domain.DTO
             public class CategoryDto
             {
                 public long CategoryId { get; set; }
-                public long Hits { get; set; }
-                public long Shows { get; set; }
+                public int Hits { get; set; }
+                public int Shows { get; set; }
             }
         }
     }

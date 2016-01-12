@@ -21,8 +21,8 @@ create table BIT.FirmCategoryStatistics(
 	ProjectId bigint not null,
 	FirmId bigint not null,
 	CategoryId bigint not null,
-	Hits bigint not null,
-	Shows bigint not null,
+	Hits int not null,
+	Shows int not null,
 	constraint PK_FirmCategoryStatistics primary key (FirmId, CategoryId)
 )
 go

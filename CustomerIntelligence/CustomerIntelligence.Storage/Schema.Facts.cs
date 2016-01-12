@@ -4,10 +4,8 @@ using LinqToDB.Mapping;
 using NuClear.CustomerIntelligence.Domain.Model.Bit;
 using NuClear.CustomerIntelligence.Domain.Model.Facts;
 
-
 namespace NuClear.CustomerIntelligence.Storage
 {
-
     public static partial class Schema
     {
         private const string ErmSchema = "ERM";
@@ -17,7 +15,7 @@ namespace NuClear.CustomerIntelligence.Storage
         {
             get
             {
-                var schema = new MappingSchema(new SqlServerMappingSchema());
+                var schema = new MappingSchema(nameof(Facts), new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
                 config.Entity<Account>().HasSchemaName(ErmSchema).Property(x => x.Id).IsPrimaryKey();

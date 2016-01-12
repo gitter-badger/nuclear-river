@@ -9,12 +9,12 @@ namespace NuClear.CustomerIntelligence.Storage
     public static partial class Schema
     {
         private const string CustomerIntelligenceSchema = "CustomerIntelligence";
-        
+
         public static MappingSchema CustomerIntelligence
         {
             get
             {
-                var schema = new MappingSchema(new SqlServerMappingSchema());
+                var schema = new MappingSchema(nameof(CustomerIntelligence), new SqlServerMappingSchema());
                 var config = schema.GetFluentMappingBuilder();
 
                 config.Entity<CategoryGroup>().HasSchemaName(CustomerIntelligenceSchema).Property(x => x.Id).IsPrimaryKey();
